@@ -1,0 +1,16 @@
+-----------------------------------------------------------------
+[3268] 2018/09/21 22:23:25.593 SKQuoteLib_EnterMonitor IP¡Gsrvsolace-fg.capital.com.tw
+[3268] 2018/09/21 22:23:25.873 SK_SUBJECT_CONNECTION_CONNECTED¡ACode: 0
+[3268] 2018/09/21 22:23:25.936 market(0)  Ready!
+[3268] 2018/09/21 22:23:25.951 market(1)  Ready!
+[3268] 2018/09/21 22:23:25.951 market(4)  Ready!
+[3268] 2018/09/21 22:23:25.951 market(2)  Ready!
+[3268] 2018/09/21 22:23:25.951 market(3)  Ready!
+[3268] 2018/09/21 22:23:25.951 market(3)  Ready!
+[3268] 2018/09/21 22:23:25.951 market(2)  Ready!
+[3268] 2018/09/21 22:23:26.061 Market Info is OK!
+[3268] 2018/09/21 22:23:26.107 Catalog info is OK!
+[3268] 2018/09/21 22:23:57.998  SKQuoteLib_RequestLiveTick ( 1 , TX00 )
+[3268] 2018/09/21 22:23:57.998 Return PageNo¡G 0 
+[3268] 2018/09/21 22:24:12.468  SKQuoteLib_RequestLiveTick ( 50 , TX00 )
+[3268] 2018/09/21 22:24:12.468 Return PageNo¡G 50 
