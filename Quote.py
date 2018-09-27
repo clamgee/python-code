@@ -15,12 +15,16 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import messagebox,colorchooser,font,Button,Frame,Label
 
-# 數學計算用物件
-import math
 #匯入所需module
-import datetime
-import numpy as np
-import pandas as pd
+import math #數學模組
+import datetime #日期模組
+import time # 時間運算模組
+import numpy as np #時間序列運算模組
+import pandas as pd # DataFrame 模組
+
+#全域變數
+TicktoK = pd.DataFrame(columns=['date','time','bid','ask','close','volume'])
+ndate = datetime.datetime.now().strftime("%Y/%m/%d")
 
 # 顯示各功能狀態用的function
 def WriteMessage(strMsg,listInformation):
@@ -356,7 +360,10 @@ class SKQuoteLibEvents:
         while len(nTimemicro)<6:
             nTimemicro='0'+nTimemicro
         nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
-        strMsg=nTime,int(nBid/100),int(nAsk/100),int(nClose/100),nQty
+        global ndate
+        nlist=[ndate,nTime,int(nBid/100),int(nAsk/100),int(nClose/100),nQty]
+        TicktoK=TicktoK.append(pd.DataFrame(nlist,columns=['date','time','bid','ask','close','volume']),ignore_index=True)
+        strMsg=TicktoK[:-1]
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
     def OnNotifyKLineData(self,bstrStockNo,bstrData):
