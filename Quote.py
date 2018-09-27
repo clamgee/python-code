@@ -17,11 +17,7 @@ from tkinter import messagebox,colorchooser,font,Button,Frame,Label
 
 # 數學計算用物件
 import math
-#匯入所需module
-import datetime
-import numpy as np
-import pandas as pd
-
+import tickstokline #自訂資料處理函數
 # 顯示各功能狀態用的function
 def WriteMessage(strMsg,listInformation):
     listInformation.insert('end', strMsg)
@@ -221,12 +217,13 @@ class Quote(Frame):
 
     def btnQueryStocks_Click(self):
         try:
-
             if(self.txtPageNo.get().replace(' ','') == ''):
                 pn = ctypes.c_short(0)
             else:
                 pn = ctypes.c_short(int(self.txtPageNo.get()))
             #x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
+            global Future
+            Future=tickstokline.dataprocess(0,self.txtStocks.get().replace(' ',''))
             x_nCode = skQ.SKQuoteLib_RequestTicks(0,self.txtStocks.get().replace(' ',''))
             print(x_nCode,type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
             #SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
@@ -338,25 +335,11 @@ class SKQuoteLibEvents:
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
     def OnNotifyTicks(self,sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
-        nTime=str(nTimehms)
-        while len(nTime)<6:
-            nTime='0'+nTime
-        nTimemicro=str(nTimemillismicros)
-        while len(nTimemicro)<6:
-            nTimemicro='0'+nTimemicro
-        nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
-        strMsg=nTime,int(nBid/100),int(nAsk/100),int(nClose/100),nQty
+        strMsg=Future.Ticks(sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate)
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
 
     def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
-        nTime=str(nTimehms)
-        while len(nTime)<6:
-            nTime='0'+nTime
-        nTimemicro=str(nTimemillismicros)
-        while len(nTimemicro)<6:
-            nTimemicro='0'+nTimemicro
-        nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
-        strMsg=nTime,int(nBid/100),int(nAsk/100),int(nClose/100),nQty
+        strMsg=Future.Ticks(sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate)
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
     def OnNotifyKLineData(self,bstrStockNo,bstrData):
