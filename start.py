@@ -1,23 +1,35 @@
-# import mathmethod
-# result1=mathmethod.square(2,2)
-# result2=mathmethod.rate(1,1,7,28)
-# print(result1,",",result2)
-# import datetime
-# import time
-# newdate=datetime.datetime.strptime('20180905','%Y%m%d').strftime('%Y/%m/%d')
-# newtime=datetime.datetime.strptime('084500','%H%M%S').strftime('%H:%M:%S')
-# print(newdate,newtime,type(newtime))
-#from numba import jit
-import csv
+import pandas as pd
+import numpy as np
+import datetime
 import time
+import csv
+import gc
 start=time.time()
-# jit decorator tells Numba to compile this function.
-# The argument types will be inferred by Numba when function is called.
-with open('Daily_2018_09_06.csv',mode='r',newline='') as newfile:
-    rows=csv.reader(newfile)
+csvpd=pd.DataFrame(columns=['date','time','close','volume'])
+global microsec
+microsec=0.0000
+global lasttime
+lasttime=''
+with open('data.csv',mode='r',encoding='utf-8',newline='') as file:
+    rows=csv.reader(file)
     for row in rows:
-        print(row[0].strip())
+        if row[0].strip() !='\ufeff成交日期' and row[1].strip()=='TX' and row[2].strip()=='201809':
+            #成交日期,商品代號,到期月份(週別),成交時間,成交價格,成交數量(B+S),近月價格,遠月價格,開盤集合競價 
+            row[0]=datetime.datetime.strptime(str(row[0]).strip(),'%Y%m%d').strftime('%Y/%m/%d')
+            if row[3].strip() != lasttime :
+                lasttime=row[3].strip()
+                microsec=0.0000
+                row[3]=datetime.datetime.strptime(row[3].strip(),'%H%M%S').strftime('%H:%M:%S')
+            else:
+                microsec+=0.0001
+                row[3]=datetime.datetime.strptime(row[3].strip(),'%H%M%S').strftime('%H:%M:%S')+str(microsec)[1:6]
+            #print(type(row[0]),type(row[3]),type(row[4]),type(row[5]))
+            newlist=[[row[0],row[3],row[4].strip(),row[5].strip()]]
+            csvpd=csvpd.append(pd.DataFrame(newlist,columns=['date','time','close','volume']),ignore_index=True)
 
+print(csvpd.head())
+csvpd.to_csv('output.csv',index=False)
+gc.set_threshold(700, 10, 5)
 end=time.time()
 elapsed = end - start
 print('運行時間: ',elapsed)

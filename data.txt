@@ -1,0 +1,1 @@
+﻿C:\Users\Owner\AppData\Local\Programs\Python\Python37\Scripts\;C:\Users\Owner\AppData\Local\Programs\Python\Python37\;C:\Users\Owner\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Owner\AppData\Local\Programs\Microsoft VS Code
