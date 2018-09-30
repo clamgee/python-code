@@ -15,23 +15,9 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import messagebox,colorchooser,font,Button,Frame,Label
 
-<<<<<<< HEAD
-#匯入所需module
-import math #數學模組
-import datetime #日期模組
-import time # 時間運算模組
-import numpy as np #時間序列運算模組
-import pandas as pd # DataFrame 模組
-
-#全域變數
-TicktoK = pd.DataFrame(columns=['date','time','bid','ask','close','volume'])
-ndate = datetime.datetime.now().strftime("%Y/%m/%d")
-
-=======
 # 數學計算用物件
 import math
 import tickstokline #自訂資料處理函數
->>>>>>> 13f13c2b4a9e79f709ca8a5c39cd75491ecf7300
 # 顯示各功能狀態用的function
 def WriteMessage(strMsg,listInformation):
     listInformation.insert('end', strMsg)
@@ -353,21 +339,7 @@ class SKQuoteLibEvents:
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
 
     def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
-<<<<<<< HEAD
-        nTime=str(nTimehms)
-        while len(nTime)<6:
-            nTime='0'+nTime
-        nTimemicro=str(nTimemillismicros)
-        while len(nTimemicro)<6:
-            nTimemicro='0'+nTimemicro
-        nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
-        global ndate
-        nlist=[ndate,nTime,int(nBid/100),int(nAsk/100),int(nClose/100),nQty]
-        TicktoK=TicktoK.append(pd.DataFrame(nlist,columns=['date','time','bid','ask','close','volume']),ignore_index=True)
-        strMsg=TicktoK[:-1]
-=======
         strMsg=Future.Ticks(sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate)
->>>>>>> 13f13c2b4a9e79f709ca8a5c39cd75491ecf7300
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
     def OnNotifyKLineData(self,bstrStockNo,bstrData):

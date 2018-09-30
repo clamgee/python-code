@@ -2,25 +2,16 @@ import datetime
 import time
 import numpy as np
 import pandas as pd
-# class Transfor:
-#     name2=''
-#     def __init__(self,type,name):
-#         self.type=type
-#         self.name=name
-#         self.tickpd=pd.DataFrame(columns=['date','time','bid','ask','close','volume'])
-    
-#     def TicktoK(self,newname):
-#         self.name=newname
-#         # return self.name
 
-
-#     # def TicktoK(date,time,bid,ask,close,volume):
-#     #     newlist=[date,time,bid,ask,close,volume]
-#     #     self.tickpd=self.tickpd.append(pd.DataFrame(newlist,columns=['date','time','bid','ask','close','volume']),ignore_index=True)
-#     #     return self.tickpd
-
-# if __name__ == '__main__' :
-#     A=Transfor(0,'TX00')
-#     A.TicktoK('MTX00')
-#     print(A.name)
-print(type(a))
+newlist=['2018/09/26','15:00:00.0005',10966,2]
+contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+contractkpd['ndatetime']=pd.to_datetime(contractkpd['ndatetime'])
+contractkpd=contractkpd.set_index(contractkpd['ndatetime'])
+contractkpd[['open','high','low','close','volume']]=contractkpd[['open','high','low','close','volume']].astype(int)
+a=datetime.datetime.strptime(newlist[0]+' '+newlist[1],'%Y/%m/%d %H:%M:%S.%f')
+nlist=[a,newlist[2],newlist[2],newlist[2],newlist[2],newlist[3]]
+contractkpd.loc['ndatetime']=nlist
+# csvpd=csvpd.append(pd.DataFrame(newlist,columns=['date','time','close','volume']),ignore_index=True)
+print(contractkpd)
+print(type(nlist[0]),type(nlist[1]),type(nlist[2]),type(nlist[3]),type(nlist[4]),type(nlist[5]))
+print(a)

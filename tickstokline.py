@@ -10,6 +10,7 @@ class dataprocess:
         self.name=name
         self.type=type
         self.klinepd=pd.DataFrame(columns=['date','time','open','high','low','close','volume'])
+        self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
         self.newlist=[]
         self.tmpcontract=0
     
@@ -26,5 +27,5 @@ class dataprocess:
         # return self.newlist
     
     def contractk(self):
-        if self.tmpcontract=0:
+        if self.tmpcontract==0:
             
