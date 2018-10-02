@@ -24,8 +24,38 @@ class dataprocess:
         nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
         nDate=datetime.datetime.now().strftime('%Y/%m/%d')
         self.newlist=[nDate,nTime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]
-        # return self.newlist
+        return self.newlist
     
-    def contractk(self):
-        if self.tmpcontract==0:
-            
+    def contractk(self,nDate,nTime,nBid,nAsk,nClose,nQty):
+        ndatetime=datetime.datetime.strptime(nDate+' '+nTime,'%Y/%m/%d %H:%M:%S.%f')
+        if self.tmpcontract==0 or self.tmpcontract==12000:
+            self.contractkpd.loc['ndatetime']=[ndatetime,nClose,nClose,nClose,nClose,nQty]
+            self.tmpcontract=nQty
+        elif (self.tmpcontract+nQty) < 12000:
+            self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
+            self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
+            self.contractkpd.iloc[-1,4]=nClose
+            self.contractkpd.iloc[-1,5]+=nQty
+            self.tmpcontract+=nQty
+        elif (self.tmpcontract+nQty)>12000:
+            self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
+            self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
+            self.contractkpd.iloc[-1,4]=nClose
+            self.contractkpd.iloc[-1,5]=12000
+            nQty=self.tmpcontract+nQty-12000
+            self.contractkpd.loc['ndatetime']=[ndatetime,nClose,nClose,nClose,nClose,nQty]
+        else:
+            self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
+            self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
+            self.contractkpd.iloc[-1,4]=nClose
+            self.contractkpd.iloc[-1,5]+=nQty
+            self.tmpcontract+=nQty
+        return self.contractkpd.iloc[-1:].values
+
+
+
+
+
+
+
+        

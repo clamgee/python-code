@@ -335,11 +335,13 @@ class SKQuoteLibEvents:
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
     def OnNotifyTicks(self,sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
-        strMsg=Future.Ticks(sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate)
+        nlist=Future.Ticks(sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate)
+        strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4],nlist[5])
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
 
     def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
-        strMsg=Future.Ticks(sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate)
+        nlist=Future.Ticks(sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate)
+        strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4],nlist[5])
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
     def OnNotifyKLineData(self,bstrStockNo,bstrData):

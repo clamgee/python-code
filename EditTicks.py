@@ -10,7 +10,7 @@ global microsec
 microsec=0.0000
 global lasttime
 lasttime=''
-with open('Daily_2018_09_27.csv',mode='r',newline='') as file:
+with open('Daily_2018_10_01.csv',mode='r',newline='') as file:
     rows=csv.reader(file)
     for row in rows:
         if row[1].strip()=='TX' and row[2].strip()=='201810':
@@ -19,15 +19,13 @@ with open('Daily_2018_09_27.csv',mode='r',newline='') as file:
             if row[3].strip() != lasttime :
                 lasttime=row[3].strip()
                 microsec=0.0000
-                row[3]=datetime.datetime.strptime(row[3].strip(),'%H%M%S').strftime('%H:%M:%S')+str(microsec)[1:6]
+                row[3]=datetime.datetime.strptime(row[3].strip(),'%H%M%S').strftime('%H:%M:%S')+'.0000'
             else:
                 microsec+=0.0001
                 row[3]=datetime.datetime.strptime(row[3].strip(),'%H%M%S').strftime('%H:%M:%S')+str(microsec)[1:6]
             #print(type(row[0]),type(row[3]),type(row[4]),type(row[5]))
             newlist=[[row[0],row[3],row[4].strip(),row[5].strip()]]
             csvpd=csvpd.append(pd.DataFrame(newlist,columns=['date','time','close','volume']),ignore_index=True)
-
-
 
 print(csvpd.head())
 csvpd.to_csv('output.csv',index=False)
