@@ -16,5 +16,6 @@ import pandas as pd
 # print(type(nlist[0]),type(nlist[1]),type(nlist[2]),type(nlist[3]),type(nlist[4]),type(nlist[5]))
 # print(a)
 df=pd.read_csv('data.csv')
-df.iloc[-1,2]=df.iloc[-1,2]+2
-print(df.iloc[-1:].values)
+df.columns=['date','time','close','volume']
+ohlc=df[['date','time','close','volume']]
+print(type(ohlc))

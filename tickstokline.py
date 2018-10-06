@@ -3,6 +3,9 @@ import datetime
 import time
 import numpy as np
 import pandas as pd
+from mpl_finance import candlestick_ohlc
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 
 
 class dataprocess:
@@ -52,6 +55,13 @@ class dataprocess:
             self.tmpcontract+=nQty
         return self.contractkpd.iloc[-1:].values
 
+    def drawkline(self):
+        ohlc=self.contractkpd[['ndatetime','open','high','low','close']]
+        ohlc['ndatetime'] = ohlc.index.map(mdates.date2num)
+        ax = plt.subplots(figsize=(10,5))
+        candlestick_ohlc(ax, ohlc.values, width=.6, colorup='red', colordown='green')
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y/%m/%d %H:%M:%S.%f'))
+        plt.show()
 
 
 
