@@ -47,6 +47,7 @@ class dataprocess:
             self.contractkpd.iloc[-1,4]=nClose
             self.contractkpd.iloc[-1,5]=12000
             nQty=self.tmpcontract+nQty-12000
+            self.tmpcontract=nQty
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
         else:
             self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
@@ -58,12 +59,12 @@ class dataprocess:
 
     def drawkline(self):
         ohlc=self.contractkpd[['ndatetime','open','high','low','close']]
-        ohlc.to_csv('data.csv')
-        ohlc['ndatetime'] = ohlc.index.map(mdates.date2num)
-        ax = plt.subplots(figsize=(10,5))
-        candlestick_ohlc(ax, ohlc.values, width=.6, colorup='red', colordown='green')
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y/%m/%d %H:%M:%S.%f'))
-        plt.show()
+        self.contractkpd.to_csv('data.csv',index=False)
+        # ohlc['ndatetime'] = ohlc.index.map(mdates.date2num)
+        # ax = plt.subplots(figsize=(10,5))
+        # candlestick_ohlc(ax, ohlc.values, width=.6, colorup='red', colordown='green')
+        # ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y/%m/%d %H:%M:%S.%f'))
+        # plt.show()
 
 
 

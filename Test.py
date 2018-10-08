@@ -1,33 +1,29 @@
-import datetime
-import time
 import numpy as np
 import pandas as pd
+import datetime
+import time
+import matplotlib
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+from mpl_finance import candlestick_ohlc
+import csv
 
-newlist=['2018/09/26','15:00:00.0005',10966,2]
-contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
-# contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close'])
-contractkpd['ndatetime']=pd.to_datetime(contractkpd['ndatetime'])
-contractkpd=contractkpd.set_index(contractkpd['ndatetime'])
-# contractkpd[['open','high','low','close','volume']]=contractkpd[['open','high','low','close','volume']].astype(int)
-a=datetime.datetime.strptime(newlist[0]+' '+newlist[1],'%Y/%m/%d %H:%M:%S.%f')
-nlist=[a,newlist[2],newlist[2],newlist[2],newlist[2],newlist[3]]
-contractkpd.loc[nlist[0]]=nlist
-# contractkpd=contractkpd.append(pd.DataFrame(nlist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=False)
-print(contractkpd)
-print(type(nlist[0]),type(nlist[1]),type(nlist[2]),type(nlist[3]),type(nlist[4]),type(nlist[5]))
-print(a)
+csvpf=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+csvpf[['open','high','low','close','volume']]=csvpf[['open','high','low','close','volume']].astype(int)
+with open('data.csv',mode='r',newline='') as file:
+    rows=csv.reader(file)
+    for row in rows:
+        ndatetime=datetime.datetime.strptime(row[0],'%Y-%m-%d %H:%M:%S.%f')
+        newlist=[ndatetime,int(row[1]),int(row[2]),int(row[3]),int(row[4]),int(row[5])]
+        csvpf.loc[ndatetime]=newlist
 
-
-ndatetime=datetime.datetime.strptime('2018/10/06 15:00:00.053345','%Y/%m/%d %H:%M:%S.%f')
-newlist=[ndatetime,10507,10507,10405,10412,50]
-contractkpd.loc[newlist[0]]=newlist
-# contractkpd=contractkpd.append(pd.DataFrame(newlist,columns=['ndatetime','open','high','low','close']),ignore_index=True)
-ndatetime=datetime.datetime.strptime('2018/10/07 01:24:20.133','%Y/%m/%d %H:%M:%S.%f')
-newlist=[ndatetime,10411,10448,10407,10443,112]
-contractkpd.loc[newlist[0]]=newlist
-# contractkpd=contractkpd.append(pd.DataFrame(newlist,columns=['ndatetime','open','high','low','close']),ignore_index=True)
-ndatetime=datetime.datetime.strptime('2018/10/07 03:44:37.656487','%Y/%m/%d %H:%M:%S.%f')
-newlist=[ndatetime,10443,10513,10436,10506,33]
-contractkpd.loc[newlist[0]]=newlist
-# contractkpd=contractkpd.append(pd.DataFrame(newlist,columns=['ndatetime','open','high','low','close']),ignore_index=True)
-print(contractkpd.info())
+# print(csvpf)
+csvpf= csvpf.reset_index(drop=True)
+# print(csvpf)
+csvpf['ndatetime']=csvpf['ndatetime'].map(mdates.date2num)
+# print(csvpf)
+ohlc=csvpf[['ndatetime','open','high','low','close']]
+print(ohlc)
+subplot=plt.subplot2grid((2,1),(0,0),rowspan=1,colspan=1)
+candlestick_ohlc(ax=subplot,quotes=ohlc,width=0.2,colorup='r',colordown='g')
+plt.show()
