@@ -1,20 +1,29 @@
-import datetime
-import time
 import numpy as np
 import pandas as pd
+import datetime
+import time
+import matplotlib
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+from mpl_finance import candlestick_ohlc
+import csv
 
-# newlist=['2018/09/26','15:00:00.0005',10966,2]
-# contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
-# contractkpd['ndatetime']=pd.to_datetime(contractkpd['ndatetime'])
-# contractkpd=contractkpd.set_index(contractkpd['ndatetime'])
-# contractkpd[['open','high','low','close','volume']]=contractkpd[['open','high','low','close','volume']].astype(int)
-# a=datetime.datetime.strptime(newlist[0]+' '+newlist[1],'%Y/%m/%d %H:%M:%S.%f')
-# nlist=[a,newlist[2],newlist[2],newlist[2],newlist[2],newlist[3]]
-# contractkpd.loc['ndatetime']=nlist
-# # csvpd=csvpd.append(pd.DataFrame(newlist,columns=['date','time','close','volume']),ignore_index=True)
-# print(contractkpd)
-# print(type(nlist[0]),type(nlist[1]),type(nlist[2]),type(nlist[3]),type(nlist[4]),type(nlist[5]))
-# print(a)
-df=pd.read_csv('data.csv')
-df.iloc[-1,2]=df.iloc[-1,2]+2
-print(df.iloc[-1:].values)
+csvpf=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+csvpf[['open','high','low','close','volume']]=csvpf[['open','high','low','close','volume']].astype(int)
+with open('data.csv',mode='r',newline='') as file:
+    rows=csv.reader(file)
+    for row in rows:
+        ndatetime=datetime.datetime.strptime(row[0],'%Y-%m-%d %H:%M:%S.%f')
+        newlist=[ndatetime,int(row[1]),int(row[2]),int(row[3]),int(row[4]),int(row[5])]
+        csvpf.loc[ndatetime]=newlist
+
+# print(csvpf)
+csvpf= csvpf.reset_index(drop=True)
+# print(csvpf)
+csvpf['ndatetime']=csvpf['ndatetime'].map(mdates.date2num)
+# print(csvpf)
+ohlc=csvpf[['ndatetime','open','high','low','close']]
+print(ohlc)
+subplot=plt.subplot2grid((2,1),(0,0),rowspan=1,colspan=1)
+candlestick_ohlc(ax=subplot,quotes=ohlc,width=0.2,colorup='r',colordown='g')
+plt.show()
