@@ -5,3 +5,5 @@
 *.swp
 *.dll
 /com
+*.code-workspace
+Clam-NB.code-workspace

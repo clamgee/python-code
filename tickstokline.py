@@ -59,12 +59,15 @@ class dataprocess:
 
     def drawkline(self):
         ohlc=self.contractkpd[['ndatetime','open','high','low','close']]
-        self.contractkpd.to_csv('data.csv',index=False)
-        # ohlc['ndatetime'] = ohlc.index.map(mdates.date2num)
-        # ax = plt.subplots(figsize=(10,5))
-        # candlestick_ohlc(ax, ohlc.values, width=.6, colorup='red', colordown='green')
-        # ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y/%m/%d %H:%M:%S.%f'))
-        # plt.show()
+        ohlc= ohlc.reset_index(drop=True)
+        ohlc['ndatetime']=ohlc['ndatetime'].map(mdates.date2num)
+        # fig = plt.figure()
+        ax1 = plt.subplot2grid((6,1),(0,0),rowspan=5,colspan=1)
+        ax1.xaxis_date()
+        candlestick_ohlc(ax1,ohlc.values,width=0.02,colorup='r',colordown='g')
+        plt.show()
+
+
 
 
 
