@@ -13,3 +13,4 @@ __pycache__
 .gitignore
 /__pycache__
 *.code-workspace
+SKCOMInital.py
