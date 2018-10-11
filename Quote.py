@@ -224,9 +224,10 @@ class Quote(Frame):
             #x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
             global Future
             Future=tickstokline.dataprocess(0,self.txtStocks.get().replace(' ',''))
-            x_nCode = skQ.SKQuoteLib_RequestTicks(0,self.txtStocks.get().replace(' ',''))
+            x_nCode = skQ.SKQuoteLib_RequestLiveTick(0,self.txtStocks.get().replace(' ',''))
+            # x_nCode = skQ.SKQuoteLib_RequestTicks(0,self.txtStocks.get().replace(' ',''))
             print(x_nCode,type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
-            #SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
+            SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
         except Exception as e:
             messagebox.showerror("error！",e)
@@ -334,26 +335,19 @@ class SKQuoteLibEvents:
         strMsg = '代碼:',pStock.bstrStockNo,'--名稱:',pStock.bstrStockName,'--開盤價:',pStock.nOpen/math.pow(10,pStock.sDecimal),'--最高:',pStock.nHigh/math.pow(10,pStock.sDecimal),'--最低:',pStock.nLow/math.pow(10,pStock.sDecimal),'--成交價:',pStock.nClose/math.pow(10,pStock.sDecimal),'--總量:',pStock.nTQty
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
-    # def OnNotifyTicks(self,*args,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
-    def OnNotifyTicks(self,*arg):
-        # if nSimulate==0:
-        #     nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
-        #     strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
-        #     Future.drawkline()
-        #     WriteMessage(strMsg,Gobal_Quote_ListInformation)
-        # strMsg=str(args)+','+str(nDate)+','+str(nTimehms)+','+str(nTimemillismicros)+','+str(nBid)+','+str(nAsk)+','+str(nClose)+','+str(nQty)+','+str(nSimulate)
-        strMsg=str(arg)
-        WriteMessage(strMsg,Gobal_Quote_ListInformation)
+    def OnNotifyTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
     
-    # def OnNotifyHistoryTicks(self,*args,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
-    def OnNotifyHistoryTicks(self,*arg):
-        # if nSimulate==0:
-        #     nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
-        #     strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
-        #     WriteMessage(strMsg,Gobal_Quote_ListInformation)
-        # strMsg=str(args)+','+str(nDate)+','+str(nTimehms)+','+str(nTimemillismicros)+','+str(nBid)+','+str(nAsk)+','+str(nClose)+','+str(nQty)+','+str(nSimulate)
-        strMsg=str(arg)
-        WriteMessage(strMsg,Gobal_Quote_ListInformation)
+        if nSimulate==0:
+            nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
+            strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
+            # Future.drawkline()
+            WriteMessage(strMsg,Gobal_Quote_ListInformation)
+    
+    def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
+        if nSimulate==0:
+            nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
+            strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
+            WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
     def OnNotifyKLineData(self,bstrStockNo,bstrData):
         cutData = bstrData.split(',')
