@@ -9,6 +9,7 @@ from mpl_finance import candlestick_ohlc
 import csv
 
 csvpf=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+print('DataFrame大小: ',csvpf.shape[0])
 csvpf[['open','high','low','close','volume']]=csvpf[['open','high','low','close','volume']].astype(int)
 with open('data.csv',mode='r',newline='') as file:
     rows=csv.reader(file)

@@ -334,15 +334,25 @@ class SKQuoteLibEvents:
         strMsg = '代碼:',pStock.bstrStockNo,'--名稱:',pStock.bstrStockName,'--開盤價:',pStock.nOpen/math.pow(10,pStock.sDecimal),'--最高:',pStock.nHigh/math.pow(10,pStock.sDecimal),'--最低:',pStock.nLow/math.pow(10,pStock.sDecimal),'--成交價:',pStock.nClose/math.pow(10,pStock.sDecimal),'--總量:',pStock.nTQty
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
-    def OnNotifyTicks(self,sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
-        nlist=Future.Ticks(sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate)
-        strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4],nlist[5])
-        Future.drawkline()
+    # def OnNotifyTicks(self,*args,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
+    def OnNotifyTicks(self,*arg):
+        # if nSimulate==0:
+        #     nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
+        #     strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
+        #     Future.drawkline()
+        #     WriteMessage(strMsg,Gobal_Quote_ListInformation)
+        # strMsg=str(args)+','+str(nDate)+','+str(nTimehms)+','+str(nTimemillismicros)+','+str(nBid)+','+str(nAsk)+','+str(nClose)+','+str(nQty)+','+str(nSimulate)
+        strMsg=str(arg)
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
-
-    def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
-        nlist=Future.Ticks(sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate)
-        strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4],nlist[5])
+    
+    # def OnNotifyHistoryTicks(self,*args,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
+    def OnNotifyHistoryTicks(self,*arg):
+        # if nSimulate==0:
+        #     nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
+        #     strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
+        #     WriteMessage(strMsg,Gobal_Quote_ListInformation)
+        # strMsg=str(args)+','+str(nDate)+','+str(nTimehms)+','+str(nTimemillismicros)+','+str(nBid)+','+str(nAsk)+','+str(nClose)+','+str(nQty)+','+str(nSimulate)
+        strMsg=str(arg)
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
     def OnNotifyKLineData(self,bstrStockNo,bstrData):

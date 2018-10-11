@@ -17,21 +17,21 @@ class dataprocess:
         self.newlist=[]
         self.tmpcontract=0
     
-    def Ticks(self,sMarketNo,sIndex,nPtr,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
+    def Ticks(self,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty):
         nTime=str(nTimehms)
         while len(nTime)<6:
             nTime='0'+nTime
         nTimemicro=str(nTimemillismicros)
         while len(nTimemicro)<6:
             nTimemicro='0'+nTimemicro
-        nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
-        nDate=datetime.datetime.now().strftime('%Y/%m/%d')
-        self.newlist=[nDate,nTime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]
-        self.contractk(self.newlist[0],self.newlist[1],self.newlist[2],self.newlist[3],self.newlist[4],self.newlist[5])
+        # nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
+        ndatetime=datetime.datetime.strptime(str(nDate)+" "+nTime,'%Y%m%d %H%M%S').strftime('%Y/%m/%d %H:%M:%S')+"."+nTimemicro.strip()
+        self.newlist=[ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]
+        self.contractk(self.newlist[0],self.newlist[1],self.newlist[2],self.newlist[3],self.newlist[4])
         return self.newlist
     
-    def contractk(self,nDate,nTime,nBid,nAsk,nClose,nQty):
-        ndatetime=datetime.datetime.strptime(nDate+' '+nTime,'%Y/%m/%d %H:%M:%S.%f')
+    def contractk(self,xdatetime,nBid,nAsk,nClose,nQty):
+        ndatetime=datetime.datetime.strptime(xdatetime,'%Y/%m/%d %H:%M:%S.%f')
         if self.tmpcontract==0 or self.tmpcontract==12000:
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
             self.tmpcontract=nQty
