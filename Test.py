@@ -5,8 +5,24 @@ import time
 import matplotlib
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-from mpl_finance import candlestick_ohlc
+from mpl_finance import candlestick2_ohlc
 import csv
+plt.ion()
+fig, ax = plt.subplots()
+ax.set_autoscaley_on(True)
+
+def drawbar(ndatetime,nopen,nhigh,nlow,nclose):
+    candlestick2_ohlc(
+        ax,
+        nopen,
+        nhigh,
+        nlow,
+        nclose,
+        width=0.6,colorup='r',colordown='g',alpha=1
+    )
+    ax.autoscale_view()
+    fig.canvas.draw()
+    fig.canvas.flush_events()
 
 csvpf=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
 print('DataFrame大小: ',csvpf.shape[0])
@@ -20,13 +36,28 @@ with open('data.csv',mode='r',newline='') as file:
         # print(csvpf)
         csvpf= csvpf.reset_index(drop=True)
         # print(csvpf)
-        csvpf['ndatetime']=csvpf['ndatetime'].map(mdates.date2num)
+        # csvpf['ndatetime']=csvpf['ndatetime'].map(mdates.date2num)
         # print(csvpf)
         ohlc=csvpf[['ndatetime','open','high','low','close']]
         print(ohlc)
+        drawbar(ohlc['ndatetime'],ohlc['open'],ohlc['high'],ohlc['low'],ohlc['close'])
+        time.sleep(1)
         # fig = plt.figure()
-        ax1 = plt.subplot2grid((6,1),(0,0),rowspan=5,colspan=1)
-        ax1.xaxis_date()
-        candlestick_ohlc(ax1,ohlc.values,width=0.02,colorup='r',colordown='g')
-        plt.show()
+
+
+    
+
+
+
+
+# candlestick2_ohlc(ax,
+#                   ohlc['open'].values,
+#                   ohlc['high'].values,
+#                   ohlc['low'].values,
+#                   ohlc['close'].values,
+#                   width=0.6,colorup='r',colordown='g',alpha=1)
+
+# plt.xticks(ohlc.index.values,ohlc['ndatetime'].values, size='small')
+# ax.set_autoscaley_on(True)
+# plt.show()
         # time.sleep(2)

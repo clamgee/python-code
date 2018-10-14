@@ -3,7 +3,7 @@ import datetime
 import time
 import numpy as np
 import pandas as pd
-from mpl_finance import candlestick_ohlc
+from mpl_finance import candlestick2_ohlc
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
@@ -16,7 +16,23 @@ class dataprocess:
         self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
         self.newlist=[]
         self.tmpcontract=0
-    
+        plt.ion()
+        self.fig, self.ax = plt.subplots()
+        self.ax.set_autoscaley_on(True)
+
+    def drawbar(self,ndatetime,nopen,nhigh,nlow,nclose):
+        candlestick2_ohlc(
+            self.ax,
+            nopen,
+            nhigh,
+            nlow,
+            nclose,
+            width=0.6,colorup='r',colordown='g',alpha=1
+        )
+        self.ax.autoscale_view()
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+
     def Ticks(self,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty):
         nTime=str(nTimehms)
         while len(nTime)<6:
@@ -32,7 +48,7 @@ class dataprocess:
     
     def contractk(self,xdatetime,nBid,nAsk,nClose,nQty):
         ndatetime=datetime.datetime.strptime(xdatetime,'%Y/%m/%d %H:%M:%S.%f')
-        if self.tmpcontract==0 or self.tmpcontract==12000:
+        if self.contractkpd.shape==0 or self.tmpcontract==0 or self.tmpcontract==12000:
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
             self.tmpcontract=nQty
         elif (self.tmpcontract+nQty) < 12000:
@@ -55,17 +71,10 @@ class dataprocess:
             self.contractkpd.iloc[-1,4]=nClose
             self.contractkpd.iloc[-1,5]+=nQty
             self.tmpcontract+=nQty
+            self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
+        
         return self.contractkpd.iloc[-1:].values
 
-    def drawkline(self):
-        ohlc=self.contractkpd[['ndatetime','open','high','low','close']]
-        ohlc= ohlc.reset_index(drop=True)
-        ohlc['ndatetime']=ohlc['ndatetime'].map(mdates.date2num)
-        # fig = plt.figure()
-        ax1 = plt.subplot2grid((6,1),(0,0),rowspan=5,colspan=1)
-        ax1.xaxis_date()
-        candlestick_ohlc(ax1,ohlc.values,width=0.02,colorup='r',colordown='g')
-        plt.show()
 
 
 

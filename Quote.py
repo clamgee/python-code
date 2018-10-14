@@ -224,8 +224,8 @@ class Quote(Frame):
             #x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
             global Future
             Future=tickstokline.dataprocess(0,self.txtStocks.get().replace(' ',''))
-            x_nCode = skQ.SKQuoteLib_RequestLiveTick(0,self.txtStocks.get().replace(' ',''))
-            # x_nCode = skQ.SKQuoteLib_RequestTicks(0,self.txtStocks.get().replace(' ',''))
+            # x_nCode = skQ.SKQuoteLib_RequestLiveTick(0,self.txtStocks.get().replace(' ',''))
+            x_nCode = skQ.SKQuoteLib_RequestTicks(0,self.txtStocks.get().replace(' ',''))
             print(x_nCode,type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
             SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
@@ -340,7 +340,14 @@ class SKQuoteLibEvents:
         if nSimulate==0:
             nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
             strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
-            # Future.drawkline()
+            if Future.contractkpd.shape!=0:
+                Future.drawbar(
+                    Future.contractkpd['ndatetime'],
+                    Future.contractkpd['open'],
+                    Future.contractkpd['high'],
+                    Future.contractkpd['low'],
+                    Future.contractkpd['close']
+                )
             WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
     def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
