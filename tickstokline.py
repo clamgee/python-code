@@ -48,7 +48,7 @@ class dataprocess:
     
     def contractk(self,xdatetime,nBid,nAsk,nClose,nQty):
         ndatetime=datetime.datetime.strptime(xdatetime,'%Y/%m/%d %H:%M:%S.%f')
-        if self.contractkpd.shape==0 or self.tmpcontract==0 or self.tmpcontract==12000:
+        if self.contractkpd.shape[0]==0 or self.tmpcontract==0 or self.tmpcontract==12000:
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
             self.tmpcontract=nQty
         elif (self.tmpcontract+nQty) < 12000:
@@ -72,7 +72,7 @@ class dataprocess:
             self.contractkpd.iloc[-1,5]+=nQty
             self.tmpcontract+=nQty
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
-        
+        # self.contractkpd.reset_index(drop=True)
         return self.contractkpd.iloc[-1:].values
 
 

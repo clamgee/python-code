@@ -218,19 +218,19 @@ class Quote(Frame):
     def btnQueryStocks_Click(self):
         try:
             if(self.txtPageNo.get().replace(' ','') == ''):
-                pn = ctypes.c_short(0)
+                pn = 0
             else:
-                pn = ctypes.c_short(int(self.txtPageNo.get()))
-            #x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
+                pn=int(self.txtPageNo.get())
+
             global Future
             Future=tickstokline.dataprocess(0,self.txtStocks.get().replace(' ',''))
-            # x_nCode = skQ.SKQuoteLib_RequestLiveTick(0,self.txtStocks.get().replace(' ',''))
-            x_nCode = skQ.SKQuoteLib_RequestTicks(0,self.txtStocks.get().replace(' ',''))
+            x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
+            # x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
             print(x_nCode,type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
             SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
         except Exception as e:
-            messagebox.showerror("error！",e)
+            messagebox.showerror("Ticks SKQuote error！",e)
 
 #下半部-報價-KLine項目
 class KLine(Frame):
@@ -336,11 +336,11 @@ class SKQuoteLibEvents:
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
     def OnNotifyTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
-    
         if nSimulate==0:
             nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
             strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
-            if Future.contractkpd.shape!=0:
+            WriteMessage(strMsg,Gobal_Quote_ListInformation)            
+            if Future.contractkpd.shape[0] != 0:
                 Future.drawbar(
                     Future.contractkpd['ndatetime'],
                     Future.contractkpd['open'],
@@ -348,7 +348,6 @@ class SKQuoteLibEvents:
                     Future.contractkpd['low'],
                     Future.contractkpd['close']
                 )
-            WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
     def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
         if nSimulate==0:
