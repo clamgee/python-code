@@ -44,7 +44,7 @@ with open('data.csv',mode='r',newline='') as file:
         time.sleep(1)
         # fig = plt.figure()
 
-
+print(csvpf.shape[0])
     
 
 

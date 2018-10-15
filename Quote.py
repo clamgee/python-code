@@ -219,6 +219,7 @@ class Quote(Frame):
     def btnQueryStocks_Click(self):
         try:
             if(self.txtPageNo.get().replace(' ','') == ''):
+<<<<<<< HEAD
                 pn = int(0)
             else:
                 pn = int(self.txtPageNo.get())
@@ -228,10 +229,21 @@ class Quote(Frame):
             print(type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
             x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
             # x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
+=======
+                pn = 0
+            else:
+                pn=int(self.txtPageNo.get())
+
+            global Future
+            Future=tickstokline.dataprocess(0,self.txtStocks.get().replace(' ',''))
+            x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
+            # x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
+            print(x_nCode,type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
+>>>>>>> 53b06f4fd91bb16f57379d463d2be5809bb2ff77
             SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
         except Exception as e:
-            messagebox.showerror("error！",e)
+            messagebox.showerror("Ticks SKQuote error！",e)
 
 #下半部-報價-KLine項目
 class KLine(Frame):
@@ -337,6 +349,7 @@ class SKQuoteLibEvents:
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
     
     def OnNotifyTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
+<<<<<<< HEAD
         start1=time.time()
         if nSimulate==0:
             nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
@@ -356,6 +369,21 @@ class SKQuoteLibEvents:
         end2=time.time()
         ep2=end2-start2
         print('PF time:',ep1,' Plot time:',ep2)
+=======
+        if nSimulate==0:
+            nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
+            strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
+            WriteMessage(strMsg,Gobal_Quote_ListInformation)            
+            if Future.contractkpd.shape[0] != 0:
+                Future.drawbar(
+                    Future.contractkpd['ndatetime'],
+                    Future.contractkpd['open'],
+                    Future.contractkpd['high'],
+                    Future.contractkpd['low'],
+                    Future.contractkpd['close']
+                )
+    
+>>>>>>> 53b06f4fd91bb16f57379d463d2be5809bb2ff77
     def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
         if nSimulate==0:
             nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
