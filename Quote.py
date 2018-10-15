@@ -224,9 +224,9 @@ class Quote(Frame):
             #x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
             global Future
             Future=tickstokline.dataprocess(0,self.txtStocks.get().replace(' ',''))
-            # x_nCode = skQ.SKQuoteLib_RequestLiveTick(0,self.txtStocks.get().replace(' ',''))
-            x_nCode = skQ.SKQuoteLib_RequestTicks(0,self.txtStocks.get().replace(' ',''))
-            print(x_nCode,type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
+            print(type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
+            x_nCode = skQ.SKQuoteLib_RequestLiveTick(0,self.txtStocks.get().replace(' ',''))
+            # x_nCode = skQ.SKQuoteLib_RequestTicks(0,self.txtStocks.get().replace(' ',''))
             SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
         except Exception as e:
