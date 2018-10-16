@@ -10,7 +10,7 @@ global microsec
 microsec=0.0000
 global lasttime
 lasttime=''
-with open('Daily_2018_10_08.csv',mode='r',newline='') as file:
+with open('Daily_2018_10_15.csv',mode='r',newline='') as file:
     rows=csv.reader(file)
     for row in rows:
         if row[1].strip()=='TX' and row[2].strip()=='201810':

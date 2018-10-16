@@ -13,8 +13,4 @@ __pycache__
 .gitignore
 /__pycache__
 *.code-workspace
-<<<<<<< HEAD
 SKCOMInital.py
-=======
-SKCOMInital.py
->>>>>>> 7b7afc3003c37eb0fb582318e9583ded57e8f2cb
