@@ -7,7 +7,7 @@
 /com
 *.code-workspace
 Clam-NB.code-workspace
-__pycache__
+__pycache__/*
 /.git
 *.json
 .gitignore
