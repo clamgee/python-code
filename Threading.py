@@ -1,12 +1,12 @@
 import threading
 import time
 def fun1():
-    for i in range(10):
-        time.sleep(0.5)
+    for j in range(10):
+        time.sleep(1)
     print('完成的工作程序: ',threading.current_thread())
 def fun2():
-    for i in range(10):
-        time.sleep(1)
+    for j in range(10):
+        time.sleep(0.5)
     print('完成工作程序2: %s '%threading.current_thread())
 
 def main():

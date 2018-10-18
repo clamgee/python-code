@@ -1,19 +1,17 @@
-import datetime
-import time
+# 
+import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
+import time
+images = np.random.uniform(0, 255, size=(40, 50, 50))
 
-TicktoK = pd.DataFrame(columns=['date','time','bid','ask','close','volume'])
-ndate = datetime.datetime.now().strftime("%Y/%m/%d")
+fig, ax = plt.subplots()
 
-def function():
-    global ndate
-    global TicktoK
-    n=0
-    ntime=datetime.datetime.now().strftime("%H:%M:%S.%f")
-    while n < 10 :
-        nlist=[ndate,ntime,10998,10999,10999,1]
-        TicktoK=self.append(pd.DataFrame(nlist,columns=['date','time','bid','ask','close','volume']),ignore_index=True)
-        n+=1
-    print(nlist)
-function()
+fig.show()
+for image in images:
+    start=time.time()
+    ax.imshow(image)
+    fig.canvas.draw()
+    ax.cla()
+    end=time.time()
+    ep=end-start
+    print('執行時間: ',ep)

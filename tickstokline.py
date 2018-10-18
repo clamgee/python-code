@@ -15,12 +15,15 @@ class dataprocess:
         self.klinepd=pd.DataFrame(columns=['date','time','open','high','low','close','volume'])
         self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
         self.newlist=[]
+        self.lastlist=[]
         self.tmpcontract=0
-        plt.ion()
+        # plt.ion()
         self.fig, self.ax = plt.subplots()
         self.ax.set_autoscaley_on(True)
+        self.fig.show()
 
     def drawbar(self,ndatetime,nopen,nhigh,nlow,nclose):
+        start=time.time()
         candlestick2_ohlc(
             self.ax,
             nopen,
@@ -31,7 +34,11 @@ class dataprocess:
         )
         self.ax.autoscale_view()
         self.fig.canvas.draw()
-        self.fig.canvas.flush_events()
+        # self.fig.canvas.flush_events()
+        self.ax.cla()
+        end=time.time()
+        ep=round((end-start),6)
+        print('繪圖時間: ',ep)
 
     def Ticks(self,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty):
         nTime=str(nTimehms)
