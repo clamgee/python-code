@@ -35,7 +35,7 @@ class dataprocess:
         self.ax.autoscale_view()
         self.fig.canvas.draw()
         # self.fig.canvas.flush_events()
-        self.ax.cla()
+        self.ax.cla()        
         end=time.time()
         ep=round((end-start),6)
         print('繪圖時間: ',ep)
@@ -78,7 +78,7 @@ class dataprocess:
             self.contractkpd.iloc[-1,4]=nClose
             self.contractkpd.iloc[-1,5]+=nQty
             self.tmpcontract+=nQty
-            self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
+            # self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
         # self.contractkpd.reset_index(drop=True)
         return self.contractkpd.iloc[-1:].values
 
