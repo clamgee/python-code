@@ -18,10 +18,11 @@ class dataprocess:
         self.tmpcontract=0
         # self.fig, self.aㄌ = plt.subplots()
         # self.ax.set_autoscaley_on(True)
+        plt.ion()
         self.fig=plt.figure()
         self.ax=self.fig.add_subplot(1,1,1)
         self.ax.set_autoscaley_on(True)
-        self.fig.show()
+        # self.fig.show()
         self.fig.canvas.draw()
 
     def drawbar(self,ndatetime,nopen,nhigh,nlow,nclose):
