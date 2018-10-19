@@ -231,6 +231,7 @@ class Quote(Frame):
             print(x_nCode,type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
             SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
+
         except Exception as e:
             messagebox.showerror("Ticks SKQuote error！",e)
 
@@ -340,6 +341,7 @@ class SKQuoteLibEvents:
     def OnNotifyTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
         if nSimulate==0:
             nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
+            strMsg=nlist
             strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
             WriteMessage(strMsg,Gobal_Quote_ListInformation)            
             add_thread=threading.Thread(target=Future.drawbar(
@@ -378,4 +380,5 @@ if __name__ == '__main__':
     root.TabControl = Notebook(root)
     root.TabControl.add(FrameQuote(master = root),text="報價功能")
     root.TabControl.grid(column = 0, row = 2, sticky = E + W)
+
     root.mainloop()
