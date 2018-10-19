@@ -6,8 +6,6 @@ import pandas as pd
 from mpl_finance import candlestick2_ohlc
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-
-
 class dataprocess:
     def __init__(self,type,name):
         self.name=name
@@ -17,7 +15,6 @@ class dataprocess:
         self.newlist=[]
         self.lastlist=[]
         self.tmpcontract=0
-        # plt.ion()
         self.fig, self.ax = plt.subplots()
         self.ax.set_autoscaley_on(True)
         self.fig.show()
@@ -34,7 +31,6 @@ class dataprocess:
         )
         self.ax.autoscale_view()
         self.fig.canvas.draw()
-        # self.fig.canvas.flush_events()
         self.ax.cla()        
         end=time.time()
         ep=round((end-start),6)
@@ -50,7 +46,7 @@ class dataprocess:
         # nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
         ndatetime=datetime.datetime.strptime(str(nDate)+" "+nTime,'%Y%m%d %H%M%S').strftime('%Y/%m/%d %H:%M:%S')+"."+nTimemicro.strip()
         self.newlist=[ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]
-        self.contractk(self.newlist[0],self.newlist[1],self.newlist[2],self.newlist[3],self.newlist[4])
+        # self.contractk(self.newlist[0],self.newlist[1],self.newlist[2],self.newlist[3],self.newlist[4])
         return self.newlist
     
     def contractk(self,xdatetime,nBid,nAsk,nClose,nQty):
@@ -58,12 +54,6 @@ class dataprocess:
         if self.contractkpd.shape[0]==0 or self.tmpcontract==0 or self.tmpcontract==12000:
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
             self.tmpcontract=nQty
-        elif (self.tmpcontract+nQty) < 12000:
-            self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
-            self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
-            self.contractkpd.iloc[-1,4]=nClose
-            self.contractkpd.iloc[-1,5]+=nQty
-            self.tmpcontract+=nQty
         elif (self.tmpcontract+nQty)>12000:
             self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
             self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
@@ -76,8 +66,9 @@ class dataprocess:
             self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
             self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
             self.contractkpd.iloc[-1,4]=nClose
-            self.contractkpd.iloc[-1,5]+=nQty
             self.tmpcontract+=nQty
+            self.contractkpd.iloc[-1,5]=self.tmpcontract
+
             # self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
         # self.contractkpd.reset_index(drop=True)
         return self.contractkpd.iloc[-1:].values

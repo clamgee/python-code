@@ -353,10 +353,13 @@ class SKQuoteLibEvents:
 
     def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
         if nSimulate==0:
+            start=time.time()
             nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
             strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
             WriteMessage(strMsg,Gobal_Quote_ListInformation)
-        print('History!')
+            end=time.time()
+            ep=round((end-start),6)
+            print('歷史Tick時間: ',ep)        
     
     def OnNotifyKLineData(self,bstrStockNo,bstrData):
         cutData = bstrData.split(',')
