@@ -6,6 +6,7 @@ import pandas as pd
 from mpl_finance import candlestick2_ohlc
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 class dataprocess:
     def __init__(self,type,name):
         self.name=name
@@ -15,9 +16,14 @@ class dataprocess:
         self.newlist=[]
         self.lastlist=[]
         self.tmpcontract=0
-        self.fig, self.ax = plt.subplots()
+        # self.fig, self.aㄌ = plt.subplots()
+        # self.ax.set_autoscaley_on(True)
+        plt.ion()
+        self.fig=plt.figure()
+        self.ax=self.fig.add_subplot(1,1,1)
         self.ax.set_autoscaley_on(True)
-        self.fig.show()
+        # self.fig.show()
+        self.fig.canvas.draw()
 
     def drawbar(self,ndatetime,nopen,nhigh,nlow,nclose):
         start=time.time()
@@ -30,8 +36,8 @@ class dataprocess:
             width=0.6,colorup='r',colordown='g',alpha=1
         )
         self.ax.autoscale_view()
-        self.fig.canvas.draw()
-        self.ax.cla()        
+        self.fig.canvas.flush_events()
+        # self.ax.cla()        
         end=time.time()
         ep=round((end-start),6)
         print('繪圖時間: ',ep)
@@ -46,7 +52,7 @@ class dataprocess:
         # nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
         ndatetime=datetime.datetime.strptime(str(nDate)+" "+nTime,'%Y%m%d %H%M%S').strftime('%Y/%m/%d %H:%M:%S')+"."+nTimemicro.strip()
         self.newlist=[ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]
-        # self.contractk(self.newlist[0],self.newlist[1],self.newlist[2],self.newlist[3],self.newlist[4])
+        self.contractk(self.newlist[0],self.newlist[1],self.newlist[2],self.newlist[3],self.newlist[4])
         return self.newlist
     
     def contractk(self,xdatetime,nBid,nAsk,nClose,nQty):
@@ -68,8 +74,6 @@ class dataprocess:
             self.contractkpd.iloc[-1,4]=nClose
             self.tmpcontract+=nQty
             self.contractkpd.iloc[-1,5]=self.tmpcontract
-
-            # self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
         # self.contractkpd.reset_index(drop=True)
         return self.contractkpd.iloc[-1:].values
 

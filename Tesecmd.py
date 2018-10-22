@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import time
 plt.ion()
 class DynamicUpdate():
     #Suppose we know the x range
@@ -14,6 +15,7 @@ class DynamicUpdate():
         self.ax.set_xlim(self.min_x, self.max_x)
         #Other stuff
         self.ax.grid()
+        plt.show()
 
     def on_running(self, xdata, ydata):
         #Update data (with the new _and_ the old points)
@@ -23,8 +25,9 @@ class DynamicUpdate():
         self.ax.relim()
         self.ax.autoscale_view()
         #We need to draw *and* flush
-        self.figure.canvas.draw()
+        # self.figure.canvas.draw()
         self.figure.canvas.flush_events()
+      
 
     #Example
     def __call__(self):
@@ -34,10 +37,13 @@ class DynamicUpdate():
         xdata = []
         ydata = []
         for x in np.arange(0,10,0.5):
+            start=time.time()
             xdata.append(x)
             ydata.append(np.exp(-x**2)+10*np.exp(-(x-7)**2))
             self.on_running(xdata, ydata)
-            time.sleep(1)
+            end=time.time()
+            ep=round((end-start),6)
+            print('繪圖時間: ',ep)
         return xdata, ydata
 
 d = DynamicUpdate()
