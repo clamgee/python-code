@@ -226,8 +226,8 @@ class Quote(Frame):
 
             global Future
             Future=tickstokline.dataprocess(0,self.txtStocks.get().replace(' ',''))
-            # x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
-            x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
+            x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
+            # x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
             print(x_nCode,type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
             SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
@@ -344,6 +344,7 @@ class SKQuoteLibEvents:
             strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
             WriteMessage(strMsg,Gobal_Quote_ListInformation)            
             add_thread=threading.Thread(target=Future.drawbar(
+            # Future.drawbar(
                 Future.contractkpd['ndatetime'],
                 Future.contractkpd['open'],
                 Future.contractkpd['high'],

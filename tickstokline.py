@@ -3,44 +3,74 @@ import datetime
 import time
 import numpy as np
 import pandas as pd
-from mpl_finance import candlestick2_ohlc
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+import pyqtgraph as pg
+from pyqtgraph import QtCore, QtGui
+# from mpl_finance import candlestick2_ohlc
+# import matplotlib.dates as mdates
+# import matplotlib.pyplot as plt
+
 class dataprocess:
-    def __init__(self,type,name):
-        self.name=name
-        self.type=type
-        self.klinepd=pd.DataFrame(columns=['date','time','open','high','low','close','volume'])
+    def __init__(self,ntype,inputname):
+        self.name=inputname
+        self.type=ntype
         self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
         self.newlist=[]
-        self.lastlist=[]
         self.tmpcontract=0
-        # self.fig, self.aㄌ = plt.subplots()
+        pg.GraphicsObject.__init__(self)
+        self.generatePicture()
+        self.plt=pg.plot()
+        QtGui.QApplication.exec_()
+        # ----matplotlib
+        # plt.ion()
+        # self.fig=plt.figure()
+        # self.ax=self.fig.add_subplot(1,1,1)
         # self.ax.set_autoscaley_on(True)
-        plt.ion()
-        self.fig=plt.figure()
-        self.ax=self.fig.add_subplot(1,1,1)
-        self.ax.set_autoscaley_on(True)
+        # self.fig.canvas.draw()
         # self.fig.show()
-        self.fig.canvas.draw()
-
-    def drawbar(self,ndatetime,nopen,nhigh,nlow,nclose):
+    
+    def generatePicture(self):
         start=time.time()
-        candlestick2_ohlc(
-            self.ax,
-            nopen,
-            nhigh,
-            nlow,
-            nclose,
-            width=0.6,colorup='r',colordown='g',alpha=1
-        )
-        self.ax.autoscale_view()
-        self.fig.canvas.flush_events()
-        # self.ax.cla()        
+        self.picture = QtGui.QPicture()
+        p = QtGui.QPainter(self.picture)
+        p.setPen(pg.mkPen('w'))
+        w = 1.0 / 3.0
+        for (t, x) in self.contractkpd.loc[:, ['open', 'high', 'low', 'close']].iterrows():
+            p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
+            if x.open>x.close:
+                p.setBrush(pg.mkBrush('g'))
+            elif x.open<x.close:
+                p.setBrush(pg.mkBrush('r'))
+            else:
+                p.setBrush(pg.mkBrush('w'))
+            p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
+        p.end()
         end=time.time()
         ep=round((end-start),6)
-        print('繪圖時間: ',ep)
+        print('繪圖時間1: ',ep)
+    
+    def paint(self, p, *args):
+        p.drawPicture(0, 0, self.picture)
+    
+    def boundingRect(self):
+        return QtCore.QRectF(self.picture.boundingRect())
+
+    # mpl_finacial 
+    # def drawbar(self,ndatetime,nopen,nhigh,nlow,nclose):
+    #     start=time.time()
+    #     self.ax.cla()    
+    #     candlestick2_ohlc(
+    #         self.ax,
+    #         nopen,
+    #         nhigh,
+    #         nlow,
+    #         nclose,
+    #         width=0.6,colorup='r',colordown='g',alpha=1
+    #     )
+    #     self.ax.autoscale_view()
+    #     self.fig.canvas.flush_events()    
+    #     end=time.time()
+    #     ep=round((end-start),6)
+    #     print('繪圖時間: ',ep)
 
     def Ticks(self,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty):
         nTime=str(nTimehms)

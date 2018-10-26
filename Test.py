@@ -21,7 +21,8 @@ def drawbar(ndatetime,nopen,nhigh,nlow,nclose):
         nclose,
         width=0.6,colorup='r',colordown='g',alpha=1
     )
-    ax.autoscale_view()    
+    ax.autoscale_view()
+    # fig.canvas.blit()    
     fig.canvas.flush_events()
 
 csvpf=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
