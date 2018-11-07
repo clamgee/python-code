@@ -6,7 +6,7 @@ import pandas as pd
 from mpl_finance import candlestick2_ohlc
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+
 class dataprocess:
     def __init__(self,type,name):
         self.name=name
@@ -27,6 +27,7 @@ class dataprocess:
 
     def drawbar(self,ndatetime,nopen,nhigh,nlow,nclose):
         start=time.time()
+        self.ax.cla()
         candlestick2_ohlc(
             self.ax,
             nopen,
@@ -36,8 +37,7 @@ class dataprocess:
             width=0.6,colorup='r',colordown='g',alpha=1
         )
         self.ax.autoscale_view()
-        self.fig.canvas.flush_events()
-        # self.ax.cla()        
+        self.fig.canvas.flush_events()        
         end=time.time()
         ep=round((end-start),6)
         print('繪圖時間: ',ep)
