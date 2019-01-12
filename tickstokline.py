@@ -65,50 +65,57 @@ class dataprocess:
             self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
             self.contractkpd.iloc[-1,4]=nClose
             self.contractkpd.iloc[-1,5]=12000
-            nQty=self.tmpcontract+nQty-12000
-            self.tmpcontract=nQty
-            self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
+            self.tmpcontract=self.tmpcontract+nQty-12000
+            self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract]
         else:
             self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
             self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
             self.contractkpd.iloc[-1,4]=nClose
-            self.tmpcontract+=nQty
+            self.tmpcontract=self.tmpcontract+nQty
             self.contractkpd.iloc[-1,5]=self.tmpcontract
         # self.contractkpd.reset_index(drop=True)
         return self.contractkpd.iloc[-1:].values
     
-    class CandlestickItem(pg.GraphicsObject):
-        def __init__(self):
-            pg.GraphicsObject.__init__(self)
-            self.generatePicture()
-            self.flagHasData = False
-
-        def generatePicture(self):
-            start=time.time()
-            self.picture = QtGui.QPicture()
-            p = QtGui.QPainter(self.picture)
-            p.setPen(pg.mkPen('w'))
-            w = 1.0 / 3.0
-            for (t, x) in self.contractkpd.loc[:, ['open', 'high', 'low', 'close']].iterrows():
-                p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
-                if x.open>x.close:
-                    p.setBrush(pg.mkBrush('g'))
-                elif x.open<x.close:
-                    p.setBrush(pg.mkBrush('r'))
+class CandlestickItem(pg.GraphicsObject):
+    def __init__(self):
+        pg.GraphicsObject.__init__(self)
+        self.count=0
+        self.total=0     
+    
+    def set_data(self,data):
+        start=time.time()
+        self.data = data.reset_index(drop=True)  ## data must have fields: time, open, close, min, max
+        print(self.data.loc[:, ['ndatetime','open','high','low','close','volume']].tail(1))
+        self.generatePicture()
+        self.informViewBoundsChanged()
+        end=time.time()
+        self.count+=1
+        self.total=self.total+(end-start)
+        ep=round((self.total/self.count),6)
+        print('繪圖時間: ',round((end-start),6),' 平均繪圖時間: ',ep)
+    
+    def generatePicture(self):
+        self.picture = QtGui.QPicture()
+        p = QtGui.QPainter(self.picture)
+        p.setPen(pg.mkPen('w'))
+        w = 1.0 / 3.0
+        for (t, x) in self.data.loc[:, ['open', 'high', 'low', 'close']].iterrows():
+            p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
+            if x.open>x.close:
+                p.setBrush(pg.mkBrush('g'))
+            elif x.open<x.close:
+                p.setBrush(pg.mkBrush('r'))
             else:
                 p.setBrush(pg.mkBrush('w'))
             p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
-            p.end()
-            end=time.time()
-            ep=round((end-start),6)
-            print('繪圖時間1: ',ep)
+        p.end()
+        
     
-        def paint(self, p, *args):
-            p.drawPicture(0, 0, self.picture)
+    def paint(self, p, *args):
+        p.drawPicture(0, 0, self.picture)
     
-        def boundingRect(self):
-            return QtCore.QRectF(self.picture.boundingRect())
- 
+    def boundingRect(self):
+        return QtCore.QRectF(self.picture.boundingRect()) 
 
 
 

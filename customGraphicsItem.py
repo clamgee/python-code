@@ -49,12 +49,6 @@ class CandlestickItem(pg.GraphicsObject):
         return QtCore.QRectF(self.picture.boundingRect())
 
 item = CandlestickItem()
-#item.set_data(data)
-
-plt = pg.plot()
-plt.addItem(item)
-plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
-QtGui.QApplication.exec_()
 
 csvpf=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
 print('DataFrame大小: ',csvpf.shape[0])
@@ -68,12 +62,32 @@ with open('data.csv',mode='r',newline='') as file:
         csvpf.loc[ndatetime]=newlist
         csvpf= csvpf.reset_index(drop=True)
         data=csvpf[['ndatetime','open','high','low','close']]
-        start=time.time()
-        item.set_data(data)
-        end=time.time()
-        ep=end-start
-        print('繪圖時間2: ',ep)
-        time.sleep(1)
+
+item.set_data(data)
+
+plt = pg.plot()
+plt.addItem(item)
+plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
+QtGui.QApplication.exec_()
+
+# csvpf=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+# print('DataFrame大小: ',csvpf.shape[0])
+# csvpf[['open','high','low','close','volume']]=csvpf[['open','high','low','close','volume']].astype(int)
+# data=csvpf[['ndatetime','open','high','low','close']]
+# with open('data.csv',mode='r',newline='') as file:
+#     rows=csv.reader(file)
+#     for row in rows:
+#         ndatetime=datetime.datetime.strptime(row[0],'%Y-%m-%d %H:%M:%S.%f')
+#         newlist=[ndatetime,int(row[1]),int(row[2]),int(row[3]),int(row[4]),int(row[5])]
+#         csvpf.loc[ndatetime]=newlist
+#         csvpf= csvpf.reset_index(drop=True)
+#         data=csvpf[['ndatetime','open','high','low','close']]
+#         start=time.time()
+#         item.set_data(data)
+#         end=time.time()
+#         ep=end-start
+#         print('繪圖時間2: ',ep)
+#         time.sleep(1)
 # data = [ ## fields are (time, open, close, min, max).
 #     (1., 10, 13, 5, 15),
 #     (2., 13, 17, 9, 20),

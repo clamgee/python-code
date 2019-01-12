@@ -4,6 +4,9 @@ import os
 import ctypes
 import time
 import threading
+#繪圖元件
+import pyqtgraph as pg
+from pyqtgraph import QtCore, QtGui
 # 第二種讓群益API元件可導入Python，code內用的物件宣告，SKCOM需要註冊Registry
 import comtypes.client
 import comtypes.gen.SKCOMLib as sk
@@ -225,9 +228,16 @@ class Quote(Frame):
                 pn=int(self.txtPageNo.get())
 
             global Future
-            Future=tickstokline.dataprocess(0,self.txtStocks.get().replace(' ',''))
-            x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
-            # x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
+            global item
+            Future = tickstokline.dataprocess(0,self.txtStocks.get().replace(' ',''))
+            # x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
+            x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
+            item = tickstokline.CandlestickItem()
+            item.set_data(Future.contractkpd)
+            plt = pg.plot()
+            plt.addItem(item)
+            plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
+            QtGui.QApplication.exec_()
             print(x_nCode,type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
             SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
@@ -340,24 +350,25 @@ class SKQuoteLibEvents:
     
     def OnNotifyTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
         if nSimulate==0:
-            nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
-            strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
+            Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
+            strMsg=Future.contractkpd.iloc[-1:].values
             WriteMessage(strMsg,Gobal_Quote_ListInformation)            
-            add_thread=threading.Thread(target=Future.drawbar(
-            # Future.drawbar(
-                Future.contractkpd['ndatetime'],
-                Future.contractkpd['open'],
-                Future.contractkpd['high'],
-                Future.contractkpd['low'],
-                Future.contractkpd['close']
-            ))
-            add_thread.start()
+            # add_thread=threading.Thread(target=Future.drawbar(
+            # # Future.drawbar(
+            #     Future.contractkpd['ndatetime'],
+            #     Future.contractkpd['open'],
+            #     Future.contractkpd['high'],
+            #     Future.contractkpd['low'],
+            #     Future.contractkpd['close']
+            # ))
+            # add_thread.start()
+            item.set_data(Future.contractkpd)
 
     def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
         if nSimulate==0:
             # start=time.time()
-            nlist=Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
-            strMsg=Future.contractk(nlist[0],nlist[1],nlist[2],nlist[3],nlist[4])
+            Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
+            strMsg=Future.contractkpd.iloc[-1:].values
             WriteMessage(strMsg,Gobal_Quote_ListInformation)
             # end=time.time()
             # ep=round((end-start),6)
