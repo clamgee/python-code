@@ -230,8 +230,8 @@ class Quote(Frame):
             global Future
             global item
             Future = tickstokline.dataprocess(0,self.txtStocks.get().replace(' ',''))
-            # x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
-            x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
+            x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
+            # x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
             item = tickstokline.CandlestickItem()
             item.set_data(Future.contractkpd)
             plt = pg.plot()
