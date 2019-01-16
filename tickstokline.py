@@ -3,17 +3,11 @@ import datetime
 import time
 import numpy as np
 import pandas as pd
-<<<<<<< HEAD
-from mpl_finance import candlestick2_ohlc
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
-=======
 import pyqtgraph as pg
 from pyqtgraph import QtCore, QtGui
 # from mpl_finance import candlestick2_ohlc
 # import matplotlib.dates as mdates
 # import matplotlib.pyplot as plt
->>>>>>> 00e4a9971672c5f2e0c963821e641383880e4027
 
 class dataprocess:
     def __init__(self,ntype,inputname):
@@ -36,19 +30,6 @@ class dataprocess:
     
     def generatePicture(self):
         start=time.time()
-<<<<<<< HEAD
-        self.ax.cla()
-        candlestick2_ohlc(
-            self.ax,
-            nopen,
-            nhigh,
-            nlow,
-            nclose,
-            width=0.6,colorup='r',colordown='g',alpha=1
-        )
-        self.ax.autoscale_view()
-        self.fig.canvas.flush_events()        
-=======
         self.picture = QtGui.QPicture()
         p = QtGui.QPainter(self.picture)
         p.setPen(pg.mkPen('w'))
@@ -63,7 +44,6 @@ class dataprocess:
                 p.setBrush(pg.mkBrush('w'))
             p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
         p.end()
->>>>>>> 00e4a9971672c5f2e0c963821e641383880e4027
         end=time.time()
         ep=round((end-start),6)
         print('繪圖時間1: ',ep)
