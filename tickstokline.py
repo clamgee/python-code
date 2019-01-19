@@ -16,6 +16,7 @@ class dataprocess:
         self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
         self.newlist=[]
         self.tmpcontract=0
+        self.CheckHour=0
         # ----matplotlib
         # plt.ion()
         # self.fig=plt.figure()
@@ -57,7 +58,8 @@ class dataprocess:
     
     def contractk(self,xdatetime,nBid,nAsk,nClose,nQty):
         ndatetime=datetime.datetime.strptime(xdatetime,'%Y/%m/%d %H:%M:%S.%f')
-        if self.contractkpd.shape[0]==0 or self.tmpcontract==0 or self.tmpcontract==12000:
+        tmphour=ndatetime.hour
+        if self.contractkpd.shape[0]==0 or self.tmpcontract==0 or self.tmpcontract==12000 or (tmphour==8 and self.CheckHour==4) or (tmphour==15 and self.CheckHour==13):
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
             self.tmpcontract=nQty
         elif (self.tmpcontract+nQty)>12000:
@@ -74,6 +76,7 @@ class dataprocess:
             self.tmpcontract=self.tmpcontract+nQty
             self.contractkpd.iloc[-1,5]=self.tmpcontract
         # self.contractkpd.reset_index(drop=True)
+        self.CheckHour=tmphour
         return self.contractkpd.iloc[-1:].values
     
 class CandlestickItem(pg.GraphicsObject):
