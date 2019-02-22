@@ -1,64 +1,13 @@
-import numpy as np
-import pandas as pd
-import datetime
-import time
-import matplotlib
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
-from mpl_finance import candlestick2_ohlc
-import csv
-plt.ion()
-fig, ax = plt.subplots()
-ax.set_autoscaley_on(True)
-fig.canvas.draw()
+# import sys
+# from PyQt5.QtWidgets import QApplication,QMainWindow,QAction
+# import pyqtgraph as pg
+# import numpy as np
+# x = np.arange(1000)
+# y = np.random.normal(size=(3, 1000))
+# plotWidget = pg.plot(title="Three plot curves")
+# for i in range(1+):
+#     plotWidget.plot(x, y[i], pen=(i,3))  ## setting pen=(i,3) automaticaly creates three different-colored pens
 
-def drawbar(ndatetime,nopen,nhigh,nlow,nclose):
-    candlestick2_ohlc(
-        ax,
-        nopen,
-        nhigh,
-        nlow,
-        nclose,
-        width=0.6,colorup='r',colordown='g',alpha=1
-    )
-    ax.autoscale_view()
-    # fig.canvas.blit()    
-    fig.canvas.flush_events()
-
-csvpf=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
-print('DataFrame大小: ',csvpf.shape[0])
-csvpf[['open','high','low','close','volume']]=csvpf[['open','high','low','close','volume']].astype(int)
-with open('data.csv',mode='r',newline='') as file:
-    rows=csv.reader(file)
-    for row in rows:
-        ndatetime=datetime.datetime.strptime(row[0],'%Y-%m-%d %H:%M:%S.%f')
-        newlist=[ndatetime,int(row[1]),int(row[2]),int(row[3]),int(row[4]),int(row[5])]
-        csvpf.loc[ndatetime]=newlist
-        # print(csvpf)
-        csvpf= csvpf.reset_index(drop=True)
-        # print(csvpf)
-        # csvpf['ndatetime']=csvpf['ndatetime'].map(mdates.date2num)
-        # print(csvpf)
-        ohlc=csvpf[['ndatetime','open','high','low','close']]
-        # print(ohlc)
-        start=time.time()
-        drawbar(ohlc['ndatetime'],ohlc['open'],ohlc['high'],ohlc['low'],ohlc['close'])
-        end=time.time()
-        ep=end-start
-        print('繪圖時間: ',ep)
-        time.sleep(1)
-        # fig = plt.figure()
-
-# print(csvpf.shape[0])
-
-# candlestick2_ohlc(ax,
-#                   ohlc['open'].values,
-#                   ohlc['high'].values,
-#                   ohlc['low'].values,
-#                   ohlc['close'].values,
-#                   width=0.6,colorup='r',colordown='g',alpha=1)
-
-# plt.xticks(ohlc.index.values,ohlc['ndatetime'].values, size='small')
-# ax.set_autoscaley_on(True)
-
-# time.sleep(2)
+# if __name__=='__main__':
+#     app=QApplication(sys.argv)
+#     sys.exit(app.exec_())

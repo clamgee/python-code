@@ -1,17 +1,30 @@
-def chart():    
-    hist_data = ts.get_hist_data('600519',start='2017-05-01',end='2017-11-24')    
-    data_list = []    
-    for dates,row in hist_data.iterrows():        
-        # 將時間轉換為數字# 
-        date_time = datetime.datetime.strptime(dates,'%Y-%m-%d')        
-        t = date2num(date_time)        
-        t = dict(enumerate(datetime))        
-        open,high,close,low = row[:4]        
-        datas = (t,open,close,low,high)        
-        data_list.append(datas)    
-    axis_dict = dict(enumerate(axis))    
-    item = CandlestickItem(data_list)    
-    plt = pg.PlotWidget()    
-    plt.addItem(item,)    
-    plt.showGrid(x=True,y=True)    
-    return plt
+import sys
+from PyQt5.QtWidgets import QApplication,QMainWindow,QAction
+
+class GUi(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.resize(800,600)
+        self.setWindowTitle('Clam 視窗')
+        self.statusBar().showMessage('內文狀態')
+        #建立一個Menu欄
+        self.menu = self.menuBar()
+        #建立一個Menu
+        self.file_menu=self.menu.addMenu('文件')
+        #建立一個行為
+        self.new_action = QAction('新文件',self)
+        #添加一個行為到Menu
+        self.file_menu.addAction(self.new_action)
+        #更新狀態欄位
+        self.new_action.setStatusTip('新的文件')
+
+
+
+if __name__=='__main__':
+    app=QApplication(sys.argv)
+    gui=GUi()
+    gui.show()
+    sys.exit(app.exec_())
