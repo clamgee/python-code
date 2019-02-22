@@ -16,6 +16,7 @@ class dataprocess:
         self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
         self.newlist=[]
         self.tmpcontract=0
+        self.CheckHour=0
         # ----matplotlib
         # plt.ion()
         # self.fig=plt.figure()
@@ -57,7 +58,8 @@ class dataprocess:
     
     def contractk(self,xdatetime,nBid,nAsk,nClose,nQty):
         ndatetime=datetime.datetime.strptime(xdatetime,'%Y/%m/%d %H:%M:%S.%f')
-        if self.contractkpd.shape[0]==0 or self.tmpcontract==0 or self.tmpcontract==12000:
+        tmphour=ndatetime.hour
+        if self.contractkpd.shape[0]==0 or self.tmpcontract==0 or self.tmpcontract==12000 or (tmphour==8 and self.CheckHour==4) or (tmphour==15 and self.CheckHour==13):
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
             self.tmpcontract=nQty
         elif (self.tmpcontract+nQty)>12000:
@@ -74,18 +76,31 @@ class dataprocess:
             self.tmpcontract=self.tmpcontract+nQty
             self.contractkpd.iloc[-1,5]=self.tmpcontract
         # self.contractkpd.reset_index(drop=True)
+        self.CheckHour=tmphour
         return self.contractkpd.iloc[-1:].values
     
 class CandlestickItem(pg.GraphicsObject):
     def __init__(self):
         pg.GraphicsObject.__init__(self)
         self.count=0
-        self.total=0     
+        self.total=0
+        self.checkpoint=''
     
     def set_data(self,data):
         start=time.time()
-        self.data = data.reset_index(drop=True)  ## data must have fields: time, open, close, min, max
-        print(self.data.loc[:, ['ndatetime','open','high','low','close','volume']].tail(1))
+        # print(data.ndatetime.tail(1).values)
+        # if data.shape[0]>=2 and self.checkpoint != data.ndatetime.tail(1).values:
+        #     self.checkpoint=data.ndatetime.tail(1).values
+        #     last=data.shape[0]
+        #     self.data=data.loc[:last-2].rest_index(drop=True)
+        #     self.generatePicture()
+        #     self.data=data.reset_index(drop=True).tail(1) ## data must have fields: time, open, close, min, max
+        #     self.generatePicture()
+        # else:
+        #     self.data=data.reset_index(drop=True).tail(1)
+        #     self.generatePicture()
+        self.data = data.reset_index(drop=True)
+        # print(self.data.loc[:, ['ndatetime','open','high','low','close','volume']].tail(1))
         self.generatePicture()
         self.informViewBoundsChanged()
         end=time.time()

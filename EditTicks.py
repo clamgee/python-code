@@ -10,10 +10,10 @@ global microsec
 microsec=0.0000
 global lasttime
 lasttime=''
-with open('Daily_2019_01_11.csv',mode='r',newline='') as file:
+with open('Daily_2019_02_20.csv',mode='r',newline='') as file:
     rows=csv.reader(file)
     for row in rows:
-        if row[1].strip()=='TX' and row[2].strip()=='201901':
+        if row[1].strip()=='TX' and row[2].strip()=='201902':
             #成交日期,商品代號,到期月份(週別),成交時間,成交價格,成交數量(B+S),近月價格,遠月價格,開盤集合競價 
             row[0]=datetime.datetime.strptime(str(row[0]).strip(),'%Y%m%d').strftime('%Y/%m/%d')
             if row[3].strip() != lasttime :
