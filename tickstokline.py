@@ -83,12 +83,24 @@ class CandlestickItem(pg.GraphicsObject):
     def __init__(self):
         pg.GraphicsObject.__init__(self)
         self.count=0
-        self.total=0     
+        self.total=0
+        self.checkpoint=''
     
     def set_data(self,data):
         start=time.time()
-        self.data = data.reset_index(drop=True)  ## data must have fields: time, open, close, min, max
-        print(self.data.loc[:, ['ndatetime','open','high','low','close','volume']].tail(1))
+        # print(data.ndatetime.tail(1).values)
+        # if data.shape[0]>=2 and self.checkpoint != data.ndatetime.tail(1).values:
+        #     self.checkpoint=data.ndatetime.tail(1).values
+        #     last=data.shape[0]
+        #     self.data=data.loc[:last-2].rest_index(drop=True)
+        #     self.generatePicture()
+        #     self.data=data.reset_index(drop=True).tail(1) ## data must have fields: time, open, close, min, max
+        #     self.generatePicture()
+        # else:
+        #     self.data=data.reset_index(drop=True).tail(1)
+        #     self.generatePicture()
+        self.data = data.reset_index(drop=True)
+        # print(self.data.loc[:, ['ndatetime','open','high','low','close','volume']].tail(1))
         self.generatePicture()
         self.informViewBoundsChanged()
         end=time.time()

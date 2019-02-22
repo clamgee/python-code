@@ -21,6 +21,8 @@ class CandlestickItem(pg.GraphicsObject):
         p = QtGui.QPainter(self.picture)
         p.setPen(pg.mkPen('w'))
         w = 1.0 / 3.0
+        # last=data.shape[0]
+        # print(last)
         for (t, x) in data.loc[:, ['open', 'high', 'low', 'close']].iterrows():
             p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
             if x.open>x.close:
@@ -62,7 +64,8 @@ with open('data.csv',mode='r',newline='') as file:
         csvpf.loc[ndatetime]=newlist
         csvpf= csvpf.reset_index(drop=True)
         data=csvpf[['ndatetime','open','high','low','close']]
-
+tmp=data.ndatetime.tail(1)
+print(tmp)
 item.set_data(data)
 
 plt = pg.plot()
