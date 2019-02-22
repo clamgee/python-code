@@ -27,7 +27,7 @@ with open('data.csv',mode='r',encoding='utf-8',newline='') as file:
             newlist=[[row[0],row[3],row[4].strip(),row[5].strip()]]
             csvpd=csvpd.append(pd.DataFrame(newlist,columns=['date','time','close','volume']),ignore_index=True)
 
-print(csvpd)
+print(csvpd.head())
 csvpd.to_csv('output.csv',index=False)
 gc.set_threshold(700, 10, 5)
 end=time.time()
