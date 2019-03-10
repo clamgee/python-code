@@ -84,53 +84,79 @@ class CandlestickItem(pg.GraphicsObject):
         pg.GraphicsObject.__init__(self)
         self.count=0
         self.total=0
+        self.picture = QtGui.QPicture()
+        self.pictures=[]
+        self.setFlag(self.ItemUsesExtendedStyleOption)
+        self.rect = None
+        self.low=0
+        self.high=0
         self.checkpoint=''
     
     def set_data(self,data):
         start=time.time()
-        # print(data.ndatetime.tail(1).values)
-        # if data.shape[0]>=2 and self.checkpoint != data.ndatetime.tail(1).values:
-        #     self.checkpoint=data.ndatetime.tail(1).values
-        #     last=data.shape[0]
-        #     self.data=data.loc[:last-2].rest_index(drop=True)
-        #     self.generatePicture()
-        #     self.data=data.reset_index(drop=True).tail(1) ## data must have fields: time, open, close, min, max
-        #     self.generatePicture()
-        # else:
-        #     self.data=data.reset_index(drop=True).tail(1)
-        #     self.generatePicture()
         self.data = data.reset_index(drop=True)
-        # print(self.data.loc[:, ['ndatetime','open','high','low','close','volume']].tail(1))
+        self.low,self.high = (self.data['low'].min(),self.data['high'].max()) if len(data)>0 else (0,1)
         self.generatePicture()
         self.informViewBoundsChanged()
+        if not self.scene() is None:
+            self.scene().update()
         end=time.time()
         self.count+=1
         self.total=self.total+(end-start)
         ep=round((self.total/self.count),6)
         print('繪圖時間: ',round((end-start),6),' 平均繪圖時間: ',ep)
     
-    def generatePicture(self):
-        self.picture = QtGui.QPicture()
-        p = QtGui.QPainter(self.picture)
-        p.setPen(pg.mkPen('w'))
+    def generatePicture(self):    
+        # 重畫或者最後一根K線
+        if self.pictures != []:
+            self.pictures.pop()
         w = 1.0 / 3.0
+        npic = len(self.pictures)
         for (t, x) in self.data.loc[:, ['open', 'high', 'low', 'close']].iterrows():
-            p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
-            if x.open>x.close:
-                p.setBrush(pg.mkBrush('g'))
-            elif x.open<x.close:
-                p.setBrush(pg.mkBrush('r'))
-            else:
-                p.setBrush(pg.mkBrush('w'))
-            p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
-        p.end()
+            if t>=npic:
+                picture = QtGui.QPicture()
+                p = QtGui.QPainter(picture)
+                p.setPen(pg.mkPen('w'))
+                p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
+                if x.open>x.close:
+                    p.setBrush(pg.mkBrush('g'))
+                elif x.open<x.close:
+                    p.setBrush(pg.mkBrush('r'))
+                else:
+                    p.setBrush(pg.mkBrush('w'))
+                p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
+                p.end()
+                self.pictures.append(picture)
+                print('t=',t,', npic=',npic,' len pic=',len(self.pictures))
         
-    
-    def paint(self, p, *args):
-        p.drawPicture(0, 0, self.picture)
+    def paint(self, painter, opt, w):
+        rect = opt.exposedRect
+        xmin,xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
+        self.rect = (rect.left(),rect.right())
+        self.picture = self.createPic(xmin,xmax)
+        print('4')
+        self.picture.play(painter)
+        # if not self.rect == (rect.left(),rect.right()) or self.picture is None:
+        #     self.rect = (rect.left(),rect.right())
+        #     self.picture = self.createPic(xmin,xmax)
+        #     print('4')
+        #     self.picture.play(painter)
+        # elif not self.picture is None:
+        #     print('5')
+        #     self.picture.play(painter)
+
+
+    # 缓存图片
+    #----------------------------------------------------------------------
+    def createPic(self,xmin,xmax):
+        picture = QtGui.QPicture()
+        p = QtGui.QPainter(picture)
+        [pic.play(p) for pic in self.pictures[xmin:xmax]]
+        p.end()
+        return picture
     
     def boundingRect(self):
-        return QtCore.QRectF(self.picture.boundingRect()) 
+        return QtCore.QRectF(0,self.low,len(self.pictures),(self.high-self.low)) 
 
 
 
