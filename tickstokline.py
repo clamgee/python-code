@@ -103,12 +103,12 @@ class CandlestickItem(pg.GraphicsObject):
         end=time.time()
         self.count+=1
         self.total=self.total+(end-start)
-        ep=round((self.total/self.count),6)
+        ep=int(1/(self.total/self.count))
         print('繪圖時間: ',round((end-start),6),' 平均繪圖時間: ',ep)
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
-        if self.pictures != []:
+        if int(len(self.pictures))>1:
             self.pictures.pop()
         w = 1.0 / 3.0
         npic = len(self.pictures)
@@ -127,14 +127,12 @@ class CandlestickItem(pg.GraphicsObject):
                 p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
                 p.end()
                 self.pictures.append(picture)
-                print('t=',t,', npic=',npic,' len pic=',len(self.pictures))
         
     def paint(self, painter, opt, w):
         rect = opt.exposedRect
         xmin,xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
         self.rect = (rect.left(),rect.right())
         self.picture = self.createPic(xmin,xmax)
-        print('4')
         self.picture.play(painter)
         # if not self.rect == (rect.left(),rect.right()) or self.picture is None:
         #     self.rect = (rect.left(),rect.right())
