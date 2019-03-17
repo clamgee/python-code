@@ -84,7 +84,9 @@ class CandlestickItem(pg.GraphicsObject):
         pg.GraphicsObject.__init__(self)
         self.count=0
         self.total=0
-        self.picture = QtGui.QPicture()
+        # self.picture = QtGui.QPicture()
+        self.picturemain = QtGui.QPicture()
+        self.picturelast = QtGui.QPicture()
         self.pictures=[]
         self.setFlag(self.ItemUsesExtendedStyleOption)
         self.rect = None
@@ -98,12 +100,15 @@ class CandlestickItem(pg.GraphicsObject):
         self.low,self.high = (self.data['low'].min(),self.data['high'].max()) if len(data)>0 else (0,1)
         self.generatePicture()
         self.informViewBoundsChanged()
-        if not self.scene() is None:
-            self.scene().update()
+        # if not self.scene() is None:
+        self.scene().update()
         end=time.time()
         self.count+=1
         self.total=self.total+(end-start)
-        ep=int(1/(self.total/self.count))
+        if self.count != 0 and self.total !=0 :
+            ep=int(1/(self.total/self.count))
+        else:
+            ep=0
         print('繪圖時間: ',round((end-start),6),' 平均繪圖時間: ',ep)
     
     def generatePicture(self):    
@@ -131,18 +136,22 @@ class CandlestickItem(pg.GraphicsObject):
     def paint(self, painter, opt, w):
         rect = opt.exposedRect
         xmin,xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
-        self.rect = (rect.left(),rect.right())
-        self.picture = self.createPic(xmin,xmax)
-        self.picture.play(painter)
-        # if not self.rect == (rect.left(),rect.right()) or self.picture is None:
-        #     self.rect = (rect.left(),rect.right())
-        #     self.picture = self.createPic(xmin,xmax)
-        #     print('4')
-        #     self.picture.play(painter)
-        # elif not self.picture is None:
-        #     print('5')
-        #     self.picture.play(painter)
-
+        # self.rect = (rect.left(),rect.right())
+        # self.picture = self.createPic(xmin,xmax)
+        # self.picture.play(painter)
+        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None:
+            self.rect = (rect.left(),rect.right())
+            # print('rect: ',self.rect)
+            self.picturemain = self.createPic(xmin,xmax-1)
+            self.picturemain.play(painter)
+            self.picturelast = self.createPic(xmax-1,xmax)
+            self.picturelast.play(painter)
+            # print('4')            
+        elif not self.picturemain is None:
+            self.picturemain.play(painter)
+            self.picturelast = self.createPic(xmax-1,xmax)
+            self.picturelast.play(painter)
+            # print('5')
 
     # 缓存图片
     #----------------------------------------------------------------------
