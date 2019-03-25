@@ -92,7 +92,7 @@ class CandlestickItem(pg.GraphicsObject):
         self.rect = None
         self.low=0
         self.high=0
-        self.timenp=np.array([])
+        self.timelist=[]
 
     def set_data(self,data):
         start=time.time()
@@ -103,14 +103,15 @@ class CandlestickItem(pg.GraphicsObject):
         if not self.scene() is None:
             self.scene().update() #強制圖形更新
         end=time.time()
-        if self.timenp.size<100:
-            self.timenp.append(a,(end-start),axis=0)
+        if len(self.timelist)<100:
+            self.timelist.append((end-start))
         else:
-            self.timenp.delete(a,0,axis=0)
-            self.timenp.append(a,(end-start),axis=0)
-        if self.timenp.sum(axis=0)!=0:
-            ep=int(1/(self.timenp.sum(axis=0)/self.timenp.size))
-
+            self.timelist.pop(0)
+            self.timelist.append((end-start))
+        if sum(self.timelist)!=0 and len(self.timelist)>0:
+            ep=int(1/(sum(self.timelist)/len(self.timelist)))
+        else:
+            ep=0
         print('繪圖時間: ',round((end-start),6),' 平均繪圖時間: ',ep)
     
     def generatePicture(self):    
