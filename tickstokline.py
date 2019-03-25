@@ -85,30 +85,32 @@ class CandlestickItem(pg.GraphicsObject):
         self.count=0
         self.total=0
         # self.picture = QtGui.QPicture()
-        self.picturemain = QtGui.QPicture()
-        self.picturelast = QtGui.QPicture()
+        self.picturemain = QtGui.QPicture() #主K線圖
+        self.picturelast = QtGui.QPicture() #最後一根K線圖
         self.pictures=[]
         self.setFlag(self.ItemUsesExtendedStyleOption)
         self.rect = None
         self.low=0
         self.high=0
-        self.checkpoint=''
-    
+        self.timenp=np.array([])
+
     def set_data(self,data):
         start=time.time()
         self.data = data.reset_index(drop=True)
         self.low,self.high = (self.data['low'].min(),self.data['high'].max()) if len(data)>0 else (0,1)
         self.generatePicture()
         self.informViewBoundsChanged()
-        # if not self.scene() is None:
-        self.scene().update()
+        if not self.scene() is None:
+            self.scene().update() #強制圖形更新
         end=time.time()
-        self.count+=1
-        self.total=self.total+(end-start)
-        if self.count != 0 and self.total !=0 :
-            ep=int(1/(self.total/self.count))
+        if self.timenp.size<100:
+            self.timenp.append(a,(end-start),axis=0)
         else:
-            ep=0
+            self.timenp.delete(a,0,axis=0)
+            self.timenp.append(a,(end-start),axis=0)
+        if self.timenp.sum(axis=0)!=0:
+            ep=int(1/(self.timenp.sum(axis=0)/self.timenp.size))
+
         print('繪圖時間: ',round((end-start),6),' 平均繪圖時間: ',ep)
     
     def generatePicture(self):    

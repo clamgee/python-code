@@ -236,11 +236,15 @@ class Quote(Frame):
             # item.set_data(Future.contractkpd)
             plt = pg.plot()
             plt.addItem(item)
-            # plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
-            QtGui.QApplication.exec_()
+            plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
             print(x_nCode,type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
             SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
+            print(sys.excepthook)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
+            if __name__ == '__main__':
+                import sys
+                if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+                    QtGui.QApplication.instance().exec_()
 
         except Exception as e:
             messagebox.showerror("Ticks SKQuote error！",e)
