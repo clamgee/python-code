@@ -100,8 +100,8 @@ class CandlestickItem(pg.GraphicsObject):
         self.low,self.high = (self.data['low'].min(),self.data['high'].max()) if len(data)>0 else (0,1)
         self.generatePicture()
         self.informViewBoundsChanged()
-        if not self.scene() is None:
-            self.scene().update() #強制圖形更新
+        # if not self.scene() is None:
+        #     self.scene().update() #強制圖形更新
         end=time.time()
         if len(self.timelist)<100:
             self.timelist.append((end-start))
