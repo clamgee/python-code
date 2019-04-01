@@ -7,9 +7,9 @@ import pandas as pd
 import numpy as np
 
 class CandlestickItem(pg.GraphicsObject):
-    def __init__(self):
-        pg.GraphicsObject.__init__(self)        
-    
+    def __init__(self, *args, **kwargs):
+        pg.GraphicsObject.__init__(self)
+
     def set_data(self,data):
         self.data = data  ## data must have fields: time, open, close, min, max
         self.generatePicture()
@@ -69,6 +69,9 @@ print(tmp)
 item.set_data(data)
 
 plt = pg.plot()
+plt.hideAxis('left')
+plt.showAxis('right')
+plt.showGrid(False,True)
 plt.addItem(item)
 plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
 QtGui.QApplication.exec_()

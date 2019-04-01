@@ -1,24 +1,21 @@
-# import pyqtgraph as pg
-# from pyqtgraph import QtCore, QtGui
-# import numpy as np
-# x = np.arange(1000)
-# y = np.random.normal(size=(3, 1000))
-# plotWidget = pg.plot(title="Three plot curves")
-# for i in range(3):
-#     plotWidget.plot(x, y[i], pen=(i,3)) 
-# if __name__ == '__main__':
-#     import sys
-#     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-#          QtGui.QApplication.instance().exec_()
+import pandas as pd
+import os
+df=None
+# print(os.path.abspath('data'))
+for info in os.listdir('data'):
+    domain=os.path.abspath(r'data')
+    info=os.path.join(domain,info)
+    print(info)
+    if df is None:
+        df=pd.read_csv(info,header=None)
+        print(1)
+    else:        
+        df=df.append(pd.read_csv(info,header=None))
+        print(2)
 
-# if __name__=='__main__':
-#     app=QApplication(sys.argv)
-#     sys.exit(app.exec_())
-import pyqtgraph.examples
-pyqtgraph.examples.run()
-
-# import keyword
-# print(keyword.kwlist)
-
-# # list all built-in keywords
-# print(vars(__builtin__).keys())
+# df = pd.read_csv('data/Ticks2019319.txt',header=None)
+df[0]=df[0]+' '+df[1]
+del df[1]
+df[0]=pd.to_datetime(df[0],format='%Y/%m/%d %H:%M:%S.%f')
+print(df.head())
+print(df.shape)
