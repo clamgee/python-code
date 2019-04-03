@@ -52,31 +52,11 @@ class CandlestickItem(pg.GraphicsObject):
 
 item = CandlestickItem()
 
-csvpf=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
-print('DataFrame大小: ',csvpf.shape[0])
-csvpf[['open','high','low','close','volume']]=csvpf[['open','high','low','close','volume']].astype(int)
-data=csvpf[['ndatetime','open','high','low','close']]
-with open('data.csv',mode='r',newline='') as file:
-    rows=csv.reader(file)
-    for row in rows:
-        ndatetime=datetime.datetime.strptime(row[0],'%Y-%m-%d %H:%M:%S.%f')
-        newlist=[ndatetime,int(row[1]),int(row[2]),int(row[3]),int(row[4]),int(row[5])]
-        csvpf.loc[ndatetime]=newlist
-        csvpf= csvpf.reset_index(drop=True)
-        data=csvpf[['ndatetime','open','high','low','close']]
-tmp=data.ndatetime.tail(1)
-print(tmp)
-item.set_data(data)
-
-plt = pg.plot()
-plt.hideAxis('left')
-plt.showAxis('right')
-plt.showGrid(False,True)
-plt.addItem(item)
-plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
-QtGui.QApplication.exec_()
-
-# csvpf=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+csvpf=pd.read_csv('result.csv')
+csvpf['ndatetime']=pd.to_datetime(csvpf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+print(csvpf.tail(5))
+print(csvpf.info())
+print(csvpf.shape)
 # print('DataFrame大小: ',csvpf.shape[0])
 # csvpf[['open','high','low','close','volume']]=csvpf[['open','high','low','close','volume']].astype(int)
 # data=csvpf[['ndatetime','open','high','low','close']]
@@ -87,19 +67,18 @@ QtGui.QApplication.exec_()
 #         newlist=[ndatetime,int(row[1]),int(row[2]),int(row[3]),int(row[4]),int(row[5])]
 #         csvpf.loc[ndatetime]=newlist
 #         csvpf= csvpf.reset_index(drop=True)
-#         data=csvpf[['ndatetime','open','high','low','close']]
-#         start=time.time()
-#         item.set_data(data)
-#         end=time.time()
-#         ep=end-start
-#         print('繪圖時間2: ',ep)
-#         time.sleep(1)
-# data = [ ## fields are (time, open, close, min, max).
-#     (1., 10, 13, 5, 15),
-#     (2., 13, 17, 9, 20),
-#     (3., 17, 14, 11, 23),
-#     (4., 14, 15, 5, 19),
-#     (5., 15, 9, 8, 22),
-#     (6., 9, 15, 8, 16),
-# ]
-# item = CandlestickItem(data)
+#         
+# tmp=data.ndatetime.tail(1)
+# print(tmp)
+
+data=csvpf[['ndatetime','open','high','low','close']]
+item.set_data(data)
+
+plt = pg.plot()
+plt.hideAxis('left')
+plt.showAxis('right')
+plt.showGrid(False,True)
+plt.addItem(item)
+plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
+QtGui.QApplication.exec_()
+

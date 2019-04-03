@@ -13,7 +13,9 @@ class dataprocess:
     def __init__(self,ntype,inputname):
         self.name=inputname
         self.type=ntype
-        self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+        # self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+        self.contractkpd=pd.read_csv('result.csv')
+        self.contractkpd['ndatetime']=pd.to_datetime(self.contractkpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.newlist=[]
         self.tmpcontract=0
         self.CheckHour=0
