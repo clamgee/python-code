@@ -20,10 +20,33 @@ df.rename(columns={
 df.drop(['lastmon','farmon','open'],axis=1,inplace=True)
 df=df[df['product'].str.strip()=='TX']
 df=df[df['Month'].str.strip()=='201904']
-# df['ndate']=df['ndate'].str.strip()+' '+df['ntime'].str.strip()
+# global tmp,ms
+def fx(x):
+    a=str(x)
+    while len(a)<6:
+        a='0'+a
+    # if tmp !=a :
+    #     tmp=a
+    #     ms=0.0000
+    #     a=str(float(tmp)+ms)
+    # else:
+    #     ms=ms+0.0001
+    #     a=str(float(tmp)+ms)
+    return a
+df['ntime']=df['ntime'].map(fx)
+
+df['ndatetime']=df['ndate'].astype(str).str.strip()+' '+df['ntime'].str.strip()
+df['ndatetime']=pd.to_datetime(df['ndatetime'],format='%Y%m%d %H%M%S')
+df.drop(['ndate','product','Month','ntime'],axis=1,inplace=True)
+df=df[['ndatetime','price','volumn']]
+df=df.reset_index(drop=True)
+
+
 print(df.columns.values)
 print(df.shape)
+print(df.info())
 print(df.head(5))
+df.to_csv('output.csv')
 
 # start=time.time()
 # csvpd=pd.DataFrame(columns=['date','time','close','volume'])
