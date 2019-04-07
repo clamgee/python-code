@@ -20,10 +20,25 @@ df.rename(columns={
 df.drop(['lastmon','farmon','open'],axis=1,inplace=True)
 df=df[df['product'].str.strip()=='TX']
 df=df[df['Month'].str.strip()=='201904']
-# df['ndate']=df['ndate'].str.strip()+' '+df['ntime'].str.strip()
+df[['ndate','ntime']]=df[['ndate','ntime']].astype(str)
+df['ndatetime']=datetime.datetime.strptime('2019-01-01 11:11:11.1','%Y-%m-%d %H:%M:%S.%f')
 print(df.columns.values)
 print(df.shape)
+print(df.info())
 print(df.head(5))
+
+# print(df[df['ntime'].str.len() < 6])
+df.reset_index()
+
+for (t,x) in df[df['ntime'].str.len() < 6].iterrows():
+    while len(x.ntime)<6:
+        x.ntime='0'+x.ntime
+    df.loc[t,['ntime']]=x.ntime
+
+print(df[df['ntime'].str.len() < 6])
+# for (t,x) in df.loc[:,['ndatetime','ndate','ntime']].iterrows():
+
+    
 
 # start=time.time()
 # csvpd=pd.DataFrame(columns=['date','time','close','volume'])
