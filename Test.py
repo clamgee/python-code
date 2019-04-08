@@ -29,7 +29,7 @@ if df is not None:
     print(df.head())
     print(df.shape)
 else:
-    print('Nd Data UpDate!!')
+    print('No Data UpDate!!')
 
 class Klineprocess:
     def __init__(self):

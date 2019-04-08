@@ -114,29 +114,29 @@ class CandlestickItem(pg.GraphicsObject):
             ep=int(1/(sum(self.timelist)/len(self.timelist)))
         else:
             ep=0
-        print('繪圖時間: ',round((end-start),6),' 平均繪圖時間: ',ep)
+        print('每100張FPS: ',ep)
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
         if int(len(self.pictures))>1:
             self.pictures.pop()
         w = 1.0 / 3.0
-        npic = len(self.pictures)
-        for (t, x) in self.data.loc[:, ['open', 'high', 'low', 'close']].iterrows():
-            if t>=npic:
-                picture = QtGui.QPicture()
-                p = QtGui.QPainter(picture)
-                p.setPen(pg.mkPen('w'))
-                p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
-                if x.open>x.close:
-                    p.setBrush(pg.mkBrush('g'))
-                elif x.open<x.close:
-                    p.setBrush(pg.mkBrush('r'))
-                else:
-                    p.setBrush(pg.mkBrush('w'))
-                p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
-                p.end()
-                self.pictures.append(picture)
+        start = len(self.pictures)
+        stop = self.data.shape[0]
+        for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
+            picture = QtGui.QPicture()
+            p = QtGui.QPainter(picture)
+            p.setPen(pg.mkPen('w'))
+            p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
+            if x.open>x.close:
+                p.setBrush(pg.mkBrush('g'))
+            elif x.open<x.close:
+                p.setBrush(pg.mkBrush('r'))
+            else:
+                p.setBrush(pg.mkBrush('w'))
+            p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
+            p.end()
+            self.pictures.append(picture)
         
     def paint(self, painter, opt, w):
         rect = opt.exposedRect
@@ -151,12 +151,12 @@ class CandlestickItem(pg.GraphicsObject):
             self.picturemain.play(painter)
             self.picturelast = self.createPic(xmax-1,xmax)
             self.picturelast.play(painter)
-            # print('4')            
+            print('重繪')            
         elif not self.picturemain is None:
             self.picturemain.play(painter)
             self.picturelast = self.createPic(xmax-1,xmax)
             self.picturelast.play(painter)
-            # print('5')
+            print('快圖')
 
     # 缓存图片
     #----------------------------------------------------------------------

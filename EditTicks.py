@@ -4,7 +4,8 @@ import datetime
 import time
 import csv
 import gc
-
+start=time.time()
+#修改要抓資料的檔案
 df=pd.read_csv('Daily_2019_04_03.csv',encoding='big5',error_bad_lines=False,warn_bad_lines=True)
 df.rename(columns={
     df.columns[0]:'ndate',
@@ -12,34 +13,39 @@ df.rename(columns={
     df.columns[2]:'Month',
     df.columns[3]:'ntime',
     df.columns[4]:'price',
-    df.columns[5]:'volumn',
+    df.columns[5]:'volume',
     df.columns[6]:'lastmon',
     df.columns[7]:'farmon',
     df.columns[8]:'open'
 },inplace=True)
 df.drop(['lastmon','farmon','open'],axis=1,inplace=True)
-df=df[df['product'].str.strip()=='TX']
-df=df[df['Month'].str.strip()=='201904']
+df=df[df['product'].str.strip()=='TX'] #目標商品
+df=df[df['Month'].str.strip()=='201904'] #修改目標月份
 df[['ndate','ntime']]=df[['ndate','ntime']].astype(str)
-df['ndatetime']=datetime.datetime.strptime('2019-01-01 11:11:11.1','%Y-%m-%d %H:%M:%S.%f')
+df.drop(['product','Month'],axis=1,inplace=True)
+
+def fx(x):
+    while len(x)<6:
+        x='0'+x
+    return x
+
+df.ntime=df.ntime.apply(fx)
+
+df.price=df.price.astype(int)
+df=df[['ndate','ntime','price','volume']]
+df['ndate']=pd.to_datetime(df['ndate'],format='%Y%m%d').dt.date
+df['ntime']=pd.to_datetime(df['ntime'],format='%H%M%S').dt.time
+df=df.reset_index(drop=True)
+filename='data/Ticks'+str(df.iloc[-1,0])+'.txt'
+
 print(df.columns.values)
 print(df.shape)
 print(df.info())
 print(df.head(5))
-
-# print(df[df['ntime'].str.len() < 6])
-df.reset_index()
-
-for (t,x) in df[df['ntime'].str.len() < 6].iterrows():
-    while len(x.ntime)<6:
-        x.ntime='0'+x.ntime
-    df.loc[t,['ntime']]=x.ntime
-
-print(df[df['ntime'].str.len() < 6])
-# for (t,x) in df.loc[:,['ndatetime','ndate','ntime']].iterrows():
-
-    
-
+print(filename) 
+df.to_csv(filename,header=False,index=False)
+end=time.time()
+print('耗時: ',round((end-start),3),' 秒')
 # start=time.time()
 # csvpd=pd.DataFrame(columns=['date','time','close','volume'])
 # global microsec
