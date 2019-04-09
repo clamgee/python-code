@@ -4,50 +4,53 @@ import datetime
 import time
 import csv
 import gc
-
-df=pd.read_csv('Daily_2019_04_03.csv',encoding='big5',error_bad_lines=False,warn_bad_lines=True)
+start=time.time()
+#修改要抓資料的檔案
+df=pd.read_csv('Daily_2019_04_09.csv',encoding='big5',error_bad_lines=False,warn_bad_lines=True)
 df.rename(columns={
     df.columns[0]:'ndate',
     df.columns[1]:'product',
     df.columns[2]:'Month',
     df.columns[3]:'ntime',
     df.columns[4]:'price',
-    df.columns[5]:'volumn',
+    df.columns[5]:'volume',
     df.columns[6]:'lastmon',
     df.columns[7]:'farmon',
     df.columns[8]:'open'
 },inplace=True)
 df.drop(['lastmon','farmon','open'],axis=1,inplace=True)
-df=df[df['product'].str.strip()=='TX']
-df=df[df['Month'].str.strip()=='201904']
-# global tmp,ms
+df=df[df['product'].str.strip()=='TX'] #目標商品
+df=df[df['Month'].str.strip()=='201904'] #修改目標月份
+df[['ndate','ntime']]=df[['ndate','ntime']].astype(str)
+df.drop(['product','Month'],axis=1,inplace=True)
+
 def fx(x):
-    a=str(x)
-    while len(a)<6:
-        a='0'+a
-    # if tmp !=a :
-    #     tmp=a
-    #     ms=0.0000
-    #     a=str(float(tmp)+ms)
-    # else:
-    #     ms=ms+0.0001
-    #     a=str(float(tmp)+ms)
-    return a
-df['ntime']=df['ntime'].map(fx)
+    while len(x)<6:
+        x='0'+x
+    return x
 
-df['ndatetime']=df['ndate'].astype(str).str.strip()+' '+df['ntime'].str.strip()
-df['ndatetime']=pd.to_datetime(df['ndatetime'],format='%Y%m%d %H%M%S')
-df.drop(['ndate','product','Month','ntime'],axis=1,inplace=True)
-df=df[['ndatetime','price','volumn']]
+df.ntime=df.ntime.apply(fx)
+
+df.price=df.price.astype(int)
+df=df[['ndate','ntime','price','volume']]
+df['ndate']=pd.to_datetime(df['ndate'],format='%Y%m%d').dt.date
+df['ntime']=pd.to_datetime(df['ntime'],format='%H%M%S').dt.time
 df=df.reset_index(drop=True)
-
+filename='data/Ticks'+str(df.iloc[-1,0])+'.txt'
 
 print(df.columns.values)
 print(df.shape)
 print(df.info())
 print(df.head(5))
+<<<<<<< HEAD
 df.to_csv('output.csv')
 
+=======
+print(filename) 
+df.to_csv(filename,header=False,index=False)
+end=time.time()
+print('耗時: ',round((end-start),3),' 秒')
+>>>>>>> c8e17eb3755117771607b94f4fb1e6e42fb4b034
 # start=time.time()
 # csvpd=pd.DataFrame(columns=['date','time','close','volume'])
 # global microsec
