@@ -6,7 +6,7 @@ import csv
 import gc
 start=time.time()
 #修改要抓資料的檔案
-df=pd.read_csv('Daily_2019_04_09.csv',encoding='big5',error_bad_lines=False,warn_bad_lines=True)
+df=pd.read_csv('Daily_2019_04_03.csv',encoding='big5',error_bad_lines=False,warn_bad_lines=True)
 df.rename(columns={
     df.columns[0]:'ndate',
     df.columns[1]:'product',
@@ -42,15 +42,10 @@ print(df.columns.values)
 print(df.shape)
 print(df.info())
 print(df.head(5))
-<<<<<<< HEAD
-df.to_csv('output.csv')
-
-=======
 print(filename) 
 df.to_csv(filename,header=False,index=False)
 end=time.time()
 print('耗時: ',round((end-start),3),' 秒')
->>>>>>> c8e17eb3755117771607b94f4fb1e6e42fb4b034
 # start=time.time()
 # csvpd=pd.DataFrame(columns=['date','time','close','volume'])
 # global microsec

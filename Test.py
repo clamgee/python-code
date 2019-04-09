@@ -61,6 +61,8 @@ class Klineprocess:
         self.CheckHour=tmphour
         return self.contractkpd.iloc[-1:].values
 
+df.sort_values(by=['ndatetime'],ascending=True)
+
 kline=Klineprocess()
 for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows():
     kline.contractk(x.ndatetime,x.close,x.volume)
