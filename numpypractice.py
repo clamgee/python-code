@@ -12,5 +12,7 @@
 # print(ticksdf.head())
 # print(ticksdf.info())
 import datetime
-nTime=datetime.datetime.now().time()
-sTime=datetime.datetime.strptime('12:55:00','%H:%M:%S').time()
+ndate=datetime.datetime.today()
+sTime=datetime.datetime.now().time()
+ndatetime=datetime.datetime.combine(ndate,sTime)
+print(ndatetime)

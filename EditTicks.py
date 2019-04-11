@@ -33,7 +33,9 @@ def fx(x):
 df.ntime=df.ntime.apply(fx)
 
 df.price=df.price.astype(int)
-df=df[['ndate','ntime','price','volume']]
+df['nbid']=df['price']
+df['nask']=df['price']
+df=df[['ndate','ntime','nbid','nask','price','volume']]
 df['ndate']=pd.to_datetime(df['ndate'],format='%Y%m%d').dt.date
 df['ntime']=pd.to_datetime(df['ntime'],format='%H%M%S.%f').dt.time
 df=df.reset_index(drop=True)
