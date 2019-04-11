@@ -92,8 +92,7 @@ class dataprocess:
 class CandlestickItem(pg.GraphicsObject):
     def __init__(self):
         pg.GraphicsObject.__init__(self)
-        self.count=0
-        self.total=0
+        self.lastbar = None
         # self.picture = QtGui.QPicture()
         self.picturemain = QtGui.QPicture() #主K線圖
         self.picturelast = QtGui.QPicture() #最後一根K線圖
@@ -106,7 +105,7 @@ class CandlestickItem(pg.GraphicsObject):
 
     def set_data(self,data):
         start=time.time()
-        self.data = data.reset_index(drop=True)
+        self.data = data.tail(120).reset_index(drop=True)
         self.low,self.high = (self.data['low'].min(),self.data['high'].max()) if len(data)>0 else (0,1)
         self.generatePicture()
         self.informViewBoundsChanged()
@@ -152,8 +151,9 @@ class CandlestickItem(pg.GraphicsObject):
         # self.rect = (rect.left(),rect.right())
         # self.picture = self.createPic(xmin,xmax)
         # self.picture.play(painter)
-        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None:
+        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None or self.lastbar != self.data.iloc[-1,0]:
             self.rect = (rect.left(),rect.right())
+            self.lastbar = self.data.iloc[-1,0]
             # print('rect: ',self.rect)
             self.picturemain = self.createPic(xmin,xmax-1)
             self.picturemain.play(painter)

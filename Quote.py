@@ -243,7 +243,6 @@ class Quote(Frame):
             # x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
             x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
             item = tickstokline.CandlestickItem()
-            # item.set_data(Future.contractkpd)
             plt = pg.plot()
             plt.hideAxis('left')
             plt.showAxis('right')
@@ -251,8 +250,8 @@ class Quote(Frame):
             plt.addItem(item)
             plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
             print(x_nCode,type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
+            item.set_data(Future.contractkpd)
             SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
-            print(sys.excepthook)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
             if __name__ == '__main__':
                 import sys
