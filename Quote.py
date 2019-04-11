@@ -2,6 +2,7 @@
 import os
 #目前已知RequestLiveTick 函數需要指定C語言的變數型態
 import ctypes
+import datetime
 import time
 import threading
 #繪圖元件
@@ -213,6 +214,15 @@ class Quote(Frame):
         self.btnQueryStocks["command"] = self.btnQueryStocks_Click
         self.btnQueryStocks.grid(column = 4, row = 0)
 
+        self.btnOutputTicks = Button(self)
+        self.btnOutputTicks["text"] = "匯出Ticks"
+        self.btnOutputTicks["background"] = "#ff9797"
+        self.btnOutputTicks["foreground"] = "#000000"
+        self.btnOutputTicks["font"] = 20
+        self.btnOutputTicks["command"] = self.btnOutputTicks_Click
+        self.btnOutputTicks.grid(column = 5, row = 0)
+
+
         #訊息欄
         self.listInformation = Listbox(self, height = 25, width = 100)
         self.listInformation.grid(column = 0, row = 2, sticky = E + W, columnspan = 6)
@@ -251,6 +261,14 @@ class Quote(Frame):
 
         except Exception as e:
             messagebox.showerror("Ticks SKQuote error！",e)
+    
+    def btnOutputTicks_Click(self):
+        try:
+            if Future.ticksdf is not None:
+                filename='data/Ticks'+str(Future.ticksdf.iloc[-1,0])+'.txt'
+                Future.ticksdf.to_csv(filename,header=False,index=False)
+        except Exception as e:
+             messagebox.showerror("Ticks Output error！",e)
 
 #下半部-報價-KLine項目
 class KLine(Frame):
@@ -348,6 +366,25 @@ class SKQuoteLibEvents:
         elif (nKind == 3021):
             strMsg = "Connect Error!"
         WriteMessage(strMsg,GlobalListInformation)
+    
+    def OnNotifyServerTime(self,sHour,sMinute,sSecond,nTotal):
+        HH=str(sHour) 
+        while len(HH)<2 : 
+            HH='0'+HH
+        MM=str(sMinute)
+        while len(MM)<2 :
+            MM='0'+MM
+        SS=str(sSecond)
+        while len(SS)<2 :
+            SS='0'+SS
+        nTime=HH+MM+SS
+        nTime=datetime.datetime.strptime(nTime,'%H%M%S').time()
+        jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
+        if nTime==jTime and Future.ticksdf is not None :
+            filename='data/Ticks'+str(Future.ticksdf.iloc[-1,0])+'.txt'
+            Future.ticksdf.to_csv(filename,header=False,index=False)
+
+        WriteMessage(nTime,GlobalListInformation)       
 
     def OnNotifyQuote(self, sMarketNo, sStockidx):
         pStock = sk.SKSTOCK()

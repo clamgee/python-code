@@ -14,9 +14,13 @@ class dataprocess:
         self.name=inputname
         self.type=ntype
         # self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+        self.ticksdf=pd.DataFrame(columns=['ndate','ntime','nbid','nask','close','volume'])
+        self.ticksdf['ndate']=pd.to_datetime(self.ticksdf['ndate'],format='%Y-%m-%d')
+        self.ticksdf['ntime']=pd.to_datetime(self.ticksdf['ntime'],format='%H:%M:%S.%f')
         self.contractkpd=pd.read_csv('result.csv')
         self.contractkpd['ndatetime']=pd.to_datetime(self.contractkpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.newlist=[]
+        self.tmplist=[]
         self.tmpcontract=0
         self.CheckHour=0
         # ----matplotlib
@@ -55,6 +59,11 @@ class dataprocess:
         # nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
         ndatetime=datetime.datetime.strptime(str(nDate)+" "+nTime,'%Y%m%d %H%M%S').strftime('%Y/%m/%d %H:%M:%S')+"."+nTimemicro.strip()
         self.newlist=[ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]
+        self.tmplist.append(datetime.datetime.strptime(str(nDate),'%Y%m%d').date())
+        self.tmplist.append(datetime.datetime.strptime(nTime+"."+nTimemicro.strip(),'%H%M%S.%f').time())
+        self.tmplist=[self.tmplist+[self.newlist[1],self.newlist[2],self.newlist[3],self.newlist[4]]]
+        self.ticksdf=self.ticksdf.append(pd.DataFrame(self.tmplist,columns=['ndate','ntime','nbid','nask','close','volume']),ignore_index=True)
+        self.tmplist.clear()
         self.contractk(self.newlist[0],self.newlist[1],self.newlist[2],self.newlist[3],self.newlist[4])
         return self.newlist
     

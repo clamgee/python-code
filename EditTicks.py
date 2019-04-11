@@ -27,6 +27,7 @@ df.drop(['product','Month'],axis=1,inplace=True)
 def fx(x):
     while len(x)<6:
         x='0'+x
+    x=x+'.000'
     return x
 
 df.ntime=df.ntime.apply(fx)
@@ -34,7 +35,7 @@ df.ntime=df.ntime.apply(fx)
 df.price=df.price.astype(int)
 df=df[['ndate','ntime','price','volume']]
 df['ndate']=pd.to_datetime(df['ndate'],format='%Y%m%d').dt.date
-df['ntime']=pd.to_datetime(df['ntime'],format='%H%M%S').dt.time
+df['ntime']=pd.to_datetime(df['ntime'],format='%H%M%S.%f').dt.time
 df=df.reset_index(drop=True)
 filename='data/Ticks'+str(df.iloc[-1,0])+'.txt'
 

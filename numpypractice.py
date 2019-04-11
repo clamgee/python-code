@@ -1,6 +1,16 @@
-import numpy as np
-array=np.array([[1,2,3],[4,5,6]])
-print(array)
-print(array.ndim)
-print(array.shape)
-print(array.size)
+# import datetime
+# import pandas as pd
+# tmplist=[]
+# ticksdf=pd.DataFrame(columns=['ndate','ntime','nbid','nask','close','volume'])
+# ticksdf['ndate']=pd.to_datetime(ticksdf['ndate'],format='%Y-%m-%d')
+# ticksdf['ntime']=pd.to_datetime(ticksdf['ntime'],format='%H:%M:%S.%f')
+# tmplist.append(datetime.datetime.now().date())
+# tmplist.append(datetime.datetime.now().time())
+# tmplist=[tmplist+[1,2,3,4]]
+# print(len(tmplist))
+# ticksdf=ticksdf.append(pd.DataFrame(tmplist,columns=['ndate','ntime','nbid','nask','close','volume']),ignore_index=True)
+# print(ticksdf.head())
+# print(ticksdf.info())
+import datetime
+nTime=datetime.datetime.now().time()
+sTime=datetime.datetime.strptime('12:55:00','%H:%M:%S').time()
