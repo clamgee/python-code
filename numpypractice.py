@@ -11,8 +11,10 @@
 # ticksdf=ticksdf.append(pd.DataFrame(tmplist,columns=['ndate','ntime','nbid','nask','close','volume']),ignore_index=True)
 # print(ticksdf.head())
 # print(ticksdf.info())
-import datetime
-ndate=datetime.datetime.today()
-sTime=datetime.datetime.now().time()
-ndatetime=datetime.datetime.combine(ndate,sTime)
-print(ndatetime)
+# import datetime
+# ndate=datetime.datetime.today()
+# sTime=datetime.datetime.now().time()
+# ndatetime=datetime.datetime.combine(ndate,sTime)
+# print(ndatetime)
+import pyqtgraph.examples
+pyqtgraph.examples.run()
