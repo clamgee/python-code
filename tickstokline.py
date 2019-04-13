@@ -105,7 +105,7 @@ class CandlestickItem(pg.GraphicsObject):
 
     def set_data(self,data):
         start=time.time()
-        self.data = data.tail(120).reset_index(drop=True)
+        self.data = data.reset_index(drop=True)
         self.low,self.high = (self.data['low'].min(),self.data['high'].max()) if len(data)>0 else (0,1)
         self.generatePicture()
         self.informViewBoundsChanged()
@@ -151,11 +151,14 @@ class CandlestickItem(pg.GraphicsObject):
         # self.rect = (rect.left(),rect.right())
         # self.picture = self.createPic(xmin,xmax)
         # self.picture.play(painter)
-        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None or self.lastbar != self.data.iloc[-1,0]:
+        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None: #or self.lastbar != self.data.iloc[-1,0]:
             self.rect = (rect.left(),rect.right())
             self.lastbar = self.data.iloc[-1,0]
             # print('rect: ',self.rect)
+            # if (xmax-121)<0:
             self.picturemain = self.createPic(xmin,xmax-1)
+            # else:
+            #     self.picturemain = self.createPic(xmax-121,xmax-1)
             self.picturemain.play(painter)
             self.picturelast = self.createPic(xmax-1,xmax)
             self.picturelast.play(painter)
