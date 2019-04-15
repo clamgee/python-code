@@ -24,6 +24,7 @@ from tkinter import messagebox,colorchooser,font,Button,Frame,Label
 # 數學計算用物件
 import math
 import tickstokline #自訂資料處理函數
+import KlineUi #繪圖介面
 # 顯示各功能狀態用的function
 def WriteMessage(strMsg,listInformation):
     listInformation.insert('end', strMsg)
@@ -242,7 +243,7 @@ class Quote(Frame):
             Future = tickstokline.dataprocess(0,self.txtStocks.get().replace(' ',''))
             # x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
             x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
-            item = tickstokline.CandlestickItem()
+            item = KlineUi.CandlestickItem()
             plt = pg.plot()
             plt.hideAxis('left')
             plt.showAxis('right')

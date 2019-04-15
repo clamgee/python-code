@@ -5,7 +5,7 @@ import time
 import csv
 import gc
 start=time.time()
-#修改要抓資料的檔案
+#修改要抓期交所資料的檔案
 df=pd.read_csv('Daily_2019_04_03.csv',encoding='big5',error_bad_lines=False,warn_bad_lines=True)
 df.rename(columns={
     df.columns[0]:'ndate',
