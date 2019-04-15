@@ -1,7 +1,6 @@
 *.csv
 /x64
 /PythonExample
-*.txt
 *.swp
 *.dll
 /com
@@ -13,4 +12,4 @@ __pycache__/*
 .gitignore
 /__pycache__
 *.code-workspace
-SKCOMInital.py
+/tmp
