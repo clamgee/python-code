@@ -179,11 +179,7 @@ class CandlestickItem(pg.GraphicsObject):
         return picture
     
     def boundingRect(self):
-        if len(self.pictures)-120>0:
-            x=len(self.pictures)-120
-        else:
-            x=0
-        return QtCore.QRectF(x,self.low,len(self.pictures),(self.high-self.low)) 
+        return QtCore.QRectF(0,self.low,len(self.pictures),(self.high-self.low)) 
 
 
 

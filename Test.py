@@ -1,44 +1,8 @@
-import pandas as pd
-import os
-df=None
-df1=pd.read_csv('tmp/filename.txt')
-if 'filename1.txt' not in df1['filename'].values:
-    print('yes')
-else :
-    print('no')
-print(os.path.abspath('tmp'))
-domain=os.path.abspath(r'tmp')
-domain1=os.path.abspath(r'data')
-for info in os.listdir('tmp'):
-    if info not in df1['filename'].values:
-        df1=df1.append(pd.DataFrame([[info]],columns=['filename']),ignore_index=True)
-        info=os.path.join(domain,info)
-        print(info)
-        df=pd.read_csv(info,header=None)
-        df[0]=pd.to_datetime(df[0],format='%Y-%m-%d').dt.date
-        if len(str(df.iloc[1,1]))==8:
-            df[1]=pd.to_datetime(df[1],format='%H:%M:%S').dt.time
-        else:
-            df[1]=pd.to_datetime(df[1],format='%H:%M:%S.%f').dt.time
-        df.columns=['date','time','close','volume']
-        df['nbid']=df['close']
-        df['nask']=df['close']
-        df=df[['date','time','nbid','nask','close','volume']]
-        filename='Ticks'+str(df.iloc[-1,0])+'.txt'
-        filename=os.path.join(domain1,filename)
-        df.to_csv(filename,header=False,index=False)
-        df.drop(df.index,inplace=True)
-        df1.to_csv('tmp/filename.txt',index=False)     
-print(df1)
+import sys
+print(sys.getdefaultencoding())     # 打印出目前系統字符編碼
 
-# if df is not None:
-#     df[0]=df[0]+' '+df[1]
-#     del df[1]
-#     df[0]=pd.to_datetime(df[0],format='%Y/%m/%d %H:%M:%S.%f')
-#     df.columns=['ndatetime','close','volume']
-#     print(df.head())
-#     print(df.shape)
-#     df.sort_values(by=['ndatetime'],ascending=True)
-# else:
-#     print('No Data UpDate!!')
-
+s1 = u"人生苦短"
+s2 = s1.encode('utf-8')
+print(s1,len(s1),type(s1))
+print(s2,len(s2),type(s2))
+# s2 = unicode("人生苦短", "utf-8")
