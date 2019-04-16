@@ -1,4 +1,4 @@
-from PyQt4 import QtGui  # (the example applies equally well to PySide)
+from PyQt5 import QtGui  # (the example applies equally well to PySide)
 import pyqtgraph as pg
 
 ## Always start by initializing Qt (only once per application)
