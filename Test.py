@@ -6,10 +6,8 @@ win = pg.GraphicsWindow()
 win.setWindowTitle('pyqtgraph example: Scrolling Plots')
 
 p1 = win.addPlot()
-p2 = win.addPlot()
 data1 = np.random.normal(size=300)
 curve1 = p1.plot(data1)
-curve2 = p2.plot(data1)
 ptr1 = 0
 def update1():
     global data1, curve1, ptr1
@@ -19,8 +17,9 @@ def update1():
     curve1.setData(data1)
     
     ptr1 += 1
-    curve2.setData(data1)
-    curve2.setPos(ptr1, 0)
+    curve1.setData(data1)
+    curve1.setPos(ptr1, 0)
+    print(ptr1,data1[-1])
 # update all plots
 def update():
     update1()

@@ -3,17 +3,17 @@ import sip
 sip.setapi("QString", 2)
 sip.setapi("QVariant", 2)
 import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+# reload(sys)
+# sys.setdefaultencoding('utf8')
 import os
 os.environ['QT_API'] = 'pyqt'
 from uiBasicIO import uiBasicIO
 from uiKLine import KLineWidget
 # PyQt
-from qtpy.QtGui import *
-from qtpy.QtWidgets import *
-from qtpy.QtCore import *
-from qtpy import QtGui,QtCore
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5 import QtGui,QtCore
 
 
 import pandas as pd
@@ -67,7 +67,7 @@ class uiKLineTool(uiBasicIO):
             kTool.pwOI.removeItem(kTool.subSigPlots[sig])
         kTool.subSigData  = {}
         kTool.subSigPlots = {}
-        print u'正在准备回测结果数据....'
+        print (u'正在准备回测结果数据....')
         self.canvas.clearData()
         self.pdBars = data[['open','close','low','high','volume','openInterest']]
         self.canvas.loadData(self.pdBars)
@@ -77,7 +77,7 @@ class uiKLineTool(uiBasicIO):
         self.stateData = data[allState].to_records()
         self.editDict['signalName'].clear()
         self.editDict['signalName'].addItems(allState) 
-        print u'数据准备完成！'
+        print (u'数据准备完成！')
 
     #----------------------------------------------------------------------
     def initUi(self):

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # PyQt
-from qtpy.QtGui import *
-from qtpy.QtWidgets import *
-from qtpy.QtCore import *
-from qtpy import QtGui,QtCore
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5 import QtGui,QtCore
 # Others
 import os
 import imp
