@@ -1,3 +1,5 @@
+# 將舊的Ticks資料檔轉為新的格式
+
 import pandas as pd
 import os
 df=None

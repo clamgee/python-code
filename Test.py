@@ -1,31 +1,39 @@
-from PyQt5 import QtGui  # (the example applies equally well to PySide)
 import pyqtgraph as pg
+from pyqtgraph.Qt import QtCore, QtGui
+import numpy as np
 
-## Always start by initializing Qt (only once per application)
-app = QtGui.QApplication([])
+win = pg.GraphicsWindow()
+win.setWindowTitle('pyqtgraph example: Scrolling Plots')
 
-## Define a top-level widget to hold everything
-w = QtGui.QWidget()
+p1 = win.addPlot()
+p2 = win.addPlot()
+data1 = np.random.normal(size=300)
+curve1 = p1.plot(data1)
+curve2 = p2.plot(data1)
+ptr1 = 0
+def update1():
+    global data1, curve1, ptr1
+    data1[:-1] = data1[1:]  # shift data in the array one sample left
+                            # (see also: np.roll)
+    data1[-1] = np.random.normal()
+    curve1.setData(data1)
+    
+    ptr1 += 1
+    curve2.setData(data1)
+    curve2.setPos(ptr1, 0)
+# update all plots
+def update():
+    update1()
+    # update2()
+    # update3()
+timer = pg.QtCore.QTimer()
+timer.timeout.connect(update)
+timer.start(50)
 
-## Create some widgets to be placed inside
-btn = QtGui.QPushButton('press me')
-text = QtGui.QLineEdit('enter text')
-listw = QtGui.QListWidget()
-plot = pg.PlotWidget()
-
-## Create a grid layout to manage the widgets size and position
-layout = QtGui.QGridLayout()
-w.setLayout(layout)
-
-## Add widgets to the layout in their proper positions
-layout.addWidget(btn, 0, 0)   # button goes in upper-left
-layout.addWidget(text, 1, 0)   # text edit goes in middle-left
-layout.addWidget(listw, 2, 0)  # list widget goes in bottom-left
-layout.addWidget(plot, 0, 1, 3, 1)  # plot goes on right side, spanning 3 rows
-
-## Display the widget as a new window
-w.show()
 
 
-## Start the Qt event loop
-app.exec_()
+## Start Qt event loop unless running in interactive mode or using pyside.
+if __name__ == '__main__':
+    import sys
+    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+        QtGui.QApplication.instance().exec_()
