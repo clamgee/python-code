@@ -248,10 +248,7 @@ class Quote(Frame):
             ui.KLtitle.setText(self.txtStocks.get().replace(' ',''),size='20pt')
             ui.show()
             ui.loadData(Future.contractkpd)
-           
-            if __name__ == '__main__':
-                if sys.flags.interactive != 1 or not hasattr(QtCore, 'PYQT_VERSION'):
-                    app.exec_()
+            app.exec_()
             # x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
             SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
