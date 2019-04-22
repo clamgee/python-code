@@ -364,9 +364,24 @@ class KLineWidget(KeyWraper):
         self.lay_KL.nextRow()
         self.lay_KL.addItem(self.pwKL)
 
+    def refresh(self):
+        # 更新X軸邊界        
+        # minutes = int(self.countK/2)
+        xmin    = max(0,len(self.candle.pictures))
+        try:
+            xmax    = len(self.candle.pictures)
+        except:
+            xmax    = len(self.candle.pictures)
+        # self.pwOI.setRange(xRange = (xmin,xmax))
+        self.pwKL.setRange(xRange = (xmin,xmax))
+        # self.pwVol.setRange(xRange = (xmin,xmax))
+
+
     def loadData(self, datas, sigs = None):
         # 更新K線資料
         self.candle.set_data(datas)
+        self.refresh()
+
         # 设置中心点时间
         # 绑定数据，更新横坐标映射，更新Y轴自适应函数，更新十字光标映射
         # self.axisTime.xdict={}
@@ -374,18 +389,6 @@ class KLineWidget(KeyWraper):
         # self.axisTime.update_xdict(xdict)
         # self.resignData(self.datas)
 
-    def refresh(self):
-        # 更新X軸邊界
-        datas   = self.datas
-        minutes = int(self.countK/2)
-        xmin    = max(0,self.index-minutes)
-        try:
-            xmax    = min(xmin+2*minutes,len(self.datas)-1) if self.datas else xmin+2*minutes
-        except:
-            xmax    = xmin+2*minutes
-        self.pwOI.setRange(xRange = (xmin,xmax))
-        self.pwKL.setRange(xRange = (xmin,xmax))
-        self.pwVol.setRange(xRange = (xmin,xmax))
 
 
 
@@ -419,6 +422,7 @@ if __name__ == '__main__':
     ui.show()
     ui.KLtitle.setText('rb1701',size='20pt')
     ui.loadData(data)
+    
     # ui.refreshAll()
     app.exec_()
 

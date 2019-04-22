@@ -239,25 +239,31 @@ class Quote(Frame):
                 pn=int(self.txtPageNo.get())
 
             global Future
-            global item
+            global ui
             Future = tickstokline.dataprocess(0,self.txtStocks.get().replace(' ',''))
-            # x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
             x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
-            item = KlineUi.CandlestickItem()
-            plt = pg.plot()
-            plt.hideAxis('left')
-            plt.showAxis('right')
-            plt.showGrid(False,True)
-            plt.addItem(item)
-            plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
-            print(x_nCode,type(pn),pn,type(self.txtStocks.get().replace(' ','')),self.txtStocks.get().replace(' ',''))
-            item.set_data(Future.contractkpd)
+            import sys
+            app = QtGui.QApplication(sys.argv)
+            ui = KlineUi.KLineWidget()
+            ui.KLtitle.setText(self.txtStocks.get().replace(' ',''),size='20pt')
+            ui.show()
+            ui.loadData(Future.contractkpd)
+           
+            if __name__ == '__main__':
+                if sys.flags.interactive != 1 or not hasattr(QtCore, 'PYQT_VERSION'):
+                    app.exec_()
+            # x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
             SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
-            if __name__ == '__main__':
-                import sys
-                if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-                    QtGui.QApplication.instance().exec_()
+            # if __name__ == '__main__':
+            #     import sys
+            #     app = QtGui.QApplication(sys.argv)
+            #     ui = KlineUi.KLineWidget()
+            #     ui.show()
+            #     ui.KLtitle.setText(self.txtStocks.get().replace(' ',''),size='20pt')
+            #     ui.loadData(Future.contractkpd)
+                # ui.refreshAll()
+                # app.exec_()
 
         except Exception as e:
             messagebox.showerror("Ticks SKQuote error！",e)
@@ -406,7 +412,8 @@ class SKQuoteLibEvents:
             #     Future.contractkpd['close']
             # ))
             # add_thread.start()
-            item.set_data(Future.contractkpd)
+            ui.loadData(Future.contractkpd)
+            # item.set_data(Future.contractkpd)
 
     def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
         if nSimulate==0:
