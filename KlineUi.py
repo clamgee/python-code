@@ -108,4 +108,4 @@ class KlineWidget:
     def update(self,xmin,xmax,ymin,ymax):
         if self.right!=xmax:
             self.right=xmax
-            self.plt.setRange((xmin,xmax),(ymin,ymax))
+            self.plt.setRange(xRange=(xmin,xmax),yRange=(ymin,ymax))
