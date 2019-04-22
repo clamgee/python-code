@@ -28,7 +28,7 @@ class CandlestickItem(pg.GraphicsObject):
     def set_data(self,data):
         start=pg.time()
         self.data = data.reset_index(drop=True)
-        self.low,self.high = (self.data['low'].min(),self.data['high'].max()) if len(data)>0 else (0,1)
+        self.low,self.high = (self.data['low'].values.min(),self.data['high'].values.max()) if len(data)>0 else (0,1)
         self.generatePicture()
         self.informViewBoundsChanged()
         # if not self.scene() is None:

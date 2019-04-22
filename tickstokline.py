@@ -3,16 +3,13 @@ import datetime
 import time
 import numpy as np
 import pandas as pd
-import pyqtgraph as pg
-from pyqtgraph import QtCore, QtGui
 # from mpl_finance import candlestick2_ohlc
 # import matplotlib.dates as mdates
 # import matplotlib.pyplot as plt
 
 class dataprocess:
-    def __init__(self,ntype,inputname):
+    def __init__(self,inputname):
         self.name=inputname
-        self.type=ntype
         # self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
         self.ticksdf=pd.DataFrame(columns=['ndate','ntime','nbid','nask','close','volume'])
         self.ticksdf['ndate']=pd.to_datetime(self.ticksdf['ndate'],format='%Y-%m-%d')
@@ -57,7 +54,7 @@ class dataprocess:
         while len(nTimemicro)<6:
             nTimemicro='0'+nTimemicro
         # nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
-        ndatetime=datetime.datetime.strptime(str(nDate)+" "+nTime,'%Y%m%d %H%M%S').strftime('%Y/%m/%d %H:%M:%S')+"."+nTimemicro.strip()
+        ndatetime=datetime.datetime.strptime(str(nDate)+" "+nTime,'%Y%m%d %H%M%S').strftime('%Y-%m-%d %H:%M:%S')+"."+nTimemicro.strip()
         ndate=datetime.datetime.strptime(str(nDate),'%Y%m%d').date()
         ntime=datetime.datetime.strptime(nTime+"."+nTimemicro.strip(),'%H%M%S.%f').time()
         self.newlist=[ndate,ntime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]
@@ -67,7 +64,7 @@ class dataprocess:
         return self.newlist
     
     def contractk(self,xdatetime,nBid,nAsk,nClose,nQty):
-        ndatetime=datetime.datetime.strptime(xdatetime,'%Y/%m/%d %H:%M:%S.%f')
+        ndatetime=datetime.datetime.strptime(xdatetime,'%Y-%m-%d %H:%M:%S.%f')
         tmphour=ndatetime.hour
         if self.contractkpd.shape[0]==0 or self.tmpcontract==0 or self.tmpcontract==12000 or (tmphour==8 and self.CheckHour==4) or (tmphour==15 and self.CheckHour==13):
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]

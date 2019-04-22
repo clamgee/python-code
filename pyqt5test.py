@@ -1,54 +1,131 @@
-# -*- coding: utf-8 -*-#
-
-#-------------------------------------------------------------------------------
-# Name:         pyqtgraph逐点画波形图
-# Description:
-# Author:       lgk
-# Date:         2018/6/2
-#-------------------------------------------------------------------------------
-
 import pyqtgraph as pg
+from pyqtgraph import QtGui,QtCore
+# from PyQt5.QtGui import *
+# from PyQt5.QtCore import *
+# from PyQt5.QtWidgets import *
+# from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QLabel, QPushButton
+# from PyQt5 import QtGui,QtCore
+import datetime
+import time
+import csv
+import pandas as pd
 import numpy as np
-import array
 
-app = pg.mkQApp()
+class CandlestickItem(pg.GraphicsObject):
+    def __init__(self):
+        pg.GraphicsObject.__init__(self)
+        self.lastbar = None
+        self.picturemain = QtGui.QPicture() #主K線圖
+        self.picturelast = QtGui.QPicture() #最後一根K線圖
+        self.pictures = []
+        self.setFlag(self.ItemUsesExtendedStyleOption)
+        self.rect = None
+        self.low = 0
+        self.high = 0
+        self.timelist = []
+        self.countK = 60 #設定要顯示多少K線
 
-win = pg.GraphicsWindow()
-win.setWindowTitle(u'pyqtgraph逐点画波形图')
-win.resize(800, 500)
+    def set_data(self,data):
+        start=pg.time()
+        self.data = data.reset_index(drop=True)
+        self.low,self.high = (self.data['low'].values.min(),self.data['high'].values.max()) if len(data)>0 else (0,1)
+        self.generatePicture()
+        self.informViewBoundsChanged()
+        # if not self.scene() is None:
+        #     self.scene().update() #強制圖形更新
+        end=pg.time()
+        if len(self.timelist)<100:
+            self.timelist.append((end-start))
+        else:
+            self.timelist.pop(0)
+            self.timelist.append((end-start))
+        if sum(self.timelist)!=0 and len(self.timelist)>0:
+            ep=int(1/(sum(self.timelist)/len(self.timelist)))
+        else:
+            ep=0
+        print('每100張FPS: ',ep)
+    
+    def generatePicture(self):    
+        # 重畫或者最後一根K線
+        if int(len(self.pictures))>1:
+            self.pictures.pop()
+        w = 1.0 / 3.0
+        start = len(self.pictures)
+        stop = self.data.shape[0]
+        for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
+            picture = QtGui.QPicture()
+            p = QtGui.QPainter(picture)
+            p.setPen(pg.mkPen('w'))
+            p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
+            if x.open>x.close:
+                p.setBrush(pg.mkBrush('g'))
+            elif x.open<x.close:
+                p.setBrush(pg.mkBrush('r'))
+            else:
+                p.setBrush(pg.mkBrush('w'))
+            p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
+            p.end()
+            self.pictures.append(picture)
+        
+    def paint(self, painter, opt, w):
+        rect = opt.exposedRect
+        xmin,xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
+        # self.rect = (rect.left(),rect.right())
+        # self.picture = self.createPic(xmin,xmax)
+        # self.picture.play(painter)
+        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None or self.lastbar != self.data.iloc[-1,0]:
+            self.rect = (rect.left(),rect.right())
+            self.lastbar = self.data.iloc[-1,0]
+            # print('rect: ',self.rect)
+            # if (xmax-121)<0:
+            self.picturemain = self.createPic(xmin,xmax-1)
+            # else:
+            #     self.picturemain = self.createPic(xmax-121,xmax-1)
+            self.picturemain.play(painter)
+            self.picturelast = self.createPic(xmax-1,xmax)
+            self.picturelast.play(painter)
+            print('重繪')            
+        elif not self.picturemain is None:
+            self.picturemain.play(painter)
+            self.picturelast = self.createPic(xmax-1,xmax)
+            self.picturelast.play(painter)
+            # print('快圖')
 
-data = array.array('d') #可动态改变数组的大小,double型数组
-historyLength = 200
+    # 缓存图片
+    #----------------------------------------------------------------------
+    def createPic(self,xmin,xmax):
+        picture = QtGui.QPicture()
+        p = QtGui.QPainter(picture)
+        [pic.play(p) for pic in self.pictures[xmin:xmax]]
+        p.end()
+        return picture
+    
+    def boundingRect(self):
+        return QtCore.QRectF(0,self.low,len(self.pictures),(self.high-self.low)) 
 
-p = win.addPlot()
-p.showGrid(x=True, y=True)
+csvpf=pd.read_csv('result.csv')
+csvpf['ndatetime']=pd.to_datetime(csvpf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+print(csvpf.tail(5))
+print(csvpf.info())
+print(csvpf.shape)
+data=csvpf[['ndatetime','open','high','low','close']]
+item=CandlestickItem()
+app = QtGui.QApplication([])
+plt=pg.PlotWidget()
 
-p.setRange(xRange=[200,400], yRange=[-1.2, 1.2], padding=0)
-p.setLabel(axis='left', text='y / V')
-p.setLabel(axis='bottom', text='x / point')
-p.setTitle('y = sin(x)')
+plt.addItem(item)
+plt.showGrid(y=True)
+plt.plotItem.hideAxis('left')
+plt.plotItem.showAxis('right')
+item.set_data(data)
+xmax=int(len(item.pictures))
+xmin=int(max(0,xmax-item.countK))
+ymin=item.data.loc[xmin:xmax,['low']].values.min()
+ymax=item.data.loc[xmin:xmax,['high']].values.max()
+plt.setRange(xRange=(xmin,xmax),yRange=(ymin,ymax))
 
-curve = p.plot()
-idx = 0
-
-def plotData():
-    global idx
-    tmp = np.sin(np.pi / 50 * idx)
-
-    if len(data)<historyLength:
-        data.append(tmp)
-    else:
-        data[:-1] = data[1:]
-        data[-1] = tmp
-        # curve.setPos(idx-historyLength, 0)
-        # p.enableAutoRange('x', True)
-
-    curve.setData(np.frombuffer(data, dtype=np.double))
-    # curve.setData(data) #也可以
-    idx += 1
-
-timer = pg.QtCore.QTimer()
-timer.timeout.connect(plotData)
-timer.start(50)
-
-app.exec_()
+plt.show()
+if __name__ == '__main__':
+    import sys
+    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+        app.exec_()
