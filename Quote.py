@@ -244,7 +244,7 @@ class Quote(Frame):
             Future = tickstokline.dataprocess(self.txtStocks.get().strip())
             x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
             item=KlineUi.CandlestickItem()
-            app = QtGui.QApplication([])
+            app = QtGui.QGuiApplication()
             Kui=KlineUi.KlineWidget(self.txtStocks.get().strip())
             Kui.plt.addItem(item)
             Kui.plt.show()
