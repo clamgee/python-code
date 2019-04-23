@@ -6,7 +6,7 @@ from pyqtgraph import QtCore,QtGui
 class CandlestickItem(pg.GraphicsObject):
     def __init__(self):
         pg.GraphicsObject.__init__(self)
-        self.lastbar = None
+        #self.lastbar = None
         # self.picture = QtGui.QPicture()
         self.picturemain = QtGui.QPicture() #主K線圖
         self.picturelast = QtGui.QPicture() #最後一根K線圖
@@ -66,9 +66,9 @@ class CandlestickItem(pg.GraphicsObject):
         # self.rect = (rect.left(),rect.right())
         # self.picture = self.createPic(xmin,xmax)
         # self.picture.play(painter)
-        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None or self.lastbar != self.data.index.values[-1]:
+        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None:# or self.lastbar != self.data.index.values[-1]:
             self.rect = (rect.left(),rect.right())
-            self.lastbar = self.data.index.values[-1]
+            #self.lastbar = self.data.index.values[-1]
             # print('rect: ',self.rect)
             # if (xmax-121)<0:
             self.picturemain = self.createPic(xmin,xmax-1)
@@ -104,8 +104,15 @@ class KlineWidget:
         self.plt.plotItem.hideAxis('left')
         self.plt.plotItem.showAxis('right')
         self.right=None
+        self.high=None
+        self.low=None
 
     def update(self,xmin,xmax,ymin,ymax):
         if self.right!=xmax:
             self.right=xmax
-            self.plt.setRange(xRange=(xmin,xmax),yRange=(ymin,ymax))
+            self.plt.setXRange(xmin,xmax)
+
+        if self.high!=ymax or self.low!=ymin:
+            self.low=ymin
+            self.high=ymax
+            self.plt.setYRange(ymin,ymax)
