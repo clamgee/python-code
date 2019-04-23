@@ -106,15 +106,12 @@ class KlineWidget:
         self.right=None
         self.high=None
         self.low=None
-        self.gui=QtGui.QGuiApplication.processEvents
         
-    def update(self,xmin,xmax,ymin,ymax):
-        self.gui()
+    def update(self,xmin,xmax,ymin,ymax):        
         if self.right!=xmax or self.high!=ymax or self.low!=ymin:
             self.right=xmax
             self.plt.setXRange(xmin,xmax)
             self.plt.setYRange(ymin,ymax)
-            self.gui()
 
         # if self.high!=ymax or self.low!=ymin:
         #     self.low=ymin
