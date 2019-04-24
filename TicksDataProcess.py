@@ -43,7 +43,10 @@ class Klineprocess:
     def contractk(self,ndatetime,nClose,nQty):
         tmphour=ndatetime.hour
         if self.contractkpd.shape[0]==0 or self.tmpcontract==0 or self.tmpcontract==12000 or (tmphour==8 and self.CheckHour==4) or (tmphour==15 and self.CheckHour==13):
-            self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
+            # self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
+            tmplist=[[ndatetime,nClose,nClose,nClose,nClose,nQty]]
+            self.contractkpd=self.contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
+            print(self.contractkpd.tail(1))
             self.tmpcontract=nQty
         elif (self.tmpcontract+nQty)>12000:
             self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
