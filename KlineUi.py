@@ -99,6 +99,7 @@ class CandlestickItem(pg.GraphicsObject):
 class KlineWidget:
     def __init__(self,name):
         self.name=name
+        # self.gui=QtGui.QGuiApplication.processEvents
         self.plt=pg.PlotWidget()
         self.plt.showGrid(y=True)
         self.plt.plotItem.hideAxis('left')

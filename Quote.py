@@ -245,7 +245,7 @@ class Quote(Frame):
             Future = tickstokline.dataprocess(self.txtStocks.get().strip())
             x_nCode = skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
             item=KlineUi.CandlestickItem()
-            app = QtGui.QGuiApplication([])
+            app = QtGui.QApplication([])
             Kui=KlineUi.KlineWidget(self.txtStocks.get().strip())
             Kui.plt.addItem(item)
             Kui.plt.show()
@@ -404,16 +404,17 @@ class SKQuoteLibEvents:
             #     Future.contractkpd['close']
             # ))
             # add_thread.start()
-            app.processEvents()
+            # app.processEvents()
             item.set_data(Future.contractkpd)
-            app.processEvents()       
+            # app.processEvents()
             xmax=int(len(item.pictures))
             xmin=int(max(0,xmax-item.countK))
             ymin=item.data.loc[xmin:xmax,['low']].values.min()
             ymax=item.data.loc[xmin:xmax,['high']].values.max()
-            app.processEvents()         
+            # app.processEvents()   
             Kui.update(xmin,xmax,ymin,ymax)
-            app.processEvents()            
+            # app.processEvents()
+                        
 
     def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
         if nSimulate==0:
