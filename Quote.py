@@ -233,30 +233,28 @@ class Quote(Frame):
         Gobal_Quote_ListInformation = self.listInformation
 
     def btnQueryStocks_Click(self):
-        try:
-            if(self.txtPageNo.get().strip()== ''):
-                pn = 0
-            else:
+        try:            
+            pn = 0
+            if(self.txtPageNo.get().strip()!= ''):
                 pn=int(self.txtPageNo.get().strip())
 
-            # global Future
-            # global item
-            # global Kui
-            # Future = tickstokline.dataprocess(self.txtStocks.get().strip())
+            global Future
+            global item
+            global Kui
+            Future = tickstokline.dataprocess(self.txtStocks.get().strip())
+            skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().strip())
             # x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().strip())
-            x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().strip())
-            print(x_nCode,type(x_nCode))
-            # item=KlineUi.CandlestickItem()
-            # app = QtGui.QApplication([])
-            # Kui=KlineUi.KlineWidget(self.txtStocks.get().strip())
-            # Kui.plt.addItem(item)
-            # Kui.plt.show()
-            # if __name__ == '__main__':
-            #     import sys
-            #     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-            #         app.instance().exec_()
+            item=KlineUi.CandlestickItem()
+            app = QtGui.QApplication([])
+            Kui=KlineUi.KlineWidget(self.txtStocks.get().strip())
+            Kui.plt.addItem(item)
+            Kui.plt.show()
+            if __name__ == '__main__':
+                import sys
+                if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+                    app.instance().exec_()
             # x_nCode = skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
-            SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
+            # SendReturnMessage("Quote", x_nCode, "SKQuoteLib_RequestLiveTick",GlobalListInformation)
             #skQ.SKQuoteLib_RequestStocks(pn,self.txtStocks.get().replace(' ',''))
 
         except Exception as e:
@@ -394,9 +392,9 @@ class SKQuoteLibEvents:
     
     def OnNotifyTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
         if nSimulate==0:
-            # Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
-            # strMsg=Future.contractkpd.iloc[-1:].values
-            strMsg=nDate+','+nTimehms+','+nTimemillismicros+','+nBid+','+nAsk+','+nClose+','+nQty
+            Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
+            strMsg=Future.contractkpd.iloc[-1:].values
+            # strMsg=nDate+','+nTimehms+','+nTimemillismicros+','+nBid+','+nAsk+','+nClose+','+nQty
             WriteMessage(strMsg,Gobal_Quote_ListInformation)            
             # add_thread=threading.Thread(target=Future.drawbar(
             # # Future.drawbar(
@@ -408,23 +406,23 @@ class SKQuoteLibEvents:
             # ))
             # add_thread.start()
             # app.processEvents()
-            # item.set_data(Future.contractkpd)
+            item.set_data(Future.contractkpd)
             # app.processEvents()
-            # xmax=int(len(item.pictures))
-            # xmin=int(max(0,xmax-item.countK))
-            # ymin=item.data.loc[xmin:xmax,['low']].values.min()
-            # ymax=item.data.loc[xmin:xmax,['high']].values.max()
+            xmax=int(len(item.pictures))
+            xmin=int(max(0,xmax-item.countK))
+            ymin=item.data.loc[xmin:xmax,['low']].values.min()
+            ymax=item.data.loc[xmin:xmax,['high']].values.max()
             # app.processEvents()   
-            # Kui.update(xmin,xmax,ymin,ymax)
+            Kui.update(xmin,xmax,ymin,ymax)
             # app.processEvents()
                         
 
     def OnNotifyHistoryTicks(self,sMarketNo,sIndex,nPtr,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty,nSimulate):
         if nSimulate==0:
             # start=time.time()
-            # Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
-            # strMsg=Future.contractkpd.iloc[-1:].values
-            strMsg=nDate+','+nTimehms+','+nTimemillismicros+','+nBid+','+nAsk+','+nClose+','+nQty
+            Future.Ticks(nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty)
+            strMsg=Future.contractkpd.iloc[-1:].values
+            # strMsg=nDate+','+nTimehms+','+nTimemillismicros+','+nBid+','+nAsk+','+nClose+','+nQty
             WriteMessage(strMsg,Gobal_Quote_ListInformation)
             # end=time.time()
             # ep=round((end-start),6)
