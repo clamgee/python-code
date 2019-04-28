@@ -14,3 +14,4 @@ __pycache__/*
 *.code-workspace
 /tmp
 data/filename.txt
+/BackUp
