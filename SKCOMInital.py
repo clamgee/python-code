@@ -8,10 +8,15 @@ try:
 
     folder=GetDesktopPath()
     if os.path.exists(folder):
-        # folder = filedialog.askdirectory(title=u'選擇資料夾',initialdir=(os.path.expanduser(folder)))
+        print(os.path.exists(folder))
         print(folder)
-        # shutil.rmtree(folder)
-    
+        shutil.rmtree(folder)
+        os.mkdir(folder)
+    elif not os.path.exists(folder) :
+        os.mkdir(folder)
+    else :
+        print('未安裝!!')
+    # cc.GetModule(r'./PythonExample/x64/SKCOM.dll')
     fname = os.path.abspath(r'PythonExample\x64')
     fname = filedialog.askopenfilename(title=u'選擇SKCOM.dll',initialdir=(os.path.expanduser(fname)))
     print(fname)
