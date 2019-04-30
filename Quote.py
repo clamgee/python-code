@@ -466,7 +466,7 @@ class SKQuoteLibEvents:
         if nSimulate==0:
             Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
             strMsg=Future.contractkpd.iloc[-1:].values
-            WriteMessage(strMsg,Gobal_Quote_ListInformation)
+            WriteMessage(strMsg,Gobal_Tick_ListInformation)
         # strMsg = "[OnNotifyHistoryTicks]", sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate
         # WriteMessage(strMsg,Gobal_Tick_ListInformation)
 
@@ -475,7 +475,7 @@ class SKQuoteLibEvents:
                 Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
                 strMsg=Future.contractkpd.iloc[-1:].values
                 # strMsg=lDate+','+lTimehms+','+lTimemillismicros+','+nBid+','+nAsk+','+nClose+','+nQty
-                WriteMessage(strMsg,Gobal_Quote_ListInformation)            
+                WriteMessage(strMsg,Gobal_Tick_ListInformation)            
                 item.set_data(Future.contractkpd)
                 # app.processEvents()
                 xmax=int(len(item.pictures))

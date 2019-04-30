@@ -13,6 +13,6 @@ __pycache__/*
 /__pycache__
 *.code-workspace
 /tmp
-data/filename.txt
+/data/filename.txt
 /BackUp
 /CapitalLog_Quote
