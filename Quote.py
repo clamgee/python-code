@@ -38,7 +38,7 @@ import tickstokline
 import KlineUi
 #K線繪圖pyqtgraph 宣告
 global app
-app = QtGui.QApplication([])
+app=pg.Qt.QtWidgets.QApplication([])
 
 # 顯示各功能狀態用的function
 def WriteMessage(strMsg,listInformation):
@@ -320,14 +320,24 @@ class Tick(Frame):
             global Kui
             Future = tickstokline.dataprocess(self.txtStocks.get().strip())
             skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
+            # app=pg.Qt.QtWidgets.QApplication([])
             item=KlineUi.CandlestickItem()            
             Kui=KlineUi.KlineWidget(self.txtStocks.get().strip())
-            Kui.plt.addItem(item)
             Kui.plt.show()
-            # if __name__ == '__main__':
-            #     import sys
-            #     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-            app.instance().exec_()
+            Kui.plt.addItem(item)
+            item.set_data(Future.contractkpd)
+            # app.processEvents()
+            xmax=int(len(item.pictures))
+            xmin=int(max(0,xmax-item.countK))
+            ymin=item.data.loc[xmin:xmax,['low']].values.min()
+            ymax=item.data.loc[xmin:xmax,['high']].values.max()
+            # app.processEvents()   
+            Kui.update(xmin,xmax,ymin,ymax)
+            
+            if __name__ == '__main__':
+                import sys
+                if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+                    app.exit(app.instance().exec_())
         except Exception as e:
             messagebox.showerror("error！",e)
 
@@ -499,13 +509,15 @@ SKQuoteEvent=SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
 
 if __name__ == '__main__':
+    # import sys
+    # if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+    #     app.exit(app.instance().exec_())
+
     root = Tk()
     root.title("PythonExampleQuote")
     root["background"] = "#ffdbdb"
-
     # Center
     FrameLogin(master = root)
-
     #TabControl
     root.TabControl = Notebook(root)
     root.TabControl.add(FrameQuote(master = root),text="報價功能")

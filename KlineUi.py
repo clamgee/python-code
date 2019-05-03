@@ -100,6 +100,7 @@ class KlineWidget:
     def __init__(self,name):
         self.name=name
         # self.gui=QtGui.QGuiApplication.processEvents
+        # self.plt=pg.PlotWidget()
         self.plt=pg.PlotWidget()
         self.plt.showGrid(y=True)
         self.plt.plotItem.hideAxis('left')
@@ -111,6 +112,7 @@ class KlineWidget:
     def update(self,xmin,xmax,ymin,ymax):        
         if self.right!=xmax or self.high!=ymax or self.low!=ymin:
             self.right=xmax
+            # self.plt.setRange(xRange=(xmin,xmax),yRange=(ymin,ymax))
             self.plt.setXRange(xmin,xmax)
             self.plt.setYRange(ymin,ymax)
 
