@@ -36,10 +36,9 @@ from tkinter import filedialog
 paths=sys.path
 # print(paths)
 for path in paths:
-    print(path)
-    # pattern='Users+AppData+Local+Programs+Python+lib+site-packages'
-    # pattern=r'lib\\site-packages'
-    # pattern=r'AppData\\Local\\Programs\\Python'
-    pattern=os.path.expanduser('~')
+    # print(path)
+    pattern=r'lib\\site-packages'
     target=re.search(pattern,path)
-    print(target)
+    # print(target)
+    if target is not None:
+        print(path)
