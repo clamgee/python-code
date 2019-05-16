@@ -1,14 +1,5 @@
 import sys
 import os
-<<<<<<< HEAD
-import sys
-import re
-from tkinter import filedialog
-# try:
-#     def GetDesktopPath():
-#         return os.path.join(os.path.expanduser('~'), r'AppData\Local\Programs\Python\Python37\Lib\site-packages\comtypes\gen')
-
-=======
 from PyQt5.uic import loadUi
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog
@@ -30,6 +21,15 @@ App=QApplication(sys.argv)
 Widget=UpdateSKCOM()
 Widget.show()
 sys.exit(App.exec_())
+
+# import sys
+# import re
+# from tkinter import filedialog
+# try:
+#     def GetDesktopPath():
+#         return os.path.join(os.path.expanduser('~'), r'AppData\Local\Programs\Python\Python37\Lib\site-packages\comtypes\gen')
+
+
 # from PyQt5.QtCore import pyqtSlot
 # from PyQt5.QtWidgets import QApplication,QDialog
 
@@ -37,7 +37,6 @@ sys.exit(App.exec_())
 #     def GetDesktopPath():
 #         return os.path.join(os.path.expanduser('~'), r'AppData\Local\Programs\Python\Python37\Lib\site-packages\comtypes\gen')
 
->>>>>>> 2d825d06e6c96969bb380e312da62ab539742270
 #     folder=GetDesktopPath()
 #     if os.path.exists(folder):
 #         print(os.path.exists(folder))
@@ -60,19 +59,16 @@ sys.exit(App.exec_())
 #         os._exit(0)
 # except OSError as e:
 #     print('錯誤訊息: ',e)
-<<<<<<< HEAD
 # print(os.path.expanduser('~'))
 # print(os.environ)
 # print(os.path.expandvars${var})
-paths=sys.path
+# paths=sys.path
 # print(paths)
-for path in paths:
+# for path in paths:
     # print(path)
-    pattern=r'lib\\site-packages'
-    target=re.search(pattern,path)
+#     pattern=r'lib\\site-packages'
+#     target=re.search(pattern,path)
     # print(target)
-    if target is not None:
-        print(path)
-=======
-    
->>>>>>> 2d825d06e6c96969bb380e312da62ab539742270
+#     if target is not None:
+        # print(path)
+
