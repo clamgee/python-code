@@ -33,3 +33,6 @@ Ticks2019-05-06.txt
 Ticks2019-05-07.txt
 Ticks2019-05-08.txt
 Ticks2019-05-09.txt
+Ticks2019-05-10.txt
+Ticks2019-05-14.txt
+Ticks2019-05-15.txt
