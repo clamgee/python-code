@@ -1,6 +1,6 @@
-import comtypes.client as cc
-import shutil
+import sys
 import os
+<<<<<<< HEAD
 import sys
 import re
 from tkinter import filedialog
@@ -8,6 +8,36 @@ from tkinter import filedialog
 #     def GetDesktopPath():
 #         return os.path.join(os.path.expanduser('~'), r'AppData\Local\Programs\Python\Python37\Lib\site-packages\comtypes\gen')
 
+=======
+from PyQt5.uic import loadUi
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog
+
+class UpdateSKCOM(QDialog):
+    def __init__(self):
+        super(UpdateSKCOM,self).__init__()
+        loadUi(r'APIver1/UI/SKCOMupdate.ui',self)
+        self.openSKCOMdirbtn.clicked.connect(self.openModulepath_click)
+
+    def openModulepath_click(self):
+        orgpath=self.GetDesktopPath()
+        ModulePath=QFileDialog.getExistingDirectory(self,'選擇SKCOM模組路徑',orgpath)
+        self.SKCOMdirpath.setText(ModulePath)
+    def GetDesktopPath(self):
+        return os.path.join(os.path.expanduser('~'), r'AppData\Local\Programs\Python\Python37\Lib\site-packages\comtypes\gen')
+
+App=QApplication(sys.argv)
+Widget=UpdateSKCOM()
+Widget.show()
+sys.exit(App.exec_())
+# from PyQt5.QtCore import pyqtSlot
+# from PyQt5.QtWidgets import QApplication,QDialog
+
+# try:
+#     def GetDesktopPath():
+#         return os.path.join(os.path.expanduser('~'), r'AppData\Local\Programs\Python\Python37\Lib\site-packages\comtypes\gen')
+
+>>>>>>> 2d825d06e6c96969bb380e312da62ab539742270
 #     folder=GetDesktopPath()
 #     if os.path.exists(folder):
 #         print(os.path.exists(folder))
@@ -30,6 +60,7 @@ from tkinter import filedialog
 #         os._exit(0)
 # except OSError as e:
 #     print('錯誤訊息: ',e)
+<<<<<<< HEAD
 # print(os.path.expanduser('~'))
 # print(os.environ)
 # print(os.path.expandvars${var})
@@ -42,3 +73,6 @@ for path in paths:
     # print(target)
     if target is not None:
         print(path)
+=======
+    
+>>>>>>> 2d825d06e6c96969bb380e312da62ab539742270
