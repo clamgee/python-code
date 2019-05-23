@@ -38,3 +38,7 @@ Ticks2019-05-14.txt
 Ticks2019-05-15.txt
 Ticks2019-05-16.txt
 Ticks2019-05-17.txt
+Ticks2019-05-20.txt
+Ticks2019-05-21.txt
+Ticks2019-05-22.txt
+Ticks2019-05-23.txt
