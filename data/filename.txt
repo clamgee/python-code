@@ -42,3 +42,4 @@ Ticks2019-05-20.txt
 Ticks2019-05-21.txt
 Ticks2019-05-22.txt
 Ticks2019-05-23.txt
+Ticks2019-05-24.txt

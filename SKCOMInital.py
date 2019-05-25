@@ -30,12 +30,10 @@ class UpdateSKCOM(QDialog):
         self.UpdateComfirm.rejected.connect(self.close)
 
     def openSKCOMfile_click(self):
-        # orgpath=self.GetDesktopPath()
         self.dllpath=QFileDialog.getOpenFileName(self,'選擇SKCOM.dll檔案')
         self.dllpath=(str(self.dllpath[0]).replace('/','\\'))
         self.SKCOMfilepath.setText(self.dllpath)
-    # def GetDesktopPath(self):
-    #     return os.path.join(os.path.expanduser('~'), r'AppData\Local\Programs\Python\Python37\Lib\site-packages\comtypes\gen')
+
     def ok_click(self):
         if self.found:
             shutil.rmtree(self.path)

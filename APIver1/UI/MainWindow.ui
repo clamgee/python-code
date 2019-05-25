@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>CapitalAPI</class>
  <widget class="QMainWindow" name="CapitalAPI">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -26,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
