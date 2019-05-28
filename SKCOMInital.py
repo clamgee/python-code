@@ -38,8 +38,12 @@ class UpdateSKCOM(QDialog):
         if self.found:
             shutil.rmtree(self.path)
             os.mkdir(self.path)
-        cc.GetModule(self.dllpath)
-        self.label2.setText('已更新!!')
+        try:
+            cc.GetModule(self.dllpath)
+            self.label2.setText('已更新!!')    
+        except Exception as e:
+            self.label2.setText(e)
+            pass
 
 if __name__ == '__main__':
     App=QApplication(sys.argv)

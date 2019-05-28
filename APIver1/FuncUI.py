@@ -11,6 +11,11 @@ class LoginDialog(QDialog):
         super(LoginDialog,self).__init__()
         loadUi(r'UI/Login.ui',self)
 
+class MessageDialog(QDialog):
+    def __init__(self):
+        super(MessageDialog,self).__init__()
+        loadUi(r'UI/Message.ui',self)
+
 if __name__ == "__main__":
     LoginApp=QApplication(sys.argv)
     SKLogin=LoginDialog()

@@ -116,6 +116,7 @@ class FrameLogin(Frame):
         try:
             skC.SKCenterLib_SetLogPath(os.path.split(os.path.realpath(__file__))[0] + "\\CapitalLog_Quote")
             m_nCode = skC.SKCenterLib_Login(self.textID.get().replace(' ',''),self.textPassword.get().replace(' ',''))
+            print(m_nCode)
             if(m_nCode==0):
                 Global_ID["text"] =  self.textID.get().replace(' ','')
                 WriteMessage("登入成功",self.listInformation)
