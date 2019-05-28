@@ -32,6 +32,7 @@ class UpdateSKCOM(QDialog):
     def openSKCOMfile_click(self):
         self.dllpath=QFileDialog.getOpenFileName(self,'選擇SKCOM.dll檔案')
         self.dllpath=(str(self.dllpath[0]).replace('/','\\'))
+        # self.dllpath=str(self.dllpath[0])
         self.SKCOMfilepath.setText(self.dllpath)
 
     def ok_click(self):
