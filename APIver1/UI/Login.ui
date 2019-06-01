@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>Login</class>
  <widget class="QDialog" name="Login">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,8 +13,16 @@
     <height>172</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Arial</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>登入</string>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
   </property>
   <widget class="QPushButton" name="LoginConfirmbtn">
    <property name="geometry">

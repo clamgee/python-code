@@ -5,6 +5,7 @@ import os
 from PyQt5.uic import loadUi #使用.ui介面模組
 from PyQt5.QtCore import pyqtSlot #插入資訊模組
 from PyQt5.QtWidgets import QApplication,QDialog #PyQt5介面控制模組
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class LoginDialog(QDialog):
     def __init__(self):

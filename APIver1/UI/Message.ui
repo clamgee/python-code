@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MessageUI</class>
  <widget class="QDialog" name="MessageUI">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>SK訊息</string>
+   <string>訊息</string>
   </property>
   <widget class="QTextBrowser" name="textBrowser">
    <property name="geometry">
@@ -21,6 +24,11 @@
      <width>640</width>
      <height>480</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+    </font>
    </property>
    <property name="verticalScrollBarPolicy">
     <enum>Qt::ScrollBarAsNeeded</enum>

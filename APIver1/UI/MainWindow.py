@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_CapitalAPI(object):
     def setupUi(self, CapitalAPI):
         CapitalAPI.setObjectName("CapitalAPI")
-        CapitalAPI.setWindowModality(QtCore.Qt.WindowModal)
+        CapitalAPI.setWindowModality(QtCore.Qt.NonModal)
         CapitalAPI.resize(1024, 576)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -32,12 +32,16 @@ class Ui_CapitalAPI(object):
         self.menu_4 = QtWidgets.QMenu(self.menubar)
         self.menu_4.setObjectName("menu_4")
         CapitalAPI.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(CapitalAPI)
-        self.statusbar.setObjectName("statusbar")
-        CapitalAPI.setStatusBar(self.statusbar)
+        self.statusBar = QtWidgets.QStatusBar(CapitalAPI)
+        self.statusBar.setObjectName("statusBar")
+        CapitalAPI.setStatusBar(self.statusBar)
+        self.toolBar = QtWidgets.QToolBar(CapitalAPI)
+        self.toolBar.setObjectName("toolBar")
+        CapitalAPI.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actionLogin = QtWidgets.QAction(CapitalAPI)
         self.actionLogin.setObjectName("actionLogin")
-        self.actionLogin.triggered
+        self.SysDetail = QtWidgets.QAction(CapitalAPI)
+        self.SysDetail.setObjectName("SysDetail")
         self.menu_3.addAction(self.actionLogin)
         self.menu_3.addSeparator()
         self.menu_4.addSeparator()
@@ -45,6 +49,7 @@ class Ui_CapitalAPI(object):
         self.menubar.addAction(self.menu_2.menuAction())
         self.menubar.addAction(self.menu_3.menuAction())
         self.menubar.addAction(self.menu_4.menuAction())
+        self.toolBar.addAction(self.SysDetail)
 
         self.retranslateUi(CapitalAPI)
         QtCore.QMetaObject.connectSlotsByName(CapitalAPI)
@@ -56,7 +61,10 @@ class Ui_CapitalAPI(object):
         self.menu_2.setTitle(_translate("CapitalAPI", "檢視"))
         self.menu_3.setTitle(_translate("CapitalAPI", "功能"))
         self.menu_4.setTitle(_translate("CapitalAPI", "說明"))
+        self.toolBar.setWindowTitle(_translate("CapitalAPI", "toolBar"))
         self.actionLogin.setText(_translate("CapitalAPI", "登入"))
+        self.SysDetail.setText(_translate("CapitalAPI", "系統訊息"))
+        self.SysDetail.setToolTip(_translate("CapitalAPI", "API系統訊息"))
 
 
 if __name__ == "__main__":

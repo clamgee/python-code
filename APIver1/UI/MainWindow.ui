@@ -3,14 +3,14 @@
  <class>CapitalAPI</class>
  <widget class="QMainWindow" name="CapitalAPI">
   <property name="windowModality">
-   <enum>Qt::WindowModal</enum>
+   <enum>Qt::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>576</height>
+    <height>574</height>
    </rect>
   </property>
   <property name="font">
@@ -60,19 +60,30 @@
    <addaction name="menu_3"/>
    <addaction name="menu_4"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar">
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
    </property>
-   <property name="layoutDirection">
-    <enum>Qt::RightToLeft</enum>
-   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="SysDetail"/>
   </widget>
   <action name="actionLogin">
    <property name="text">
     <string>登入</string>
+   </property>
+  </action>
+  <action name="SysDetail">
+   <property name="text">
+    <string>系統訊息</string>
+   </property>
+   <property name="toolTip">
+    <string>API系統訊息</string>
    </property>
   </action>
  </widget>
