@@ -66,6 +66,9 @@
         <pointsize>9</pointsize>
        </font>
       </property>
+      <property name="text">
+       <string>TX00</string>
+      </property>
      </widget>
      <widget class="QPushButton" name="commoditybtn">
       <property name="geometry">
@@ -104,6 +107,19 @@
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="TDetailbtn">
+      <property name="geometry">
+       <rect>
+        <x>940</x>
+        <y>70</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>交易明細</string>
       </property>
      </widget>
     </widget>
@@ -164,6 +180,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="SysDetail"/>
+   <addaction name="Connectbtn"/>
+   <addaction name="Disconnectbtn"/>
   </widget>
   <action name="actionLogin">
    <property name="text">
@@ -176,6 +194,22 @@
    </property>
    <property name="toolTip">
     <string>API系統訊息</string>
+   </property>
+  </action>
+  <action name="Connectbtn">
+   <property name="text">
+    <string>報價連線</string>
+   </property>
+   <property name="toolTip">
+    <string>建立報價連線回報機制</string>
+   </property>
+  </action>
+  <action name="Disconnectbtn">
+   <property name="text">
+    <string>報價清除</string>
+   </property>
+   <property name="toolTip">
+    <string>斷開或情除報價連線狀態</string>
    </property>
   </action>
  </widget>

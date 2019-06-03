@@ -1,20 +1,6 @@
-try:
-    import comtypes.gen.SKCOMLib as sk
-    found=True
-    path=sk.__file__
-    a=path.index('_')-1
-    path=path[:a]
-    print(path)
-except ImportError:
-    found=False
+from PyQt5.QtCore import QTime,QDate,QDateTime,Qt
 
-print(found)
-######以上需要
-
-
-# import comtypes.gen.SKCOMLib as sk
-# path=sk.__file__
-# a=path.index('_')-1
-# path=path[:a]
-
-# print(path)
+n=QTime(22,23,24,123)
+n1=QTime.currentTime()
+# n=QDate(2019,6,13)
+print(n,n1)

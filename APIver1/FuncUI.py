@@ -13,8 +13,9 @@ class LoginDialog(QDialog):
         loadUi(r'UI/Login.ui',self)
 
 class MessageDialog(QDialog):
-    def __init__(self):
+    def __init__(self,gname):
         super(MessageDialog,self).__init__()
+        self.setWindowTitle(gname)
         loadUi(r'UI/Message.ui',self)
 
 if __name__ == "__main__":

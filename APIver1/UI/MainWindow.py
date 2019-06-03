@@ -47,6 +47,9 @@ class Ui_CapitalAPI(object):
         self.label.setFont(font)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
+        self.TDetailbtn = QtWidgets.QPushButton(self.tab)
+        self.TDetailbtn.setGeometry(QtCore.QRect(940, 70, 75, 23))
+        self.TDetailbtn.setObjectName("TDetailbtn")
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -76,6 +79,8 @@ class Ui_CapitalAPI(object):
         self.actionLogin.setObjectName("actionLogin")
         self.SysDetail = QtWidgets.QAction(CapitalAPI)
         self.SysDetail.setObjectName("SysDetail")
+        self.Connectbtn = QtWidgets.QAction(CapitalAPI)
+        self.Connectbtn.setObjectName("Connectbtn")
         self.menu_3.addAction(self.actionLogin)
         self.menu_3.addSeparator()
         self.menu_4.addSeparator()
@@ -84,6 +89,7 @@ class Ui_CapitalAPI(object):
         self.menubar.addAction(self.menu_3.menuAction())
         self.menubar.addAction(self.menu_4.menuAction())
         self.toolBar.addAction(self.SysDetail)
+        self.toolBar.addAction(self.Connectbtn)
 
         self.retranslateUi(CapitalAPI)
         self.tabWidget.setCurrentIndex(0)
@@ -92,8 +98,10 @@ class Ui_CapitalAPI(object):
     def retranslateUi(self, CapitalAPI):
         _translate = QtCore.QCoreApplication.translate
         CapitalAPI.setWindowTitle(_translate("CapitalAPI", "群益API"))
+        self.commodityline.setText(_translate("CapitalAPI", "TX00"))
         self.commoditybtn.setText(_translate("CapitalAPI", "OK"))
         self.label.setText(_translate("CapitalAPI", "商品"))
+        self.TDetailbtn.setText(_translate("CapitalAPI", "交易明細"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("CapitalAPI", "Tab 1"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("CapitalAPI", "Tab 2"))
         self.menu.setTitle(_translate("CapitalAPI", "檔案"))
@@ -104,6 +112,8 @@ class Ui_CapitalAPI(object):
         self.actionLogin.setText(_translate("CapitalAPI", "登入"))
         self.SysDetail.setText(_translate("CapitalAPI", "系統訊息"))
         self.SysDetail.setToolTip(_translate("CapitalAPI", "API系統訊息"))
+        self.Connectbtn.setText(_translate("CapitalAPI", "報價連線"))
+        self.Connectbtn.setToolTip(_translate("CapitalAPI", "建立報價連線回報機制"))
 
 
 if __name__ == "__main__":
