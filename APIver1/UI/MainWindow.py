@@ -25,9 +25,11 @@ class Ui_CapitalAPI(object):
         self.tabWidget.setObjectName("tabWidget")
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
-        self.graphicsView = QtWidgets.QGraphicsView(self.tab)
-        self.graphicsView.setGeometry(QtCore.QRect(0, 0, 900, 479))
-        self.graphicsView.setObjectName("graphicsView")
+        self.KLineview = QtWidgets.QGraphicsView(self.tab)
+        self.KLineview.setGeometry(QtCore.QRect(0, 0, 900, 479))
+        self.KLineview.setObjectName("KLineview")
+        self.KLinescene=QtWidgets.QGraphicsScene()
+        self.KLinescene.
         self.commodityline = QtWidgets.QLineEdit(self.tab)
         self.commodityline.setGeometry(QtCore.QRect(901, 18, 113, 20))
         font = QtGui.QFont()
@@ -81,6 +83,8 @@ class Ui_CapitalAPI(object):
         self.SysDetail.setObjectName("SysDetail")
         self.Connectbtn = QtWidgets.QAction(CapitalAPI)
         self.Connectbtn.setObjectName("Connectbtn")
+        self.Disconnectbtn = QtWidgets.QAction(CapitalAPI)
+        self.Disconnectbtn.setObjectName("Disconnectbtn")
         self.menu_3.addAction(self.actionLogin)
         self.menu_3.addSeparator()
         self.menu_4.addSeparator()
@@ -90,6 +94,7 @@ class Ui_CapitalAPI(object):
         self.menubar.addAction(self.menu_4.menuAction())
         self.toolBar.addAction(self.SysDetail)
         self.toolBar.addAction(self.Connectbtn)
+        self.toolBar.addAction(self.Disconnectbtn)
 
         self.retranslateUi(CapitalAPI)
         self.tabWidget.setCurrentIndex(0)
@@ -114,6 +119,8 @@ class Ui_CapitalAPI(object):
         self.SysDetail.setToolTip(_translate("CapitalAPI", "API系統訊息"))
         self.Connectbtn.setText(_translate("CapitalAPI", "報價連線"))
         self.Connectbtn.setToolTip(_translate("CapitalAPI", "建立報價連線回報機制"))
+        self.Disconnectbtn.setText(_translate("CapitalAPI", "報價清除"))
+        self.Disconnectbtn.setToolTip(_translate("CapitalAPI", "斷開或情除報價連線狀態"))
 
 
 if __name__ == "__main__":

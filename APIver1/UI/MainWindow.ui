@@ -42,7 +42,7 @@
      <attribute name="title">
       <string>Tab 1</string>
      </attribute>
-     <widget class="QGraphicsView" name="graphicsView">
+     <widget class="QGraphicsView" name="KLineview">
       <property name="geometry">
        <rect>
         <x>0</x>

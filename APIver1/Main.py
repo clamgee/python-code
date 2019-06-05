@@ -7,10 +7,13 @@ import pandas as pd
 # 使用PyQt5套件
 from PyQt5.uic import loadUi #使用.ui介面模組
 from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt #插入資訊模組
-from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow #PyQt5介面控制模組
+from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene #PyQt5介面控制模組
 from PyQt5 import QtCore, QtGui, QtWidgets
+import pyqtgraph as pg
 #匯入外部字寫套件
 import FuncUI
+import tickstokline
+import KlineUi
 # 使用SKCOM元件
 import comtypes.client
 import comtypes.gen.SKCOMLib as sk
@@ -85,9 +88,23 @@ class SKMainWindow(QMainWindow): #主視窗
     #商品訂閱
     def commodityFnc(self):
         nstock=self.commodityline.text().replace(' ','')
+        self.Future = tickstokline.dataprocess(nstock)
         skQ.SKQuoteLib_RequestTicks(0,nstock)
         self.ndetialmsg=FuncUI.MessageDialog(nstock)
         self.TDetailbtn.clicked.connect(self.ndetialmsg.show)
+        # self.ndetialmsg.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
+        # self.ndetialmsg.show()
+        self.Kitem=KlineUi.CandlestickItem()
+        self.Kui=KlineUi.KlineWidget(nstock)
+        self.Kui.plt.show()
+        self.Kui.plt.addItem(self.Kitem)
+        self.Kitem.set_data(self.Future.contractkpd)
+        xmax=int(len(self.Kitem.pictures))
+        xmin=int(max(0,xmax-self.Kitem.countK))
+        ymin=self.Kitem.data.loc[xmin:xmax,['low']].values.min()
+        ymax=self.Kitem.data.loc[xmin:xmax,['high']].values.max()
+        # app.processEvents()   
+        self.Kui.update(xmin,xmax,ymin,ymax)
 
 class SKQuoteLibEvents:
      
@@ -104,20 +121,36 @@ class SKQuoteLibEvents:
         SKMain.SKMessage.textBrowser.append(strMsg)
 
     def OnNotifyServerTime(self,sHour,sMinute,sSecond,nTotal):
-        nTime=QTime(sHour,sMinute,sSecond).toString(Qt.ISODate)
+        nTime=QTime(sHour,sMinute,sSecond)
+        jTime=QTime(13,50,00)
         # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
-        # if nTime==jTime and Future.ticksdf is not None :
-        #     filename='data/Ticks'+str(Future.ticksdf.iloc[-1,0])+'.txt'
-        #     Future.ticksdf.to_csv(filename,header=False,index=False)
+        if nTime==jTime and SKMain.Future.ticksdf is not None :
+            filename='data/Ticks'+str(SKMain.Future.ticksdf.iloc[-1,0])+'.txt'
+            SKMain.Future.ticksdf.to_csv(filename,header=False,index=False)
+        nTime=QTime(sHour,sMinute,sSecond).toString(Qt.ISODate)
         SKMain.statusBar.showMessage('帳號:'+str(SKMain.SKID)+'\t伺服器時間:'+nTime)
     
     def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        strMsg=str(lDate)+','+str(lTimehms)+','+str(lTimemillismicros)+','+str(nBid)+','+str(nAsk)+','+str(nClose)+','+str(nQty)
-        SKMain.ndetialmsg.textBrowser.append(strMsg)
+        # strMsg=str(lDate)+','+str(lTimehms)+','+str(lTimemillismicros)+','+str(nBid)+','+str(nAsk)+','+str(nClose)+','+str(nQty)
+        if nSimulate==0:
+            SKMain.Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
+            strMsg=str(SKMain.Future.contractkpd.iloc[-1:].values)
+            SKMain.ndetialmsg.textBrowser.append(strMsg)
     
     def OnNotifyTicks(self,sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        strMsg=str(lDate)+','+str(lTimehms)+','+str(lTimemillismicros)+','+str(nBid)+','+str(nAsk)+','+str(nClose)+','+str(nQty)
-        SKMain.ndetialmsg.textBrowser.append(strMsg)
+        # strMsg=str(lDate)+','+str(lTimehms)+','+str(lTimemillismicros)+','+str(nBid)+','+str(nAsk)+','+str(nClose)+','+str(nQty)
+        if nSimulate==0:
+            SKMain.Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
+            strMsg=str(SKMain.Future.contractkpd.iloc[-1:].values)
+            SKMain.ndetialmsg.textBrowser.append(strMsg)
+            SKMain.Kitem.set_data(SKMain.Future.contractkpd)
+            # app.processEvents()
+            xmax=int(len(SKMain.Kitem.pictures))
+            xmin=int(max(0,xmax-SKMain.Kitem.countK))
+            ymin=SKMain.Kitem.data.loc[xmin:xmax,['low']].values.min()
+            ymax=SKMain.Kitem.data.loc[xmin:xmax,['high']].values.max()
+            # app.processEvents()   
+            SKMain.Kui.update(xmin,xmax,ymin,ymax)
 
 
 SKQuoteEvent=SKQuoteLibEvents()
