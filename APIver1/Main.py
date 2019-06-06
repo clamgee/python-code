@@ -7,7 +7,7 @@ import pandas as pd
 # 使用PyQt5套件
 from PyQt5.uic import loadUi #使用.ui介面模組
 from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt #插入資訊模組
-from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene #PyQt5介面控制模組
+from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene #PyQt5介面與繪圖模組
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 #匯入外部字寫套件
@@ -94,6 +94,7 @@ class SKMainWindow(QMainWindow): #主視窗
         self.TDetailbtn.clicked.connect(self.ndetialmsg.show)
         # self.ndetialmsg.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         # self.ndetialmsg.show()
+        self.KLineScense=QGraphicsScene()
         self.Kitem=KlineUi.CandlestickItem()
         self.Kui=KlineUi.KlineWidget(nstock)
         self.Kui.plt.show()

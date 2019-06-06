@@ -1,5 +1,6 @@
 import pyqtgraph as pg
 from pyqtgraph import QtGui,QtCore
+from PyQt5.QtWidgets import (QGraphicsView,QGraphicsScene,QApplication,QGridLayout)
 # from PyQt5.QtGui import *
 # from PyQt5.QtCore import *
 # from PyQt5.QtWidgets import *
@@ -103,29 +104,59 @@ class CandlestickItem(pg.GraphicsObject):
     def boundingRect(self):
         return QtCore.QRectF(0,self.low,len(self.pictures),(self.high-self.low)) 
 
-csvpf=pd.read_csv('result.csv')
-csvpf['ndatetime']=pd.to_datetime(csvpf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
-print(csvpf.tail(5))
-print(csvpf.info())
-print(csvpf.shape)
-data=csvpf[['ndatetime','open','high','low','close']]
-item=CandlestickItem()
-app = QtGui.QApplication([])
-plt=pg.PlotWidget()
+# csvpf=pd.read_csv('result.csv')
+# csvpf['ndatetime']=pd.to_datetime(csvpf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+# print(csvpf.tail(5))
+# print(csvpf.info())
+# print(csvpf.shape)
+# data=csvpf[['ndatetime','open','high','low','close']]
+# item=CandlestickItem()
+# app = QtGui.QApplication([])
+# plt=pg.PlotWidget()
 
-plt.addItem(item)
-plt.showGrid(y=True)
-plt.plotItem.hideAxis('left')
-plt.plotItem.showAxis('right')
-item.set_data(data)
-xmax=int(len(item.pictures))
-xmin=int(max(0,xmax-item.countK))
-ymin=item.data.loc[xmin:xmax,['low']].values.min()
-ymax=item.data.loc[xmin:xmax,['high']].values.max()
-plt.setRange(xRange=(xmin,xmax),yRange=(ymin,ymax))
+# plt.addItem(item)
+# plt.showGrid(y=True)
+# plt.plotItem.hideAxis('left')
+# plt.plotItem.showAxis('right')
+# item.set_data(data)
+# xmax=int(len(item.pictures))
+# xmin=int(max(0,xmax-item.countK))
+# ymin=item.data.loc[xmin:xmax,['low']].values.min()
+# ymax=item.data.loc[xmin:xmax,['high']].values.max()
+# plt.setRange(xRange=(xmin,xmax),yRange=(ymin,ymax))
+# plt.show()
 
-plt.show()
+class MainWindow(QGraphicsView):
+    def __init__(self,parent=None):
+        super(MainWindow, self).__init__(parent)
+        #创建场景
+        self.scene = QGraphicsScene()
+        #在场景中添加文字
+        self.scene.addText("Hello, world!")
+        #将场景加载到窗口
+        self.setScene(self.scene)
+
 if __name__ == '__main__':
     import sys
-    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        app.exec_()
+    #每个PyQt程序必须创建一个application对象，sys.argv 参数是命令行中的一组参数
+    #注意：application在 PyQt5.QtWidgets 模块中
+    #注意：application在 PyQt4.QtGui 模块中
+    app = QApplication(sys.argv)
+    #创建桌面窗口
+    mainWindow = MainWindow()
+    csvpf=pd.read_csv('result.csv')
+    csvpf['ndatetime']=pd.to_datetime(csvpf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+    print(csvpf.tail(5))
+    print(csvpf.info())
+    print(csvpf.shape)
+    data=csvpf[['ndatetime','open','high','low','close']]
+    KLineitem=CandlestickItem()
+    item=QGridLayout()
+    item.addWidget(KLineitem)
+    
+    mainWindow.scene.addItem(item)
+    data=csvpf[['ndatetime','open','high','low','close']]
+    item.set_data(data)   
+    #显示桌面窗口
+    mainWindow.show()
+    sys.exit(app.exec_())
