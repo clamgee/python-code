@@ -28,8 +28,6 @@ class Ui_CapitalAPI(object):
         self.KLineview = QtWidgets.QGraphicsView(self.tab)
         self.KLineview.setGeometry(QtCore.QRect(0, 0, 900, 479))
         self.KLineview.setObjectName("KLineview")
-        self.KLinescene=QtWidgets.QGraphicsScene()
-        self.KLinescene.
         self.commodityline = QtWidgets.QLineEdit(self.tab)
         self.commodityline.setGeometry(QtCore.QRect(901, 18, 113, 20))
         font = QtGui.QFont()

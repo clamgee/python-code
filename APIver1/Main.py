@@ -1,6 +1,8 @@
 # 系統套件
 import sys
 import os
+import datetime
+import time
 #運算套件
 import numpy as np
 import pandas as pd
@@ -97,13 +99,16 @@ class SKMainWindow(QMainWindow): #主視窗
         self.KLineScense=QGraphicsScene()
         self.Kitem=KlineUi.CandlestickItem()
         self.Kui=KlineUi.KlineWidget(nstock)
-        self.Kui.plt.show()
         self.Kui.plt.addItem(self.Kitem)
         self.Kitem.set_data(self.Future.contractkpd)
         xmax=int(len(self.Kitem.pictures))
         xmin=int(max(0,xmax-self.Kitem.countK))
         ymin=self.Kitem.data.loc[xmin:xmax,['low']].values.min()
         ymax=self.Kitem.data.loc[xmin:xmax,['high']].values.max()
+        self.KLboxview=pg.ViewBox()
+        self.KLboxview.addItem(self.Kui)
+        self.KLineScense.addItem(self.KLboxview)
+        self.KLineview.setScense(self.KLineScense)
         # app.processEvents()   
         self.Kui.update(xmin,xmax,ymin,ymax)
 
