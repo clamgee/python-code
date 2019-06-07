@@ -1,11 +1,8 @@
+from PyQt5.uic import loadUi #使用.ui介面模組
+from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt #插入資訊模組
+from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene #PyQt5介面與繪圖模組
+from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
-from pyqtgraph import QtGui,QtCore
-from PyQt5.QtWidgets import (QGraphicsView,QGraphicsScene,QApplication,QGridLayout)
-# from PyQt5.QtGui import *
-# from PyQt5.QtCore import *
-# from PyQt5.QtWidgets import *
-# from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QLabel, QPushButton
-# from PyQt5 import QtGui,QtCore
 import datetime
 import time
 import csv
@@ -104,30 +101,52 @@ class CandlestickItem(pg.GraphicsObject):
     def boundingRect(self):
         return QtCore.QRectF(0,self.low,len(self.pictures),(self.high-self.low)) 
 
-csvpf=pd.read_csv('result.csv')
-csvpf['ndatetime']=pd.to_datetime(csvpf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
-print(csvpf.tail(5))
-print(csvpf.info())
-print(csvpf.shape)
-data=csvpf[['ndatetime','open','high','low','close']]
-item=CandlestickItem()
-app = QtGui.QApplication([])
-plt=pg.PlotWidget()
+# csvpf=pd.read_csv('result.csv')
+# csvpf['ndatetime']=pd.to_datetime(csvpf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+# print(csvpf.tail(5))
+# print(csvpf.info())
+# print(csvpf.shape)
+# data=csvpf[['ndatetime','open','high','low','close']]
+# item=CandlestickItem()
+# app = QtGui.QApplication([])
+# plt=pg.PlotWidget()
 
-plt.addItem(item)
-plt.showGrid(y=True)
-plt.plotItem.hideAxis('left')
-plt.plotItem.showAxis('right')
-item.set_data(data)
-xmax=int(len(item.pictures))
-xmin=int(max(0,xmax-item.countK))
-ymin=item.data.loc[xmin:xmax,['low']].values.min()
-ymax=item.data.loc[xmin:xmax,['high']].values.max()
-plt.setRange(xRange=(xmin,xmax),yRange=(ymin,ymax))
-plt.show()
+# plt.addItem(item)
+# plt.showGrid(y=True)
+# plt.plotItem.hideAxis('left')
+# plt.plotItem.showAxis('right')
+# item.set_data(data)
+# xmax=int(len(item.pictures))
+# xmin=int(max(0,(xmax-item.countK)))
+# print(xmax,xmin)
+# ymin=item.data.loc[xmin:xmax,['low']].values.min()
+# ymax=item.data.loc[xmin:xmax,['high']].values.max()
+# plt.setXRange(xmin,xmax)
+# plt.setYRange(ymin,ymax)
+# plt.show()
 
 
-if __name__ == '__main__':
+class TMW(QMainWindow): #主視窗
+    def __init__(self):
+        super(TMW,self).__init__()
+        loadUi(r'TMW.ui',self)
+        self.scense=QGraphicsScene()
+        self.TGV.setScene(self.scense)
+
+if __name__ == "__main__":
     import sys
-    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        QtGui.QApplication.instance().exec_()
+    App=QApplication(sys.argv)
+    TMWindow=TMW()
+    csvpf=pd.read_csv('result.csv')
+    csvpf['ndatetime']=pd.to_datetime(csvpf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+    print(csvpf.tail(5))
+    print(csvpf.info())
+    print(csvpf.shape)
+    data=csvpf[['ndatetime','open','high','low','close']]
+    item=CandlestickItem()
+    KLWedget=pg.PlotWidget(item)
+    KLWedget=TMWindow.scense.addWidget(item)
+    item.set_data(data)
+
+    TMWindow.show()
+    sys.exit(App.exec_())
