@@ -17,7 +17,7 @@ class Ui_MainWindow(object):
         self.TGV = QtWidgets.QGraphicsView(self.centralwidget)
         self.TGV.setGeometry(QtCore.QRect(0, 0, 640, 480))
         self.TGV.setObjectName("TGV")
-        self.TGV.setScene
+        self.TGV.centralwidget
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))

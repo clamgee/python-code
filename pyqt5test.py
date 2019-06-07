@@ -144,8 +144,13 @@ if __name__ == "__main__":
     print(csvpf.shape)
     data=csvpf[['ndatetime','open','high','low','close']]
     item=CandlestickItem()
-    KLWedget=pg.PlotWidget(item)
-    KLWedget=TMWindow.scense.addWidget(item)
+    KLWidget=pg.PlotWidget()
+    KLWidget.addItem(item)
+    vb=pg.ViewBox()
+    vb.addItem(KLWidget)
+    l=QtGui.QGraphicsGridLayout()
+    l.addItem(vb,0,1)
+    TMWindow.TGV.centralWidget.setLayout(l)
     item.set_data(data)
 
     TMWindow.show()
