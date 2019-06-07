@@ -148,9 +148,7 @@ if __name__ == "__main__":
     KLWidget.addItem(item)
     vb=pg.ViewBox()
     vb.addItem(KLWidget)
-    l=QtGui.QGraphicsGridLayout()
-    l.addItem(vb,0,1)
-    TMWindow.TGV.centralWidget.setLayout(l)
+    TMWindow.scense.addItem(vb)
     item.set_data(data)
 
     TMWindow.show()
