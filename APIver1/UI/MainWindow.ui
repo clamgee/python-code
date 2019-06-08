@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
-    <height>574</height>
+    <width>1026</width>
+    <height>571</height>
    </rect>
   </property>
   <property name="font">
@@ -42,16 +42,6 @@
      <attribute name="title">
       <string>Tab 1</string>
      </attribute>
-     <widget class="QGraphicsView" name="KLineview">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>900</width>
-        <height>479</height>
-       </rect>
-      </property>
-     </widget>
      <widget class="QLineEdit" name="commodityline">
       <property name="geometry">
        <rect>
@@ -122,6 +112,17 @@
        <string>交易明細</string>
       </property>
      </widget>
+     <widget class="QWidget" name="gridLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>891</width>
+        <height>481</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="GL"/>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -136,7 +137,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1024</width>
+     <width>1026</width>
      <height>21</height>
     </rect>
    </property>

@@ -96,15 +96,15 @@ class CandlestickItem(pg.GraphicsObject):
     def boundingRect(self):
         return QtCore.QRectF(0,self.low,len(self.pictures),(self.high-self.low)) 
 
-class KlineWidget:
+class KlineWidget(pg.PlotWidget):
     def __init__(self,name):
+        pg.PlotWidget.__init__(self)
         self.name=name
         # self.gui=QtGui.QGuiApplication.processEvents
         # self.plt=pg.PlotWidget()
-        self.plt=pg.PlotWidget()
-        self.plt.showGrid(y=True)
-        self.plt.plotItem.hideAxis('left')
-        self.plt.plotItem.showAxis('right')
+        self.showGrid(y=True)
+        self.plotItem.hideAxis('left')
+        self.plotItem.showAxis('right')
         self.right=None
         self.high=None
         self.low=None
@@ -113,8 +113,8 @@ class KlineWidget:
         if self.right!=xmax or self.high!=ymax or self.low!=ymin:
             self.right=xmax
             # self.plt.setRange(xRange=(xmin,xmax),yRange=(ymin,ymax))
-            self.plt.setXRange(xmin,xmax)
-            self.plt.setYRange(ymin,ymax)
+            self.setXRange(xmin,xmax)
+            self.setYRange(ymin,ymax)
 
         # if self.high!=ymax or self.low!=ymin:
         #     self.low=ymin

@@ -131,7 +131,7 @@ class TMW(QMainWindow): #主視窗
         super(TMW,self).__init__()
         loadUi(r'TMW.ui',self)
         self.scense=QGraphicsScene()
-        self.TGV.setScene(self.scense)
+        self.grid=QtWidgets.QGraphicsGridLayout()
 
 if __name__ == "__main__":
     import sys
@@ -146,9 +146,7 @@ if __name__ == "__main__":
     item=CandlestickItem()
     KLWidget=pg.PlotWidget()
     KLWidget.addItem(item)
-    vb=pg.ViewBox()
-    vb.addItem(KLWidget)
-    TMWindow.scense.addItem(vb)
+    TMWindow.verticalLayout.addWidget(KLWidget)
     item.set_data(data)
 
     TMWindow.show()
