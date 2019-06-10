@@ -146,7 +146,7 @@ if __name__ == "__main__":
     item=CandlestickItem()
     KLWidget=pg.PlotWidget()
     KLWidget.addItem(item)
-    TMWindow.verticalLayout.addWidget(KLWidget)
+    TMWindow.gridLayout_3.addWidget(KLWidget)
     item.set_data(data)
 
     TMWindow.show()
