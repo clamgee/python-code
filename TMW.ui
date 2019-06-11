@@ -30,8 +30,15 @@
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="4,1">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
           <item>
-           <layout class="QGridLayout" name="gridLayout_3"/>
+           <layout class="QGridLayout" name="gridLayout_3" rowstretch="0" columnstretch="0" rowminimumheight="0" columnminimumwidth="0">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetDefaultConstraint</enum>
+            </property>
+           </layout>
           </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,1,25">
@@ -64,25 +71,43 @@
                <enum>Qt::SolidLine</enum>
               </property>
               <property name="rowCount">
-               <number>20</number>
+               <number>21</number>
               </property>
               <property name="columnCount">
-               <number>5</number>
+               <number>3</number>
               </property>
               <attribute name="horizontalHeaderVisible">
-               <bool>false</bool>
+               <bool>true</bool>
+              </attribute>
+              <attribute name="horizontalHeaderCascadingSectionResizes">
+               <bool>true</bool>
               </attribute>
               <attribute name="horizontalHeaderDefaultSectionSize">
                <number>35</number>
               </attribute>
-              <attribute name="verticalHeaderVisible">
+              <attribute name="horizontalHeaderHighlightSections">
                <bool>false</bool>
+              </attribute>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderVisible">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="verticalHeaderCascadingSectionResizes">
+               <bool>true</bool>
               </attribute>
               <attribute name="verticalHeaderDefaultSectionSize">
                <number>19</number>
               </attribute>
+              <attribute name="verticalHeaderHighlightSections">
+               <bool>false</bool>
+              </attribute>
               <attribute name="verticalHeaderMinimumSectionSize">
                <number>5</number>
+              </attribute>
+              <attribute name="verticalHeaderStretchLastSection">
+               <bool>false</bool>
               </attribute>
               <row/>
               <row/>
@@ -104,8 +129,7 @@
               <row/>
               <row/>
               <row/>
-              <column/>
-              <column/>
+              <row/>
               <column/>
               <column/>
               <column/>

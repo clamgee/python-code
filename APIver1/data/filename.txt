@@ -53,3 +53,4 @@ Ticks2019-06-04.txt
 Ticks2019-06-05.txt
 Ticks2019-06-06.txt
 Ticks2019-06-10.txt
+Ticks2019-06-11.txt

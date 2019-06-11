@@ -9,7 +9,7 @@ import pandas as pd
 # 使用PyQt5套件
 from PyQt5.uic import loadUi #使用.ui介面模組
 from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt #插入資訊模組
-from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene #PyQt5介面與繪圖模組
+from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene,QHeaderView #PyQt5介面與繪圖模組
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 #匯入外部字寫套件
@@ -31,6 +31,8 @@ class SKMainWindow(QMainWindow): #主視窗
         self.showMaximized()
         self.SKID='未登入'
         self.statusBar.showMessage('帳號:'+self.SKID)
+        self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         # 介面導入
         self.SKLoginUI() #登入介面
         self.SKMessageFunc()#系統訊息介面
