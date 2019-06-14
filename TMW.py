@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QHeaderView
+from PyQt5.QtWidgets import QHeaderView,QTableWidgetItem
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -50,7 +50,7 @@ class Ui_MainWindow(object):
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.horizontalHeader().setVisible(True)
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
-        self.tableWidget.setH
+        self.tableWidget.setItem
         # self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
         # self.tableWidget.horizontalHeader().setDefaultSectionSize(1)
         # self.tableWidget.horizontalHeader().setHighlightSections(False)

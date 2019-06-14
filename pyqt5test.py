@@ -133,8 +133,6 @@ class TMW(QMainWindow): #主視窗
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.tableWidget.setHorizontalHeaderLabels(['買價','成交價','賣價'])
-       
-        
 
 if __name__ == "__main__":
     import sys
@@ -146,11 +144,21 @@ if __name__ == "__main__":
     print(csvpf.info())
     print(csvpf.shape)
     data=csvpf[['ndatetime','open','high','low','close']]
+    # TMWindow.bestfive['close']=TMWindow.bestfive['close'].map(lambda x:data.iloc[-1,4]+(TMWindow.bestfive['close'][TMWindow.bestfive['close']==x].index[0]-13))
     item=CandlestickItem()
     KLWidget=pg.PlotWidget()
     KLWidget.addItem(item)
     TMWindow.gridLayout_3.addWidget(KLWidget)
     item.set_data(data)
+    bestfive=pd.DataFrame(np.arange(27).reshape(27),columns=['close'])
+    bestfive['bid']=''
+    bestfive['ask']=''
+    i=0
+    print(bestfive.shape[0])
+    while i < bestfive.shape[0]:
+            TMWindow.tableWidget.setItem(i,1,QTableWidgetItem(str(bestfive.iloc[i,0])))
+            print(bestfive.iloc[i,0])
+            i=i+1
 
     TMWindow.show()
     sys.exit(App.exec_())

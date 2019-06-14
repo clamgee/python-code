@@ -9,7 +9,7 @@ import pandas as pd
 # 使用PyQt5套件
 from PyQt5.uic import loadUi #使用.ui介面模組
 from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt #插入資訊模組
-from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene,QHeaderView #PyQt5介面與繪圖模組
+from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene,QHeaderView,QTableWidgetItem #PyQt5介面與繪圖模組
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 #匯入外部字寫套件
@@ -31,11 +31,10 @@ class SKMainWindow(QMainWindow): #主視窗
         self.showMaximized()
         self.SKID='未登入'
         self.statusBar.showMessage('帳號:'+self.SKID)
-        self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         # 介面導入
         self.SKLoginUI() #登入介面
         self.SKMessageFunc()#系統訊息介面
+        self.DomTableUI()#閃電下單介面
         #ManuBar連結
         self.actionLogin.triggered.connect(self.Login.show)#登入介面連結
         #ToolBar連結
@@ -81,6 +80,19 @@ class SKMainWindow(QMainWindow): #主視窗
             self.SKMessage.textBrowser.append('發生錯誤:'+e)
             # print('系統錯誤:'+e)
             pass
+    
+    def DomTableUI(self):
+        self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.DomTable.setHorizontalHeaderLabels(['買價','成交價','賣價'])
+        self.bestfive=pd.DataFrame(np.arange(27).reshape(27),columns=['close'])
+        self.bestfive['bid']=''
+        self.bestfive['ask']=''
+        i=0
+        while i < self.bestfive.shape[0]:
+            self.DomTable.setItem(i,1,QTableWidgetItem(str(self.bestfive.iloc[i,0])))
+            i=i+1
+
     # 登入功能結束
     #報價系統連線功能
     def ConnectFun(self):
@@ -148,6 +160,7 @@ class SKQuoteLibEvents:
             strMsg=str(SKMain.Future.contractkpd.iloc[-1:].values)
             SKMain.ndetialmsg.textBrowser.append(strMsg)
             SKMain.Kitem.set_data(SKMain.Future.contractkpd)
+            SKMain.bestfive['close']=SKMain.bestfive['close'].map(lambda x:SKMain.Future.contractkpd.iloc[-1,4]+(SKMain.bestfive['close'][SKMain.bestfive['close']==x].index[0]-13))
             # app.processEvents()
             xmax=int(len(SKMain.Kitem.pictures))
             xmin=int(max(0,xmax-SKMain.Kitem.countK))
