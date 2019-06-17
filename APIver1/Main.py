@@ -34,7 +34,7 @@ class SKMainWindow(QMainWindow): #主視窗
         # 介面導入
         self.SKLoginUI() #登入介面
         self.SKMessageFunc()#系統訊息介面
-        self.DomTableUI()#閃電下單介面
+        
         #ManuBar連結
         self.actionLogin.triggered.connect(self.Login.show)#登入介面連結
         #ToolBar連結
@@ -89,9 +89,27 @@ class SKMainWindow(QMainWindow): #主視窗
         self.bestfive['bid']=''
         self.bestfive['ask']=''
         i=0
+        self.bestfive['close']=self.bestfive['close'].map(lambda x:self.Future.contractkpd.iloc[-1,4]+(self.bestfive['close'][self.bestfive['close']==x].index[0]-13))
         while i < self.bestfive.shape[0]:
             self.DomTable.setItem(i,1,QTableWidgetItem(str(self.bestfive.iloc[i,0])))
-            i=i+1
+            i+=1
+    
+    def DomTableFillFunc(self,nclose,bid_dict,ask_dict):
+        self.bestfive['close']=self.bestfive['close'].map(lambda x:nclose+(self.bestfive['close'][self.bestfive['close']==x].index[0]-13))
+        self.bestfive['bid']=self.bestfive['close'].map(bid_dict)
+        self.bestfive['ask']=self.bestfive['close'].map(ask_dict)
+        i=0
+        while i < self.bestfive.shape[0]:
+            self.DomTable.setItem(i,1,QTableWidgetItem(str(self.bestfive.iloc[i,0])))
+            if self.bestfive.iloc[i,1]!='nan':
+                self.DomTable.setItem(i,0,QTableWidgetItem(str(self.bestfive.iloc[i,1])))
+            else:
+                self.DomTable.setItem(i,0,QTableWidgetItem(''))
+            if self.bestfive.iloc[i,2]!='nan':
+                self.DomTable.setItem(i,2,QTableWidgetItem(str(self.bestfive.iloc[i,2])))
+            else:
+                self.DomTable.setItem(i,2,QTableWidgetItem(''))
+            i+=1
 
     # 登入功能結束
     #報價系統連線功能
@@ -106,10 +124,12 @@ class SKMainWindow(QMainWindow): #主視窗
         nstock=self.commodityline.text().replace(' ','')
         self.Future = tickstokline.dataprocess(nstock)
         skQ.SKQuoteLib_RequestTicks(0,nstock)
+        # skQ.SKQuoteLib_RequestLiveTick(0,nstock)
         self.ndetialmsg=FuncUI.MessageDialog(nstock)
         self.TDetailbtn.clicked.connect(self.ndetialmsg.show)
         # self.ndetialmsg.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         # self.ndetialmsg.show()
+        self.DomTableUI()#閃電下單介面
         self.Kitem=KlineUi.CandlestickItem()
         self.Kui=KlineUi.KlineWidget(nstock)
         self.Kui.addItem(self.Kitem)
@@ -168,7 +188,10 @@ class SKQuoteLibEvents:
             ymax=SKMain.Kitem.data.loc[xmin:xmax,['high']].values.max()
             # app.processEvents()   
             SKMain.Kui.update(xmin,xmax,ymin,ymax)
-
+    def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
+        bid_dict={nBestBid1:nBestBidQty1,nBestBid2:nBestBidQty2,nBestBid3:nBestBidQty3,nBestBid4:nBestBidQty4,nBestBid5:nBestBidQty5,nExtendBid:nExtendBidQty}
+        ask_dict={nBestAsk1:nBestAskQty1,nBestAsk2:nBestAskQty2,nBestAsk3:nBestAskQty3,nBestAsk4:nBestAskQty4,nBestAsk5:nBestAskQty5,nExtendAsk:nExtendAskQty}
+        SKMain.DomTableFillFunc(SKMain.Future.contractkpd.iloc[-1,4],bid_dict,ask_dict)
 
 SKQuoteEvent=SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)

@@ -155,10 +155,11 @@ if __name__ == "__main__":
     bestfive['ask']=''
     i=0
     print(bestfive.shape[0])
+    bestfive['close']=bestfive['close'].map(lambda x:data.iloc[-1,4]+(bestfive['close'][bestfive['close']==x].index[0]-13))
     while i < bestfive.shape[0]:
-            TMWindow.tableWidget.setItem(i,1,QTableWidgetItem(str(bestfive.iloc[i,0])))
-            print(bestfive.iloc[i,0])
-            i=i+1
+        TMWindow.tableWidget.setItem(i,1,QTableWidgetItem(str(bestfive.iloc[i,0])))
+        print(bestfive.iloc[i,0])
+        i+=1
 
     TMWindow.show()
     sys.exit(App.exec_())
