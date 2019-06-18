@@ -98,6 +98,8 @@ class SKMainWindow(QMainWindow): #主視窗
         self.bestfive['close']=self.bestfive['close'].map(lambda x:nclose+13-(self.bestfive['close'][self.bestfive['close']==x].index[0]))
         self.bestfive['bid']=self.bestfive['close'].map(bid_dict).fillna(value=0).astype(int)
         self.bestfive['ask']=self.bestfive['close'].map(ask_dict).fillna(value=0).astype(int)
+        # print('buy: ',bid_dict)
+        # print('ask: ',ask_dict)
         i=0
         while i < self.bestfive.shape[0]:
             self.DomTable.setItem(i,1,QTableWidgetItem(str(self.bestfive.iloc[i,0])))
@@ -189,8 +191,8 @@ class SKQuoteLibEvents:
             # app.processEvents()   
             SKMain.Kui.update(xmin,xmax,ymin,ymax)
     def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
-        bid_dict={(nBestBid1/100):nBestBidQty1,(nBestBid2/100):nBestBidQty2,(nBestBid3/100):nBestBidQty3,(nBestBid4/100):nBestBidQty4,(nBestBid5/100):nBestBidQty5,(nExtendBid/100):nExtendBidQty}
-        ask_dict={(nBestAsk1/100):nBestAskQty1,(nBestAsk2/100):nBestAskQty2,(nBestAsk3/100):nBestAskQty3,(nBestAsk4/100):nBestAskQty4,(nBestAsk5/100):nBestAskQty5,(nExtendAsk/100):nExtendAskQty}
+        bid_dict={int(nBestBid1/100):nBestBidQty1,int(nBestBid2/100):nBestBidQty2,int(nBestBid3/100):nBestBidQty3,int(nBestBid4/100):nBestBidQty4,int(nBestBid5/100):nBestBidQty5,int(nExtendBid/100):nExtendBidQty}
+        ask_dict={int(nBestAsk1/100):nBestAskQty1,int(nBestAsk2/100):nBestAskQty2,int(nBestAsk3/100):nBestAskQty3,int(nBestAsk4/100):nBestAskQty4,int(nBestAsk5/100):nBestAskQty5,int(nExtendAsk/100):nExtendAskQty}
         SKMain.DomTableFillFunc(SKMain.Future.contractkpd.iloc[-1,4],bid_dict,ask_dict)
 
 SKQuoteEvent=SKQuoteLibEvents()

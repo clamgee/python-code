@@ -58,3 +58,4 @@ Ticks2019-06-12.txt
 Ticks2019-06-13.txt
 Ticks2019-06-14.txt
 Ticks2019-06-17.txt
+Ticks2019-06-18.txt
