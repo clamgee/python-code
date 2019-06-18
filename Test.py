@@ -25,9 +25,9 @@ import numpy as np
 a=pd.DataFrame(np.arange(27).reshape(27),columns=['close'])
 a['bid']=''
 a['ask']=''
-a['close']=a['close'].map(lambda x:10500+(a['close'][a['close']==x].index[0]-13))
+a['close']=a['close'].map(lambda x:10500+13-(a['close'][a['close']==x].index[0]))
 dict_bid={10499:28,10498:30,10497:22,10496:35,10495:18}
 a.set_index('close')
-a['bid']=a['close'].map(dict_bid)
+a['bid']=a['close'].map(dict_bid).fillna(value=0).astype(int)
 
-print(a)
+print(a['close'])

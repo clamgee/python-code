@@ -95,6 +95,9 @@
               <property name="alternatingRowColors">
                <bool>true</bool>
               </property>
+              <property name="textElideMode">
+               <enum>Qt::ElideLeft</enum>
+              </property>
               <property name="rowCount">
                <number>27</number>
               </property>
