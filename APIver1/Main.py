@@ -203,14 +203,9 @@ class SKQuoteLibEvents:
             # app.processEvents()   
             SKMain.Kui.update(xmin,xmax,ymin,ymax)
     def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
-<<<<<<< HEAD
-        bid_dict={int(nBestBid1/100):nBestBidQty1,int(nBestBid2/100):nBestBidQty2,int(nBestBid3/100):nBestBidQty3,int(nBestBid4/100):nBestBidQty4,int(nBestBid5/100):nBestBidQty5,int(nExtendBid/100):nExtendBidQty}
-        ask_dict={int(nBestAsk1/100):nBestAskQty1,int(nBestAsk2/100):nBestAskQty2,int(nBestAsk3/100):nBestAskQty3,int(nBestAsk4/100):nBestAskQty4,int(nBestAsk5/100):nBestAskQty5,int(nExtendAsk/100):nExtendAskQty}
-        SKMain.DomTableFillFunc(SKMain.Future.contractkpd.iloc[-1,4],bid_dict,ask_dict)
-=======
-            total_dict={'bid_dict':{int(nBestBid1/100):nBestBidQty1,int(nBestBid2/100):nBestBidQty2,int(nBestBid3/100):nBestBidQty3,int(nBestBid4/100):nBestBidQty4,int(nBestBid5/100):nBestBidQty5},'ask_dict':{int(nBestAsk1/100):nBestAskQty1,int(nBestAsk2/100):nBestAskQty2,int(nBestAsk3/100):nBestAskQty3,int(nBestAsk4/100):nBestAskQty4,int(nBestAsk5/100):nBestAskQty5}}
-            SKMain.TableThrd.Table_signal.emit(SKMain.Future.contractkpd.iloc[-1,4],total_dict)
->>>>>>> 1da9cd85d2ff7e9e210addb20d351d3a98fe6b1c
+        Total_dict={'bid_dict':{int(nBestBid1/100):nBestBidQty1,int(nBestBid2/100):nBestBidQty2,int(nBestBid3/100):nBestBidQty3,int(nBestBid4/100):nBestBidQty4,int(nBestBid5/100):nBestBidQty5},
+        'ask_dict':{int(nBestAsk1/100):nBestAskQty1,int(nBestAsk2/100):nBestAskQty2,int(nBestAsk3/100):nBestAskQty3,int(nBestAsk4/100):nBestAskQty4,int(nBestAsk5/100):nBestAskQty5}}
+        SKMain.TableThrd.Table_signal(SKMain.Future.contractkpd.iloc[-1,4],Total_dict)
 
 SKQuoteEvent=SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)

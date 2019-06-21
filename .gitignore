@@ -17,3 +17,6 @@ __pycache__/*
 /BackUp
 /CapitalLog_Quote
 /APIver1/CapitalLog_Quote
+/APIver1/data/filename.txt
+/APIver1/*.csv
+/APIver1/__pycache__
