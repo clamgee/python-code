@@ -1,5 +1,9 @@
 from PyQt5.uic import loadUi #使用.ui介面模組
+<<<<<<< HEAD
 from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt,QThread #插入資訊模組
+=======
+from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt,QThread,pyqtSignal #插入資訊模組
+>>>>>>> 1da9cd85d2ff7e9e210addb20d351d3a98fe6b1c
 from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene,QHeaderView,QTableWidget,QTableWidgetItem #PyQt5介面與繪圖模組
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
@@ -133,6 +137,25 @@ class TMW(QMainWindow): #主視窗
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.tableWidget.setHorizontalHeaderLabels(['買價','成交價','賣價'])
+        self.tableT=TableThread()
+        self.tableT.start()
+        total_dict={'bid':{10500:25,10501:22},'ask':{10503:27,10504:21}}
+        close=10500
+        self.tableT.bid_signal.emit(close,total_dict)
+
+
+class TableThread(QThread):
+    bid_signal=pyqtSignal(int,dict)
+    # ask_signal=pyqtSignal(dict)
+    def __init__(self,parent=None):
+        super(TableThread,self).__init__(parent)
+        self.bid_signal.connect(self.bid)
+        # self.ask_signal.connect(self.ask)
+    def bid(self,biddata,dict):
+        print('dict: ',dict['bid'],'ask: ',dict['ask'])
+    # def ask(self,askdata):
+    #     print('ask: ',askdata)
+
 
 class Tablethread(Qthread):
     signal=QtCore.pyqtSignal(tuple)
@@ -162,11 +185,14 @@ if __name__ == "__main__":
     bestfive['ask']=''
     i=0
     print(bestfive.shape[0])
+<<<<<<< HEAD
     bestfive['close']=bestfive['close'].map(lambda x:data.iloc[-1,4]+13-(bestfive['close'][bestfive['close']==x].index[0]))
+=======
+>>>>>>> 1da9cd85d2ff7e9e210addb20d351d3a98fe6b1c
     while i < bestfive.shape[0]:
         TMWindow.tableWidget.setItem(i,1,QTableWidgetItem(str(bestfive.iloc[i,0])))
-        print(bestfive.iloc[i,0])
+        # print(bestfive.iloc[i,0])
         i+=1
-
+    bestfive['close']=bestfive['close'].map(lambda x:data.iloc[-1,4]+(bestfive['close'][bestfive['close']==x].index[0]-13))
     TMWindow.show()
     sys.exit(App.exec_())

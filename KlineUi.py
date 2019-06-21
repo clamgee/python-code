@@ -36,7 +36,7 @@ class CandlestickItem(pg.GraphicsObject):
             ep=int(1/(sum(self.timelist)/len(self.timelist)))
         else:
             ep=0
-        print('每100張FPS: ',ep)
+        # print('每100張FPS: ',ep)
     
     def generatePicture(self):    
         # 重畫或者最後一根K線

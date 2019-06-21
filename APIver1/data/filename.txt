@@ -59,3 +59,8 @@ Ticks2019-06-13.txt
 Ticks2019-06-14.txt
 Ticks2019-06-17.txt
 Ticks2019-06-18.txt
+<<<<<<< HEAD
+=======
+Ticks2019-06-19.txt
+Ticks2019-06-20.txt
+>>>>>>> 1da9cd85d2ff7e9e210addb20d351d3a98fe6b1c
