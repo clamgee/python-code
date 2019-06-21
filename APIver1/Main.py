@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 # 使用PyQt5套件
 from PyQt5.uic import loadUi #使用.ui介面模組
-from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt #插入資訊模組
+from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt,QThread,pyqtSignal #插入資訊模組
 from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene,QHeaderView,QTableWidgetItem #PyQt5介面與繪圖模組
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
@@ -134,6 +134,8 @@ class SKMainWindow(QMainWindow): #主視窗
         self.Kui=KlineUi.KlineWidget(nstock)
         self.Kui.addItem(self.Kitem)
         self.Kitem.set_data(self.Future.contractkpd)
+        self.TableThrd=TableThread()
+        self.TableThrd.start()
         xmax=int(len(self.Kitem.pictures))
         xmin=int(max(0,xmax-self.Kitem.countK))
         ymin=self.Kitem.data.loc[xmin:xmax,['low']].values.min()
@@ -141,6 +143,16 @@ class SKMainWindow(QMainWindow): #主視窗
         self.GL.addWidget(self.Kui)
         # app.processEvents()   
         self.Kui.update(xmin,xmax,ymin,ymax)
+
+class TableThread(QThread):
+    Table_signal=pyqtSignal(int,dict)
+
+    def __init__(self,parent=None):
+        super(TableThread,self).__init__(parent)
+        self.Table_signal.connect(self.TableFunc)
+
+    def TableFunc(self,nclose,total_dict):
+        SKMain.DomTableFillFunc(nclose,total_dict['bid_dict'],total_dict['ask_dict'])
 
 class SKQuoteLibEvents:
      
@@ -189,9 +201,8 @@ class SKQuoteLibEvents:
             # app.processEvents()   
             SKMain.Kui.update(xmin,xmax,ymin,ymax)
     def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
-        bid_dict={(nBestBid1/100):nBestBidQty1,(nBestBid2/100):nBestBidQty2,(nBestBid3/100):nBestBidQty3,(nBestBid4/100):nBestBidQty4,(nBestBid5/100):nBestBidQty5,(nExtendBid/100):nExtendBidQty}
-        ask_dict={(nBestAsk1/100):nBestAskQty1,(nBestAsk2/100):nBestAskQty2,(nBestAsk3/100):nBestAskQty3,(nBestAsk4/100):nBestAskQty4,(nBestAsk5/100):nBestAskQty5,(nExtendAsk/100):nExtendAskQty}
-        SKMain.DomTableFillFunc(SKMain.Future.contractkpd.iloc[-1,4],bid_dict,ask_dict)
+            total_dict={'bid_dict':{int(nBestBid1/100):nBestBidQty1,int(nBestBid2/100):nBestBidQty2,int(nBestBid3/100):nBestBidQty3,int(nBestBid4/100):nBestBidQty4,int(nBestBid5/100):nBestBidQty5},'ask_dict':{int(nBestAsk1/100):nBestAskQty1,int(nBestAsk2/100):nBestAskQty2,int(nBestAsk3/100):nBestAskQty3,int(nBestAsk4/100):nBestAskQty4,int(nBestAsk5/100):nBestAskQty5}}
+            SKMain.TableThrd.Table_signal.emit(SKMain.Future.contractkpd.iloc[-1,4],total_dict)
 
 SKQuoteEvent=SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
