@@ -82,36 +82,45 @@ class SKMainWindow(QMainWindow): #主視窗
             pass
     
     def DomTableUI(self):
+        self.lastclose=0
         self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.DomTable.setHorizontalHeaderLabels(['買價','成交價','賣價'])
         self.bestfive=pd.DataFrame(np.arange(27).reshape(27),columns=['close'])
-        self.bestfive['bid']=''
-        self.bestfive['ask']=''
+        self.bestfive['bid']=0
+        self.bestfive['ask']=0
         i=0
         self.bestfive['close']=self.bestfive['close'].map(lambda x:self.Future.contractkpd.iloc[-1,4]+13-(self.bestfive['close'][self.bestfive['close']==x].index[0]))
+        self.lastfive=self.bestfive
         while i < self.bestfive.shape[0]:
             self.DomTable.setItem(i,1,QTableWidgetItem(str(self.bestfive.iloc[i,0])))
             i+=1
     
     def DomTableFillFunc(self,nclose,bid_dict,ask_dict):
-        self.bestfive['close']=self.bestfive['close'].map(lambda x:nclose+13-(self.bestfive['close'][self.bestfive['close']==x].index[0]))
+        if self.lastclose!=nclose:
+            self.bestfive['close']=self.bestfive['close'].map(lambda x:nclose+13-(self.bestfive['close'][self.bestfive['close']==x].index[0]))
         self.bestfive['bid']=self.bestfive['close'].map(bid_dict).fillna(value=0).astype(int)
         self.bestfive['ask']=self.bestfive['close'].map(ask_dict).fillna(value=0).astype(int)
-        # print('buy: ',bid_dict)
+        bidlist=(self.bestfive['bid']!=self.lastfive['bid']).index.tolist()
+        asklist=(self.bestfive['ask']!=self.lastfive['ask']).index.tolist()
         # print('ask: ',ask_dict)
         i=0
         while i < self.bestfive.shape[0]:
-            self.DomTable.setItem(i,1,QTableWidgetItem(str(self.bestfive.iloc[i,0])))
-            if self.bestfive.iloc[i,1]!=0:
-                self.DomTable.setItem(i,0,QTableWidgetItem(str(self.bestfive.iloc[i,1])))                
-            else:
-                self.DomTable.setItem(i,0,QTableWidgetItem(''))
-            if self.bestfive.iloc[i,2]!=0:
-                self.DomTable.setItem(i,2,QTableWidgetItem(str(self.bestfive.iloc[i,2])))                
-            else:                
-                self.DomTable.setItem(i,2,QTableWidgetItem(''))
+            if self.lastclose!=nclose:
+                self.DomTable.setItem(i,1,QTableWidgetItem(str(self.bestfive.iloc[i,0])))
+            if i in bidlist:
+                if self.bestfive.iloc[i,1]==0:
+                    self.DomTable.setItem(i,0,QTableWidgetItem(''))
+                else:
+                    self.DomTable.setItem(i,0,QTableWidgetItem(str(self.bestfive.iloc[i,1])))                
+            if i in asklist:
+                if self.bestfive.iloc[i,2]==0:
+                    self.DomTable.setItem(i,2,QTableWidgetItem(''))
+                else:                
+                    self.DomTable.setItem(i,2,QTableWidgetItem(str(self.bestfive.iloc[i,2])))                
             i+=1
+        self.lastclose=nclose
+        self.lastfive=self.bestfive
 
     # 登入功能結束
     #報價系統連線功能
