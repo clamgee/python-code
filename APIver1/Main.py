@@ -82,57 +82,67 @@ class SKMainWindow(QMainWindow): #主視窗
             pass
     
     def DomTableUI(self):
-        self.lastclose=0
         self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.DomTable.setHorizontalHeaderLabels(['買價','成交價','賣價'])
         self.bestfive=pd.DataFrame(np.arange(27).reshape(27),columns=['close'])
         self.bestfive['bid']=0
         self.bestfive['ask']=0
+        self.bestfive=self.bestfive[['close','bid','ask']].astype(int)
         i=0
-        self.bestfive['close']=self.bestfive['close'].map(lambda x:self.Future.contractkpd.iloc[-1,4]+13-(self.bestfive['close'][self.bestfive['close']==x].index[0]))
-        self.lastfive=self.bestfive
-        while i < self.bestfive.shape[0]:
+        # self.bestfive['close']=self.bestfive['close'].map(lambda x:self.Future.contractkpd.iloc[-1,4]+13-(self.bestfive['close'][self.bestfive['close']==x].index[0]))
+        self.lastclose=[]
+        self.lastbidlist=[]
+        self.lastasklist=[]
+        # while i < self.bestfive.shape[0]:
+        while i < 27 :
             tmpitem=QTableWidgetItem(str(self.bestfive.iloc[i,0]))
             tmpitem.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            if i == 13 :
+                tmpitem.setBackground(Qt.yellow)
             self.DomTable.setItem(i,1,tmpitem)
             # self.DomTable.setItem(i,1,QTableWidgetItem(str(self.bestfive.iloc[i,0])))
             i+=1
     
     def DomTableFillFunc(self,nclose,bid_dict,ask_dict):
-        if self.lastclose!=nclose:
-            self.bestfive['close']=self.bestfive['close'].map(lambda x:nclose+13-(self.bestfive['close'][self.bestfive['close']==x].index[0]))
+        Change=False
+        if self.lastclose != self.bestfive['close'].tolist():
+            Change=True
+            self.bestfive['close']=self.bestfive['close'].map(lambda x : nclose+13-(self.bestfive['close'][self.bestfive['close']==x].index[0]))
         self.bestfive['bid']=self.bestfive['close'].map(bid_dict).fillna(value=0).astype(int)
         self.bestfive['ask']=self.bestfive['close'].map(ask_dict).fillna(value=0).astype(int)
-        bidlist=(self.bestfive['bid']!=self.lastfive['bid']).index.tolist()
-        asklist=(self.bestfive['ask']!=self.lastfive['ask']).index.tolist()
-        # print('ask: ',ask_dict)
+        asklist=self.bestfive['ask'][self.bestfive['ask']!=0].index.tolist()
+        bidlist=self.bestfive['bid'][self.bestfive['bid']!=0].index.tolist()
+        # print('bid: ',self.bestfive['bid'].to_dict())
+        self.lastbidlist=list(set(self.lastbidlist+bidlist))
+        self.lastasklist=list(set(self.lastasklist+asklist))
         i=0
-        while i < self.bestfive.shape[0]:
-            if self.lastclose!=nclose:
+        # while i < self.bestfive.shape[0]:
+        while i < 27 :
+            if Change is True :
                 tmpitem=QTableWidgetItem(str(self.bestfive.iloc[i,0]))
                 tmpitem.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+                if i == 13 :
+                    tmpitem.setBackground(Qt.yellow)
                 self.DomTable.setItem(i,1,tmpitem)
-                # self.DomTable.setItem(i,1,QTableWidgetItem(str(self.bestfive.iloc[i,0])))
-            if i in bidlist:
+            if i in self.lastbidlist:
                 if self.bestfive.iloc[i,1]==0:
                     self.DomTable.setItem(i,0,QTableWidgetItem(''))
                 else:
                     biditem=QTableWidgetItem(str(self.bestfive.iloc[i,1]))
                     biditem.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
                     self.DomTable.setItem(i,0,biditem)
-                    # self.DomTable.setItem(i,0,QTableWidgetItem(str(self.bestfive.iloc[i,1])))                
-            if i in asklist:
+            if i in self.lastasklist:
                 if self.bestfive.iloc[i,2]==0:
                     self.DomTable.setItem(i,2,QTableWidgetItem(''))
                 else:
                     askitem=QTableWidgetItem(str(self.bestfive.iloc[i,2]))
                     askitem.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
                     self.DomTable.setItem(i,2,askitem)
-                    # self.DomTable.setItem(i,2,QTableWidgetItem(str(self.bestfive.iloc[i,2])))                
             i+=1
-        self.lastclose=nclose
-        self.lastfive=self.bestfive
+        self.lastclose=self.bestfive['close'].tolist()
+        self.lastbidlist=bidlist
+        self.lastasklist=asklist
 
     # 登入功能結束
     #報價系統連線功能
@@ -224,7 +234,8 @@ class SKQuoteLibEvents:
             # app.processEvents()   
             SKMain.Kui.update(xmin,xmax,ymin,ymax)
     def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
-            total_dict={'bid_dict':{int(nBestBid1/100):nBestBidQty1,int(nBestBid2/100):nBestBidQty2,int(nBestBid3/100):nBestBidQty3,int(nBestBid4/100):nBestBidQty4,int(nBestBid5/100):nBestBidQty5},'ask_dict':{int(nBestAsk1/100):nBestAskQty1,int(nBestAsk2/100):nBestAskQty2,int(nBestAsk3/100):nBestAskQty3,int(nBestAsk4/100):nBestAskQty4,int(nBestAsk5/100):nBestAskQty5}}
+            total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
+            'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
             SKMain.TableThrd.Table_signal.emit(SKMain.Future.contractkpd.iloc[-1,4],total_dict)
             # 更新點
 

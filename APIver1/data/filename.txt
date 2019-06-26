@@ -62,3 +62,6 @@ Ticks2019-06-18.txt
 Ticks2019-06-19.txt
 Ticks2019-06-20.txt
 Ticks2019-06-21.txt
+Ticks2019-06-24.txt
+Ticks2019-06-25.txt
+Ticks2019-06-26.txt
