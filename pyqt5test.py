@@ -1,9 +1,5 @@
 from PyQt5.uic import loadUi #使用.ui介面模組
-<<<<<<< HEAD
-from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt,QThread #插入資訊模組
-=======
 from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt,QThread,pyqtSignal #插入資訊模組
->>>>>>> 1da9cd85d2ff7e9e210addb20d351d3a98fe6b1c
 from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene,QHeaderView,QTableWidget,QTableWidgetItem #PyQt5介面與繪圖模組
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
@@ -157,12 +153,12 @@ class TableThread(QThread):
     #     print('ask: ',askdata)
 
 
-class Tablethread(Qthread):
-    signal=QtCore.pyqtSignal(tuple)
-    def signalemit(self,var:tuple):
-        self.signal.emit(var)
-    def __init__(self, *args, **kwargs):
-        super(Tablethread,self).__init__(*args, **kwargs)
+# class Tablethread(Qthread):
+#     signal=QtCore.pyqtSignal(tuple)
+#     def signalemit(self,var:tuple):
+#         self.signal.emit(var)
+#     def __init__(self, *args, **kwargs):
+#         super(Tablethread,self).__init__(*args, **kwargs)
 
 if __name__ == "__main__":
     import sys
@@ -185,10 +181,6 @@ if __name__ == "__main__":
     bestfive['ask']=''
     i=0
     print(bestfive.shape[0])
-<<<<<<< HEAD
-    bestfive['close']=bestfive['close'].map(lambda x:data.iloc[-1,4]+13-(bestfive['close'][bestfive['close']==x].index[0]))
-=======
->>>>>>> 1da9cd85d2ff7e9e210addb20d351d3a98fe6b1c
     while i < bestfive.shape[0]:
         TMWindow.tableWidget.setItem(i,1,QTableWidgetItem(str(bestfive.iloc[i,0])))
         # print(bestfive.iloc[i,0])
