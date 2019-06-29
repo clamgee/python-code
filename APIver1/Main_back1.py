@@ -89,45 +89,60 @@ class SKMainWindow(QMainWindow): #主視窗
         self.bestfive['bid']=0
         self.bestfive['ask']=0
         self.bestfive=self.bestfive[['close','bid','ask']].astype(int)
-        self.bestfive['closeTBitem']=''
-        self.bestfive['bidTBitem']=''
-        self.bestfive['askTBitem']=''
+        i=0
+        # self.bestfive['close']=self.bestfive['close'].map(lambda x:self.Future.contractkpd.iloc[-1,4]+13-(self.bestfive['close'][self.bestfive['close']==x].index[0]))
         self.lastclose=[]
         self.lastbidlist=[]
         self.lastasklist=[]
         # while i < self.bestfive.shape[0]:
-        i=0
         while i < 27 :
-            self.bestfive.loc[i,'closeTBitem']=QTableWidgetItem('')
-            self.DomTable.setItem(i,1,self.bestfive.loc[i,'closeTBitem'])
-            self.bestfive.loc[i,'bidTBitem']=QTableWidgetItem('')
-            self.DomTable.setItem(i,0,self.bestfive.loc[i,'bidTBitem'])
-            self.bestfive.loc[i,'askTBitem']=QTableWidgetItem('')
-            self.DomTable.setItem(i,2,self.bestfive.loc[i,'askTBitem'])
-            self.bestfive.loc[i,'closeTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.bestfive.loc[i,'bidTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.bestfive.loc[i,'askTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            i+=1    
-        self.bestfive.loc[13,'closeTBitem'].setBackground(Qt.yellow)
-        self.bestfive.loc[13,'bidTBitem'].setBackground(Qt.yellow)
-        self.bestfive.loc[13,'askTBitem'].setBackground(Qt.yellow)
-
+            tmpitem=QTableWidgetItem(str(self.bestfive.iloc[i,0]))
+            tmpitem.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            if i == 13 :
+                tmpitem.setBackground(Qt.yellow)
+            self.DomTable.setItem(i,1,tmpitem)
+            # self.DomTable.setItem(i,1,QTableWidgetItem(str(self.bestfive.iloc[i,0])))
+            i+=1
+    
     def DomTableFillFunc(self,nclose,bid_dict,ask_dict):
         Change=False
         if self.lastclose != self.bestfive['close'].tolist():
             Change=True
             self.bestfive['close']=self.bestfive['close'].map(lambda x : nclose+13-(self.bestfive['close'][self.bestfive['close']==x].index[0]))
-            self.bestfive['closeTBitem'].map(lambda x:x.setText(str(self.bestfive.loc[self.bestfive['closeTBitem'][self.bestfive['closeTBitem']==x].index[0],'close'])))
         self.bestfive['bid']=self.bestfive['close'].map(bid_dict).fillna(value=0).astype(int)
         self.bestfive['ask']=self.bestfive['close'].map(ask_dict).fillna(value=0).astype(int)
         asklist=self.bestfive['ask'][self.bestfive['ask']!=0].index.tolist()
         bidlist=self.bestfive['bid'][self.bestfive['bid']!=0].index.tolist()
-        # # print('bid: ',self.bestfive['bid'].to_dict())
+        # print('bid: ',self.bestfive['bid'].to_dict())
         self.lastbidlist=list(set(self.lastbidlist+bidlist))
         self.lastasklist=list(set(self.lastasklist+asklist))
+        i=0
+        # while i < self.bestfive.shape[0]:
+        while i < 27 :
+            if Change is True :
+                tmpitem=QTableWidgetItem(str(self.bestfive.iloc[i,0]))
+                tmpitem.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+                if i == 13 :
+                    tmpitem.setBackground(Qt.yellow)
+                self.DomTable.setItem(i,1,tmpitem)
+            if i in self.lastbidlist:
+                if self.bestfive.iloc[i,1]==0:
+                    self.DomTable.setItem(i,0,QTableWidgetItem(''))
+                else:
+                    biditem=QTableWidgetItem(str(self.bestfive.iloc[i,1]))
+                    biditem.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+                    self.DomTable.setItem(i,0,biditem)
+            if i in self.lastasklist:
+                if self.bestfive.iloc[i,2]==0:
+                    self.DomTable.setItem(i,2,QTableWidgetItem(''))
+                else:
+                    askitem=QTableWidgetItem(str(self.bestfive.iloc[i,2]))
+                    askitem.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+                    self.DomTable.setItem(i,2,askitem)
+            i+=1
         self.lastclose=self.bestfive['close'].tolist()
-        # self.lastbidlist=bidlist
-        # self.lastasklist=asklist
+        self.lastbidlist=bidlist
+        self.lastasklist=asklist
 
     # 登入功能結束
     #報價系統連線功能
