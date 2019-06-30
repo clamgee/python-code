@@ -16,6 +16,7 @@ class CandlestickItem(pg.GraphicsObject):
         self.low = 0
         self.high = 0
         self.timelist = []
+        self.fps=0
         self.countK = 60 #設定要顯示多少K線
 
     def set_data(self,data):
@@ -36,7 +37,7 @@ class CandlestickItem(pg.GraphicsObject):
             ep=int(1/(sum(self.timelist)/len(self.timelist)))
         else:
             ep=0
-        # print('每100張FPS: ',ep)
+        self.fps=ep
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
@@ -100,8 +101,6 @@ class KlineWidget(pg.PlotWidget):
     def __init__(self,name):
         pg.PlotWidget.__init__(self)
         self.name=name
-        # self.gui=QtGui.QGuiApplication.processEvents
-        # self.plt=pg.PlotWidget()
         self.showGrid(y=True)
         self.plotItem.hideAxis('left')
         self.plotItem.showAxis('right')
@@ -109,7 +108,8 @@ class KlineWidget(pg.PlotWidget):
         self.high=None
         self.low=None
         
-    def update(self,xmin,xmax,ymin,ymax):        
+    def update(self,xmin,xmax,ymin,ymax,fps):
+        self.plotItem.setLabel('top',text='FPS: '+str(fps))        
         if self.right!=xmax or self.high!=ymax or self.low!=ymin:
             self.right=xmax
             # self.plt.setRange(xRange=(xmin,xmax),yRange=(ymin,ymax))

@@ -40,6 +40,9 @@ class TMW(QMainWindow): #主視窗
         self.bestfive.loc[13,'askTBitem'].setBackground(Qt.yellow)
         self.bestfive['close']=self.bestfive['close'].map(lambda x : 10500+13-(self.bestfive['close'][self.bestfive['close']==x].index[0]))
         self.bestfive['closeTBitem'].map(lambda x:x.setText(str(self.bestfive.loc[self.bestfive['closeTBitem'][self.bestfive['closeTBitem']==x].index[0],'close'])))
+        print(self.bestfive.query('close==10500').index[0])
+        self.bidlist=[]
+        print(self.bestfive.loc[testlist,'close'])
 
 
 
@@ -52,7 +55,6 @@ if __name__ == "__main__":
     TMWindow.show()
 
     sys.exit(App.exec_())
-
 
 # import pandas as pd
 # import numpy as np
