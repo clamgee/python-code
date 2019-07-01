@@ -113,7 +113,7 @@ class SKMainWindow(QMainWindow): #主視窗
         self.bestfive.loc[13,'askTBitem'].setBackground(Qt.yellow)
 
     def DomTableFillFunc(self,nclose,bid_dict,ask_dict):
-        if self.lastclose != self.bestfive['close'].tolist():
+        if self.bestfive.loc[13,'close'] != nclose:
             self.bestfive['close']=self.bestfive['close'].map(lambda x : nclose+13-(self.bestfive['close'][self.bestfive['close']==x].index[0]))
             self.bestfive['closeTBitem'].map(lambda x:x.setText(str(self.bestfive.loc[self.bestfive['closeTBitem'][self.bestfive['closeTBitem']==x].index[0],'close'])))
         self.bestfive['bid']=self.bestfive['close'].map(bid_dict).fillna(value=0).astype(int)
@@ -123,9 +123,9 @@ class SKMainWindow(QMainWindow): #主視窗
         # # print('bid: ',self.bestfive['bid'].to_dict())
         self.lastbidlist=list(set(self.lastbidlist+bidlist))
         self.lastasklist=list(set(self.lastasklist+asklist))
-        self.bestfive.loc[self.lastbidlist,'bidTBitem'].map(lambda x : x.setText(str(self.bestfive.loc[self.bestfive['bidTBitem'][self.bestfive['bidTBitem']==x].index[0],'bid'])) if self.bestfive.loc[self.bestfive['bidTBitem'][self.bestfive['bidTBitem']==x].index[0],'bid']!=0 else x.strText('') )
-        self.bestfive.loc[self.lastasklist,'askTBitem'].map(lambda x : x.setText(str(self.bestfive.loc[self.bestfive['askTBitem'][self.bestfive['askTBitem']==x].index[0],'ask'])) if self.bestfive.loc[self.bestfive['askTBitem'][self.bestfive['askTBitem']==x].index[0],'ask']!=0 else x.strText('') )
-        self.lastclose=self.bestfive['close'].tolist()
+        self.bestfive.loc[self.lastbidlist,'bidTBitem'].map(lambda x : x.setText(str(self.bestfive.loc[self.bestfive['bidTBitem'][self.bestfive['bidTBitem']==x].index[0],'bid'])) if self.bestfive.loc[self.bestfive['bidTBitem'][self.bestfive['bidTBitem']==x].index[0],'bid']!=0 else x.setText('') )
+        self.bestfive.loc[self.lastasklist,'askTBitem'].map(lambda x : x.setText(str(self.bestfive.loc[self.bestfive['askTBitem'][self.bestfive['askTBitem']==x].index[0],'ask'])) if self.bestfive.loc[self.bestfive['askTBitem'][self.bestfive['askTBitem']==x].index[0],'ask']!=0 else x.setText('') )
+        # self.lastclose=self.bestfive['close'].tolist()
         self.lastbidlist=bidlist
         self.lastasklist=asklist
 
@@ -160,7 +160,7 @@ class SKMainWindow(QMainWindow): #主視窗
         ymax=self.Kitem.data.loc[xmin:xmax,['high']].values.max()
         self.GL.addWidget(self.Kui)
         # app.processEvents()   
-        self.Kui.update(xmin,xmax,ymin,ymax)
+        self.Kui.update(xmin,xmax,ymin,ymax,self.Kitem.FPS)
 
 class TableThread(QThread):
     Table_signal=pyqtSignal(int,dict)
@@ -214,7 +214,7 @@ class SKQuoteLibEvents:
             xmin=int(max(0,xmax-SKMain.Kitem.countK))
             ymin=SKMain.Kitem.data.loc[xmin:xmax,['low']].values.min()
             ymax=SKMain.Kitem.data.loc[xmin:xmax,['high']].values.max()
-            SKMain.Kui.update(xmin,xmax,ymin,ymax,SKMain.Kitem.)
+            SKMain.Kui.update(xmin,xmax,ymin,ymax,SKMain.Kitem.FPS)
     def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
             total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
             'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}

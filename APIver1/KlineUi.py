@@ -15,8 +15,8 @@ class CandlestickItem(pg.GraphicsObject):
         self.rect = None
         self.low = 0
         self.high = 0
+        self.FPS = 0
         self.timelist = []
-        self.fps=0
         self.countK = 60 #設定要顯示多少K線
 
     def set_data(self,data):
@@ -37,7 +37,7 @@ class CandlestickItem(pg.GraphicsObject):
             ep=int(1/(sum(self.timelist)/len(self.timelist)))
         else:
             ep=0
-        self.fps=ep
+        self.FPS = ep
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
