@@ -33,31 +33,6 @@ class dataprocess:
         self.newlist=[]
         self.tmpcontract=0
         self.CheckHour=0
-        # ----matplotlib
-        # plt.ion()
-        # self.fig=plt.figure()
-        # self.ax=self.fig.add_subplot(1,1,1)
-        # self.ax.set_autoscaley_on(True)
-        # self.fig.canvas.draw()
-        # self.fig.show()    
-
-    # mpl_finacial 
-    # def drawbar(self,ndatetime,nopen,nhigh,nlow,nclose):
-    #     start=time.time()
-    #     self.ax.cla()    
-    #     candlestick2_ohlc(
-    #         self.ax,
-    #         nopen,
-    #         nhigh,
-    #         nlow,
-    #         nclose,
-    #         width=0.6,colorup='r',colordown='g',alpha=1
-    #     )
-    #     self.ax.autoscale_view()
-    #     self.fig.canvas.flush_events()    
-    #     end=time.time()
-    #     ep=round((end-start),6)
-    #     print('繪圖時間: ',ep)
 
     def contractk(self,xdatetime,nBid,nAsk,nClose,nQty):
         ndatetime=datetime.datetime.strptime(xdatetime,'%Y-%m-%d %H:%M:%S.%f')
@@ -83,12 +58,12 @@ class dataprocess:
         return self.contractkpd.iloc[-1:].values
 
     def Ticks(self,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty):
-        nTime=str(nTimehms)
-        while len(nTime)<6:
-            nTime='0'+nTime
-        nTimemicro=str(nTimemillismicros)
-        while len(nTimemicro)<6:
-            nTimemicro='0'+nTimemicro
+        nTime=str(nTimehms).zfill(6)
+        # while len(nTime)<6:
+        #     nTime='0'+nTime
+        nTimemicro=str(nTimemillismicros).zfill(6)
+        # while len(nTimemicro)<6:
+        #     nTimemicro='0'+nTimemicro
         # nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
         ndatetime=datetime.datetime.strptime(str(nDate)+" "+nTime,'%Y%m%d %H%M%S').strftime('%Y-%m-%d %H:%M:%S')+"."+nTimemicro.strip()
         ndate=datetime.datetime.strptime(str(nDate),'%Y%m%d').date()

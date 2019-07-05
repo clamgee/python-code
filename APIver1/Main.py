@@ -30,6 +30,7 @@ class SKMainWindow(QMainWindow): #主視窗
         loadUi(r'UI/MainWindow.ui',self)
         self.showMaximized()
         self.SKID='未登入'
+        self.Bill=[] # 期貨權益數
         self.statusBar.showMessage('帳號:'+self.SKID)
         # 介面導入
         self.SKLoginUI() #登入介面
@@ -65,6 +66,8 @@ class SKMainWindow(QMainWindow): #主視窗
             ID=self.Login.LoginID.text().replace(' ','')
             PW=self.Login.LoginPW.text().replace(' ','')
             m_nCode = skC.SKCenterLib_Login(ID,PW)
+            m_nCode = skO.SKOrderLib_Initialize()
+            m_nCode = skO.GetUserAccount()
             if m_nCode==0:
                 self.SKID=ID
                 self.statusBar.showMessage('帳號:'+str(self.SKID))
@@ -172,6 +175,29 @@ class TableThread(QThread):
     def TableFunc(self,nclose,total_dict):
         SKMain.DomTableFillFunc(nclose,total_dict['bid_dict'],total_dict['ask_dict'])
 
+class SKOrderLibEvent:
+    def OnAccount(self,bstrLogInID,bstrAccountData):
+        Line=bstrAccountData.split(',')
+        if Line[0]=='TF':
+            bstrAccount=str(Line[1]).strip()+str(Line[3]).strip()
+            print('期貨帳戶: '+bstrAccount,',',Line[5])
+            m_nCode=skO.GetFutureRights(bstrLogInID,bstrAccount,1)
+            m_nCode=skO.ReadCertByID(bstrLogInID)
+            SKMain.SKMessage.textBrowser.append(str(m_nCode))
+    
+    def OnFutureRights(self,bstrData):
+        Line=bstrData.split(',')
+        for row in Line:
+            if row.find('##')>=0:
+                print('rows: ',SKMain.Bill,' \n多少個 : ',len(SKMain.Bill))
+                break
+            else:
+                if row.find('+')>=0 :
+                    SKMain.Bill.append(int(row.replace('+','').strip()))
+                else :
+                    SKMain.Bill.append(row.strip())
+
+
 class SKQuoteLibEvents:
      
     def OnConnection(self, nKind, nCode):
@@ -221,8 +247,11 @@ class SKQuoteLibEvents:
             SKMain.TableThrd.Table_signal.emit(SKMain.Future.contractkpd.iloc[-1,4],total_dict)
             # 更新點
 
+#comtypes使用此方式註冊callback
 SKQuoteEvent=SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
+SKOrderEvent = SKOrderLibEvent()
+SKOrderLibEventHandler = comtypes.client.GetEvents(skO, SKOrderEvent)
 
 if __name__ == "__main__":
     SKApp=QApplication(sys.argv)
