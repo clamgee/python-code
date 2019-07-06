@@ -17,8 +17,8 @@ class MessageDialog(QDialog):
         self.setWindowTitle(gname)
         loadUi(r'UI/Message.ui',self)
 
-# if __name__ == "__main__":
-#     LoginApp=QApplication(sys.argv)
-#     SKLogin=LoginDialog()
-#     SKLogin.show()
-#     sys.exit(LoginApp.exec_())
+if __name__ == "__main__":
+    LoginApp=QApplication(sys.argv)
+    SKLogin=LoginDialog()
+    SKLogin.show()
+    sys.exit(LoginApp.exec_())

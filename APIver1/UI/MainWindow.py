@@ -161,6 +161,7 @@ class Ui_CapitalAPI(object):
         self.Right_TB = QtWidgets.QTableView(self.tab_2)
         self.Right_TB.setAlternatingRowColors(True)
         self.Right_TB.setObjectName("Right_TB")
+        self.tableitem=self.Right_TB.sets
         self.horizontalLayout_6.addWidget(self.Right_TB)
         self.horizontalLayout_6.setStretch(0, 1)
         self.horizontalLayout_6.setStretch(1, 1)

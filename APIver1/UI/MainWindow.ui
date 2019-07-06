@@ -270,18 +270,55 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <widget class="QTableView" name="tableView"/>
+             <widget class="QTableWidget" name="Commission_TB"/>
             </item>
             <item>
-             <widget class="QTableView" name="tableView_2"/>
+             <widget class="QTableWidget" name="Onopen_TB"/>
             </item>
            </layout>
           </item>
           <item>
-           <widget class="QTableView" name="Right_TB">
+           <widget class="QTableWidget" name="Right_TB">
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
+            <property name="rowCount">
+             <number>25</number>
+            </property>
+            <property name="columnCount">
+             <number>3</number>
+            </property>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <row/>
+            <column/>
+            <column/>
+            <column/>
            </widget>
           </item>
          </layout>
