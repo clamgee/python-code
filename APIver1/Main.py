@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphi
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 #匯入外部字寫套件
-import APIver1.FuncUI
+import FuncUI
 import tickstokline
 import KlineUi
 # 使用SKCOM元件
