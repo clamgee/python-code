@@ -9,7 +9,6 @@ Clam-NB.code-workspace
 __pycache__/*
 /.git
 *.json
-.gitignore
 /__pycache__
 *.code-workspace
 /tmp
