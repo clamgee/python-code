@@ -29,13 +29,14 @@ class SKMainWindow(QMainWindow): #主視窗
         super(SKMainWindow,self).__init__()
         loadUi(r'UI/MainWindow.ui',self)
         self.showMaximized()
-        self.SKID='未登入'
-        self.Bill=[] # 期貨權益數
+        # 帳號處理
+        self.SKID='未登入' # 
         self.statusBar.showMessage('帳號:'+self.SKID)
+        self.Bill=[]
         # 介面導入
         self.SKLoginUI() #登入介面
         self.SKMessageFunc()#系統訊息介面
-        
+        self.RightUI() #權益數介面        
         #ManuBar連結
         self.actionLogin.triggered.connect(self.Login.show)#登入介面連結
         #ToolBar連結
@@ -83,7 +84,32 @@ class SKMainWindow(QMainWindow): #主視窗
             self.SKMessage.textBrowser.append('發生錯誤:'+e)
             # print('系統錯誤:'+e)
             pass
-    
+    # 登入功能結束
+    # 權益數介面
+    def RightUI(self):
+        self.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.Right_TB.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.Right_TB.setHorizontalHeaderLabels(['帳戶餘額','浮動損益','已實現費用'])
+
+        self.Bill=pd.DataFrame(np.arange(39).reshape(39),columns=['Right']) # 期貨權益數
+        # self.Bill['RightItem']=''
+        i=0
+        while i < self.Bill.shape[0]:
+            self.Bill.loc[i,'Right']=QTableWidgetItem('')
+            self.Bill.loc[i,'Right'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            i+=1
+        i=1
+        j=0
+        while i < self.Right_TB.rowCount():
+            self.Right_TB.setItem(i,0,self.Bill.loc[j,'Right'])
+            j+=1
+            self.Right_TB.setItem(i,1,self.Bill.loc[j,'Right'])
+            j+=1
+            self.Right_TB.setItem(i,2,self.Bill.loc[j,'Right'])
+            j+=1
+            i+=2
+    # 權益數介面結束    
+    # 閃電下單
     def DomTableUI(self):
         self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -131,16 +157,16 @@ class SKMainWindow(QMainWindow): #主視窗
         # self.lastclose=self.bestfive['close'].tolist()
         self.lastbidlist=bidlist
         self.lastasklist=asklist
-
-    # 登入功能結束
-    #報價系統連線功能
+    # 閃電下單結束
+    # 報價系統連線功能
     def ConnectFun(self):
         m_nCode=skQ.SKQuoteLib_EnterMonitor()
         self.SKMessage.textBrowser.append(str(m_nCode))
     def disconnectFun(self):
         m_nCode=skQ.SKQuoteLib_LeaveMonitor()
         self.SKMessage.textBrowser.append(str(m_nCode))
-    #商品訂閱
+    # 報價系統結束
+    # 商品訂閱
     def commodityFnc(self):
         nstock=self.commodityline.text().replace(' ','')
         self.Future = tickstokline.dataprocess(nstock)
@@ -164,7 +190,8 @@ class SKMainWindow(QMainWindow): #主視窗
         self.GL.addWidget(self.Kui)
         # app.processEvents()   
         self.Kui.update(xmin,xmax,ymin,ymax,self.Kitem.FPS)
-
+    # 商品訂閱結束
+# 多執行續 閃電下單
 class TableThread(QThread):
     Table_signal=pyqtSignal(int,dict)
 
@@ -187,15 +214,16 @@ class SKOrderLibEvent:
     
     def OnFutureRights(self,bstrData):
         Line=bstrData.split(',')
+        i=0
         for row in Line:
             if row.find('##')>=0:
-                print('rows: ',SKMain.Bill,' \n多少個 : ',len(SKMain.Bill))
                 break
             else:
                 if row.find('+')>=0 :
-                    SKMain.Bill.append(int(row.replace('+','').strip()))
+                    SKMain.Bill.loc[i,'Right'].setText(str(int(row.replace('+','').strip())))
                 else :
-                    SKMain.Bill.append(row.strip())
+                    SKMain.Bill.loc[i,'Right'].setText(row.strip())
+            i+=1
 
 
 class SKQuoteLibEvents:

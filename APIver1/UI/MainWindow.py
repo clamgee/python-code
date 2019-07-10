@@ -160,6 +160,7 @@ class Ui_CapitalAPI(object):
         self.horizontalLayout_6.addLayout(self.verticalLayout_5)
         self.Right_TB = QtWidgets.QTableView(self.tab_2)
         self.Right_TB.setAlternatingRowColors(True)
+        self.Right_TB.horizontalHeader.setAutoFillBackground
         self.Right_TB.setObjectName("Right_TB")
         self.tableitem=self.Right_TB.sets
         self.horizontalLayout_6.addWidget(self.Right_TB)
