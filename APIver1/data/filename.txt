@@ -74,3 +74,5 @@ Ticks2019-07-04.txt
 Ticks2019-07-05.txt
 Ticks2019-07-08.txt
 Ticks2019-07-09.txt
+Ticks2019-07-10.txt
+Ticks2019-07-11.txt
