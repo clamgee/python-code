@@ -224,7 +224,22 @@ class SKOrderLibEvent:
                 else :
                     SKMain.Bill.loc[i,'Right'].setText(row.strip())
             i+=1
+    def OnOpenInterest(self,bstrData):
+        print(bstrData)
 
+class SKReplyLibEvent:
+    def OnConnect(self,bstrUserID,nErrorCode):
+        nErrorStr=skC.SKCenterLib_GetReturnCodeMessage(nErrorCode)
+        print('連線成功: ',bstrUserID,nErrorStr)
+    def OnDisconnect(self,bstrUserID,nErrorCode):
+        nErrorStr=skC.SKCenterLib_GetReturnCodeMessage(nErrorCode)
+        print('連線失敗: ',bstrUserID,nErrorStr)
+    def OnComplete(self,bstrUserID):
+        print('回報完成: ',bstrUserID)
+    def OnNewData(self,bstrUserID,bstrData):
+        print(bstrData,'一般回報:',bstrData)
+    def OnSmartData(self,bstrUserID,bstrData):
+        print(bstrData,'智動回報:',bstrData)
 
 class SKQuoteLibEvents:
      
@@ -280,6 +295,9 @@ SKQuoteEvent=SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
 SKOrderEvent = SKOrderLibEvent()
 SKOrderLibEventHandler = comtypes.client.GetEvents(skO, SKOrderEvent)
+SKReplyEvent=SKReplyLibEvent()
+SKReplyLibEventHandler = comtypes.client.GetEvents(skR, SKReplyEvent)
+
 
 if __name__ == "__main__":
     SKApp=QApplication(sys.argv)
