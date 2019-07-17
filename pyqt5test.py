@@ -138,6 +138,23 @@ class TMW(QMainWindow): #主視窗
         total_dict={'bid':{10500:25,10501:22},'ask':{10503:27,10504:21}}
         close=10500
         self.tableT.bid_signal.emit(close,total_dict)
+        self.TB_BtnUI()
+        # 
+    
+    def TB_BtnUI(self):
+        self.TB_Btn.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.TB_Btn.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        combox_lay = QtWidgets.QComboBox(self)
+        combox_lay.addItems(["I","II"])
+        self.TB_Btn.setCellWidget(0, 1, combox_lay)
+        btn = QtWidgets.QPushButton()
+        btn.setText('Test1')
+        btn1 = QtWidgets.QPushButton()
+        btn1.setText('Test2')
+        self.TB_Btn.setCellWidget(0,0,btn|btn1)
+
+
+
 
 
 class TableThread(QThread):
@@ -174,7 +191,7 @@ if __name__ == "__main__":
     item=CandlestickItem()
     KLWidget=pg.PlotWidget()
     KLWidget.addItem(item)
-    TMWindow.gridLayout_3.addWidget(KLWidget)
+    TMWindow.gridLayout.addWidget(KLWidget)
     item.set_data(data)
     bestfive=pd.DataFrame(np.arange(27).reshape(27),columns=['close'])
     bestfive['bid']=''
