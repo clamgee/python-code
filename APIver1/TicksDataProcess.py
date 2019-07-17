@@ -4,7 +4,7 @@ import numba
 
 df=None
 df1=pd.read_csv('data/filename.txt')
-if 'filename1.txt' not in df1['filename'].values:
+if 'filename.txt' not in df1['filename'].values:
     print('yes')
 else :
     print('no')

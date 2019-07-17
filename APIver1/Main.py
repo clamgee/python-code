@@ -238,7 +238,11 @@ class SKReplyLibEvent:
     def OnComplete(self,bstrUserID):
         print('回報完成: ',bstrUserID)
     def OnNewData(self,bstrUserID,bstrData):
-        print(bstrUserID,'一般回報:',bstrData)
+        Line=bstrData.split(',')
+        i=0
+        for row in Line :
+            print(i,',',row)
+            i+=1
     def OnSmartData(self,bstrUserID,bstrData):
         print(bstrData,'智動回報:',bstrData)
 
