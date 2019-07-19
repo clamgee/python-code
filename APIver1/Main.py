@@ -210,6 +210,7 @@ class SKOrderLibEvent:
             print('期貨帳戶: '+bstrAccount,',',Line[5])
             m_nCode=skO.GetFutureRights(bstrLogInID,bstrAccount,1)
             m_nCode=skO.ReadCertByID(bstrLogInID)
+            m_nCode = skR.SKReplyLib_ConnectByID(bstrLogInID)
             SKMain.SKMessage.textBrowser.append(str(m_nCode))
     
     def OnFutureRights(self,bstrData):
@@ -237,7 +238,11 @@ class SKReplyLibEvent:
     def OnComplete(self,bstrUserID):
         print('回報完成: ',bstrUserID)
     def OnNewData(self,bstrUserID,bstrData):
-        print(bstrData,'一般回報:',bstrData)
+        Line=bstrData.split(',')
+        i=0
+        for row in Line :
+            print(i,',',row)
+            i+=1
     def OnSmartData(self,bstrUserID,bstrData):
         print(bstrData,'智動回報:',bstrData)
 
