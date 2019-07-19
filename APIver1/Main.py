@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 # 使用PyQt5套件
 from PyQt5.uic import loadUi #使用.ui介面模組
-from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt,QThread,pyqtSignal #插入資訊模組
+from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt,QThread,pyqtSignal,QAbstractTableModel #插入資訊模組
 from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene,QHeaderView,QTableWidgetItem #PyQt5介面與繪圖模組
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
@@ -74,6 +74,7 @@ class SKMainWindow(QMainWindow): #主視窗
                 self.statusBar.showMessage('帳號:'+str(self.SKID))
                 self.SKMessage.textBrowser.append('登入成功')
                 self.SKMessage.textBrowser.append('帳號: '+str(self.SKID))
+                self.ReplyFnc()
                 self.Login.close()
             else:
                 self.SKMessage.textBrowser.append('登入失敗,錯誤碼:')
@@ -191,6 +192,11 @@ class SKMainWindow(QMainWindow): #主視窗
         # app.processEvents()   
         self.Kui.update(xmin,xmax,ymin,ymax,self.Kitem.FPS)
     # 商品訂閱結束
+    #委託回報資料
+    def ReplyFnc(self):
+        self.replypd=pd.DataFrame(columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','條件','倉位','當沖','委託序號','委託書號','委託日期','委託時間','交易時段'])
+        self.ReplyCRpdMode = PandasModel()
+    #委託回報資料結束
 # 多執行續 閃電下單
 class TableThread(QThread):
     Table_signal=pyqtSignal(int,dict)
@@ -201,6 +207,31 @@ class TableThread(QThread):
 
     def TableFunc(self,nclose,total_dict):
         SKMain.DomTableFillFunc(nclose,total_dict['bid_dict'],total_dict['ask_dict'])
+
+class PandasModel(QAbstractTableModel):
+
+    def __init__(self):
+        QAbstractTableModel.__init__(self)
+
+    def setdata(self,data):
+        self._data=data
+
+    def rowCount(self, parent=None):
+        return self._data.shape[0]
+
+    def columnCount(self, parnet=None):
+        return self._data.shape[1]
+
+    def data(self, index, role=Qt.DisplayRole):
+        if index.isValid():
+            if role == Qt.DisplayRole:
+                return str(self._data.iloc[index.row(), index.column()])
+        return None
+
+    def headerData(self, col, orientation, role):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            return self._data.columns[col]
+        return None
 
 class SKOrderLibEvent:
     def OnAccount(self,bstrLogInID,bstrAccountData):
@@ -236,6 +267,7 @@ class SKReplyLibEvent:
         nErrorStr=skC.SKCenterLib_GetReturnCodeMessage(nErrorCode)
         print('連線失敗: ',bstrUserID,nErrorStr)
     def OnComplete(self,bstrUserID):
+        SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
         print('回報完成: ',bstrUserID)
     def OnNewData(self,bstrUserID,bstrData):
         Line=bstrData.split(',')
@@ -243,6 +275,10 @@ class SKReplyLibEvent:
         for row in Line :
             print(i,',',row)
             i+=1
+        tmplist=[[Line[8],Line[6],Line[11],Line[20],Line[2],Line[20],Line[20],Line[6],Line[6],Line[6],Line[0],Line[10],Line[23],Line[24],Line[24]]]
+        SKMain.replypd.append(pd.DataFrame(tmplist,columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','條件','倉位','當沖','委託序號','委託書號','委託日期','委託時間','交易時段']),ignore_index=True)
+        
+    
     def OnSmartData(self,bstrUserID,bstrData):
         print(bstrData,'智動回報:',bstrData)
 

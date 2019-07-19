@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1026</width>
+    <width>1002</width>
     <height>571</height>
    </rect>
   </property>
@@ -270,7 +270,11 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <widget class="QTableWidget" name="Commission_TB"/>
+             <widget class="QTableView" name="Reply_TBW">
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QTableWidget" name="Onopen_TB"/>
@@ -1014,7 +1018,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1026</width>
+     <width>1002</width>
      <height>21</height>
     </rect>
    </property>
