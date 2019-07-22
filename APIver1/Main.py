@@ -74,7 +74,7 @@ class SKMainWindow(QMainWindow): #主視窗
                 self.statusBar.showMessage('帳號:'+str(self.SKID))
                 self.SKMessage.textBrowser.append('登入成功')
                 self.SKMessage.textBrowser.append('帳號: '+str(self.SKID))
-                self.ReplyFnc()
+                self.Reply_Open_Fnc()
                 self.Login.close()
             else:
                 self.SKMessage.textBrowser.append('登入失敗,錯誤碼:')
@@ -192,11 +192,14 @@ class SKMainWindow(QMainWindow): #主視窗
         # app.processEvents()   
         self.Kui.update(xmin,xmax,ymin,ymax,self.Kitem.FPS)
     # 商品訂閱結束
-    #委託回報資料
-    def ReplyFnc(self):
+    #委託未平倉回報資料
+    def Reply_Open_Fnc(self):
         self.replypd=pd.DataFrame(columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','條件','倉位','當沖','委託序號','委託書號','委託日期','委託時間','交易時段'])
         self.ReplyCRpdMode = PandasModel()
-    #委託回報資料結束
+        self.openpd=pd.DataFrame(columns=['市場別','帳號','商品','買賣別','未平倉部位','當沖未平倉部位','平均成本','一點價值','單口手續費','交易稅'])
+        self.OpenCRpdMode = PandasModel()
+
+    #委託未平回報資料結束
 # 多執行續 閃電下單
 class TableThread(QThread):
     Table_signal=pyqtSignal(int,dict)
@@ -241,7 +244,8 @@ class SKOrderLibEvent:
             print('期貨帳戶: '+bstrAccount,',',Line[5])
             m_nCode=skO.GetFutureRights(bstrLogInID,bstrAccount,1)
             m_nCode=skO.ReadCertByID(bstrLogInID)
-            m_nCode = skR.SKReplyLib_ConnectByID(bstrLogInID)
+            m_nCode=skR.SKReplyLib_ConnectByID(bstrLogInID)
+            m_nCode=skO.GetOpenInterest(bstrLogInID,bstrAccount)
             SKMain.SKMessage.textBrowser.append(str(m_nCode))
     
     def OnFutureRights(self,bstrData):

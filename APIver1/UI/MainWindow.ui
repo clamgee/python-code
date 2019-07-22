@@ -277,7 +277,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QTableWidget" name="Onopen_TB"/>
+             <widget class="QTableWidget" name="Open_TBW"/>
             </item>
            </layout>
           </item>
