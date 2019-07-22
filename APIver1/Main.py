@@ -198,6 +198,7 @@ class SKMainWindow(QMainWindow): #主視窗
         self.ReplyCRpdMode = PandasModel()
         self.openpd=pd.DataFrame(columns=['市場別','帳號','商品','買賣別','未平倉部位','當沖未平倉部位','平均成本','一點價值','單口手續費','交易稅'])
         self.OpenCRpdMode = PandasModel()
+        self.test=0
 
     #委託未平回報資料結束
 # 多執行續 閃電下單
@@ -261,7 +262,13 @@ class SKOrderLibEvent:
                     SKMain.Bill.loc[i,'Right'].setText(row.strip())
             i+=1
     def OnOpenInterest(self,bstrData):
-        print('持倉回報: ',bstrData)
+        print('持倉回報: ',bstrData,' 次數:',SKMain.test)
+        i=0
+        Line=bstrData.split(',')
+        for row in Line:
+            print('次數: ', SKMain.test, '欄位:',i,'數值:',row)
+            i+=1
+        SKMain.test+=1
 
 class SKReplyLibEvent:
     def OnConnect(self,bstrUserID,nErrorCode):
@@ -271,23 +278,21 @@ class SKReplyLibEvent:
         nErrorStr=skC.SKCenterLib_GetReturnCodeMessage(nErrorCode)
         print('連線失敗: ',bstrUserID,nErrorStr)
     def OnComplete(self,bstrUserID):
-        print(SKMain.replypd)
+        # print(SKMain.replypd)
         SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
         SKMain.Reply_TBW.setModel(SKMain.ReplyCRpdMode)
         print('回報完成: ',bstrUserID)
     def OnNewData(self,bstrUserID,bstrData):
         Line=bstrData.split(',')
+        tmplist=[[Line[8],Line[6],Line[11],Line[20],Line[2],Line[20],Line[20],Line[6],Line[6],Line[6],Line[0],Line[10],Line[23],Line[24],Line[24]]]
+        SKMain.replypd=SKMain.replypd.append(pd.DataFrame(tmplist,columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','條件','倉位','當沖','委託序號','委託書號','委託日期','委託時間','交易時段']),ignore_index=True)
         # i=0
         # for row in Line :
         #     print(i,',',row)
         #     i+=1
-        tmplist=[[Line[8],Line[6],Line[11],Line[20],Line[2],Line[20],Line[20],Line[6],Line[6],Line[6],Line[0],Line[10],Line[23],Line[24],Line[24]]]
-        print(tmplist)
-        SKMain.replypd=SKMain.replypd.append(pd.DataFrame(tmplist,columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','條件','倉位','當沖','委託序號','委託書號','委託日期','委託時間','交易時段']),ignore_index=True)
-        print('Test:',SKMain.replypd)
-    
+        # print('Test:',SKMain.replypd)        
     def OnSmartData(self,bstrUserID,bstrData):
-        print(bstrData,'智動回報:',bstrData)
+        print(bstrUserID,'智動回報:',bstrData)
 
 class SKQuoteLibEvents:
      
