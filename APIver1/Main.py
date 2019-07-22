@@ -226,7 +226,7 @@ class SKOrderLibEvent:
                     SKMain.Bill.loc[i,'Right'].setText(row.strip())
             i+=1
     def OnOpenInterest(self,bstrData):
-        print(bstrData)
+        print('持倉回報: ',bstrData)
 
 class SKReplyLibEvent:
     def OnConnect(self,bstrUserID,nErrorCode):
