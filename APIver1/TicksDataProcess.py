@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import numba
 
 df=None
 df1=pd.read_csv('data/filename.txt')
