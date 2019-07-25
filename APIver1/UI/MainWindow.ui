@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1002</width>
-    <height>571</height>
+    <width>1052</width>
+    <height>556</height>
    </rect>
   </property>
   <property name="font">
@@ -38,38 +38,42 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="5,1">
+         <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="6,1">
           <item>
            <layout class="QGridLayout" name="GL"/>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,1,30,3,1">
+           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,23,1,1,1,1,1">
             <item>
-             <widget class="QLabel" name="label">
-              <property name="font">
-               <font>
-                <pointsize>9</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>商品</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="commodityline">
-              <property name="font">
-               <font>
-                <pointsize>9</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>TX00</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,4">
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>商品:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="commodityline">
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>TX00</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -159,69 +163,159 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,2,1">
+             <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2,1,2">
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout_3" stretch="2,1">
-                <item>
-                 <widget class="QPushButton" name="pushButton">
-                  <property name="autoFillBackground">
-                   <bool>false</bool>
-                  </property>
-                  <property name="text">
-                   <string>市價買</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="LimitBid_btn">
-                  <property name="text">
-                   <string>限價買</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>未平倉:</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout_2">
-                <item>
-                 <widget class="QLabel" name="label_2">
-                  <property name="text">
-                   <string>未平倉</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_3">
-                  <property name="text">
-                   <string>損益</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="Price_Spin">
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                  <property name="maximum">
-                   <number>0</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <widget class="QLabel" name="label_6">
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(255, 255, 255);</string>
+                </property>
+                <property name="text">
+                 <string>0</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
               </item>
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout_4" stretch="2,1">
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>損益:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_7">
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(255, 255, 255);</string>
+                </property>
+                <property name="text">
+                 <string>0</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,1,3,3">
+              <item>
+               <widget class="QPushButton" name="pushButton">
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>買</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="LimitBid_btn">
+                <property name="text">
+                 <string>賣</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox_2">
+                <item>
+                 <property name="text">
+                  <string>新倉</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>平倉</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>自動</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox">
+                <item>
+                 <property name="text">
+                  <string>ROD</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>IOC</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>FOK</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="2,3,5">
+              <item>
+               <widget class="QLabel" name="label_8">
+                <property name="text">
+                 <string>委託價:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="Price_Spin">
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="minimum">
+                 <number>3000</number>
+                </property>
+                <property name="maximum">
+                 <number>15000</number>
+                </property>
+                <property name="value">
+                 <number>15000</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,1,2">
                 <item>
                  <widget class="QPushButton" name="pushButton_2">
                   <property name="text">
-                   <string>市價賣</string>
+                   <string>現</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="Limitask_btn">
                   <property name="text">
-                   <string>限價賣</string>
+                   <string>市</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="Limitask_btn_2">
+                  <property name="text">
+                   <string>範市</string>
                   </property>
                  </widget>
                 </item>
@@ -230,27 +324,52 @@
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,1,1">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,2">
+                <item>
+                 <widget class="QLabel" name="label_4">
+                  <property name="text">
+                   <string>口數:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinBox">
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="checkBox">
+                <property name="text">
+                 <string>盤中</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_3">
+                <property name="text">
+                 <string>確定</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_12">
               <item>
                <widget class="QPushButton" name="pushButton_6">
                 <property name="text">
                  <string>一鍵刪單</string>
                 </property>
                </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
-                <item>
-                 <widget class="QLabel" name="label_4">
-                  <property name="text">
-                   <string>口數設定:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spinBox"/>
-                </item>
-               </layout>
               </item>
               <item>
                <widget class="QPushButton" name="pushButton_5">
@@ -1025,7 +1144,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1002</width>
+     <width>1052</width>
      <height>21</height>
     </rect>
    </property>
