@@ -33,6 +33,7 @@ class SKMainWindow(QMainWindow): #主視窗
         self.SKID='未登入' # 
         self.statusBar.showMessage('帳號:'+self.SKID)
         self.Bill=[]
+        self.fOrder=sk.FUTUREORDER()
         # 介面導入
         self.SKLoginUI() #登入介面
         self.SKMessageFunc()#系統訊息介面
@@ -46,6 +47,7 @@ class SKMainWindow(QMainWindow): #主視窗
 
         # Tab內功能組連結
         self.commoditybtn.clicked.connect(self.commodityFnc)
+        self.LimitBid_btn.clicked.connect(self.OrderFunc)
 
     # 呼叫系統訊息介面與功能
     def SKMessageFunc(self):
@@ -199,9 +201,35 @@ class SKMainWindow(QMainWindow): #主視窗
         self.openpd=pd.DataFrame(columns=['市場別','帳號','商品','買賣別','未平倉部位','當沖未平倉部位','平均成本','一點價值','單口手續費','交易稅'])
         self.OpenCRpdMode = PandasModel()
         self.test=0
+    #委託未平倉回報結束
+    #下單功能
+    def OrderFunc(self):
+        # 填入完整帳號
+        self.fOrder.bstrFullAccount =  self.Future_Acc_CBox.currentText()
+        # 填入期權代號
+        self.fOrder.bstrStockNo = self.commodityline.text()
+        # 買賣別
+        self.fOrder.sBuySell = 0
+        # ROD、IOC、FOK
+        self.fOrder.sTradeType = 0
+        # 非當沖、當沖
+        self.fOrder.sDayTrade = 0
+        # 委託價
+        self.fOrder.bstrPrice = '10000'
+        # 委託數量
+        self.fOrder.nQty = int(0)
+        # 新倉、平倉、自動
+        self.fOrder.sNewClose = 0
+        # 盤中、T盤預約
+        self.fOrder.sReserved = 0
 
-    #委託未平回報資料結束
-# 多執行續 閃電下單
+        print('FutureOrder:',self.fOrder)
+
+
+
+    #下單功能結束
+
+# 多執行續閃電下單
 class TableThread(QThread):
     Table_signal=pyqtSignal(int,dict)
 
@@ -249,6 +277,8 @@ class SKOrderLibEvent:
             m_nCode=skO.GetOpenInterest(bstrLogInID,bstrAccount)
             SKMain.SKMessage.textBrowser.append(str(m_nCode))
     
+    def OnAsyncOrder(self,nThreadID,nCode,bstrMessage):
+        print('OnAsyncOrder:',nThreadID,',',nCode,',',bstrMessage)
     def OnFutureRights(self,bstrData):
         Line=bstrData.split(',')
         i=0
@@ -263,12 +293,12 @@ class SKOrderLibEvent:
             i+=1
     def OnOpenInterest(self,bstrData):
         print('持倉回報: ',bstrData,' 次數:',SKMain.test)
-        i=0
-        Line=bstrData.split(',')
-        for row in Line:
-            print('次數: ', SKMain.test, '欄位:',i,'數值:',row)
-            i+=1
         SKMain.test+=1
+        # i=0
+        # Line=bstrData.split(',')
+        # for row in Line:
+        #     print('次數: ', SKMain.test, '欄位:',i,'數值:',row)
+        #     i+=1
 
 class SKReplyLibEvent:
     def OnConnect(self,bstrUserID,nErrorCode):

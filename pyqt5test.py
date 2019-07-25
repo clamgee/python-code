@@ -151,7 +151,7 @@ class TMW(QMainWindow): #主視窗
         btn.setText('Test1')
         btn1 = QtWidgets.QPushButton()
         btn1.setText('Test2')
-        self.TB_Btn.setCellWidget(0,0,btn|btn1)
+        self.TB_Btn.setCellWidget(0,0,btn)
 
 
 

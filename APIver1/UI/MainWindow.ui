@@ -30,7 +30,7 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -173,7 +173,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_3">
+                 <widget class="QPushButton" name="LimitBid_btn">
                   <property name="text">
                    <string>限價買</string>
                   </property>
@@ -198,7 +198,14 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="spinBox_2"/>
+                 <widget class="QSpinBox" name="Price_Spin">
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="maximum">
+                   <number>0</number>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
@@ -212,7 +219,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_4">
+                 <widget class="QPushButton" name="Limitask_btn">
                   <property name="text">
                    <string>限價賣</string>
                   </property>

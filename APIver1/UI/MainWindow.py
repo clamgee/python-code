@@ -216,6 +216,7 @@ class Ui_CapitalAPI(object):
         CapitalAPI.setWindowTitle(_translate("CapitalAPI", "群益API"))
         self.label.setText(_translate("CapitalAPI", "商品"))
         self.commodityline.setText(_translate("CapitalAPI", "TX00"))
+        self.commodityline.text
         self.TDetailbtn.setText(_translate("CapitalAPI", "交易明細"))
         self.commoditybtn.setText(_translate("CapitalAPI", "OK"))
         self.pushButton.setText(_translate("CapitalAPI", "市價買"))
