@@ -87,8 +87,6 @@ Ticks2019-07-23.txt
 Ticks2019-07-24.txt
 Ticks2019-07-25.txt
 Ticks2019-07-26.txt
-<<<<<<< HEAD
 Ticks2019-07-29.txt
 Ticks2019-07-30.txt
-=======
->>>>>>> c674e39e482ad5b97e8b4e996fcfe470b35c2ac3
+Ticks2019-07-31.txt

@@ -48,6 +48,7 @@ class SKMainWindow(QMainWindow): #主視窗
         # Tab內功能組連結
         self.commoditybtn.clicked.connect(self.commodityFnc)
         self.LimitBid_btn.clicked.connect(self.OrderFunc)
+        self.Order_btn.clicked.connect(self.OrderFunc)
 
     # 呼叫系統訊息介面與功能
     def SKMessageFunc(self):
@@ -209,21 +210,23 @@ class SKMainWindow(QMainWindow): #主視窗
         # 填入期權代號
         self.fOrder.bstrStockNo = self.commodityline.text()
         # 買賣別
-        self.fOrder.sBuySell = 0
+        self.fOrder.sBuySell = 1
         # ROD、IOC、FOK
         self.fOrder.sTradeType = 0
         # 非當沖、當沖
         self.fOrder.sDayTrade = 0
         # 委託價
-        self.fOrder.bstrPrice = '10000'
+        self.fOrder.bstrPrice = '10900'
         # 委託數量
         self.fOrder.nQty = int(0)
         # 新倉、平倉、自動
         self.fOrder.sNewClose = 0
         # 盤中、T盤預約
         self.fOrder.sReserved = 0
-
-        print('FutureOrder:',self.fOrder)
+        # bstrMessage=''
+        m_ncode=skO.SendFutureOrder(self.SKID,False,self.fOrder)
+        # print(skC.SKCenterLib_GetReturnCodeMessage(m_ncode))
+        print(m_ncode)
 
 
 
@@ -274,6 +277,7 @@ class SKOrderLibEvent:
             SKMain.Future_Acc_CBox.addItem(bstrAccount)
             m_nCode=skO.GetFutureRights(bstrLogInID,bstrAccount,1)
             m_nCode=skO.ReadCertByID(bstrLogInID)
+            SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
             m_nCode=skR.SKReplyLib_ConnectByID(bstrLogInID)
             m_nCode=skO.GetOpenInterest(bstrLogInID,bstrAccount)
             SKMain.SKMessage.textBrowser.append(str(m_nCode))
