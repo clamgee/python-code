@@ -271,6 +271,7 @@ class SKOrderLibEvent:
         if Line[0]=='TF':
             bstrAccount=str(Line[1]).strip()+str(Line[3]).strip()
             print('期貨帳戶: '+bstrAccount,',',Line[5])
+            SKMain.Future_Acc_CBox.addItem(bstrAccount)
             m_nCode=skO.GetFutureRights(bstrLogInID,bstrAccount,1)
             m_nCode=skO.ReadCertByID(bstrLogInID)
             m_nCode=skR.SKReplyLib_ConnectByID(bstrLogInID)
