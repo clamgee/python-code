@@ -228,6 +228,7 @@ class Ui_CapitalAPI(object):
         self.pushButton_6.setText(_translate("CapitalAPI", "一鍵刪單"))
         self.label_4.setText(_translate("CapitalAPI", "口數設定:"))
         self.pushButton_5.setText(_translate("CapitalAPI", "一鍵平倉"))
+        self.pushButton_5.setCheckable
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("CapitalAPI", "Tab 1"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("CapitalAPI", "期權帳務"))
         self.menu.setTitle(_translate("CapitalAPI", "檔案"))

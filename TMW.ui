@@ -168,9 +168,21 @@
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,2">
                 <item>
-                 <widget class="QPushButton" name="pushButton_5">
+                 <widget class="QPushButton" name="bid_btn">
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
                   <property name="text">
                    <string>市價買</string>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="checked">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
@@ -213,9 +225,18 @@
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,2">
                 <item>
-                 <widget class="QPushButton" name="pushButton_6">
+                 <widget class="QPushButton" name="ask_btn">
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>市價賣</string>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="checked">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>

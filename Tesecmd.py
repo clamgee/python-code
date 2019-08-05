@@ -16,43 +16,100 @@
 # print(OnNewData_dict['BuySell']['TF']['B'],OnNewData_dict['BuySell']['TF']['N'],OnNewData_dict['BuySell']['TF']['R'],OnNewData_dict['BuySell']['TF']['2'])
 
 
-import sys
-import pandas as pd
-from PyQt5.QtWidgets import QApplication, QTableView
-from PyQt5.QtCore import QAbstractTableModel, Qt
 
-df = pd.DataFrame({'a': ['Mary', 'Jim', 'John'],
-                   'b': [100, 200, 300],
-                   'c': ['a', 'b', 'c']})
-
-class pandasModel(QAbstractTableModel):
-
-    def __init__(self, data):
-        QAbstractTableModel.__init__(self)
-        self._data = data
-
-    def rowCount(self, parent=None):
-        return self._data.shape[0]
-
-    def columnCount(self, parnet=None):
-        return self._data.shape[1]
-
-    def data(self, index, role=Qt.DisplayRole):
-        if index.isValid():
-            if role == Qt.DisplayRole:
-                return str(self._data.iloc[index.row(), index.column()])
-        return None
-
-    def headerData(self, col, orientation, role):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return self._data.columns[col]
-        return None
-
-if __name__ == '__main__':
+from PyQt5.QtWidgets import QApplication, QPushButton, QStyleFactory
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor
+ 
+class ToggleButton(QtWidgets.QWidget):
+    def __init__(self, parent= None):
+        QtWidgets.QWidget.__init__(self)
+        
+        self.color = QColor(0, 0, 0)
+        self.setGeometry(300, 300, 280, 170)
+        self.setWindowTitle('ToggleButton')
+        self.red = QPushButton('Red',  self)
+        self.red.setCheckable(True)
+        self.red.move(10, 10)
+        self.red.clicked.connect(self.setRed)
+        self.green = QPushButton('Green',  self)
+        self.green.setCheckable(True)
+        self.green.move(10, 60)
+        self.green.clicked.connect(self.setGreen)
+        self.blue = QPushButton('Blue',  self)
+        self.blue.setCheckable(True)
+        self.blue.move(10, 110)
+        self.blue.clicked.connect(self.setBlue)
+        
+        self.square = QtWidgets.QWidget(self)
+        self.square.setGeometry(150, 20, 100, 100)
+        self.square.setStyleSheet('QWidget{background-color:%s}'%self.color.name())
+        QApplication.setStyle(QStyleFactory.create('cleanlooks'))
+        
+        
+    def setRed(self):
+        if self.red.isChecked():
+            self.color.setRed(255)
+        else:
+            self.color.setRed(0)
+        
+        self.square.setStyleSheet('QWidget{background-color:%s}'%self.color.name())
+    
+    def setGreen(self):
+        if self.green.isChecked():
+            self.color.setGreen(255)
+        else:
+            self.color.setGreen(0)
+        
+        self.square.setStyleSheet('QWidget{background-color:%s}'%self.color.name())
+ 
+    def setBlue(self):
+        if self.blue.isChecked():
+            self.color.setBlue(255)
+        else:
+            self.color.setBlue(0)
+        
+        self.square.setStyleSheet('QWidget{background-color:%s}'%self.color.name())
+ 
+if __name__ == "__main__":
+    import sys
     app = QApplication(sys.argv)
-    model = pandasModel(df)
-    view = QTableView()
-    view.setModel(model)
-    view.resize(800, 600)
-    view.show()
+    qb = ToggleButton()
+    qb.show()
     sys.exit(app.exec_())
+
+
+# import pandas as pd
+# import numpy as np
+# import time
+# a=pd.DataFrame(np.arange(27).reshape(27),columns=['close'])
+# b=pd.DataFrame(np.arange(27).reshape(27),columns=['close'])
+
+# # a['bid']=0
+# # a['ask']=0
+# a['close']=a['close'].map(lambda x:10500+13-(a['close'][a['close']==x].index[0]))
+# dict_bid={'bid':{10499:28,10498:30,10497:22,10496:35,10495:18},'ask':{10500:22,10501:25}}
+# # a.set_index('close')
+# # a['bid']=a['close'].map(dict_bid['bid']).fillna(value=0).astype(int)
+# # print('1: ',a['bid'])
+# a['bid']=a.set_index(['close']).update(dict_bid)
+# print('2: ',a['close'].tolist())
+# a['ask']=a['close'].map(dict_bid['ask']).fillna(value=0).astype(int)
+# # b['close']=b['close'].map(lambda x:10505+13-(b['close'][b['close']==x].index[0]))
+# # start=time.time()
+# # print((a['close']!=b['close']).index.tolist())
+# # end=time.time()
+# # print(round((end-start),6))
+# # print(dict_bid['bid'])
+# # total_dict={'bid':{10500:25,10501:22},'ask':{10503:27,10504:21}}
+# # print(total_dict['bid'],total_dict['ask'])
+# Change=False
+# bidlist=a['bid'][a['bid']!=0].index.tolist()
+# if a.loc[13,'close'] != 10500 :
+#     Change=True
+#     print(a.loc[13,'close'],Change)
+# tmplist=[15,16,17,18,19]
+# if Change is True :
+#     bidlist=list(set(bidlist+tmplist))
+#     print(bidlist)
