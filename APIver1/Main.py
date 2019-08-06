@@ -243,6 +243,15 @@ class TableThread(QThread):
     def TableFunc(self,nclose,total_dict):
         SKMain.DomTableFillFunc(nclose,total_dict['bid_dict'],total_dict['ask_dict'])
 
+class KlineThread(QThread):
+    Kline_signal=pyqtSignal(list)
+
+    def __init__(self,parent=None):
+        super(KlineThread,self).__init__(parent)
+        self.Kline_signal.connect(self.KlineFunc)
+    def KlineFunc(self,Ticklist):
+        print('ok')
+
 class PandasModel(QAbstractTableModel):
 
     def __init__(self):
