@@ -30,7 +30,7 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -416,7 +416,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QTableWidget" name="Open_TBW"/>
+             <widget class="QTableView" name="Open_TBW">
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

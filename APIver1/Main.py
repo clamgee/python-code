@@ -239,9 +239,9 @@ class TableThread(QThread):
 
     def __init__(self,parent=None):
         super(TableThread,self).__init__(parent)
-        self.Table_signal.connect(self.TableFunc)
+        self.Table_signal.connect(self.run)
 
-    def TableFunc(self,nclose,total_dict):
+    def run(self,nclose,total_dict):
         SKMain.DomTableFillFunc(nclose,total_dict['bid_dict'],total_dict['ask_dict'])
 
 class His_KLlineThread(QThread):
@@ -326,8 +326,19 @@ class SKOrderLibEvent:
                     SKMain.Bill.loc[i,'Right'].setText(row.strip())
             i+=1
     def OnOpenInterest(self,bstrData):
-        print('持倉回報: ',bstrData,' 次數:',SKMain.test)
-        SKMain.test+=1
+        # print('持倉回報: ',bstrData,' 次數:',SKMain.test)
+        Line=bstrData.split(',')
+        if Line[0]=='M003 NO DATA':
+            print('No Data pass')
+            pass
+        elif Line[0]=='##':
+            SKMain.OpenCRpdMode.setdata(SKMain.openpd)
+            SKMain.Open_TBW.setModel(SKMain.OpenCRpdMode)
+            print('OnOpenInterest end pass')
+            pass
+        else:
+            SKMain.openpd=SKMain.openpd.append(pd.DataFrame(Line,columns=['市場別','帳號','商品','買賣別','未平倉部位','當沖未平倉部位','平均成本','一點價值','單口手續費','交易稅']))
+        # SKMain.test+=1
         # i=0
         # Line=bstrData.split(',')
         # for row in Line:
