@@ -185,6 +185,8 @@ class SKMainWindow(QMainWindow): #主視窗
         self.Kui=KlineUi.KlineWidget(nstock)
         self.Kui.addItem(self.Kitem)
         self.Kitem.set_data(self.Future.contractkpd)
+        # self.HisKlineThrd=His_KLlineThread()
+        # self.HisKlineThrd.start()
         self.TableThrd=TableThread()
         self.TableThrd.start()
         xmax=int(len(self.Kitem.pictures))
@@ -192,7 +194,6 @@ class SKMainWindow(QMainWindow): #主視窗
         ymin=self.Kitem.data.loc[xmin:xmax,['low']].values.min()
         ymax=self.Kitem.data.loc[xmin:xmax,['high']].values.max()
         self.GL.addWidget(self.Kui)
-        # app.processEvents()   
         self.Kui.update(xmin,xmax,ymin,ymax,self.Kitem.FPS)
     # 商品訂閱結束
     #委託未平倉回報資料
@@ -243,14 +244,31 @@ class TableThread(QThread):
     def TableFunc(self,nclose,total_dict):
         SKMain.DomTableFillFunc(nclose,total_dict['bid_dict'],total_dict['ask_dict'])
 
-class KlineThread(QThread):
-    Kline_signal=pyqtSignal(list)
+class His_KLlineThread(QThread):
+    KLine_signal=pyqtSignal(str,int,int,int,int,int,int)
 
     def __init__(self,parent=None):
-        super(KlineThread,self).__init__(parent)
-        self.Kline_signal.connect(self.KlineFunc)
-    def KlineFunc(self,Ticklist):
-        print('ok')
+        super(His_KLlineThread,self).__init__(parent)
+        self.KLine_signal.connect(self.KLFunc)
+
+    def KLFunc(self,lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty):
+        SKMain.Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
+        strMsg=str(SKMain.Future.contractkpd.iloc[-1:].values)
+        SKMain.ndetialmsg.textBrowser.append(strMsg)
+
+
+
+class KLlineThread(QThread):
+    KLine_signal=pyqtSignal(list)
+
+    def __init__(self,name=None,parent=None):
+        super(TableThread,self).__init__(parent)
+        self.Name=name
+        self.Table_signal.connect(self.TableFunc)
+
+    def TableFunc(self,newlist):
+        print(newlist)
+
 
 class PandasModel(QAbstractTableModel):
 
@@ -285,11 +303,13 @@ class SKOrderLibEvent:
             print('期貨帳戶: '+bstrAccount,',',Line[5])
             SKMain.Future_Acc_CBox.addItem(bstrAccount)
             m_nCode=skO.GetFutureRights(bstrLogInID,bstrAccount,1)
+            SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
             m_nCode=skO.ReadCertByID(bstrLogInID)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
             m_nCode=skR.SKReplyLib_ConnectByID(bstrLogInID)
+            SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
             m_nCode=skO.GetOpenInterest(bstrLogInID,bstrAccount)
-            SKMain.SKMessage.textBrowser.append(str(m_nCode))
+            SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
     
     def OnAsyncOrder(self,nThreadID,nCode,bstrMessage):
         print('OnAsyncOrder:',nThreadID,',',nCode,',',bstrMessage)
@@ -363,8 +383,8 @@ class SKQuoteLibEvents:
         SKMain.statusBar.showMessage('帳號:'+str(SKMain.SKID)+'\t伺服器時間:'+nTime)
     
     def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        # strMsg=str(lDate)+','+str(lTimehms)+','+str(lTimemillismicros)+','+str(nBid)+','+str(nAsk)+','+str(nClose)+','+str(nQty)
         if nSimulate==0:
+            # SKMain.HisKlineThrd.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             SKMain.Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
             strMsg=str(SKMain.Future.contractkpd.iloc[-1:].values)
             SKMain.ndetialmsg.textBrowser.append(strMsg)
