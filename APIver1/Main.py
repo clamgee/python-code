@@ -239,9 +239,9 @@ class TableThread(QThread):
 
     def __init__(self,parent=None):
         super(TableThread,self).__init__(parent)
-        self.Table_signal.connect(self.run)
+        self.Table_signal.connect(self.TableFunc)
 
-    def run(self,nclose,total_dict):
+    def TableFunc(self,nclose,total_dict):
         SKMain.DomTableFillFunc(nclose,total_dict['bid_dict'],total_dict['ask_dict'])
 
 class His_KLlineThread(QThread):
