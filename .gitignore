@@ -10,7 +10,6 @@ __pycache__/*
 /.git
 *.json
 /__pycache__
-*.code-workspace
 /tmp
 /data/filename.txt
 /BackUp

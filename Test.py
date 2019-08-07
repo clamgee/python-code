@@ -15,6 +15,8 @@ class TMW(QMainWindow): #主視窗
         self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.pushButton.clicked.connect(self.tableupdate)
         self.trade_act=0
+        self.spinBox.setEnabled(False)
+        print(self.spinBox.value())
         self.bid_btn.clicked.connect(self.bidfunc)
         self.ask_btn.clicked.connect(self.askfunc)
         QApplication.setStyle(QStyleFactory.create('cleanlooks'))

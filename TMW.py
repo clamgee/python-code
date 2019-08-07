@@ -11,6 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
+        MainWindow.setEnabled(True)
         MainWindow.resize(949, 600)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -82,9 +83,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.bid_btn = QtWidgets.QPushButton(self.tab)
         self.bid_btn.setAutoFillBackground(False)
-        self.bid_btn.setStyleSheet("color: rgb(255, 255, 255);\n"
-"background-color: rgb(255, 0, 0);")
+        self.bid_btn.setStyleSheet("")
         self.bid_btn.setCheckable(True)
+        self.bid_btn.setChecked(False)
         self.bid_btn.setObjectName("bid_btn")
         self.verticalLayout_2.addWidget(self.bid_btn)
         self.pushButton_2 = QtWidgets.QPushButton(self.tab)
@@ -104,6 +105,10 @@ class Ui_MainWindow(object):
         self.label_2.setObjectName("label_2")
         self.verticalLayout_4.addWidget(self.label_2)
         self.spinBox = QtWidgets.QSpinBox(self.tab)
+        self.spinBox.setEnabled(False)
+        self.spinBox.v
+        self.spinBox.setInputMethodHints(QtCore.Qt.ImhNone)
+        self.spinBox.setProperty("value", 95)
         self.spinBox.setObjectName("spinBox")
         self.verticalLayout_4.addWidget(self.spinBox)
         self.horizontalLayout_3.addLayout(self.verticalLayout_4)
