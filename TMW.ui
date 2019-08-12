@@ -2,9 +2,6 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="enabled">
-   <bool>true</bool>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -173,7 +170,7 @@
                 <item>
                  <widget class="QPushButton" name="bid_btn">
                   <property name="autoFillBackground">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                   <property name="styleSheet">
                    <string notr="true"/>
@@ -182,7 +179,7 @@
                    <string>市價買</string>
                   </property>
                   <property name="checkable">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                   <property name="checked">
                    <bool>false</bool>
@@ -222,14 +219,8 @@
                 </item>
                 <item>
                  <widget class="QSpinBox" name="spinBox">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="inputMethodHints">
-                   <set>Qt::ImhNone</set>
-                  </property>
-                  <property name="value">
-                   <number>95</number>
+                  <property name="specialValueText">
+                   <string> </string>
                   </property>
                  </widget>
                 </item>
@@ -246,7 +237,7 @@
                    <string>市價賣</string>
                   </property>
                   <property name="checkable">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                   <property name="checked">
                    <bool>false</bool>

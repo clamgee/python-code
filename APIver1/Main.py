@@ -34,6 +34,9 @@ class SKMainWindow(QMainWindow): #主視窗
         self.statusBar.showMessage('帳號:'+self.SKID)
         self.Bill=[]
         self.fOrder=sk.FUTUREORDER()
+        #下單參數 Future structure 
+        self.trade_act=-1
+        # self.Price_Spin.setSpecialValueText(' ')
         # 介面導入
         self.SKLoginUI() #登入介面
         self.SKMessageFunc()#系統訊息介面
@@ -47,7 +50,8 @@ class SKMainWindow(QMainWindow): #主視窗
 
         # Tab內功能組連結
         self.commoditybtn.clicked.connect(self.commodityFnc)
-        self.LimitBid_btn.clicked.connect(self.OrderFunc)
+        self.BidAct_btn.clicked.connect(self.BidFunc)
+        self.AskAct_btn.clicked.connect(self.AskFunc)
         self.Order_btn.clicked.connect(self.OrderFunc)
 
     # 呼叫系統訊息介面與功能
@@ -205,6 +209,24 @@ class SKMainWindow(QMainWindow): #主視窗
         self.test=0
     #委託未平倉回報結束
     #下單功能
+    def BidFunc(self):
+        if self.trade_act!=0:
+            self.BidAct_btn.setStyleSheet('background-color: red;''color: white;')
+            self.trade_act=0
+            self.AskAct_btn.setStyleSheet('background-color: ')
+        else:
+            self.BidAct_btn.setStyleSheet('background-color: ;''color:')
+            self.trade_act=-1
+    
+    def AskFunc(self):
+        if self.trade_act!=1:
+            self.AskAct_btn.setStyleSheet('background-color: green')
+            self.trade_act=1
+            self.BidAct_btn.setStyleSheet('background-color: ;''color:')
+        else :
+            self.AskAct_btn.setStyleSheet('background-color: ')
+            self.trade_act=-1
+
     def OrderFunc(self):
         # 填入完整帳號
         self.fOrder.bstrFullAccount =  self.Future_Acc_CBox.currentText()
