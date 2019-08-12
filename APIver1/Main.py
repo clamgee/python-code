@@ -36,7 +36,6 @@ class SKMainWindow(QMainWindow): #主視窗
         self.fOrder=sk.FUTUREORDER()
         #下單參數 Future structure 
         self.trade_act=-1
-        # self.Price_Spin.setSpecialValueText(' ')
         # 介面導入
         self.SKLoginUI() #登入介面
         self.SKMessageFunc()#系統訊息介面
@@ -47,11 +46,13 @@ class SKMainWindow(QMainWindow): #主視窗
         self.SysDetail.triggered.connect(self.SKMessage.show)
         self.Connectbtn.triggered.connect(self.ConnectFun)
         self.Disconnectbtn.triggered.connect(self.disconnectFun)
-
         # Tab內功能組連結
         self.commoditybtn.clicked.connect(self.commodityFnc)
         self.BidAct_btn.clicked.connect(self.BidFunc)
         self.AskAct_btn.clicked.connect(self.AskFunc)
+        self.LastPrice_btn.clicked.connect(self.LastPriceFunc)
+        self.MarketPrice_btn.clicked.connect(self.MarketPriceFunc)
+        self.LimitMarketPrice_btn.clicked.connect(self.LimitMarketPriceFunc)
         self.Order_btn.clicked.connect(self.OrderFunc)
 
     # 呼叫系統訊息介面與功能
@@ -226,6 +227,13 @@ class SKMainWindow(QMainWindow): #主視窗
         else :
             self.AskAct_btn.setStyleSheet('background-color: ')
             self.trade_act=-1
+
+    def LastPriceFunc(self):
+        self.PriceSpin.setValue=self.Future.contractkpd.iloc[-1,4]
+    def MarketPriceFunc(self):
+        self.PriceSpin.setSpecialValueText('M')
+    def LimitMarketPriceFunc(self):
+        self.PriceSpin.setSpecialValueText('P')
 
     def OrderFunc(self):
         # 填入完整帳號
