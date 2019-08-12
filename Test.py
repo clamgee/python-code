@@ -14,7 +14,7 @@ class TMW(QMainWindow): #主視窗
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.pushButton.clicked.connect(self.tableupdate)
-        self.trade_act=0
+        self.trade_act=-1
         self.spinBox.setEnabled(False)
         print(self.spinBox.value())
         self.bid_btn.clicked.connect(self.bidfunc)
@@ -22,7 +22,8 @@ class TMW(QMainWindow): #主視窗
         QApplication.setStyle(QStyleFactory.create('cleanlooks'))
     
     def bidfunc(self):
-        self.bid_btn.setStyleSheet('color: white;\n''background-color: red;')
+        self.bid_btn.setStyleSheet('background-color: red;''color: white;')
+
         if self.bid_btn.isChecked():
             self.ask_btn.setChecked(False)
             self.ask_btn.setStyleSheet('background-color: ')            
