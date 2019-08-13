@@ -179,8 +179,8 @@ class SKMainWindow(QMainWindow): #主視窗
     def commodityFnc(self):
         nstock=self.commodityline.text().replace(' ','')
         self.Future = tickstokline.dataprocess(nstock)
-        skQ.SKQuoteLib_RequestTicks(0,nstock)
-        # skQ.SKQuoteLib_RequestLiveTick(0,nstock)
+        # skQ.SKQuoteLib_RequestTicks(0,nstock)
+        skQ.SKQuoteLib_RequestLiveTick(0,nstock)
         self.ndetialmsg=FuncUI.MessageDialog(nstock)
         self.TDetailbtn.clicked.connect(self.ndetialmsg.show)
         # self.ndetialmsg.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
@@ -229,11 +229,11 @@ class SKMainWindow(QMainWindow): #主視窗
             self.trade_act=-1
 
     def LastPriceFunc(self):
-        self.PriceSpin.setValue=self.Future.contractkpd.iloc[-1,4]
+        self.PriceSpin.setValue(self.Future.contractkpd.iloc[-1,4])
     def MarketPriceFunc(self):
-        self.PriceSpin.setSpecialValueText('M')
+        self.PriceSpin.setSpecialValueText('市價')
     def LimitMarketPriceFunc(self):
-        self.PriceSpin.setSpecialValueText('P')
+        self.PriceSpin.setSpecialValueText('範圍市價')
 
     def OrderFunc(self):
         # 填入完整帳號

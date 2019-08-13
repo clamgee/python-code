@@ -106,7 +106,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.label_2)
         self.spinBox = QtWidgets.QSpinBox(self.tab)
         self.spinBox.setEnabled(False)
-        self.spinBox.v
+        
         self.spinBox.setInputMethodHints(QtCore.Qt.ImhNone)
         self.spinBox.setProperty("value", 95)
         self.spinBox.setObjectName("spinBox")
