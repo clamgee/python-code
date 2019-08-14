@@ -179,8 +179,8 @@ class SKMainWindow(QMainWindow): #主視窗
     def commodityFnc(self):
         nstock=self.commodityline.text().replace(' ','')
         self.Future = tickstokline.dataprocess(nstock)
-        # skQ.SKQuoteLib_RequestTicks(0,nstock)
-        skQ.SKQuoteLib_RequestLiveTick(0,nstock)
+        skQ.SKQuoteLib_RequestTicks(0,nstock)
+        # skQ.SKQuoteLib_RequestLiveTick(0,nstock)
         self.ndetialmsg=FuncUI.MessageDialog(nstock)
         self.TDetailbtn.clicked.connect(self.ndetialmsg.show)
         # self.ndetialmsg.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
