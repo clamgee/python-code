@@ -36,6 +36,7 @@ class SKMainWindow(QMainWindow): #主視窗
         self.fOrder=sk.FUTUREORDER()
         #下單參數 Future structure 
         self.trade_act=-1
+        self.OrderPrice=''
         # 介面導入
         self.SKLoginUI() #登入介面
         self.SKMessageFunc()#系統訊息介面
@@ -229,11 +230,18 @@ class SKMainWindow(QMainWindow): #主視窗
             self.trade_act=-1
 
     def LastPriceFunc(self):
+        self.PriceSpin.setEnabled(True)
         self.PriceSpin.setValue(self.Future.contractkpd.iloc[-1,4])
     def MarketPriceFunc(self):
-        self.PriceSpin.setSpecialValueText('市價')
+        self.PriceSpin.setEnabled(False)
+        if self.OrderPrice !='M' :
+            self.OrderPrice = 'M'
     def LimitMarketPriceFunc(self):
-        self.PriceSpin.setSpecialValueText('範圍市價')
+        self.PriceSpin.setEnabled(False)
+        if self.OrderPrice !='P':
+            self.OrderPrice = 'P'
+            self.OrderType_box.currentText()
+
 
     def OrderFunc(self):
         # 填入完整帳號

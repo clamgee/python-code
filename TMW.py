@@ -105,10 +105,12 @@ class Ui_MainWindow(object):
         self.label_2.setObjectName("label_2")
         self.verticalLayout_4.addWidget(self.label_2)
         self.spinBox = QtWidgets.QSpinBox(self.tab)
-        self.spinBox.setEnabled(False)
+        # self.spinBox.setEnabled(False)
+        self.spinBox.textValid = True
+        self.spinBox.setSpecialValueText('市價')
         
         self.spinBox.setInputMethodHints(QtCore.Qt.ImhNone)
-        self.spinBox.setProperty("value", 95)
+        self.spinBox.setProperty("SpecialValueText", '市價')
         self.spinBox.setObjectName("spinBox")
         self.verticalLayout_4.addWidget(self.spinBox)
         self.horizontalLayout_3.addLayout(self.verticalLayout_4)
