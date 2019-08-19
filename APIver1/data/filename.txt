@@ -100,3 +100,4 @@ Ticks2019-08-12.txt
 Ticks2019-08-13.txt
 Ticks2019-08-14.txt
 Ticks2019-08-15.txt
+Ticks2019-08-16.txt

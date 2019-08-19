@@ -240,7 +240,7 @@ class SKMainWindow(QMainWindow): #主視窗
         self.PriceSpin.setEnabled(False)
         if self.OrderPrice !='P':
             self.OrderPrice = 'P'
-            self.OrderType_box.currentText()
+            self.OrderType_box.currentIndex()
 
 
     def OrderFunc(self):
