@@ -9,7 +9,7 @@ import pandas as pd
 # 使用PyQt5套件
 from PyQt5.uic import loadUi #使用.ui介面模組
 from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt,QThread,pyqtSignal,QAbstractTableModel #插入資訊模組
-from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene,QHeaderView,QTableWidgetItem #PyQt5介面與繪圖模組
+from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene,QHeaderView,QTableWidgetItem,QMessageBox #PyQt5介面與繪圖模組
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 #匯入外部字寫套件
@@ -52,6 +52,7 @@ class SKMainWindow(QMainWindow): #主視窗
         self.BidAct_btn.clicked.connect(self.BidFunc)
         self.AskAct_btn.clicked.connect(self.AskFunc)
         self.LastPrice_btn.clicked.connect(self.LastPriceFunc)
+        self.PriceSpin.valueChanged.connect(self.GetPriceFunc)
         self.MarketPrice_btn.clicked.connect(self.MarketPriceFunc)
         self.LimitMarketPrice_btn.clicked.connect(self.LimitMarketPriceFunc)
         self.Order_btn.clicked.connect(self.OrderFunc)
@@ -231,16 +232,20 @@ class SKMainWindow(QMainWindow): #主視窗
 
     def LastPriceFunc(self):
         self.PriceSpin.setEnabled(True)
+        self.OrderType_box.setCurrentIndex(0)
         self.PriceSpin.setValue(self.Future.contractkpd.iloc[-1,4])
+    def GetPriceFunc(self):
+        self.OrderPrice=str(self.PriceSpin.value())
     def MarketPriceFunc(self):
         self.PriceSpin.setEnabled(False)
         if self.OrderPrice !='M' :
             self.OrderPrice = 'M'
+            self.OrderType_box.setCurrentIndex(1)
     def LimitMarketPriceFunc(self):
         self.PriceSpin.setEnabled(False)
         if self.OrderPrice !='P':
             self.OrderPrice = 'P'
-            self.OrderType_box.currentIndex()
+            self.OrderType_box.setCurrentIndex(1)
 
 
     def OrderFunc(self):
@@ -249,17 +254,28 @@ class SKMainWindow(QMainWindow): #主視窗
         # 填入期權代號
         self.fOrder.bstrStockNo = self.commodityline.text()
         # 買賣別
-        self.fOrder.sBuySell = 1
+        if self.trade_act!=-1:
+            self.fOrder.sBuySell = self.trade_act
+        else:
+            msgbox=QMessageBox()
+            msgbox.setWindowTitle('買賣設定錯誤')
+            msgbox.setIcon(QMessageBox.Critical)
+            msgbox.setText('尚未選定買或賣')
+            msgbox.setStandardButtons(QMessageBox.Abort)
+            msgbox.setDefaultButton(QMessageBox.Abort)
+            reply=msgbox.exec_()
+            if reply == QMessageBox.Abort:
+                return
         # ROD、IOC、FOK
-        self.fOrder.sTradeType = 0
+        self.fOrder.sTradeType = self.OrderType_box.currentIndex()
         # 非當沖、當沖
         self.fOrder.sDayTrade = 0
         # 委託價
-        self.fOrder.bstrPrice = '10900'
+        self.fOrder.bstrPrice = self.OrderPrice
         # 委託數量
-        self.fOrder.nQty = int(0)
+        self.fOrder.nQty = self.Contract_Box.value()
         # 新倉、平倉、自動
-        self.fOrder.sNewClose = 0
+        self.fOrder.sNewClose = self.InterestType_box.currentIndex()
         # 盤中、T盤預約
         self.fOrder.sReserved = 0
         # bstrMessage=''
