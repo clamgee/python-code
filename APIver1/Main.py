@@ -279,9 +279,9 @@ class SKMainWindow(QMainWindow): #主視窗
         # 盤中、T盤預約
         self.fOrder.sReserved = 0
         # bstrMessage=''
-        m_ncode=skO.SendFutureOrder(self.SKID,False,self.fOrder)
-        # print(skC.SKCenterLib_GetReturnCodeMessage(m_ncode))
-        print(m_ncode)
+        m_nCode=skO.SendFutureOrder(self.SKID,False,self.fOrder)
+        print(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
+        # self.SKMessage.textBrowser.append(str(skC.SKCenterLib_GetReturnCodeMessage(m_nCode)))
 
 
 
