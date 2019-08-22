@@ -411,9 +411,8 @@ class SKReplyLibEvent:
         nErrorStr=skC.SKCenterLib_GetReturnCodeMessage(nErrorCode)
         print('連線失敗: ',bstrUserID,nErrorStr)
     def OnComplete(self,bstrUserID):
-        # SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
-        # SKMain.Reply_TBW.setModel(SKMain.ReplyCRpdMode)
-        print('回報完成: ',bstrUserID)
+        SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
+        SKMain.Reply_TBW.setModel(SKMain.ReplyCRpdMode)
     def OnNewData(self,bstrUserID,bstrData):
         Line=bstrData.split(',')
         tmplist=[[Line[8],Line[6],Line[11],Line[20],Line[2],Line[20],Line[20],Line[6],Line[6],Line[6],Line[0],Line[10],Line[23],Line[24],Line[24]]]
