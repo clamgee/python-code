@@ -16,6 +16,7 @@ import pyqtgraph as pg
 import FuncUI
 import tickstokline
 import KlineUi
+import Config_dict
 # 使用SKCOM元件
 import comtypes.client
 import comtypes.gen.SKCOMLib as sk
