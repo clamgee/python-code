@@ -37,6 +37,7 @@ class SKMainWindow(QMainWindow): #主視窗
         #下單參數 Future structure 
         self.trade_act=-1
         self.OrderPrice=''
+        self.ReplyComplete=False
         # 介面導入
         self.SKLoginUI() #登入介面
         self.SKMessageFunc()#系統訊息介面
@@ -333,8 +334,13 @@ class PandasModel(QAbstractTableModel):
     def __init__(self):
         QAbstractTableModel.__init__(self)
 
+    # def setdata(self,data):
+    #     self._data=data
     def setdata(self,data):
         self._data=data
+        self.layoutAboutToBeChanged.emit() #建立變更資料通知訊號發射
+        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(0), self.columnCount(0))) #資料變更區域訊號發射
+        self.layoutChanged.emit() #資料變更訊號發射
 
     def rowCount(self, parent=None):
         return self._data.shape[0]
@@ -352,6 +358,7 @@ class PandasModel(QAbstractTableModel):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return self._data.columns[col]
         return None
+        
 
 class SKOrderLibEvent:
     def OnAccount(self,bstrLogInID,bstrAccountData):
@@ -413,14 +420,14 @@ class SKReplyLibEvent:
     def OnComplete(self,bstrUserID):
         SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
         SKMain.Reply_TBW.setModel(SKMain.ReplyCRpdMode)
+        SKMain.ReplyComplete=True
     def OnNewData(self,bstrUserID,bstrData):
         Line=bstrData.split(',')
         tmplist=[[Line[8],Line[6],Line[11],Line[20],Line[2],Line[20],Line[20],Line[6],Line[6],Line[6],Line[0],Line[10],Line[23],Line[24],Line[24]]]
         SKMain.replypd=SKMain.replypd.append(pd.DataFrame(tmplist,columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','條件','倉位','當沖','委託序號','委託書號','委託日期','委託時間','交易時段']),ignore_index=True)
-        # SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
+        if SKMain.ReplyComplete==True:
+            SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
         print('委託:',tmplist)
-        # SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
-        # SKMain.Reply_TBW.setModel(SKMain.ReplyCRpdMode)
         # i=0
         # for row in Line :
         #     print(i,',',row)

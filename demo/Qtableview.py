@@ -1,226 +1,224 @@
-from PyQt5.uic import loadUi #使用.ui介面模組
-from PyQt5.QtCore import pyqtSlot,QDate,QTime,QDateTime,QTimer,Qt,QThread,pyqtSignal,QAbstractTableModel #插入資訊模組
-from PyQt5.QtWidgets import QApplication,QDialog,QFileDialog,QMainWindow,QGraphicsScene,QHeaderView,QTableWidgetItem,QMessageBox #PyQt5介面與繪圖模組
-from PyQt5 import QtCore, QtGui, QtWidgets
+''' pqt_tableview3.py
+explore PyQT's QTableView Model
+using QAbstractTableModel to present tabular data
+allow table sorting by clicking on the header title
 
+used the Anaconda package (comes with PyQt4) on OS X
+(dns)
+'''
 
-has_pandas = False
-try:
-  import pandas as pd
-  has_pandas = True
-except:
-  pass
+#coding=utf-8
 
-class TableModel(QtCore.QAbstractTableModel):
-    def __init__(self, parent=None, *args):
-        super(TableModel, self).__init__()
-        self.datatable = None
-        self.headerdata = None
+import operator  # used for sorting
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5 import QtGui, QtCore
+from time import time
+import threading
 
-    def update(self, dataIn):
-        print ('Updating Model')
-        self.datatable = dataIn
-        print('Datatable : {0}'.format(self.datatable))
-        if has_pandas:
-          headers = dataIn.columns.values
-        else:
-          headers = dataIn.columns
-        header_items = [
-                    str(field)
-                    for field in headers
-        ]
-        self.headerdata = header_items
-        print ('Headers')
-        print (self.headerdata)
+class MyWindow(QWidget):
+    def __init__(self, dataList, header, *args):
+        QWidget.__init__(self, *args)
+        # setGeometry(x_pos, y_pos, width, height)
+        self.setGeometry(70, 150, 1326, 582)
+        self.setWindowTitle("Click on the header to sort table")
 
-    def rowCount(self, parent=QtCore.QModelIndex()):
-        return len(self.datatable.index)
+        self.table_model = MyTableModel(self, dataList, header)
+        self.table_view = QTableView()
+        #self.table_view.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.table_view.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.table_view.setSelectionBehavior(QAbstractItemView.SelectRows)
+        # bind cell click to a method reference
+        self.table_view.clicked.connect(self.showSelection)
+        self.table_view.clicked.connect(self.selectRow)
 
-    def columnCount(self, parent=QtCore.QModelIndex()):
-        if has_pandas:
-          return len(self.datatable.columns.values)
-        else:
-          return len(self.datatable.columns)
+        self.table_view.setModel(self.table_model)
+        # enable sorting
+        self.table_view.setSortingEnabled(True)
 
-    def data(self, index, role=QtCore.Qt.DisplayRole):
-        if role == QtCore.Qt.DisplayRole:
-            i = index.row()
-            j = index.column()
-            return QtCore.QVariant('{0}'.format(self.datatable.iget_value(i, j)))
-        else:
-            return QtCore.QVariant()
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.table_view)
+        self.setLayout(layout)
 
-    def setData(self, index, value, role=QtCore.Qt.DisplayRole):
-        if index.column() == 4:
-            self.datatable.iset_value(index.row(), 4, value)
-            return value
-        return value
+    def update_model(self, datalist, header):
+        self.table_model2 = MyTableModel(self, dataList, header)
+        self.table_view.setModel(self.table_model2)
+        self.table_view.update()
 
-    def headerData(self, col, orientation, role):
-        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
-            return '{0}'.format(self.headerdata[col])
+    def showSelection(self, item):
+        cellContent = item.data()
+        # print(cellContent)  # test
+        sf = "You clicked on {}".format(cellContent)
+        # display in title bar for convenience
+        self.setWindowTitle(sf)
 
-    def flags(self, index):
-        if index.column() == 4:
-            return QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled
-        else:
-            return QtCore.Qt.ItemIsEnabled
-
-
-class TableView(QtWidgets.QTableView):
-    """
-    A simple table to demonstrate the QComboBox delegate.
-    """
-    def __init__(self, *args, **kwargs):
-        QtWidgets.QTableView.__init__(self, *args, **kwargs)
-        self.setItemDelegateForColumn(4, CheckBoxDelegate(self))
-
-
-class CheckBoxDelegate(QtWidgets.QStyledItemDelegate):
-    """
-    A delegate that places a fully functioning QCheckBox in every
-    cell of the column to which it's applied
-    """
-    def __init__(self, parent):
-        QtWidgets.QItemDelegate.__init__(self, parent)
-
-    def createEditor(self, parent, option, index):
-        '''
-        Important, otherwise an editor is created if the user clicks in this cell.
-        ** Need to hook up a signal to the model
-        '''
-        return None
-
-    def paint(self, painter, option, index):
-        '''
-        Paint a checkbox without the label.
-        '''
-
-        checked = index.data().toBool()
-        check_box_style_option = QtGui.QStyleOptionButton()
-
-        if (index.flags() & QtCore.Qt.ItemIsEditable) > 0:
-            check_box_style_option.state |= QtGui.QStyle.State_Enabled
-        else:
-            check_box_style_option.state |= QtGui.QStyle.State_ReadOnly
-
-        if checked:
-            check_box_style_option.state |= QtGui.QStyle.State_On
-        else:
-            check_box_style_option.state |= QtGui.QStyle.State_Off
-
-        check_box_style_option.rect = self.getCheckBoxRect(option)
-
-        # this will not run - hasFlag does not exist
-        #if not index.model().hasFlag(index, QtCore.Qt.ItemIsEditable):
-            #check_box_style_option.state |= QtGui.QStyle.State_ReadOnly
-
-        check_box_style_option.state |= QtGui.QStyle.State_Enabled
-
-        QtGui.QApplication.style().drawControl(QtGui.QStyle.CE_CheckBox, check_box_style_option, painter)
-
-    def editorEvent(self, event, model, option, index):
-        '''
-        Change the data in the model and the state of the checkbox
-        if the user presses the left mousebutton or presses
-        Key_Space or Key_Select and this cell is editable. Otherwise do nothing.
-        '''
-        print ('Check Box editor Event detected : ')
-        print (event.type())
-        if not (index.flags() & QtCore.Qt.ItemIsEditable) > 0:
-            return False
-
-        print ('Check Box editor Event detected : passed first check')
-        # Do not change the checkbox-state
-        if event.type() == QtCore.QEvent.MouseButtonPress:
-          return False
-        if event.type() == QtCore.QEvent.MouseButtonRelease or event.type() == QtCore.QEvent.MouseButtonDblClick:
-            if event.button() != QtCore.Qt.LeftButton or not self.getCheckBoxRect(option).contains(event.pos()):
-                return False
-            if event.type() == QtCore.QEvent.MouseButtonDblClick:
-                return True
-        elif event.type() == QtCore.QEvent.KeyPress:
-            if event.key() != QtCore.Qt.Key_Space and event.key() != QtCore.Qt.Key_Select:
-                return False
-        else:
-            return False
-
-        # Change the checkbox-state
-        self.setModelData(None, model, index)
-        return True
-
-    def setModelData (self, editor, model, index):
-        '''
-        The user wanted to change the old state in the opposite.
-        '''
-        print ('SetModelData')
-        newValue = not index.data().toBool()
-        print ('New Value : {0}'.format(newValue))
-        model.setData(index, newValue, QtCore.Qt.EditRole)
-
-    def getCheckBoxRect(self, option):
-        check_box_style_option = QtGui.QStyleOptionButton()
-        check_box_rect = QtGui.QApplication.style().subElementRect(QtGui.QStyle.SE_CheckBoxIndicator, check_box_style_option, None)
-        check_box_point = QtCore.QPoint (option.rect.x() +
-                            option.rect.width() / 2 -
-                            check_box_rect.width() / 2,
-                            option.rect.y() +
-                            option.rect.height() / 2 -
-                            check_box_rect.height() / 2)
-        return QtCore.QRect(check_box_point, check_box_rect.size())
-
-
-###############################################################################################################################
-class Dataframe(dict):
-    def __init__(self, columns, values):
-        if len(values) != len(columns):
-            raise Exception("Bad values")
-        self.columns = columns
-        self.values = values
-        self.index = values[0]
-        super(Dataframe, self).__init__(dict(zip(columns, values)))
+    def selectRow(self, index):
+        # print("current row is %d", index.row())
         pass
 
-    def iget_value(self, i, j):
-        return(self.values[j][i])
 
-    def iset_value(self, i, j, value):
-        self.values[j][i] = value
+class MyTableModel(QAbstractTableModel):
+    """
+    keep the method names
+    they are an integral part of the model
+    """
+    def __init__(self, parent, mylist, header, *args):
+        QAbstractTableModel.__init__(self, parent, *args)
+        self.mylist = mylist
+        self.header = header
+        self.timer = QtCore.QTimer()
+        self.change_flag = True
+        self.timer.timeout.connect(self.updateModel)
+        self.timer.start(1000)
+        
+        # self.rowCheckStateMap = {}
 
+    def setDataList(self, mylist):
+        self.mylist = mylist
+        self.layoutAboutToBeChanged.emit()
+        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(0), self.columnCount(0)))
+        self.layoutChanged.emit()
 
-if __name__=="__main__":
-    from sys import argv, exit
+    def updateModel(self):
+        dataList2 = []
+        if self.change_flag is True:
+            dataList2 = [
+                [QCheckBox("关"), 0, '063802', '01', 'rb1705,rb1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '063802', '02', 'cu1705,cu1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '063802', '03', 'zn1705,zn1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '063802', '04', 'rb1705,rb1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '063802', '01', 'zn1705,zn1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '063802', '02', 'ru1705,ru1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '063802', '02', 'ni1705,ni1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '063802', '01', 'rb1705,rb1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+            ]
+            self.change_flag = False
+        elif self.change_flag is False:
+            dataList2 = [
+                [QCheckBox("关"), 0, '058176', '01', 'rb1705,rb1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '058176', '02', 'cu1705,cu1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '058176', '03', 'zn1705,zn1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '058176', '04', 'rb1705,rb1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '058176', '01', 'zn1705,zn1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '058176', '02', 'ru1705,ru1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '058176', '02', 'ni1705,ni1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+                [QCheckBox("关"), 0, '058176', '01', 'rb1705,rb1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+            ]
+            self.change_flag = True
 
-    class Widget(QtWidgets.QWidget):
-        """
-        A simple test widget to contain and own the model and table.
-        """
-        def __init__(self, parent=None):
-            QtWidgets.QWidget.__init__(self, parent)
+        self.mylist = dataList2
+        self.layoutAboutToBeChanged.emit()
+        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(0), self.columnCount(0)))
+        self.layoutChanged.emit()
 
-            l=QtWidgets.QVBoxLayout(self)
-            cdf = self.get_data_frame()
-            self._tm=TableModel(self)
-            self._tm.update(cdf)
-            self._tv=TableView(self)
-            self._tv.setModel(self._tm)
-            for row in range(0, self._tm.rowCount()):
-                self._tv.openPersistentEditor(self._tm.index(row, 4))
-            self.setGeometry(300, 300, 550, 200)
-            l.addWidget(self._tv)
+    def rowCount(self, parent):
+        return len(self.mylist)
 
-        def get_data_frame(self):
-            if has_pandas:
-              df = pd.DataFrame({'Name':['a','b','c','d'],
-              'First':[2.3,5.4,3.1,7.7], 'Last':[23.4,11.2,65.3,88.8], 'Class':[1,1,2,1], 'Valid':[True, False, True, False]})
+    def columnCount(self, parent):
+        return len(self.mylist[0])
+
+    def data(self, index, role):
+        if not index.isValid():
+            return None
+        if (index.column() == 0):
+            value = self.mylist[index.row()][index.column()].text()
+        else:
+            value = self.mylist[index.row()][index.column()]
+        if role == QtCore.Qt.EditRole:
+            return value
+        elif role == QtCore.Qt.DisplayRole:
+            return value
+        elif role == QtCore.Qt.CheckStateRole:
+            if index.column() == 0:
+                # print(">>> data() row,col = %d, %d" % (index.row(), index.column()))
+                if self.mylist[index.row()][index.column()].isChecked():
+                    return QtCore.Qt.Checked
+                else:
+                    return QtCore.Qt.Unchecked
+
+    def headerData(self, col, orientation, role):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            return self.header[col]
+        return None
+
+    def sort(self, col, order):
+        """sort table by given column number col"""
+        # print(">>> sort() col = ", col)
+        if col != 0:
+            self.emit(SIGNAL("layoutAboutToBeChanged()"))
+            self.mylist = sorted(self.mylist, key=operator.itemgetter(col))
+            if order == Qt.DescendingOrder:
+                self.mylist.reverse()
+            self.emit(SIGNAL("layoutChanged()"))
+
+    def flags(self, index):
+        if not index.isValid():
+            return None
+        # print(">>> flags() index.column() = ", index.column())
+        if index.column() == 0:
+            # return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable
+            return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsUserCheckable
+        else:
+            return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
+
+    def setData(self, index, value, role):
+        if not index.isValid():
+            return False
+        # print(">>> setData() role = ", role)
+        # print(">>> setData() index.column() = ", index.column())
+        # print(">>> setData() value = ", value)
+        if role == QtCore.Qt.CheckStateRole and index.column() == 0:
+            print(">>> setData() role = ", role)
+            print(">>> setData() index.column() = ", index.column())
+            if value == QtCore.Qt.Checked:
+                self.mylist[index.row()][index.column()].setChecked(True)
+                self.mylist[index.row()][index.column()].setText("开")
+                # if studentInfos.size() > index.row():
+                #     emit StudentInfoIsChecked(studentInfos[index.row()])     
             else:
-              columns = ['Name', 'First', 'Last', 'Class', 'Valid']
-              values = [['a','b','c','d'], [2.3,5.4,3.1,7.7], [23.4,11.2,65.3,88.8], [1,1,2,1], [True, False, True, False]]
-              df = Dataframe(columns, values)
-            return df
+                self.mylist[index.row()][index.column()].setChecked(False)
+                self.mylist[index.row()][index.column()].setText("关")
+        else:
+            print(">>> setData() role = ", role)
+            print(">>> setData() index.column() = ", index.column())
+        # self.emit(SIGNAL("dataChanged(QModelIndex,QModelIndex)"), index, index)
+        print(">>> setData() index.row = ", index.row())
+        print(">>> setData() index.column = ", index.column())
+        self.dataChanged.emit(index, index)
+        return True
 
-    a=QApplication(argv)
-    w=Widget()
-    w.show()
-    w.raise_()
-    exit(a.exec_())
+def timer_func(win, mylist):
+    print(">>> timer_func()")
+    win.table_model.setDataList(mylist)
+    win.table_view.repaint()
+    win.table_view.update()
+
+# def timer_func(num):
+#     print(">>> timer_func() num = ", num)
+
+
+if __name__ == '__main__':
+    app = QApplication([])
+    # you could process a CSV file to create this data
+    header = ['开关', '只平', '期货账号', '策略编号', '交易合约', '总持仓', '买持仓', '卖持仓', '持仓盈亏', '平仓盈亏', '手续费', '净盈亏', '成交量', '成交金额', 'A成交率', 'B成交率', '交易模型', '下单算法']
+    # a list of (fname, lname, age, weight) tuples
+    checkbox1 = QCheckBox("关");
+    checkbox1.setChecked(True)
+    dataList = [
+        [checkbox1, 0, '058176', '01', 'rb1705,rb1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+        [QCheckBox("关"), 0, '058176', '02', 'cu1705,cu1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+        [QCheckBox("关"), 0, '058176', '03', 'zn1705,zn1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+        [QCheckBox("关"), 0, '058176', '04', 'rb1705,rb1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+        [QCheckBox("关"), 0, '058176', '01', 'zn1705,zn1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+        [QCheckBox("关"), 0, '058176', '02', 'ru1705,ru1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+        [QCheckBox("关"), 0, '058176', '02', 'ni1705,ni1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+        [QCheckBox("关"), 0, '058176', '01', 'rb1705,rb1710', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MA', '01'],
+    ]
+
+    win = MyWindow(dataList, header)
+    win.show()
+    # win.table_model.setDataList(dataList)
+    # timer = threading.Timer(10, timer_func, (win, dataList2))
+    # timer.start()
+    app.exec_()
