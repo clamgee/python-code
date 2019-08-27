@@ -207,7 +207,7 @@ class SKMainWindow(QMainWindow): #主視窗
     # 商品訂閱結束
     #委託未平倉回報資料
     def Reply_Open_Fnc(self):
-        self.replypd=pd.DataFrame(columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','條件','倉位','當沖','委託序號','委託書號','委託日期','委託時間','交易時段'])
+        self.replypd=pd.DataFrame(columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','倉位','條件','價位格式','委託序號','委託書號','委託日期','委託時間','交易時段'])
         self.ReplyCRpdMode = PandasModel()
         self.openpd=pd.DataFrame(columns=['市場別','帳號','商品','買賣別','未平倉部位','當沖未平倉部位','平均成本','一點價值','單口手續費','交易稅'])
         self.OpenCRpdMode = PandasModel()
@@ -421,14 +421,27 @@ class SKReplyLibEvent:
     def OnComplete(self,bstrUserID):
         SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
         SKMain.Reply_TBW.setModel(SKMain.ReplyCRpdMode)
-        SKMain.ReplyComplete=True
+        print(SKMain.replypd)
     def OnNewData(self,bstrUserID,bstrData):
         Line=bstrData.split(',')
-        tmplist=[[Line[8],Line[6],Line[11],Line[20],Line[2],Line[20],Line[20],Line[6],Line[6],Line[6],Line[0],Line[10],Line[23],Line[24],Line[24]]]
-        SKMain.replypd=SKMain.replypd.append(pd.DataFrame(tmplist,columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','條件','倉位','當沖','委託序號','委託書號','委託日期','委託時間','交易時段']),ignore_index=True)
+        if Line[2]=='D':
+            dealcontract=Line[20]
+        else:
+            dealcontract=0
+        if Line[2]=='C': 
+            cancelcontract=Line[20] 
+        else:
+            cancelcontract=0    
+        tmplist=[[Line[8],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][0]],
+                Line[11],Line[20],
+                Config_dict.OnNewData_dict['Type'][Line[2]],
+                dealcontract,cancelcontract,
+                Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][1]],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][2]],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][3]],
+                Line[0],Line[10],Line[23],Line[24],Line[24]]]
+        SKMain.replypd=SKMain.replypd.append(pd.DataFrame(tmplist,columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','倉位','條件','價位格式','委託序號','委託書號','委託日期','委託時間','交易時段']),ignore_index=True)
         if SKMain.ReplyComplete==True:
             SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
-        print('委託:',tmplist)
+        # print('委託:',tmplist)
         # i=0
         # for row in Line :
         #     print(i,',',row)
