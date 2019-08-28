@@ -384,7 +384,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_12">
               <item>
-               <widget class="QPushButton" name="pushButton_6">
+               <widget class="QPushButton" name="OrderCancel_btn">
                 <property name="text">
                  <string>一鍵刪單</string>
                 </property>

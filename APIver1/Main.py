@@ -31,7 +31,8 @@ class SKMainWindow(QMainWindow): #主視窗
         loadUi(r'UI/MainWindow.ui',self)
         self.showMaximized()
         # 帳號處理
-        self.SKID='未登入' # 
+        self.SKID='未登入' # 登入帳號
+        self.IBAccount='' #期貨帳號
         self.statusBar.showMessage('帳號:'+self.SKID)
         self.Bill=[]
         self.fOrder=sk.FUTUREORDER()
@@ -58,6 +59,7 @@ class SKMainWindow(QMainWindow): #主視窗
         self.MarketPrice_btn.clicked.connect(self.MarketPriceFunc)
         self.LimitMarketPrice_btn.clicked.connect(self.LimitMarketPriceFunc)
         self.Order_btn.clicked.connect(self.OrderFunc)
+        self.OrderCancel_btn.clicked.connect(self.OrderCancelFunc)
 
     # 呼叫系統訊息介面與功能
     def SKMessageFunc(self):
@@ -249,7 +251,6 @@ class SKMainWindow(QMainWindow): #主視窗
             self.OrderPrice = 'P'
             self.OrderType_box.setCurrentIndex(1)
 
-
     def OrderFunc(self):
         # 填入完整帳號
         self.fOrder.bstrFullAccount =  self.Future_Acc_CBox.currentText()
@@ -270,7 +271,7 @@ class SKMainWindow(QMainWindow): #主視窗
             msgbox.setDefaultButton(QMessageBox.Abort)
             reply=msgbox.exec_()
             if reply == QMessageBox.Abort:
-                return
+                return None
         # ROD、IOC、FOK
         self.fOrder.sTradeType = self.OrderType_box.currentIndex()
         # 非當沖、當沖
@@ -289,6 +290,13 @@ class SKMainWindow(QMainWindow): #主視窗
         # print(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
         # self.SKMessage.textBrowser.append(str(skC.SKCenterLib_GetReturnCodeMessage(m_nCode)))
 
+    def OrderCancelFunc(self):
+        if self.replypd.shape[0]>0:
+            for SqNo in self.replypd['委託序號']:
+                m_tupple=skO.CancelOrderBySeqNo(self.SKID,False,self.IBAccount,SqNo)
+                self.ndetialmsg.textBrowser.append(str(m_tupple[0])+','+str(m_tupple[1]))
+        else:
+            QMessageBox()
 
 
     #下單功能結束
@@ -365,16 +373,16 @@ class SKOrderLibEvent:
     def OnAccount(self,bstrLogInID,bstrAccountData):
         Line=bstrAccountData.split(',')
         if Line[0]=='TF':
-            bstrAccount=str(Line[1]).strip()+str(Line[3]).strip()
-            print('期貨帳戶: '+bstrAccount,',',Line[5])
-            SKMain.Future_Acc_CBox.addItem(bstrAccount)
-            m_nCode=skO.GetFutureRights(bstrLogInID,bstrAccount,1)
+            self.IBAccount=str(Line[1]).strip()+str(Line[3]).strip()
+            print('期貨帳戶: '+self.IBAccount,',',Line[5])
+            SKMain.Future_Acc_CBox.addItem(self.IBAccount)
+            m_nCode=skO.GetFutureRights(bstrLogInID,self.IBAccount,1)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
             m_nCode=skO.ReadCertByID(bstrLogInID)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
             m_nCode=skR.SKReplyLib_ConnectByID(bstrLogInID)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
-            m_nCode=skO.GetOpenInterest(bstrLogInID,bstrAccount)
+            m_nCode=skO.GetOpenInterest(bstrLogInID,self.IBAccount)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
     
     def OnAsyncOrder(self,nThreadID,nCode,bstrMessage):
