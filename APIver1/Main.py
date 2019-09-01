@@ -294,9 +294,18 @@ class SKMainWindow(QMainWindow): #主視窗
         if self.replypd.shape[0]>0:
             for SqNo in self.replypd['委託序號']:
                 m_tupple=skO.CancelOrderBySeqNo(self.SKID,False,self.IBAccount,SqNo)
-                self.ndetialmsg.textBrowser.append(str(m_tupple[0])+','+str(m_tupple[1]))
+                SKMain.SKMessage.textBrowser.append(str(m_tupple[0])+','+str(m_tupple[1])+','+str(self.IBAccount)+','+str(SqNo))
         else:
-            QMessageBox()
+            msgbox=QMessageBox()
+            msgbox.setWindowTitle('無委託')
+            msgbox.setIcon(QMessageBox.information)
+            msgbox.setText('目前無有效委託單')
+            msgbox.setStandardButtons(QMessageBox.Abort)
+            msgbox.setDefaultButton(QMessageBox.Abort)
+            reply=msgbox.exec_()
+            if reply == QMessageBox.Abort:
+                return None
+
 
 
     #下單功能結束
@@ -348,7 +357,7 @@ class PandasModel(QAbstractTableModel):
     def setdata(self,data):
         self._data=data
         self.layoutAboutToBeChanged.emit() #建立變更資料通知訊號發射
-        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(0), self.columnCount(0))) #資料變更區域訊號發射
+        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount())) #資料變更區域訊號發射
         self.layoutChanged.emit() #資料變更訊號發射
 
     def rowCount(self, parent=None):
@@ -373,16 +382,16 @@ class SKOrderLibEvent:
     def OnAccount(self,bstrLogInID,bstrAccountData):
         Line=bstrAccountData.split(',')
         if Line[0]=='TF':
-            self.IBAccount=str(Line[1]).strip()+str(Line[3]).strip()
-            print('期貨帳戶: '+self.IBAccount,',',Line[5])
-            SKMain.Future_Acc_CBox.addItem(self.IBAccount)
-            m_nCode=skO.GetFutureRights(bstrLogInID,self.IBAccount,1)
+            SKMain.IBAccount=str(Line[1]).strip()+str(Line[3]).strip()
+            print('期貨帳戶: '+SKMain.IBAccount,',',Line[5])
+            SKMain.Future_Acc_CBox.addItem(SKMain.IBAccount)
+            m_nCode=skO.GetFutureRights(bstrLogInID,SKMain.IBAccount,1)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
             m_nCode=skO.ReadCertByID(bstrLogInID)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
             m_nCode=skR.SKReplyLib_ConnectByID(bstrLogInID)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
-            m_nCode=skO.GetOpenInterest(bstrLogInID,self.IBAccount)
+            m_nCode=skO.GetOpenInterest(bstrLogInID,SKMain.IBAccount)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
     
     def OnAsyncOrder(self,nThreadID,nCode,bstrMessage):
@@ -429,9 +438,12 @@ class SKReplyLibEvent:
     def OnComplete(self,bstrUserID):
         SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
         SKMain.Reply_TBW.setModel(SKMain.ReplyCRpdMode)
-        print(SKMain.replypd)
+        SKMain.ReplyComplete=True
+        # print(SKMain.replypd)
     def OnNewData(self,bstrUserID,bstrData):
         Line=bstrData.split(',')
+        print(Line[0] in SKMain.replypd['委託序號'])
+        # print(SKMain.replypd[SKMain.replypd['委託序號']==Line[0]].index[0])
         if Line[2]=='D':
             dealcontract=Line[20]
         else:
