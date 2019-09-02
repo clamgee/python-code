@@ -442,7 +442,8 @@ class SKReplyLibEvent:
         # print(SKMain.replypd)
     def OnNewData(self,bstrUserID,bstrData):
         Line=bstrData.split(',')
-        print(Line[0] in SKMain.replypd['委託序號'])
+        tmp=SKMain.replypd['委託序號'].isin({Line[0]})
+        print(type(tmp),tmp,tmp.values)
         # print(SKMain.replypd[SKMain.replypd['委託序號']==Line[0]].index[0])
         if Line[2]=='D':
             dealcontract=Line[20]
