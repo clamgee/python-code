@@ -60,6 +60,7 @@ class SKMainWindow(QMainWindow): #主視窗
         self.LimitMarketPrice_btn.clicked.connect(self.LimitMarketPriceFunc)
         self.Order_btn.clicked.connect(self.OrderFunc)
         self.OrderCancel_btn.clicked.connect(self.OrderCancelFunc)
+        self.ClosePositionAll_btn.clicked.connect(self.ClosePositionAllFunc)
 
     # 呼叫系統訊息介面與功能
     def SKMessageFunc(self):
@@ -305,6 +306,10 @@ class SKMainWindow(QMainWindow): #主視窗
             reply=msgbox.exec_()
             if reply == QMessageBox.Abort:
                 return None
+
+    def ClosePositionAllFunc(self):
+        if SKMain.openpd.shape[0]==0:
+            return None
 
 
 

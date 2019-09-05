@@ -239,6 +239,9 @@
               </item>
               <item>
                <widget class="QComboBox" name="InterestType_box">
+                <property name="maxCount">
+                 <number>10</number>
+                </property>
                 <item>
                  <property name="text">
                   <string>新倉</string>
@@ -391,7 +394,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_5">
+               <widget class="QPushButton" name="ClosePositionAll_btn">
                 <property name="text">
                  <string>一鍵平倉</string>
                 </property>
