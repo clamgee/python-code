@@ -442,9 +442,7 @@ class SKReplyLibEvent:
         # print(SKMain.replypd)
     def OnNewData(self,bstrUserID,bstrData):
         Line=bstrData.split(',')
-        tmp=SKMain.replypd['委託序號'].isin({Line[0]})
-        print(type(tmp),tmp,tmp.values)
-        # print(SKMain.replypd[SKMain.replypd['委託序號']==Line[0]].index[0])
+        
         if Line[2]=='D':
             dealcontract=Line[20]
         else:
@@ -453,13 +451,35 @@ class SKReplyLibEvent:
             cancelcontract=Line[20] 
         else:
             cancelcontract=0    
-        tmplist=[[Line[8],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][0]],
-                Line[11],Line[20],
-                Config_dict.OnNewData_dict['Type'][Line[2]],
-                dealcontract,cancelcontract,
-                Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][1]],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][2]],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][3]],
-                Line[0],Line[10],Line[23],Line[24],Line[24]]]
-        SKMain.replypd=SKMain.replypd.append(pd.DataFrame(tmplist,columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','倉位','條件','價位格式','委託序號','委託書號','委託日期','委託時間','交易時段']),ignore_index=True)
+
+        if SKMain.replypd.shape[0]>0:
+            tmp=SKMain.replypd['委託序號'].isin({Line[0]})
+            if tmp[0]!=True:
+                tmp=None
+        else:
+            tmp=None
+        
+        if tmp is not None: #and tmp[tmp==True].shape[0]==1:
+            i=tmp[tmp==True].index[0]
+            SKMain.replypd.loc[i,'買賣']=Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][0]]
+            SKMain.replypd.loc[i,'委託價格']=Line[11]
+            SKMain.replypd.loc[i,'委託口數']=Line[20]
+            SKMain.replypd.loc[i,'委託狀態']=Config_dict.OnNewData_dict['Type'][Line[2]]
+            SKMain.replypd.loc[i,'成交口數']=dealcontract
+            SKMain.replypd.loc[i,'取消口數']=cancelcontract
+            SKMain.replypd.loc[i,'倉位']=Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][1]]
+            SKMain.replypd.loc[i,'條件']=Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][2]]
+            SKMain.replypd.loc[i,'價位格式']=Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][3]]
+            SKMain.replypd.loc[i,'委託時間']=Line[24]
+            SKMain.replypd.loc[i,'交易時段']=Line[24]
+        else:
+            tmplist=[[Line[8],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][0]],
+                    Line[11],Line[20],
+                    Config_dict.OnNewData_dict['Type'][Line[2]],
+                    dealcontract,cancelcontract,
+                    Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][1]],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][2]],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][3]],
+                    Line[0],Line[10],Line[23],Line[24],Line[24]]]
+            SKMain.replypd=SKMain.replypd.append(pd.DataFrame(tmplist,columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','倉位','條件','價位格式','委託序號','委託書號','委託日期','委託時間','交易時段']),ignore_index=True)
         if SKMain.ReplyComplete==True:
             SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
         # print('委託:',tmplist)
