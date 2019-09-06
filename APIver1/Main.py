@@ -58,7 +58,7 @@ class SKMainWindow(QMainWindow): #主視窗
         self.PriceSpin.valueChanged.connect(self.GetPriceFunc)
         self.MarketPrice_btn.clicked.connect(self.MarketPriceFunc)
         self.LimitMarketPrice_btn.clicked.connect(self.LimitMarketPriceFunc)
-        self.Order_btn.clicked.connect(self.OrderFunc)
+        self.Order_btn.clicked.connect(self.Order_btn_Func)
         self.OrderCancel_btn.clicked.connect(self.OrderCancelFunc)
         self.ClosePositionAll_btn.clicked.connect(self.ClosePositionAllFunc)
 
@@ -252,18 +252,16 @@ class SKMainWindow(QMainWindow): #主視窗
             self.OrderPrice = 'P'
             self.OrderType_box.setCurrentIndex(1)
 
-    def OrderFunc(self):
+    def Order_btn_Func(self):
         # 填入完整帳號
         self.fOrder.bstrFullAccount =  self.Future_Acc_CBox.currentText()
         # 填入期權代號
         if self.commodityline.text()=='TX00':
-            self.fOrder.bstrStockNo='MTX00'
+            commodity='MTX00'
         else:
-            self.fOrder.bstrStockNo = self.commodityline.text()
+            commodity = self.commodityline.text()
         # 買賣別
-        if self.trade_act!=-1:
-            self.fOrder.sBuySell = self.trade_act
-        else:
+        if self.trade_act==-1:
             msgbox=QMessageBox()
             msgbox.setWindowTitle('買賣設定錯誤')
             msgbox.setIcon(QMessageBox.Critical)
@@ -283,6 +281,28 @@ class SKMainWindow(QMainWindow): #主視窗
         self.fOrder.nQty = self.Contract_Box.value()
         # 新倉、平倉、自動
         self.fOrder.sNewClose = self.InterestType_box.currentIndex()
+        # 盤中、T盤預約
+        self.fOrder.sReserved = 0
+        # bstrMessage=''
+        OrderFunc(self.Future_Acc_CBox.currentText(),commodity,self.trade_act,self.OrderType_box.currentIndex(),self.Contract_Box.value(),self.InterestType_box.currentIndex())
+
+    def OrderFunc(self,Account,Commodity,TradeAct,TradeType,OderPrice,Qty,InterestType):
+        # 填入完整帳號
+        self.fOrder.bstrFullAccount =  Account
+        # 填入期權代號
+        self.fOrder.bstrStockNo = Commodity
+        # 買賣別
+        self.fOrder.sBuySell = TradeAct
+        # ROD、IOC、FOK
+        self.fOrder.sTradeType = TradeType
+        # 非當沖、當沖
+        self.fOrder.sDayTrade = 0
+        # 委託價
+        self.fOrder.bstrPrice = OderPrice
+        # 委託數量
+        self.fOrder.nQty = Qty
+        # 新倉、平倉、自動
+        self.fOrder.sNewClose = InterestType
         # 盤中、T盤預約
         self.fOrder.sReserved = 0
         # bstrMessage=''
@@ -309,7 +329,17 @@ class SKMainWindow(QMainWindow): #主視窗
 
     def ClosePositionAllFunc(self):
         if SKMain.openpd.shape[0]==0:
-            return None
+            msgbox=QMessageBox()
+            msgbox.setWindowTitle('無倉位')
+            msgbox.setIcon(QMessageBox.information)
+            msgbox.setText('目前無持有倉位')
+            msgbox.setStandardButtons(QMessageBox.Abort)
+            msgbox.setDefaultButton(QMessageBox.Abort)
+            reply=msgbox.exec_()
+            if reply == QMessageBox.Abort:
+                return None
+        else:
+
 
 
 

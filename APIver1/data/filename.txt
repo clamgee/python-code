@@ -114,3 +114,5 @@ Ticks2019-08-30.txt
 Ticks2019-09-02.txt
 Ticks2019-09-03.txt
 Ticks2019-09-04.txt
+Ticks2019-09-05.txt
+Ticks2019-09-06.txt
