@@ -328,10 +328,10 @@ class SKMainWindow(QMainWindow): #主視窗
                 return None
 
     def ClosePositionAllFunc(self):
-        if SKMain.openpd.shape[0]==0:
+        if self.openpd.shape[0]==0:
             msgbox=QMessageBox()
             msgbox.setWindowTitle('無倉位')
-            msgbox.setIcon(QMessageBox.information)
+            msgbox.setIcon(QMessageBox.Information)
             msgbox.setText('目前無持有倉位')
             msgbox.setStandardButtons(QMessageBox.Abort)
             msgbox.setDefaultButton(QMessageBox.Abort)
@@ -339,10 +339,31 @@ class SKMainWindow(QMainWindow): #主視窗
             if reply == QMessageBox.Abort:
                 return None
         else:
-            pass
-
-
-
+            tmplist=self.openpd.index.tolist()
+            for i in tmplist:
+                # ['市場別','帳號','商品','買賣別','未平倉部位','當沖未平倉部位','平均成本','一點價值','單口手續費','交易稅']
+                Account=SKMain.openpd.loc[i,'帳號']
+                Commodity=SKMain.openpd.loc[i,'商品']
+                if self.openpd.loc[i,'買賣別']=='B':
+                    TradeAct=1 #賣出平倉
+                elif self.openpd.loc[i,'買賣別']=='S':
+                    TradeAct=0 #買進平倉
+                else:
+                    msgbox=QMessageBox()
+                    msgbox.setWindowTitle('倉位錯誤')
+                    msgbox.setIcon(QMessageBox.Information)
+                    msgbox.setText('目前持有倉位不明')
+                    msgbox.setStandardButtons(QMessageBox.Abort)
+                    msgbox.setDefaultButton(QMessageBox.Abort)
+                    reply=msgbox.exec_()
+                    if reply == QMessageBox.Abort:
+                        return None
+                TradeType=1
+                OderPrice='M'
+                Qty=self.openpd.loc[i,'未平倉部位']
+                InterestType=1
+                OrderFunc(self,Account,Commodity,TradeAct,TradeType,OderPrice,Qty,InterestType)
+            
 
     #下單功能結束
 
