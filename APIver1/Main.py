@@ -339,6 +339,7 @@ class SKMainWindow(QMainWindow): #主視窗
             if reply == QMessageBox.Abort:
                 return None
         else:
+            pass
 
 
 
