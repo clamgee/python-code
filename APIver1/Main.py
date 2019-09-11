@@ -271,20 +271,8 @@ class SKMainWindow(QMainWindow): #主視窗
             reply=msgbox.exec_()
             if reply == QMessageBox.Abort:
                 return None
-        # ROD、IOC、FOK
-        self.fOrder.sTradeType = self.OrderType_box.currentIndex()
-        # 非當沖、當沖
-        self.fOrder.sDayTrade = 0
-        # 委託價
-        self.fOrder.bstrPrice = self.OrderPrice
-        # 委託數量
-        self.fOrder.nQty = self.Contract_Box.value()
-        # 新倉、平倉、自動
-        self.fOrder.sNewClose = self.InterestType_box.currentIndex()
-        # 盤中、T盤預約
-        self.fOrder.sReserved = 0
-        # bstrMessage=''
-        OrderFunc(self.Future_Acc_CBox.currentText(),commodity,self.trade_act,self.OrderType_box.currentIndex(),self.Contract_Box.value(),self.InterestType_box.currentIndex())
+       
+        self.OrderFunc(self.Future_Acc_CBox.currentText(),commodity,self.trade_act,self.OrderType_box.currentIndex(),self.OrderPrice,self.Contract_Box.value(),self.InterestType_box.currentIndex())
 
     def OrderFunc(self,Account,Commodity,TradeAct,TradeType,OderPrice,Qty,InterestType):
         # 填入完整帳號
@@ -362,7 +350,7 @@ class SKMainWindow(QMainWindow): #主視窗
                 OderPrice='M'
                 Qty=self.openpd.loc[i,'未平倉部位']
                 InterestType=1
-                OrderFunc(self,Account,Commodity,TradeAct,TradeType,OderPrice,Qty,InterestType)
+                self.OrderFunc(self,Account,Commodity,TradeAct,TradeType,OderPrice,Qty,InterestType)
             
 
     #下單功能結束
