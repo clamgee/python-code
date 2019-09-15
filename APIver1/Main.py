@@ -106,9 +106,7 @@ class SKMainWindow(QMainWindow): #主視窗
         self.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.Right_TB.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.Right_TB.setHorizontalHeaderLabels(['帳戶餘額','浮動損益','已實現費用'])
-
         self.Bill=pd.DataFrame(np.arange(39).reshape(39),columns=['Right']) # 期貨權益數
-        # self.Bill['RightItem']=''
         i=0
         while i < self.Bill.shape[0]:
             self.Bill.loc[i,'Right']=QTableWidgetItem('')
@@ -271,7 +269,6 @@ class SKMainWindow(QMainWindow): #主視窗
             reply=msgbox.exec_()
             if reply == QMessageBox.Abort:
                 return None
-       
         self.OrderFunc(self.Future_Acc_CBox.currentText(),commodity,self.trade_act,self.OrderType_box.currentIndex(),self.OrderPrice,self.Contract_Box.value(),self.InterestType_box.currentIndex())
 
     def OrderFunc(self,Account,Commodity,TradeAct,TradeType,OderPrice,Qty,InterestType):
@@ -397,8 +394,6 @@ class PandasModel(QAbstractTableModel):
     def __init__(self):
         QAbstractTableModel.__init__(self)
 
-    # def setdata(self,data):
-    #     self._data=data
     def setdata(self,data):
         self._data=data
         self.layoutAboutToBeChanged.emit() #建立變更資料通知訊號發射
@@ -487,25 +482,27 @@ class SKReplyLibEvent:
         # print(SKMain.replypd)
     def OnNewData(self,bstrUserID,bstrData):
         Line=bstrData.split(',')
-        
+
         if Line[2]=='D':
             dealcontract=Line[20]
         else:
             dealcontract=0
+
         if Line[2]=='C': 
             cancelcontract=Line[20] 
         else:
-            cancelcontract=0    
+            cancelcontract=0
 
         if SKMain.replypd.shape[0]>0:
-            tmp=SKMain.replypd['委託序號'].isin({Line[0]})
-            if tmp[0]!=True:
-                tmp=None
+            tmp=SKMain.replypd.委託序號.isin({Line[0]})
+            if tmp[tmp==True].index.shape[0]>0:
+                i=tmp[tmp==True].index[0]
+            else:
+                i=None
         else:
-            tmp=None
-        
-        if tmp is not None: #and tmp[tmp==True].shape[0]==1:
-            i=tmp[tmp==True].index[0]
+            i=None
+
+        if i is not None:
             SKMain.replypd.loc[i,'買賣']=Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][0]]
             SKMain.replypd.loc[i,'委託價格']=Line[11]
             SKMain.replypd.loc[i,'委託口數']=Line[20]
@@ -527,12 +524,7 @@ class SKReplyLibEvent:
             SKMain.replypd=SKMain.replypd.append(pd.DataFrame(tmplist,columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','倉位','條件','價位格式','委託序號','委託書號','委託日期','委託時間','交易時段']),ignore_index=True)
         if SKMain.ReplyComplete==True:
             SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
-        # print('委託:',tmplist)
-        # i=0
-        # for row in Line :
-        #     print(i,',',row)
-        #     i+=1
-        # print('Test:',SKMain.replypd)        
+
     def OnSmartData(self,bstrUserID,bstrData):
         print(bstrUserID,'智動回報:',bstrData)
 
