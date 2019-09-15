@@ -307,7 +307,7 @@ class SKMainWindow(QMainWindow): #主視窗
         else:
             msgbox=QMessageBox()
             msgbox.setWindowTitle('無委託')
-            msgbox.setIcon(QMessageBox.information)
+            msgbox.setIcon(QMessageBox.Information)
             msgbox.setText('目前無有效委託單')
             msgbox.setStandardButtons(QMessageBox.Abort)
             msgbox.setDefaultButton(QMessageBox.Abort)
