@@ -58,8 +58,9 @@ class SKMainWindow(QMainWindow): #主視窗
         self.PriceSpin.valueChanged.connect(self.GetPriceFunc)
         self.MarketPrice_btn.clicked.connect(self.MarketPriceFunc)
         self.LimitMarketPrice_btn.clicked.connect(self.LimitMarketPriceFunc)
-        self.Order_btn.clicked.connect(self.OrderFunc)
+        self.Order_btn.clicked.connect(self.Order_btn_Func)
         self.OrderCancel_btn.clicked.connect(self.OrderCancelFunc)
+        self.ClosePositionAll_btn.clicked.connect(self.ClosePositionAllFunc)
 
     # 呼叫系統訊息介面與功能
     def SKMessageFunc(self):
@@ -105,9 +106,7 @@ class SKMainWindow(QMainWindow): #主視窗
         self.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.Right_TB.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.Right_TB.setHorizontalHeaderLabels(['帳戶餘額','浮動損益','已實現費用'])
-
         self.Bill=pd.DataFrame(np.arange(39).reshape(39),columns=['Right']) # 期貨權益數
-        # self.Bill['RightItem']=''
         i=0
         while i < self.Bill.shape[0]:
             self.Bill.loc[i,'Right']=QTableWidgetItem('')
@@ -251,18 +250,16 @@ class SKMainWindow(QMainWindow): #主視窗
             self.OrderPrice = 'P'
             self.OrderType_box.setCurrentIndex(1)
 
-    def OrderFunc(self):
+    def Order_btn_Func(self):
         # 填入完整帳號
         self.fOrder.bstrFullAccount =  self.Future_Acc_CBox.currentText()
         # 填入期權代號
         if self.commodityline.text()=='TX00':
-            self.fOrder.bstrStockNo='MTX00'
+            commodity='MTX00'
         else:
-            self.fOrder.bstrStockNo = self.commodityline.text()
+            commodity = self.commodityline.text()
         # 買賣別
-        if self.trade_act!=-1:
-            self.fOrder.sBuySell = self.trade_act
-        else:
+        if self.trade_act==-1:
             msgbox=QMessageBox()
             msgbox.setWindowTitle('買賣設定錯誤')
             msgbox.setIcon(QMessageBox.Critical)
@@ -272,16 +269,25 @@ class SKMainWindow(QMainWindow): #主視窗
             reply=msgbox.exec_()
             if reply == QMessageBox.Abort:
                 return None
+        self.OrderFunc(self.Future_Acc_CBox.currentText(),commodity,self.trade_act,self.OrderType_box.currentIndex(),self.OrderPrice,self.Contract_Box.value(),self.InterestType_box.currentIndex())
+
+    def OrderFunc(self,Account,Commodity,TradeAct,TradeType,OderPrice,Qty,InterestType):
+        # 填入完整帳號
+        self.fOrder.bstrFullAccount =  Account
+        # 填入期權代號
+        self.fOrder.bstrStockNo = Commodity
+        # 買賣別
+        self.fOrder.sBuySell = TradeAct
         # ROD、IOC、FOK
-        self.fOrder.sTradeType = self.OrderType_box.currentIndex()
+        self.fOrder.sTradeType = TradeType
         # 非當沖、當沖
         self.fOrder.sDayTrade = 0
         # 委託價
-        self.fOrder.bstrPrice = self.OrderPrice
+        self.fOrder.bstrPrice = OderPrice
         # 委託數量
-        self.fOrder.nQty = self.Contract_Box.value()
+        self.fOrder.nQty = Qty
         # 新倉、平倉、自動
-        self.fOrder.sNewClose = self.InterestType_box.currentIndex()
+        self.fOrder.sNewClose = InterestType
         # 盤中、T盤預約
         self.fOrder.sReserved = 0
         # bstrMessage=''
@@ -294,10 +300,55 @@ class SKMainWindow(QMainWindow): #主視窗
         if self.replypd.shape[0]>0:
             for SqNo in self.replypd['委託序號']:
                 m_tupple=skO.CancelOrderBySeqNo(self.SKID,False,self.IBAccount,SqNo)
-                self.ndetialmsg.textBrowser.append(str(m_tupple[0])+','+str(m_tupple[1]))
+                SKMain.SKMessage.textBrowser.append(str(m_tupple[0])+','+str(m_tupple[1])+','+str(self.IBAccount)+','+str(SqNo))
         else:
-            QMessageBox()
+            msgbox=QMessageBox()
+            msgbox.setWindowTitle('無委託')
+            msgbox.setIcon(QMessageBox.Information)
+            msgbox.setText('目前無有效委託單')
+            msgbox.setStandardButtons(QMessageBox.Abort)
+            msgbox.setDefaultButton(QMessageBox.Abort)
+            reply=msgbox.exec_()
+            if reply == QMessageBox.Abort:
+                return None
 
+    def ClosePositionAllFunc(self):
+        if self.openpd.shape[0]==0:
+            msgbox=QMessageBox()
+            msgbox.setWindowTitle('無倉位')
+            msgbox.setIcon(QMessageBox.Information)
+            msgbox.setText('目前無持有倉位')
+            msgbox.setStandardButtons(QMessageBox.Abort)
+            msgbox.setDefaultButton(QMessageBox.Abort)
+            reply=msgbox.exec_()
+            if reply == QMessageBox.Abort:
+                return None
+        else:
+            tmplist=self.openpd.index.tolist()
+            for i in tmplist:
+                # ['市場別','帳號','商品','買賣別','未平倉部位','當沖未平倉部位','平均成本','一點價值','單口手續費','交易稅']
+                Account=SKMain.openpd.loc[i,'帳號']
+                Commodity=SKMain.openpd.loc[i,'商品']
+                if self.openpd.loc[i,'買賣別']=='B':
+                    TradeAct=1 #賣出平倉
+                elif self.openpd.loc[i,'買賣別']=='S':
+                    TradeAct=0 #買進平倉
+                else:
+                    msgbox=QMessageBox()
+                    msgbox.setWindowTitle('倉位錯誤')
+                    msgbox.setIcon(QMessageBox.Information)
+                    msgbox.setText('目前持有倉位不明')
+                    msgbox.setStandardButtons(QMessageBox.Abort)
+                    msgbox.setDefaultButton(QMessageBox.Abort)
+                    reply=msgbox.exec_()
+                    if reply == QMessageBox.Abort:
+                        return None
+                TradeType=1
+                OderPrice='M'
+                Qty=self.openpd.loc[i,'未平倉部位']
+                InterestType=1
+                self.OrderFunc(self,Account,Commodity,TradeAct,TradeType,OderPrice,Qty,InterestType)
+            
 
     #下單功能結束
 
@@ -343,12 +394,10 @@ class PandasModel(QAbstractTableModel):
     def __init__(self):
         QAbstractTableModel.__init__(self)
 
-    # def setdata(self,data):
-    #     self._data=data
     def setdata(self,data):
         self._data=data
         self.layoutAboutToBeChanged.emit() #建立變更資料通知訊號發射
-        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(0), self.columnCount(0))) #資料變更區域訊號發射
+        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount())) #資料變更區域訊號發射
         self.layoutChanged.emit() #資料變更訊號發射
 
     def rowCount(self, parent=None):
@@ -373,16 +422,16 @@ class SKOrderLibEvent:
     def OnAccount(self,bstrLogInID,bstrAccountData):
         Line=bstrAccountData.split(',')
         if Line[0]=='TF':
-            self.IBAccount=str(Line[1]).strip()+str(Line[3]).strip()
-            print('期貨帳戶: '+self.IBAccount,',',Line[5])
-            SKMain.Future_Acc_CBox.addItem(self.IBAccount)
-            m_nCode=skO.GetFutureRights(bstrLogInID,self.IBAccount,1)
+            SKMain.IBAccount=str(Line[1]).strip()+str(Line[3]).strip()
+            print('期貨帳戶: '+SKMain.IBAccount,',',Line[5])
+            SKMain.Future_Acc_CBox.addItem(SKMain.IBAccount)
+            m_nCode=skO.GetFutureRights(bstrLogInID,SKMain.IBAccount,1)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
             m_nCode=skO.ReadCertByID(bstrLogInID)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
             m_nCode=skR.SKReplyLib_ConnectByID(bstrLogInID)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
-            m_nCode=skO.GetOpenInterest(bstrLogInID,self.IBAccount)
+            m_nCode=skO.GetOpenInterest(bstrLogInID,SKMain.IBAccount)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
     
     def OnAsyncOrder(self,nThreadID,nCode,bstrMessage):
@@ -429,32 +478,53 @@ class SKReplyLibEvent:
     def OnComplete(self,bstrUserID):
         SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
         SKMain.Reply_TBW.setModel(SKMain.ReplyCRpdMode)
-        print(SKMain.replypd)
+        SKMain.ReplyComplete=True
+        # print(SKMain.replypd)
     def OnNewData(self,bstrUserID,bstrData):
         Line=bstrData.split(',')
+
         if Line[2]=='D':
             dealcontract=Line[20]
         else:
             dealcontract=0
+
         if Line[2]=='C': 
             cancelcontract=Line[20] 
         else:
-            cancelcontract=0    
-        tmplist=[[Line[8],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][0]],
-                Line[11],Line[20],
-                Config_dict.OnNewData_dict['Type'][Line[2]],
-                dealcontract,cancelcontract,
-                Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][1]],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][2]],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][3]],
-                Line[0],Line[10],Line[23],Line[24],Line[24]]]
-        SKMain.replypd=SKMain.replypd.append(pd.DataFrame(tmplist,columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','倉位','條件','價位格式','委託序號','委託書號','委託日期','委託時間','交易時段']),ignore_index=True)
+            cancelcontract=0
+
+        if SKMain.replypd.shape[0]>0:
+            tmp=SKMain.replypd.委託序號.isin({Line[0]})
+            if tmp[tmp==True].index.shape[0]>0:
+                i=tmp[tmp==True].index[0]
+            else:
+                i=None
+        else:
+            i=None
+
+        if i is not None:
+            SKMain.replypd.loc[i,'買賣']=Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][0]]
+            SKMain.replypd.loc[i,'委託價格']=Line[11]
+            SKMain.replypd.loc[i,'委託口數']=Line[20]
+            SKMain.replypd.loc[i,'委託狀態']=Config_dict.OnNewData_dict['Type'][Line[2]]
+            SKMain.replypd.loc[i,'成交口數']=dealcontract
+            SKMain.replypd.loc[i,'取消口數']=cancelcontract
+            SKMain.replypd.loc[i,'倉位']=Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][1]]
+            SKMain.replypd.loc[i,'條件']=Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][2]]
+            SKMain.replypd.loc[i,'價位格式']=Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][3]]
+            SKMain.replypd.loc[i,'委託時間']=Line[24]
+            SKMain.replypd.loc[i,'交易時段']=Line[24]
+        else:
+            tmplist=[[Line[8],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][0]],
+                    Line[11],Line[20],
+                    Config_dict.OnNewData_dict['Type'][Line[2]],
+                    dealcontract,cancelcontract,
+                    Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][1]],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][2]],Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][3]],
+                    Line[0],Line[10],Line[23],Line[24],Line[24]]]
+            SKMain.replypd=SKMain.replypd.append(pd.DataFrame(tmplist,columns=['商品名稱','買賣','委託價格','委託口數','委託狀態','成交口數','取消口數','倉位','條件','價位格式','委託序號','委託書號','委託日期','委託時間','交易時段']),ignore_index=True)
         if SKMain.ReplyComplete==True:
             SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
-        # print('委託:',tmplist)
-        # i=0
-        # for row in Line :
-        #     print(i,',',row)
-        #     i+=1
-        # print('Test:',SKMain.replypd)        
+
     def OnSmartData(self,bstrUserID,bstrData):
         print(bstrUserID,'智動回報:',bstrData)
 
