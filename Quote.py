@@ -320,7 +320,7 @@ class Tick(Frame):
             global item
             global Kui
             Future = tickstokline.dataprocess(self.txtStocks.get().strip())
-            skQ.SKQuoteLib_RequestTicks(pn,self.txtStocks.get().replace(' ',''))
+            skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
             # app=pg.Qt.QtWidgets.QApplication([])
             item=KlineUi.CandlestickItem()            
             Kui=KlineUi.KlineWidget(self.txtStocks.get().strip())
