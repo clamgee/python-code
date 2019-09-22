@@ -1,5 +1,5 @@
 def use_logging(func):
-    logging.warn("%s is running" % func.__name__)
+    print("%s is running" % func.__name__)
     func()
 
 def foo():

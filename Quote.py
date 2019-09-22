@@ -316,24 +316,21 @@ class Tick(Frame):
             pn = 0
             if(self.txtPageNo.get().replace(' ','') != ''):
                 pn = int(self.txtPageNo.get())
-            global Future
-            global item
-            global Kui
-            Future = tickstokline.dataprocess(self.txtStocks.get().strip())
+            # global Future
+            # global item
+            # global Kui
+            # Future = tickstokline.dataprocess(self.txtStocks.get().strip())
             skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
-            # app=pg.Qt.QtWidgets.QApplication([])
-            item=KlineUi.CandlestickItem()            
-            Kui=KlineUi.KlineWidget(self.txtStocks.get().strip())
-            Kui.plt.show()
-            Kui.plt.addItem(item)
-            item.set_data(Future.contractkpd)
-            # app.processEvents()
-            xmax=int(len(item.pictures))
-            xmin=int(max(0,xmax-item.countK))
-            ymin=item.data.loc[xmin:xmax,['low']].values.min()
-            ymax=item.data.loc[xmin:xmax,['high']].values.max()
-            # app.processEvents()   
-            Kui.update(xmin,xmax,ymin,ymax)
+            # item=KlineUi.CandlestickItem()            
+            # Kui=KlineUi.KlineWidget(self.txtStocks.get().strip())
+            # Kui.plt.show()
+            # Kui.plt.addItem(item)
+            # item.set_data(Future.contractkpd)
+            # xmax=int(len(item.pictures))
+            # xmin=int(max(0,xmax-item.countK))
+            # ymin=item.data.loc[xmin:xmax,['low']].values.min()
+            # ymax=item.data.loc[xmin:xmax,['high']].values.max()
+            # Kui.update(xmin,xmax,ymin,ymax)
             
             if __name__ == '__main__':
                 import sys
@@ -474,10 +471,12 @@ class SKQuoteLibEvents:
         WriteMessage(strMsg,Gobal_Quote_ListInformation)
         
     def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        if nSimulate==0:
-            Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
-            strMsg=Future.contractkpd.iloc[-1:].values
-            WriteMessage(strMsg,Gobal_Tick_ListInformation)
+        tmplist=[lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx]
+        return tmplist
+        # if nSimulate==0:
+        #     Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
+        #     strMsg=Future.contractkpd.iloc[-1:].values
+        #     WriteMessage(strMsg,Gobal_Tick_ListInformation)
         # strMsg = "[OnNotifyHistoryTicks]", sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate
         # WriteMessage(strMsg,Gobal_Tick_ListInformation)
 
