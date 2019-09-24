@@ -375,7 +375,7 @@ class PrintThread(QThread):
     def PrintFunc(self,tmplist):
         print(tmplist)
     def run(self):
-        self.PrintFunc(SKQuoteEvent.OnNotifyHistoryTicks)
+        SKQuoteEvent.OnNotifyHistoryTicks
 
 class His_KLlineThread(QThread):
     KLine_signal=pyqtSignal(str,int,int,int,int,int,int)
