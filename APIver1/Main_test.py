@@ -184,10 +184,10 @@ class SKMainWindow(QMainWindow): #主視窗
     def commodityFnc(self):
         nstock=self.commodityline.text().replace(' ','')
         self.Future = tickstokline.dataprocess(nstock)
-        self.nPrint=PrintThread()
-        self.nPrint.start()
-        self.nPrint.Print_signal.emit(0,nstock)
+        self.newThread=PrintThread()
+        self.newThread.Print_signal.emit(0,nstock)
         # skQ.SKQuoteLib_RequestTicks(0,nstock)
+        self.newThread.start()
         self.ndetialmsg=FuncUI.MessageDialog(nstock)
         self.TDetailbtn.clicked.connect(self.ndetialmsg.show)
         # self.ndetialmsg.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
@@ -371,11 +371,12 @@ class PrintThread(QThread):
         super(PrintThread,self).__init__(parent)
         self.Print_signal.connect(self.CommFunc)
     def CommFunc(self,npage,idx):
-        skQ.SKQuoteLib_RequestTicks(0,idx)
-    def PrintFunc(self,tmplist):
-        print(tmplist)
-    def run(self):
-        SKQuoteEvent.OnNotifyHistoryTicks
+        skQ.SKQuoteLib_RequestTicks(npage,idx)
+
+    def run(self,func):
+        def wrapper():
+            func()
+        return wrapper
 
 class His_KLlineThread(QThread):
     KLine_signal=pyqtSignal(str,int,int,int,int,int,int)
@@ -388,19 +389,6 @@ class His_KLlineThread(QThread):
         SKMain.Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
         strMsg=str(SKMain.Future.contractkpd.iloc[-1:].values)
         SKMain.ndetialmsg.textBrowser.append(strMsg)
-
-
-
-class KLlineThread(QThread):
-    KLine_signal=pyqtSignal(list)
-
-    def __init__(self,name=None,parent=None):
-        super(TableThread,self).__init__(parent)
-        self.Name=name
-        self.Table_signal.connect(self.TableFunc)
-
-    def TableFunc(self,newlist):
-        print(newlist)
 
 
 class PandasModel(QAbstractTableModel):
@@ -565,11 +553,11 @@ class SKQuoteLibEvents:
             SKMain.Future.ticksdf.to_csv(filename,header=False,index=False)
         nTime=QTime(sHour,sMinute,sSecond).toString(Qt.ISODate)
         SKMain.statusBar.showMessage('帳號:'+str(SKMain.SKID)+'\t伺服器時間:'+nTime)
-    
+    @SKMain.newThread.run
     def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
         if nSimulate==0:
             # SKMain.HisKlineThrd.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
-            return [lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx]
+            print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
             # SKMain.Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
             # strMsg=str(SKMain.Future.contractkpd.iloc[-1:].values)
             # SKMain.ndetialmsg.textBrowser.append(strMsg)
