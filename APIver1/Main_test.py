@@ -374,9 +374,7 @@ class PrintThread(QThread):
         skQ.SKQuoteLib_RequestTicks(npage,idx)
 
     def run(self,func):
-        def wrapper():
-            func()
-        return wrapper
+        SKQuoteEvent.OnNotifyHistoryTicks(sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate)
 
 class His_KLlineThread(QThread):
     KLine_signal=pyqtSignal(str,int,int,int,int,int,int)
@@ -553,7 +551,7 @@ class SKQuoteLibEvents:
             SKMain.Future.ticksdf.to_csv(filename,header=False,index=False)
         nTime=QTime(sHour,sMinute,sSecond).toString(Qt.ISODate)
         SKMain.statusBar.showMessage('帳號:'+str(SKMain.SKID)+'\t伺服器時間:'+nTime)
-    @SKMain.newThread.run
+
     def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
         if nSimulate==0:
             # SKMain.HisKlineThrd.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
