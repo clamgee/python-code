@@ -1,49 +1,43 @@
+from PyQt5.QtWidgets import  QApplication ,QWidget
+from PyQt5.QtCore import QThread ,  pyqtSignal
 import sys
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
 
-global sec
-sec = 0
+class Main(QWidget):
+    def __init__(self, parent = None):
+        super(Main,self).__init__(parent)
 
-def setTime():
-    global sec
-    sec += 1
-    # LED顯示數字+1
-    lcdNumber.display(sec)
+        # 创建一个线程实例并设置名称、变量、信号与槽
+        self.thread = MyThread()
+        self.thread.setIdentity("thread1")
+        self.thread.sinOut.connect(self.outText)
+        self.thread.setVal(6)
 
-def work():
-    # 計時器每秒計數
-    timer.start(1000)
+    def outText(self,text):
+        print(text)
 
-    # 開始一次非常耗時的計算
-    # 這裡用一個2 000 000 000次的迴圈來模擬
-    for i in range(200000000):
-        pass
+class MyThread(QThread):
+    sinOut = pyqtSignal(str)
 
-    timer.stop()
+    def __init__(self,parent=None):
+        super(MyThread,self).__init__(parent)
+        self.identity = None
 
+    def setIdentity(self,text):
+        self.identity = text
 
-if __name__ == "__main__":
+    def setVal(self,val):
+        self.times = int(val)
+        # 执行线程的run方法
+        self.start()
+
+    def run(self):
+        while self.times > 0 and self.identity:
+            # 发射信号
+            self.sinOut.emit(self.identity+"==>"+str(self.times))
+            self.times -= 1
+
+if __name__ == '__main__':  
     app = QApplication(sys.argv)
-    top = QWidget()
-    top.resize(300, 120)
-
-    # 垂直佈局類QVBoxLayout
-    layout = QVBoxLayout(top)
-
-    # 新增控制元件
-    lcdNumber = QLCDNumber()
-    layout.addWidget(lcdNumber)
-    button = QPushButton("測試")
-    layout.addWidget(button)
-    timer = QTimer()
-
-    # 每次計時結束，觸發setTime
-    timer.timeout.connect(setTime)
-
-    # 連線測試按鈕和槽函式work
-    button.clicked.connect(work)
-
-    top.show()
+    main = Main()
+    main.show()
     sys.exit(app.exec_())
