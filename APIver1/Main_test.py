@@ -184,10 +184,9 @@ class SKMainWindow(QMainWindow): #主視窗
     def commodityFnc(self):
         nstock=self.commodityline.text().replace(' ','')
         self.Future = tickstokline.dataprocess(nstock)
-        self.newThread=PrintThread()
-        self.newThread.Print_signal.emit(0,nstock)
-        # skQ.SKQuoteLib_RequestTicks(0,nstock)
+        self.newThread=PrintThread([])
         self.newThread.start()
+        skQ.SKQuoteLib_RequestTicks(0,nstock)
         self.ndetialmsg=FuncUI.MessageDialog(nstock)
         self.TDetailbtn.clicked.connect(self.ndetialmsg.show)
         # self.ndetialmsg.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
@@ -366,15 +365,11 @@ class TableThread(QThread):
         SKMain.DomTableFillFunc(nclose,total_dict['bid_dict'],total_dict['ask_dict'])
 
 class PrintThread(QThread):
-    Print_signal=pyqtSignal(int,str)
-    def __init__(self,parent=None):
+    def __init__(self,tmplist=[],parent=None):
         super(PrintThread,self).__init__(parent)
-        self.Print_signal.connect(self.CommFunc)
-    def CommFunc(self,npage,idx):
-        skQ.SKQuoteLib_RequestTicks(npage,idx)
-
-    def run(self,func):
-        SKQuoteEvent.OnNotifyHistoryTicks(sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate)
+        self.tmplist=tmplist
+    def run(self):
+        print(self.tmplist)
 
 class His_KLlineThread(QThread):
     KLine_signal=pyqtSignal(str,int,int,int,int,int,int)
@@ -555,7 +550,7 @@ class SKQuoteLibEvents:
     def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
         if nSimulate==0:
             # SKMain.HisKlineThrd.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
-            print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
+            SKMain.newThread([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
             # SKMain.Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
             # strMsg=str(SKMain.Future.contractkpd.iloc[-1:].values)
             # SKMain.ndetialmsg.textBrowser.append(strMsg)
@@ -577,6 +572,7 @@ class SKQuoteLibEvents:
             'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
             SKMain.TableThrd.Table_signal.emit(SKMain.Future.contractkpd.iloc[-1,4],total_dict)
             # 更新點
+
 
 #comtypes使用此方式註冊callback
 SKQuoteEvent=SKQuoteLibEvents()
