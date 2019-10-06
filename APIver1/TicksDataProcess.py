@@ -21,7 +21,7 @@ for info in os.listdir('data'):
             df=df.append(pd.read_csv(info,header=None))
             print(2)
 print(df1)
-df1.to_csv('data/filename.txt',index=False)
+df1.to_csv('filename.txt',index=False)
 if df is not None:
     df[0]=df[0]+' '+df[1]
     del df[1]
