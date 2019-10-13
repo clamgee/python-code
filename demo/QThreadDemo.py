@@ -18,7 +18,7 @@ class TutorialThread(QThread):
         self.update.emit(100)
         for index in range(1, 101):
             self.update.emit(index)
-            time.sleep(0.5)
+            time.sleep(0.1)
 
 
 class MainWindow(QWidget):
