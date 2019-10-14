@@ -184,7 +184,7 @@ class SKMainWindow(QMainWindow): #主視窗
     def commodityFnc(self):
         nstock=self.commodityline.text().replace(' ','')
         self.Future = tickstokline.dataprocess(nstock)
-        self.newThread=PrintThread([])
+        self.newThread=PrintThread(nstock)
         self.newThread.start()
         skQ.SKQuoteLib_RequestTicks(0,nstock)
         self.ndetialmsg=FuncUI.MessageDialog(nstock)
@@ -365,11 +365,11 @@ class TableThread(QThread):
         SKMain.DomTableFillFunc(nclose,total_dict['bid_dict'],total_dict['ask_dict'])
 
 class PrintThread(QThread):
-    def __init__(self,tmplist=[],parent=None):
+    def __init__(self,index=None,parent=None):
         super(PrintThread,self).__init__(parent)
-        self.tmplist=tmplist
+        self.idx=index
     def run(self):
-        print(self.tmplist)
+        SKQuoteEvent.OnNotifyHistoryTicks(sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate)
 
 class His_KLlineThread(QThread):
     KLine_signal=pyqtSignal(str,int,int,int,int,int,int)
@@ -523,6 +523,11 @@ class SKReplyLibEvent:
     def OnSmartData(self,bstrUserID,bstrData):
         print(bstrUserID,'智動回報:',bstrData)
 
+def repeatQuote(func):
+    def wrapper():
+        func()
+    return wrapper
+
 class SKQuoteLibEvents:
      
     def OnConnection(self, nKind, nCode):
@@ -546,11 +551,11 @@ class SKQuoteLibEvents:
             SKMain.Future.ticksdf.to_csv(filename,header=False,index=False)
         nTime=QTime(sHour,sMinute,sSecond).toString(Qt.ISODate)
         SKMain.statusBar.showMessage('帳號:'+str(SKMain.SKID)+'\t伺服器時間:'+nTime)
-
+    @repeatQuote
     def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
         if nSimulate==0:
             # SKMain.HisKlineThrd.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
-            SKMain.newThread([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
+            print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
             # SKMain.Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
             # strMsg=str(SKMain.Future.contractkpd.iloc[-1:].values)
             # SKMain.ndetialmsg.textBrowser.append(strMsg)
