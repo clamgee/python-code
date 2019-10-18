@@ -140,3 +140,4 @@ Ticks2019-10-14.txt
 Ticks2019-10-15.txt
 Ticks2019-10-16.txt
 Ticks2019-10-17.txt
+Ticks2019-10-18.txt
