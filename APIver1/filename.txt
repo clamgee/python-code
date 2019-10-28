@@ -145,3 +145,5 @@ Ticks2019-10-21.txt
 Ticks2019-10-22.txt
 Ticks2019-10-23.txt
 Ticks2019-10-24.txt
+Ticks2019-10-25.txt
+Ticks2019-10-28.txt
