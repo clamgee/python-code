@@ -1,8 +1,12 @@
-def use_logging(func):
-    print("%s is running" % func.__name__)
-    func()
+def ndouble(x):
+    return x*2
 
-def foo():
-    print('i am foo')
+def nsquare(x):
+    return x**2
 
-use_logging(foo)
+def recuclate(getNum):
+    k=5
+    i=k+getNum(k)
+    return i
+
+print(recuclate(ndouble),recuclate(nsquare))
