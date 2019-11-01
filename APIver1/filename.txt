@@ -150,3 +150,4 @@ Ticks2019-10-28.txt
 Ticks2019-10-29.txt
 Ticks2019-10-30.txt
 Ticks2019-10-31.txt
+Ticks2019-11-01.txt
