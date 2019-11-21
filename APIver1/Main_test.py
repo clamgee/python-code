@@ -184,8 +184,10 @@ class SKMainWindow(QMainWindow): #主視窗
     def commodityFnc(self):
         nstock=self.commodityline.text().replace(' ','')
         self.Future = tickstokline.dataprocess(nstock)
-        self.newThread=PrintThread(nstock)
-        self.newThread.start()
+        self.newThread=His_KLlineThread()
+        self.tmpthread=QtCore.Qthread()
+        self.newThread.moveToThread(self.tmpthread)
+        self.tmpthread.start()
         skQ.SKQuoteLib_RequestTicks(0,nstock)
         self.ndetialmsg=FuncUI.MessageDialog(nstock)
         self.TDetailbtn.clicked.connect(self.ndetialmsg.show)
@@ -364,14 +366,7 @@ class TableThread(QThread):
     def TableFunc(self,nclose,total_dict):
         SKMain.DomTableFillFunc(nclose,total_dict['bid_dict'],total_dict['ask_dict'])
 
-class PrintThread(QThread):
-    def __init__(self,index=None,parent=None):
-        super(PrintThread,self).__init__(parent)
-        self.idx=index
-    def run(self):
-        SKQuoteEvent.OnNotifyHistoryTicks(sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate)
-
-class His_KLlineThread(QThread):
+class His_KLlineThread(QtCore.QObject):
     KLine_signal=pyqtSignal(str,int,int,int,int,int,int)
 
     def __init__(self,parent=None):
