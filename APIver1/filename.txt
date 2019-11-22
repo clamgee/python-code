@@ -165,3 +165,4 @@ Ticks2019-11-18.txt
 Ticks2019-11-19.txt
 Ticks2019-11-20.txt
 Ticks2019-11-21.txt
+Ticks2019-11-22.txt
