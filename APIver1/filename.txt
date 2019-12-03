@@ -166,3 +166,9 @@ Ticks2019-11-19.txt
 Ticks2019-11-20.txt
 Ticks2019-11-21.txt
 Ticks2019-11-22.txt
+Ticks2019-11-25.txt
+Ticks2019-11-26.txt
+Ticks2019-11-27.txt
+Ticks2019-11-28.txt
+Ticks2019-11-29.txt
+Ticks2019-12-02.txt
