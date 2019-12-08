@@ -1,12 +1,4 @@
-def ndouble(x):
-    return x*2
+import datetime
+import time
 
-def nsquare(x):
-    return x**2
-
-def recuclate(getNum):
-    k=5
-    i=k+getNum(k)
-    return i
-
-print(recuclate(ndouble),recuclate(nsquare))
+print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
