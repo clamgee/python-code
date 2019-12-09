@@ -464,7 +464,8 @@ class SKReplyLibEvent:
         print('連線成功: ',bstrUserID,nErrorStr)
     def OnDisconnect(self,bstrUserID,nErrorCode):
         nErrorStr=skC.SKCenterLib_GetReturnCodeMessage(nErrorCode)
-        print('連線失敗: ',bstrUserID,nErrorStr)
+        ntime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print('連線失敗: ',bstrUserID,nErrorStr,ntime)
     def OnComplete(self,bstrUserID):
         SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
         SKMain.Reply_TBW.setModel(SKMain.ReplyCRpdMode)
