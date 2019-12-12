@@ -177,3 +177,6 @@ Ticks2019-12-04.txt
 Ticks2019-12-05.txt
 Ticks2019-12-06.txt
 Ticks2019-12-09.txt
+Ticks2019-12-10.txt
+Ticks2019-12-11.txt
+Ticks2019-12-12.txt
