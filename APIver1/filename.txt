@@ -180,3 +180,4 @@ Ticks2019-12-09.txt
 Ticks2019-12-10.txt
 Ticks2019-12-11.txt
 Ticks2019-12-12.txt
+Ticks2019-12-13.txt
