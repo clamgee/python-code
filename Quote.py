@@ -316,10 +316,10 @@ class Tick(Frame):
             pn = 0
             if(self.txtPageNo.get().replace(' ','') != ''):
                 pn = int(self.txtPageNo.get())
-            # global Future
-            # global item
-            # global Kui
-            # Future = tickstokline.dataprocess(self.txtStocks.get().strip())
+            global Future
+            global item
+            global Kui
+            Future = tickstokline.dataprocess(self.txtStocks.get().strip())
             skQ.SKQuoteLib_RequestLiveTick(pn,self.txtStocks.get().replace(' ',''))
             # item=KlineUi.CandlestickItem()            
             # Kui=KlineUi.KlineWidget(self.txtStocks.get().strip())
