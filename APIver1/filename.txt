@@ -192,3 +192,4 @@ Ticks2019-12-25.txt
 Ticks2019-12-26.txt
 Ticks2019-12-27.txt
 Ticks2019-12-30.txt
+Ticks2019-12-31.txt
