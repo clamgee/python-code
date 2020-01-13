@@ -198,3 +198,6 @@ Ticks2020-01-03.txt
 Ticks2020-01-06.txt
 Ticks2020-01-07.txt
 Ticks2020-01-08.txt
+Ticks2020-01-09.txt
+Ticks2020-01-10.txt
+Ticks2020-01-13.txt

@@ -6,7 +6,7 @@ import csv
 import gc
 start=time.time()
 #修改要抓期交所資料的檔案，手動修改檔案名稱
-df=pd.read_csv('Daily_2020_01_03.csv',encoding='big5',error_bad_lines=False,warn_bad_lines=True)
+df=pd.read_csv('Daily_2020_01_10.csv',encoding='big5',error_bad_lines=False,warn_bad_lines=True)
 df.rename(columns={
     df.columns[0]:'ndate',
     df.columns[1]:'product',
@@ -40,7 +40,7 @@ df=df[['ndate','ntime','nbid','nask','price','volume']]
 df['ndate']=pd.to_datetime(df['ndate'],format='%Y%m%d').dt.date
 df['ntime']=pd.to_datetime(df['ntime'],format='%H%M%S.%f').dt.time
 df=df.reset_index(drop=True)
-filename='data/Ticks'+str(df.iloc[-1,0])+'.txt'
+filename='APIver1/data/Ticks'+str(df.iloc[-1,0])+'.txt'
 
 print(df.columns.values)
 print(df.shape)
