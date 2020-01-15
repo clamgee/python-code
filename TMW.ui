@@ -52,7 +52,11 @@
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="5,1">
           <item>
-           <layout class="QGridLayout" name="gridLayout"/>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="QGraphicsView" name="graphicsView"/>
+            </item>
+           </layout>
           </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -220,7 +224,7 @@
                 <item>
                  <widget class="QSpinBox" name="spinBox">
                   <property name="specialValueText">
-                   <string> </string>
+                   <string/>
                   </property>
                  </widget>
                 </item>
