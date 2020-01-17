@@ -139,7 +139,6 @@ class TMW(QMainWindow): #主視窗
         close=10500
         self.tableT.bid_signal.emit(close,total_dict)
         self.TB_BtnUI()
-        # 
     
     def TB_BtnUI(self):
         self.TB_Btn.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)

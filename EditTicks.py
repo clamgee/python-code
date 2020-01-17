@@ -6,7 +6,7 @@ import csv
 import gc
 start=time.time()
 #修改要抓期交所資料的檔案，手動修改檔案名稱
-df=pd.read_csv('Daily_2020_01_14.csv',encoding='big5',error_bad_lines=False,warn_bad_lines=True)
+df=pd.read_csv('Daily_2020_01_16.csv',encoding='big5',error_bad_lines=False,warn_bad_lines=True)
 df.rename(columns={
     df.columns[0]:'ndate',
     df.columns[1]:'product',
@@ -20,7 +20,7 @@ df.rename(columns={
 },inplace=True)
 df.drop(['lastmon','farmon','open'],axis=1,inplace=True)
 df=df[df['product'].str.strip()=='TX'] #目標商品
-df=df[df['Month'].str.strip()=='202001'] #手動修改目標月份
+df=df[df['Month'].str.strip()=='202002'] #手動修改目標月份
 df[['ndate','ntime']]=df[['ndate','ntime']].astype(str)
 df.drop(['product','Month'],axis=1,inplace=True)
 
