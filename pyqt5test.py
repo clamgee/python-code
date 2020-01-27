@@ -188,9 +188,12 @@ if __name__ == "__main__":
     data=csvpf[['ndatetime','open','high','low','close']]
     # TMWindow.bestfive['close']=TMWindow.bestfive['close'].map(lambda x:data.iloc[-1,4]+(TMWindow.bestfive['close'][TMWindow.bestfive['close']==x].index[0]-13))
     item=CandlestickItem()
-    KLWidget=pg.PlotWidget()
+    KLWidget=pg.ViewBox()
     KLWidget.addItem(item)
-    TMWindow.gridLayout.addWidget(KLWidget)
+    TMWindow.KLView.scene=QtWidgets.QGraphicsScene()
+    TMWindow.KLView.scene.addItem(KLWidget)
+    TMWindow.KLView.setScene(TMWindow.KLView.scene)
+
     item.set_data(data)
     bestfive=pd.DataFrame(np.arange(27).reshape(27),columns=['close'])
     bestfive['bid']=''
