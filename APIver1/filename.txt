@@ -206,3 +206,4 @@ Ticks2020-01-15.txt
 Ticks2020-01-16.txt
 Ticks2020-01-17.txt
 Ticks2020-01-20.txt
+Ticks2020-01-30.txt
