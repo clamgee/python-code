@@ -75,7 +75,7 @@ class CandlestickItem(pg.GraphicsObject):
         # self.picture.play(painter)
         if not self.rect == (rect.left(),rect.right()) or self.picturemain is None: #or self.lastbar != self.data.iloc[-1,0]:
             self.rect = (rect.left(),rect.right())
-            self.lastbar = self.data.iloc[-1,0]
+            # self.lastbar = self.data.iloc[-1:].values
             # print('rect: ',self.rect)
             # if (xmax-121)<0:
             self.picturemain = self.createPic(xmin,xmax-1)
@@ -317,7 +317,7 @@ class KLineWidget(KeyWraper):
         self.lay_KL.setSpacing(0)
         self.lay_KL.setBorder(color=(255, 255, 255, 255), width=0.8)
         self.lay_KL.setZValue(0)
-        self.KLtitle = self.lay_KL.addLabel(u'')
+        self.KLtitle = self.lay_KL.addLabel(u'123')
         self.pw.setCentralItem(self.lay_KL)
         # 设置横坐标
         xdict = {}
@@ -420,7 +420,6 @@ if __name__ == '__main__':
     # K线界面
     ui = KLineWidget()
     ui.show()
-    ui.KLtitle.setText('rb1701',size='20pt')
     ui.loadData(data)
     
     # ui.refreshAll()
