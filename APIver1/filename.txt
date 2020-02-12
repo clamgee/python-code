@@ -208,3 +208,11 @@ Ticks2020-01-17.txt
 Ticks2020-01-20.txt
 Ticks2020-01-30.txt
 Ticks2020-01-31.txt
+Ticks2020-02-03.txt
+Ticks2020-02-04.txt
+Ticks2020-02-05.txt
+Ticks2020-02-06.txt
+Ticks2020-02-07.txt
+Ticks2020-02-10.txt
+Ticks2020-02-11.txt
+Ticks2020-02-12.txt

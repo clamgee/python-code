@@ -4,52 +4,51 @@ import datetime
 import time
 import csv
 import gc
-start=time.time()
-#修改要抓期交所資料的檔案，手動修改檔案名稱
-df=pd.read_csv('Daily_2020_01_31.csv',encoding='big5',error_bad_lines=False,warn_bad_lines=True)
+
+start = time.time()
+# 修改要抓期交所資料的檔案，手動修改檔案名稱
+df = pd.read_csv('Daily_2020_02_05.csv', encoding='big5', error_bad_lines=False, warn_bad_lines=True)
 df.rename(columns={
-    df.columns[0]:'ndate',
-    df.columns[1]:'product',
-    df.columns[2]:'Month',
-    df.columns[3]:'ntime',
-    df.columns[4]:'price',
-    df.columns[5]:'volume',
-    df.columns[6]:'lastmon',
-    df.columns[7]:'farmon',
-    df.columns[8]:'open'
-},inplace=True)
-df.drop(['lastmon','farmon','open'],axis=1,inplace=True)
-df=df[df['product'].str.strip()=='TX'] #目標商品
-df=df[df['Month'].str.strip()=='202002'] #手動修改目標月份
-df[['ndate','ntime']]=df[['ndate','ntime']].astype(str)
-df.drop(['product','Month'],axis=1,inplace=True)
+    df.columns[0]: 'ndate',
+    df.columns[1]: 'product',
+    df.columns[2]: 'Month',
+    df.columns[3]: 'ntime',
+    df.columns[4]: 'price',
+    df.columns[5]: 'volume',
+    df.columns[6]: 'lastmon',
+    df.columns[7]: 'farmon',
+    df.columns[8]: 'open'
+}, inplace=True)
+df.drop(['lastmon', 'farmon', 'open'], axis=1, inplace=True)
+df = df[df['product'].str.strip() == 'TX']  # 目標商品
+df = df[df['Month'].str.strip() == '202002']  # 手動修改目標月份
+df[['ndate', 'ntime']] = df[['ndate', 'ntime']].astype(str)
+df.drop(['product', 'Month'], axis=1, inplace=True)
+
 
 def fx(x):
-    return x.zfill(6)+'.000'
-    # while len(x)<6:
-    #     x='0'+x
-    # x=x+'.000'
-    # return x
+    return x.zfill(6) + '.000'
 
-df.ntime=df.ntime.apply(fx)
 
-df.price=df.price.astype(int)
-df['nbid']=df['price']
-df['nask']=df['price']
-df=df[['ndate','ntime','nbid','nask','price','volume']]
-df['ndate']=pd.to_datetime(df['ndate'],format='%Y%m%d').dt.date
-df['ntime']=pd.to_datetime(df['ntime'],format='%H%M%S.%f').dt.time
-df=df.reset_index(drop=True)
-filename='APIver1/data/Ticks'+str(df.iloc[-1,0])+'.txt'
+df.ntime = df.ntime.apply(fx)
+
+df.price = df.price.astype(int)
+df['nbid'] = df['price']
+df['nask'] = df['price']
+df = df[['ndate', 'ntime', 'nbid', 'nask', 'price', 'volume']]
+df['ndate'] = pd.to_datetime(df['ndate'], format='%Y%m%d').dt.date
+df['ntime'] = pd.to_datetime(df['ntime'], format='%H%M%S.%f').dt.time
+df = df.reset_index(drop=True)
+filename = 'APIver1/data/Ticks' + str(df.iloc[-1, 0]) + '.txt'
 
 print(df.columns.values)
 print(df.shape)
 print(df.info())
 print(df.head(5))
-print(filename) 
-df.to_csv(filename,header=False,index=False)
-end=time.time()
-print('耗時: ',round((end-start),3),' 秒')
+print(filename)
+df.to_csv(filename, header=False, index=False)
+end = time.time()
+print('耗時: ', round((end - start), 3), ' 秒')
 # start=time.time()
 # csvpd=pd.DataFrame(columns=['date','time','close','volume'])
 # global microsec
