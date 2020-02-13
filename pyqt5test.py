@@ -23,10 +23,10 @@ class CandlestickItem(pg.GraphicsObject):
         self.timelist = []
         self.countK = 60 #設定要顯示多少K線
 
-    def set_data(self,data):
-        start=pg.time()
+    def set_data(self, data):
+        start = pg.time()
         self.data = data.reset_index(drop=True)
-        self.low,self.high = (self.data['low'].values.min(),self.data['high'].values.max()) if len(data)>0 else (0,1)
+        self.low, self.high = (self.data['low'].values.min(),self.data['high'].values.max()) if len(data)>0 else (0,1)
         self.generatePicture()
         self.informViewBoundsChanged()
         # if not self.scene() is None:
@@ -67,7 +67,7 @@ class CandlestickItem(pg.GraphicsObject):
         
     def paint(self, painter, opt, w):
         rect = opt.exposedRect
-        xmin,xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
+        xmin, xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
         # self.rect = (rect.left(),rect.right())
         # self.picture = self.createPic(xmin,xmax)
         # self.picture.play(painter)
@@ -85,13 +85,13 @@ class CandlestickItem(pg.GraphicsObject):
             print('重繪')            
         elif not self.picturemain is None:
             self.picturemain.play(painter)
-            self.picturelast = self.createPic(xmax-1,xmax)
+            self.picturelast = self.createPic(xmax-1, xmax)
             self.picturelast.play(painter)
             # print('快圖')
 
     # 缓存图片
     #----------------------------------------------------------------------
-    def createPic(self,xmin,xmax):
+    def createPic(self, xmin, xmax):
         picture = QtGui.QPicture()
         p = QtGui.QPainter(picture)
         [pic.play(p) for pic in self.pictures[xmin:xmax]]
@@ -179,8 +179,8 @@ class TableThread(QThread):
 if __name__ == "__main__":
     import sys
     App=QApplication(sys.argv)
-    TMWindow=TMW()
-    csvpf=pd.read_csv('result.csv')
+    TMWindow = TMW()
+    csvpf = pd.read_csv('result.csv')
     csvpf['ndatetime']=pd.to_datetime(csvpf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
     print(csvpf.tail(5))
     print(csvpf.info())
