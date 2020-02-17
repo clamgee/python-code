@@ -1,6 +1,6 @@
 import pyqtgraph as pg
 import pandas as pd
-import numpy as np
+from PyQt5.QtWidgets import QMainWindow,QWidget,QGridLayout,QApplication
 import sys
 
 tmp = pd.read_csv('../APIver1/result.csv')
@@ -20,8 +20,15 @@ def makeKL(name):
     Plotitem.hideButtons()
     return Plotitem
 
+class MainWindwos(QMainWindow):
+    def __init__(self):
+        self.setWindowTitle('主視窗')
+        self
 
-pw = pg.PlotWidget()
+
+
+pw = pg.PlotWidget(data)
+
 
 # pg.plot(data, pen=(255,255,0), name="Red curve")
 # pg.plot(data, title="Simplest possible plotting example")
