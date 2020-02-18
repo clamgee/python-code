@@ -217,3 +217,5 @@ Ticks2020-02-10.txt
 Ticks2020-02-11.txt
 Ticks2020-02-12.txt
 Ticks2020-02-13.txt
+Ticks2020-02-14.txt
+Ticks2020-02-17.txt
