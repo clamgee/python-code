@@ -220,3 +220,4 @@ Ticks2020-02-13.txt
 Ticks2020-02-14.txt
 Ticks2020-02-17.txt
 Ticks2020-02-18.txt
+Ticks2020-02-19.txt
