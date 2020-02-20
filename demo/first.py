@@ -23,7 +23,7 @@ def makeKL(name):
 class MainWindwos(QMainWindow):
     def __init__(self):
         self.setWindowTitle('主視窗')
-        self
+
 
 
 
