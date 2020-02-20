@@ -1,6 +1,6 @@
 import pyqtgraph as pg
 import pandas as pd
-from PyQt5.QtWidgets import QMainWindow,QWidget,QGridLayout,QApplication
+from PyQt5.QtWidgets import QMainWindow,QWidget,QGridLayout,QApplication,QGraphicsView
 import sys
 
 tmp = pd.read_csv('../APIver1/result.csv')
@@ -23,6 +23,10 @@ def makeKL(name):
 class MainWindwos(QMainWindow):
     def __init__(self):
         self.setWindowTitle('主視窗')
+        self.maingrid = QGridLayout()
+        self.mainview = QGraphicsView()
+        self.mainview.setLayout(self.maingrid)
+
 
 
 
@@ -35,5 +39,5 @@ pw = pg.PlotWidget(data)
 
 
 if __name__ == '__main__':
-    app = pg.QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     sys.exit(app.exec_())
