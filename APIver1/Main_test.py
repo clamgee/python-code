@@ -28,7 +28,7 @@ skR = comtypes.client.CreateObject(sk.SKReplyLib,interface=sk.ISKReplyLib)
 class SKMainWindow(QMainWindow): #主視窗
     def __init__(self):
         super(SKMainWindow,self).__init__()
-        loadUi(r'UI/MainWindow.ui',self)
+        loadUi(r'UI/MainWindow.ui', self)
         self.showMaximized()
         # 帳號處理
         self.SKID='未登入' # 登入帳號

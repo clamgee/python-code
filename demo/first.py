@@ -1,11 +1,13 @@
 import pyqtgraph as pg
 import pandas as pd
-from PyQt5.QtWidgets import QMainWindow,QWidget,QGridLayout,QApplication,QGraphicsView
+from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QApplication, QGraphicsView, QGraphicsScene
+from PyQt5.uic import loadUi
 import sys
 
 tmp = pd.read_csv('../APIver1/result.csv')
-tmp['ndatetime'] = pd.to_datetime(tmp['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+tmp['ndatetime'] = pd.to_datetime(tmp['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
 data = tmp['close'].tolist()
+
 
 def makeKL(name):
     vb = pg.ViewBox()
@@ -20,24 +22,29 @@ def makeKL(name):
     Plotitem.hideButtons()
     return Plotitem
 
+class StringAxis(pg.AxisItem):
+    def __init__(self, data, *args, **kwargs):
+        pg.AxisItem.__init__(self, *args, **kwargs)
+        self.tmpdata = data
+
+
 class MainWindwos(QMainWindow):
     def __init__(self):
-        self.setWindowTitle('主視窗')
-        self.maingrid = QGridLayout()
-        self.mainview = QGraphicsView()
-        self.mainview.setLayout(self.maingrid)
+        super(MainWindwos, self).__init__()
+        loadUi(r'MG.ui', self)
+        self.vb = makeKL('Line')
+        self.drawline = pg.PlotWidget()
+        self.drawline(x=tmp.index.tolist(), y=tmp['close'].tolist(), p='g')
+        self.vb.addItem(self.drawline)
+        self.secnse = QGraphicsScene()
+        self.secnse.addItem(self.vb)
+        self.secnse.setFocus(self.vb)
+        self.graphicsView.mapToScene(self.secnse)
 
-
-
-
-
-pw = pg.PlotWidget(data)
-
-
-# pg.plot(data, pen=(255,255,0), name="Red curve")
-# pg.plot(data, title="Simplest possible plotting example")
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    MW = MainWindwos()
+    MW.show()
     sys.exit(app.exec_())
