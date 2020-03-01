@@ -1,6 +1,7 @@
 import pyqtgraph as pg
 import pandas as pd
-from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QApplication, QGraphicsView, QGraphicsScene, QGraphicsItem
+from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QApplication, QGraphicsView, QGraphicsScene, QGraphicsItem, QFrame
+from PyQt5.QtCore import QRectF
 from PyQt5.uic import loadUi
 import sys
 
@@ -21,6 +22,13 @@ class MainWindows(QMainWindow):
         self.scene = QGraphicsScene()
         self.scene.addWidget(self.lineplot)
         self.GV.setScene(self.scene)
+        self.vrect = self.GV.sceneRect()
+        self.width = self.vrect.width()
+        self.height = self.vrect.height()
+        self.srect = self.scene.sceneRect()
+        print('srect:',self.srect)
+        self.GV.mapFromScene(self.srect)
+        # self.scene.setSceneRect(0, 0, 800, 600)
 
 
 if __name__ == '__main__':
