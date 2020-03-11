@@ -232,3 +232,5 @@ Ticks2020-03-03.txt
 Ticks2020-03-04.txt
 Ticks2020-03-05.txt
 Ticks2020-03-06.txt
+Ticks2020-03-09.txt
+Ticks2020-03-10.txt

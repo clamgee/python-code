@@ -15,37 +15,23 @@ dict_tmp = tmp['ndatetime'].dt.strftime('%Y/%m/%d %H:%M:%S.%f')
 dict_tmp = dict(enumerate(dict_tmp))
 # print(list(dict_tmp.keys()))
 
-class MainWindwos(QMainWindow):
+class TmpGV(pg.GraphicsView):
     def __init__(self):
-        super(MainWindwos, self).__init__()
-        loadUi(r'MG.ui', self)
-        self.lineplot = pg.PlotDataItem()
-        self.lineplot.setData(y=data)
-        self.vb = pg.ViewBox()
-        self.vb.addItem(self.lineplot)
-        self.scene = QGraphicsScene()
-        self.scene.addItem(self.vb)
-        self.GV.setScene(self.scene)
+        pg.GraphicsView.__init__(self)
+        self.l = pg.GraphicsLayout(border=(100,100,100))
+        self.setCentralItem(self.l)
+        self.vb = self.l.addViewBox()
+
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    # lineplot = pg.PlotDataItem()
-    # lineplot.setData(y=data)
-    # vb = pg.ViewBox()
-    # vb.addItem(lineplot)
-    # gv = pg.GraphicsView()
-    # l = pg.Qt.QtGui.QGraphicsGridLayout()
-    # l.setHorizontalSpacing(0)
-    # l.setVerticalSpacing(0)
-    # l.addItem(vb,0,1)
-    # gv.centralWidget.setLayout(l)
-    # gv.show()
-    MW = MainWindwos()
-    MW.show()
+    view = TmpGV()
+    p1 = pg.PlotDataItem(y=data)
 
+    view.vb.addItem(p1)
 
-    
-
+    view.show()
     sys.exit(app.exec_())
 
 
