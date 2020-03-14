@@ -15,23 +15,19 @@ dict_tmp = tmp['ndatetime'].dt.strftime('%Y/%m/%d %H:%M:%S.%f')
 dict_tmp = dict(enumerate(dict_tmp))
 # print(list(dict_tmp.keys()))
 
-class TmpGV(pg.GraphicsView):
+class MainWindows(QMainWindow):
     def __init__(self):
-        pg.GraphicsView.__init__(self)
-        self.l = pg.GraphicsLayout(border=(100,100,100))
-        self.setCentralItem(self.l)
-        self.vb = self.l.addViewBox()
+        super(MainWindows, self).__init__()
+        loadUi(r'MG.ui', self)
+        self.GV.plot(y=data)
 
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    view = TmpGV()
-    p1 = pg.PlotDataItem(y=data)
+    MG = MainWindows()
+    MG.show()
 
-    view.vb.addItem(p1)
-
-    view.show()
     sys.exit(app.exec_())
 
 

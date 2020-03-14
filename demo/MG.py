@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\MG.ui'
+# Form implementation generated from reading ui file 'MG.ui'
 #
 # Created by: PyQt5 UI code generator 5.11.3
 #
@@ -16,10 +16,11 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
-        self.graphicsView = QtWidgets.QGraphicsView(self.centralwidget)
-        self.graphicsView.setObjectName("graphicsView")
-        self.gridLayout.addWidget(self.graphicsView, 0, 0, 1, 1)
-        self.graphicsVies.Geometry()
+        self.GV = QtWidgets.QGraphicsView(self.centralwidget)
+        self.GV.setAutoFillBackground(True)
+        self.GV.setStyleSheet("background-color: rgb(0, 0, 0);")
+        self.GV.setObjectName("GV")
+        self.gridLayout.addWidget(self.GV, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
