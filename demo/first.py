@@ -6,6 +6,7 @@ from PyQt5.QtGui import QGraphicsLayout
 from PyQt5.uic import loadUi
 import sys
 
+# pg.GraphicsView
 
 tmp = pd.read_csv('../APIver1/result.csv')
 tmp['ndatetime'] = pd.to_datetime(tmp['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
@@ -15,23 +16,24 @@ dict_tmp = tmp['ndatetime'].dt.strftime('%Y/%m/%d %H:%M:%S.%f')
 dict_tmp = dict(enumerate(dict_tmp))
 # print(list(dict_tmp.keys()))
 
-class TmpGV(pg.GraphicsView):
+
+class MainWindows(QMainWindow):
     def __init__(self):
-        pg.GraphicsView.__init__(self)
-        self.l = pg.GraphicsLayout(border=(100,100,100))
-        self.setCentralItem(self.l)
-        self.vb = self.l.addViewBox()
+        super(MainWindows, self).__init__()
+        loadUi(r'MG.ui', self)
+        self.draw1 = pg.PlotWidget()
+        self.draw1(y=data)
+        self.l = pg.GraphicsLayout()
+        self.l.addItem(self.draw1)
+        self.GV.setLayout(self.l)
 
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    view = TmpGV()
-    p1 = pg.PlotDataItem(y=data)
+    MG = MainWindows()
+    MG.show()
 
-    view.vb.addItem(p1)
-
-    view.show()
     sys.exit(app.exec_())
 
 
