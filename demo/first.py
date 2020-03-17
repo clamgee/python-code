@@ -21,17 +21,15 @@ class MainWindows(QMainWindow):
     def __init__(self):
         super(MainWindows, self).__init__()
         loadUi(r'MG.ui', self)
-        self.draw1 = pg.PlotWidget()
-        self.draw1(y=data)
-        self.l = pg.GraphicsLayout()
-        self.l.addItem(self.draw1)
-        self.GV.setLayout(self.l)
-
+        self.draw1 = pg.PlotDataItem()
+        self.draw1.setData(y=data)
+        self.GV.addItem(self.draw1)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     MG = MainWindows()
+
     MG.show()
 
     sys.exit(app.exec_())
