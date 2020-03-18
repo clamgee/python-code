@@ -11,19 +11,26 @@ import sys
 tmp = pd.read_csv('../APIver1/result.csv')
 tmp['ndatetime'] = pd.to_datetime(tmp['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
 data = tmp['close'].tolist()
+data2 = tmp['volume'].tolist()
 
 dict_tmp = tmp['ndatetime'].dt.strftime('%Y/%m/%d %H:%M:%S.%f')
 dict_tmp = dict(enumerate(dict_tmp))
 # print(list(dict_tmp.keys()))
-
+# pg.GraphicsView.setCentralWidget()
 
 class MainWindows(QMainWindow):
     def __init__(self):
         super(MainWindows, self).__init__()
         loadUi(r'MG.ui', self)
-        self.draw1 = pg.PlotDataItem()
-        self.draw1.setData(y=data)
-        self.GV.addItem(self.draw1)
+        self.l = pg.GraphicsLayout()
+        self.GV.setCentralItem(self.l)
+        self.draw1 = self.l.addPlot(y=data)
+        self.l.nextRow()
+        self.draw2 = self.l.addItem(pg.BarGraphItem(x=data2[0],y=data2[1]),1)
+
+
+
+
 
 
 if __name__ == '__main__':
