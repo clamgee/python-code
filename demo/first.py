@@ -13,7 +13,7 @@ tmp['ndatetime'] = pd.to_datetime(tmp['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f
 data = tmp['close'].tolist()
 data2 = tmp['volume'].tolist()
 data2index = tmp.index.tolist()
-print(data2index)
+
 
 dict_tmp = tmp['ndatetime'].dt.strftime('%Y/%m/%d %H:%M:%S.%f')
 dict_tmp = dict(enumerate(dict_tmp))
@@ -28,8 +28,9 @@ class MainWindows(QMainWindow):
         self.GV.setCentralItem(self.l)
         self.draw1 = self.l.addPlot(y=data)
         self.l.nextRow()
-        self.draw2 = pg.BarGraphItem(x=data2index,y=data2,width=0.3,bush='r')
-        self.l.addItem(self.draw2)
+        self.draw2 = self.l.addPlot()
+        self.bar = pg.BarGraphItem(x=data2index,height=data2,width=0.3,bush='r')
+        self.draw2.addItem(self.bar)
 
 
 
@@ -41,7 +42,6 @@ if __name__ == '__main__':
     MG = MainWindows()
 
     MG.show()
-
     sys.exit(app.exec_())
 
 
