@@ -8,7 +8,7 @@ import sys
 
 # pg.GraphicsView
 
-tmp = pd.read_csv('../APIver1/result.csv')
+tmp = pd.read_csv('../APIver1/result.dat')
 tmp['ndatetime'] = pd.to_datetime(tmp['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
 data = tmp['close'].tolist()
 data2 = tmp['volume'].tolist()

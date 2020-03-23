@@ -69,4 +69,4 @@ if df is not None:
     kline=Klineprocess()
     for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows():
         kline.contractk(x.ndatetime,x.close,x.volume)
-    kline.contractkpd.to_csv('result.csv',header=False,index=False,mode='a')
+    kline.contractkpd.to_csv('result.dat',header=False,index=False,mode='a')

@@ -26,7 +26,7 @@ class dataprocess:
         self.ticksdf=pd.DataFrame(columns=['ndate','ntime','nbid','nask','close','volume'])
         self.ticksdf['ndate']=pd.to_datetime(self.ticksdf['ndate'],format='%Y-%m-%d')
         self.ticksdf['ntime']=pd.to_datetime(self.ticksdf['ntime'],format='%H:%M:%S.%f')
-        self.contractkpd=pd.read_csv('result.csv')
+        self.contractkpd=pd.read_csv('result.dat')
         self.contractkpd['ndatetime']=pd.to_datetime(self.contractkpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.contractkpd.sort_values(by=['ndatetime'],ascending=True)
         self.contractkpd=self.contractkpd.reset_index(drop=True)

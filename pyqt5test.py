@@ -101,7 +101,7 @@ class CandlestickItem(pg.GraphicsObject):
     def boundingRect(self):
         return QtCore.QRectF(0,self.low,len(self.pictures),(self.high-self.low)) 
 
-# csvpf=pd.read_csv('result.csv')
+# csvpf=pd.read_csv('result.dat')
 # csvpf['ndatetime']=pd.to_datetime(csvpf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
 # print(csvpf.tail(5))
 # print(csvpf.info())
