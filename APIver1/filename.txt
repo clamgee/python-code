@@ -242,3 +242,10 @@ Ticks2020-03-17.txt
 Ticks2020-03-18.txt
 Ticks2020-03-19.txt
 Ticks2020-03-20.txt
+Ticks2020-03-23.txt
+Ticks2020-03-24.txt
+Ticks2020-03-25.txt
+Ticks2020-03-26.txt
+Ticks2020-03-27.txt
+Ticks2020-03-30.txt
+Ticks2020-03-31.txt
