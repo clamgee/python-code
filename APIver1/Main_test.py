@@ -184,10 +184,10 @@ class SKMainWindow(QMainWindow): #主視窗
     def commodityFnc(self):
         nstock=self.commodityline.text().replace(' ','')
         self.Future = tickstokline.dataprocess(nstock)
-        self.newThread=His_KLlineThread()
-        self.tmpthread=QThread()
-        self.newThread.moveToThread(self.tmpthread)
-        self.tmpthread.start()
+        # self.newThread=His_KLlineThread()
+        # self.tmpthread=QThread()
+        # self.newThread.moveToThread(self.tmpthread)
+        # self.tmpthread.start()
         skQ.SKQuoteLib_RequestTicks(0,nstock)
         self.ndetialmsg=FuncUI.MessageDialog(nstock)
         self.TDetailbtn.clicked.connect(self.ndetialmsg.show)
@@ -198,6 +198,8 @@ class SKMainWindow(QMainWindow): #主視窗
         self.Kui=KlineUi.KlineWidget(nstock)
         self.Kui.addItem(self.Kitem)
         self.Kitem.set_data(self.Future.contractkpd)
+        # self.SKQThread = SKQuoteThread()
+        # self.SKQThread.start()
         # self.HisKlineThrd=His_KLlineThread()
         # self.HisKlineThrd.start()
         self.TableThrd=TableThread()
@@ -550,18 +552,18 @@ class SKQuoteLibEvents:
     # @repeatQuote
     def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
         if nSimulate==0:
-            SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
+            # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
-            # SKMain.Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
-            # strMsg=str(SKMain.Future.contractkpd.iloc[-1:].values)
+            SKMain.Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
+            strMsg=str(SKMain.Future.contractkpd.iloc[-1:].values)
             # SKMain.ndetialmsg.textBrowser.append(strMsg)
     
     def OnNotifyTicks(self,sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
         # strMsg=str(lDate)+','+str(lTimehms)+','+str(lTimemillismicros)+','+str(nBid)+','+str(nAsk)+','+str(nClose)+','+str(nQty)
         if nSimulate==0:
-            SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
-            print('ThreadName: ',QThread.currentThread().objectName(),'ThreadID: ',int(QThread.currentThreadId()))
-            # SKMain.Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
+            # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
+            # print('ThreadName: ',QThread.currentThread().objectName(),'ThreadID: ',int(QThread.currentThreadId()))
+            SKMain.Future.Ticks(lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty)
             strMsg=str(SKMain.Future.contractkpd.iloc[-1:].values)
             SKMain.ndetialmsg.textBrowser.append(strMsg)
             SKMain.Kitem.set_data(SKMain.Future.contractkpd)
@@ -578,7 +580,21 @@ class SKQuoteLibEvents:
 
 
 #comtypes使用此方式註冊callback
-SKQuoteEvent=SKQuoteLibEvents()
+SKQuoteEvent = SKQuoteLibEvents()
+# class SKQuoteThread(QThread):
+#
+#     def __init__(self,parent=None):
+#         super(SKQuoteThread,self).__init__(parent)
+#
+#     def run(self):
+#         SKQuoteEvent = SKQuoteLibEvents()
+#         SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
+
+# SKQThread = SKQuoteThread()
+# SKQThread.start()
+# print('ThreadName: ',QThread.currentThread().objectName(),'ThreadID: ',int(QThread.currentThreadId()))
+
+
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
 SKOrderEvent = SKOrderLibEvent()
 SKOrderLibEventHandler = comtypes.client.GetEvents(skO, SKOrderEvent)
