@@ -603,8 +603,9 @@ class SKQuoteLibEvents:
         if nSimulate == 0:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
-            SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
-            strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
+            print(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
+            # SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
+            # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
             # SKMain.ndetialmsg.textBrowser.append(strMsg)
 
     def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty,
@@ -632,22 +633,11 @@ class SKQuoteLibEvents:
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
-# class SKQuoteThread(QThread):
-#
-#     def __init__(self, parent=None):
-#         super(SKQuoteThread, self).__init__(parent)
-#
-#     def __del__(self):
-#         self.wait()
-#
-#     def run(self):
-#         sk_quote_event = SKQuoteLibEvents()
-#         sk_quote_lib_event_handler = comtypes.client.GetEvents(skQ, sk_quote_event)
-#
-#
-# SKQThread = SKQuoteThread()
-# SKQThread.start()
-# print('ThreadName: ', QThread.currentThread().objectName(), 'ThreadID: ', int(QThread.currentThreadId()))
+SKQThread = SKQuoteThread()
+SKQuoteLibEventHandler.moveToThread(SKQThread)
+SKQThread.started.conn
+SKQThread.start()
+print('ThreadName: ', QThread.currentThread().objectName(), 'ThreadID: ', int(QThread.currentThreadId()))
 
 
 SKOrderEvent = SKOrderLibEvent()
