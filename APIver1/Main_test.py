@@ -584,7 +584,7 @@ class SKQuoteLibEvents:
         elif (nKind == 3021):
             strMsg = "Connect Error!"
         print(strMsg)
-        SKMain.SKMessage.textBrowser.append(strMsg)
+        SKMain.SKMessage.textBrowser.append(strMsg+'測試')
 
     def OnNotifyServerTime(self, sHour, sMinute, sSecond, nTotal):
         nTime = QTime(sHour, sMinute, sSecond)
@@ -594,7 +594,7 @@ class SKQuoteLibEvents:
             filename = 'data/Ticks' + str(SKMain.Future.ticksdf.iloc[-1, 0]) + '.txt'
             SKMain.Future.ticksdf.to_csv(filename, header=False, index=False)
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
-        # print('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
+        print('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
         SKMain.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
 
     # @repeatQuote
@@ -633,12 +633,19 @@ class SKQuoteLibEvents:
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
+
+class SKQuoteThread(QThread):
+    def __init__(self, parent=None):
+        super(SKQuoteThread, self).__init__()
+
+    def run(self):
+        SKQuoteEvent = SKQuoteLibEvents()
+        SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
+
+
 SKQThread = SKQuoteThread()
-SKQuoteLibEventHandler.moveToThread(SKQThread)
-SKQThread.started.conn
 SKQThread.start()
 print('ThreadName: ', QThread.currentThread().objectName(), 'ThreadID: ', int(QThread.currentThreadId()))
-
 
 SKOrderEvent = SKOrderLibEvent()
 SKOrderLibEventHandler = comtypes.client.GetEvents(skO, SKOrderEvent)
