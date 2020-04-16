@@ -257,3 +257,5 @@ Ticks2020-04-09.txt
 Ticks2020-04-10.txt
 Ticks2020-04-13.txt
 Ticks2020-04-14.txt
+Ticks2020-04-15.txt
+Ticks2020-04-16.txt
