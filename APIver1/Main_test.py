@@ -633,9 +633,8 @@ class SKQuoteLibEvents:
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
-SKQThread = SKQuoteThread()
+SKQThread = QThread()
 SKQuoteLibEventHandler.moveToThread(SKQThread)
-SKQThread.started.conn
 SKQThread.start()
 print('ThreadName: ', QThread.currentThread().objectName(), 'ThreadID: ', int(QThread.currentThreadId()))
 
