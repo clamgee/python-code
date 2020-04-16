@@ -635,7 +635,7 @@ SKQuoteEvent = SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
 SKQThread = SKQuoteThread()
 SKQuoteLibEventHandler.moveToThread(SKQThread)
-SKQThread.started.conn
+
 SKQThread.start()
 print('ThreadName: ', QThread.currentThread().objectName(), 'ThreadID: ', int(QThread.currentThreadId()))
 
