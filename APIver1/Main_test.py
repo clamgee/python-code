@@ -594,7 +594,7 @@ class SKQuoteLibEvents:
             filename = 'data/Ticks' + str(SKMain.Future.ticksdf.iloc[-1, 0]) + '.txt'
             SKMain.Future.ticksdf.to_csv(filename, header=False, index=False)
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
-        print('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
+        # print('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
         SKMain.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
 
     # @repeatQuote
@@ -634,18 +634,18 @@ class SKQuoteLibEvents:
 SKQuoteEvent = SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
 
-class SKQuoteThread(QThread):
-    def __init__(self, parent=None):
-        super(SKQuoteThread, self).__init__()
-
-    def run(self):
-        SKQuoteEvent = SKQuoteLibEvents()
-        SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
-
-
-SKQThread = SKQuoteThread()
-SKQThread.start()
-print('ThreadName: ', QThread.currentThread().objectName(), 'ThreadID: ', int(QThread.currentThreadId()))
+# class SKQuoteThread(QThread):
+#     def __init__(self, parent=None):
+#         super(SKQuoteThread, self).__init__()
+#
+#     def run(self):
+#         SKQuoteEvent = SKQuoteLibEvents()
+#         SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
+#
+#
+# SKQThread = SKQuoteThread()
+# SKQThread.start()
+# print('ThreadName: ', QThread.currentThread().objectName(), 'ThreadID: ', int(QThread.currentThreadId()))
 
 SKOrderEvent = SKOrderLibEvent()
 SKOrderLibEventHandler = comtypes.client.GetEvents(skO, SKOrderEvent)
