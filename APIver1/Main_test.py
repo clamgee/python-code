@@ -584,7 +584,7 @@ class SKQuoteLibEvents:
         elif (nKind == 3021):
             strMsg = "Connect Error!"
         print(strMsg)
-        SKMain.SKMessage.textBrowser.append(strMsg+'測試')
+        SKMain.SKMessage.textBrowser.append(strMsg)
 
     def OnNotifyServerTime(self, sHour, sMinute, sSecond, nTotal):
         nTime = QTime(sHour, sMinute, sSecond)
@@ -603,8 +603,8 @@ class SKQuoteLibEvents:
         if nSimulate == 0:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
-            # print(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
-            SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
+            print(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
+            # SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
             # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
             # SKMain.ndetialmsg.textBrowser.append(strMsg)
 
@@ -633,19 +633,12 @@ class SKQuoteLibEvents:
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
+SKQThread = SKQuoteThread()
+SKQuoteLibEventHandler.moveToThread(SKQThread)
 
-# class SKQuoteThread(QThread):
-#     def __init__(self, parent=None):
-#         super(SKQuoteThread, self).__init__()
-#
-#     def run(self):
-#         SKQuoteEvent = SKQuoteLibEvents()
-#         SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
-#
-#
-# SKQThread = SKQuoteThread()
-# SKQThread.start()
-# print('ThreadName: ', QThread.currentThread().objectName(), 'ThreadID: ', int(QThread.currentThreadId()))
+SKQThread.start()
+print('ThreadName: ', QThread.currentThread().objectName(), 'ThreadID: ', int(QThread.currentThreadId()))
+
 
 SKOrderEvent = SKOrderLibEvent()
 SKOrderLibEventHandler = comtypes.client.GetEvents(skO, SKOrderEvent)
