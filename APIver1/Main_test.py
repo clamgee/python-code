@@ -623,23 +623,17 @@ class SKQuoteLibEvents:
             ymin = SKMain.Kitem.data.loc[xmin:xmax, ['low']].values.min()
             ymax = SKMain.Kitem.data.loc[xmin:xmax, ['high']].values.max()
             SKMain.Kui.update(xmin, xmax, ymin, ymax, SKMain.Kitem.FPS)
-    # def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
-    #         total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
-    #         'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
-    #         SKMain.TableThrd.Table_signal.emit(SKMain.Future.contractkpd.iloc[-1,4],total_dict)
-    #         # 更新點
+
+    def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
+            total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
+            'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
+            SKMain.TableThrd.Table_signal.emit(SKMain.Future.contractkpd.iloc[-1,4],total_dict)
+            # 更新點
 
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
 SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
-SKQThread = SKQuoteThread()
-SKQuoteLibEventHandler.moveToThread(SKQThread)
-
-SKQThread.start()
-print('ThreadName: ', QThread.currentThread().objectName(), 'ThreadID: ', int(QThread.currentThreadId()))
-
-
 SKOrderEvent = SKOrderLibEvent()
 SKOrderLibEventHandler = comtypes.client.GetEvents(skO, SKOrderEvent)
 SKReplyEvent = SKReplyLibEvent()
