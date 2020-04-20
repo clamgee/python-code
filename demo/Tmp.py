@@ -1,45 +1,22 @@
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QApplication, QWidget
+import pandas as pd
 
-from ui_calc import Ui_Calc
+avgpd = pd.read_csv('../APIver1/result.dat')
+avgpd.sort_values(by=['ndatetime'], ascending=True)
+avgpd = avgpd.reset_index(drop=True)
+avgpd['high_avg'] = 0
+avgpd['low_avg'] = 0
 
+def avgline(x):
+    for idx in avgpd.index:
+        if idx < x:
+            oldx = x
+            x = idx
 
-# 方式一
-class MyCalc(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.ui = Ui_Calc()
-        self.ui.setupUi(self)
+        avgpd.loc[idx,'high_avg'] = avgpd['high'].iloc[-x:].mean(0)
+        avgpd.loc[idx,'low_avg'] = avgpd['low'].iloc[-x:].mean(0)
 
-    @pyqtSlot(int)
-    def on_inputSpinBox1_valueChanged(self, value):
-        self.ui.outputWidget.setText(str(value + self.ui.inputSpinBox2.value()))
+#
+avgpd.apply(avgline(20))
 
-    @pyqtSlot(int)
-    def on_inputSpinBox2_valueChanged(self, value):
-        self.ui.outputWidget.setText(str(value + self.ui.inputSpinBox1.value()))
-
-
-# 方式二
-class MyCalc2(QWidget, Ui_Calc):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setupUi(self)
-
-    @pyqtSlot(int)
-    def on_inputSpinBox1_valueChanged(self, value):
-        self.outputWidget.setText(str(value + self.inputSpinBox2.value()))
-
-    @pyqtSlot(int)
-    def on_inputSpinBox2_valueChanged(self, value):
-        self.outputWidget.setText(str(value + self.inputSpinBox1.value()))
-
-
-if __name__ == '__main__':
-    import sys
-
-    app = QApplication(sys.argv)
-    win = MyCalc()
-    # win = MyCalc2()
-    win.show()
-    sys.exit(app.exec_())
+# a = avgpd['high'].iloc[-20:].mean(0)
+print(avgpd.tail(5))
