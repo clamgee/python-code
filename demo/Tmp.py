@@ -12,11 +12,11 @@ def avgline(x):
             oldx = x
             x = idx
 
-        avgpd.loc[idx,'high_avg'] = avgpd['high'].iloc[-x:].mean(0)
-        avgpd.loc[idx,'low_avg'] = avgpd['low'].iloc[-x:].mean(0)
+        result = avgpd['high'].iloc[-x:].mean(0)
+    return result
 
 #
-avgpd.apply(avgline(20))
+avgpd['high_avg'] = avgpd.apply(avgline(20))
 
 # a = avgpd['high'].iloc[-20:].mean(0)
 print(avgpd.tail(5))
