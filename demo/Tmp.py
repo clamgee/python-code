@@ -7,16 +7,12 @@ avgpd['high_avg'] = 0
 avgpd['low_avg'] = 0
 
 def avgline(x):
-    for idx in avgpd.index:
-        if idx < x:
-            oldx = x
-            x = idx
-
-        result = avgpd['high'].iloc[-x:].mean(0)
-    return result
+    # x = avgpd['high'].iloc[-20:].mean(0)
+    return x.iloc[-20:].mean(0)
 
 #
-avgpd['high_avg'] = avgpd.apply(avgline(20))
+avgpd['high_avg'] = avgpd.high.rolling(20).mean()
+avgpd['low_avg'] = avgpd.low.rolling(20).mean()
 
 # a = avgpd['high'].iloc[-20:].mean(0)
-print(avgpd.tail(5))
+print(avgpd.tail(20))
