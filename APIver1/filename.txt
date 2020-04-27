@@ -265,3 +265,4 @@ Ticks2020-04-21.txt
 Ticks2020-04-22.txt
 Ticks2020-04-23.txt
 Ticks2020-04-24.txt
+Ticks2020-04-27.txt
