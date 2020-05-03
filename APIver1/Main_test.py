@@ -604,8 +604,8 @@ class SKQuoteLibEvents:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
             SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
-            # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
-            # SKMain.ndetialmsg.textBrowser.append(strMsg)
+            strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
+            SKMain.ndetialmsg.textBrowser.append(strMsg)
 
     def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty,
                       nSimulate):

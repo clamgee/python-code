@@ -46,8 +46,9 @@ class CandlestickItem(pg.GraphicsObject):
         w = 1.0 / 3.0
         start = len(self.pictures)
         stop = self.data.shape[0]
-        # high_avg = 0
-        for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
+        highavg = ''
+        lowavg = ''
+        for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close', 'high_avg', 'low_avg']].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
             p.setPen(pg.mkPen('w'))
@@ -59,12 +60,17 @@ class CandlestickItem(pg.GraphicsObject):
             else:
                 p.setBrush(pg.mkBrush('w'))
             p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
-            # if high_avg != 0:
-            #     p.setPen(pg.mkPen('c'))
-            #     p.setBrush(pg.mkBrush('c'))
-            #     p.drawLine(QtCore.QPointF(t - 1, prema10), QtCore.QPointF(t, high_avg))
-            #     https: // blog.csdn.net / otter1010 / article / details / 83719709
-
+            if highavg != '':
+                p.setPen(pg.mkPen('b'))
+                p.setBrush(pg.mkBrush('b'))
+                p.drawLine(QtCore.QPointF(t - 1, highavg), QtCore.QPointF(t, x.high_avg))
+            # print('圖: ', x.high_avg)
+            highavg = x.high_avg
+            if lowavg != '':
+                p.setPen(pg.mkPen('w'))
+                p.setBrush(pg.mkBrush('w'))
+                p.drawLine(QtCore.QPointF(t - 1, lowavg), QtCore.QPointF(t, x.low_avg))
+            lowavg = x.low_avg
             p.end()
             self.pictures.append(picture)
         
