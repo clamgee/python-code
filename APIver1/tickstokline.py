@@ -32,6 +32,8 @@ class dataprocess:
         self.contractkpd['ndatetime']=pd.to_datetime(self.contractkpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.contractkpd.sort_values(by=['ndatetime'],ascending=True)
         self.contractkpd=self.contractkpd.reset_index(drop=True)
+        self.contractkpd['high_avg'] = self.contractkpd.high.rolling(11).mean().round(2)
+        self.contractkpd['low_avg'] = self.contractkpd.low.rolling(11).mean().round(2)
         self.newlist=[]
         self.tmpcontract=0
         self.CheckHour=0
@@ -42,8 +44,8 @@ class dataprocess:
         if self.contractkpd.shape[0]==0 or self.tmpcontract==0 or self.tmpcontract==12000 or (tmphour==8 and self.CheckHour==4) or (tmphour==15 and self.CheckHour==13):
             self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,nQty, '', '']],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True)
             self.tmpcontract=nQty
-            self.contractkpd['high_avg'] = self.contractkpd.high.rolling(11).mean().round(2)
-            self.contractkpd['low_avg'] = self.contractkpd.low.rolling(11).mean().round(2)
+            # self.contractkpd['high_avg'] = self.contractkpd.high.rolling(11).mean().round(2)
+            # self.contractkpd['low_avg'] = self.contractkpd.low.rolling(11).mean().round(2)
         elif (self.tmpcontract+nQty)>12000:
             self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
             self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
@@ -51,8 +53,8 @@ class dataprocess:
             self.contractkpd.iloc[-1,5]=12000
             self.tmpcontract=self.tmpcontract+nQty-12000
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract,'','']
-            self.contractkpd['high_avg'] = self.contractkpd.high.rolling(11).mean().round(2)
-            self.contractkpd['low_avg'] = self.contractkpd.low.rolling(11).mean().round(2)
+            # self.contractkpd['high_avg'] = self.contractkpd.high.rolling(11).mean().round(2)
+            # self.contractkpd['low_avg'] = self.contractkpd.low.rolling(11).mean().round(2)
         else:
             self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
             self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
@@ -60,6 +62,8 @@ class dataprocess:
             self.tmpcontract=self.tmpcontract+nQty
             self.contractkpd.iloc[-1,5]=self.tmpcontract
         # self.contractkpd.reset_index(drop=True)
+        self.contractkpd['high_avg'] = self.contractkpd.high.rolling(11).mean().round(2)
+        self.contractkpd['low_avg'] = self.contractkpd.low.rolling(11).mean().round(2)
         self.CheckHour=tmphour
         return self.contractkpd.iloc[-1:].values
 
