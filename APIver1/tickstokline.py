@@ -27,8 +27,6 @@ class dataprocess:
         self.ticksdf['ndate']=pd.to_datetime(self.ticksdf['ndate'],format='%Y-%m-%d')
         self.ticksdf['ntime']=pd.to_datetime(self.ticksdf['ntime'],format='%H:%M:%S.%f')
         self.contractkpd=pd.read_csv('result.dat')
-        self.contractkpd['high_avg'] = ''
-        self.contractkpd['low_avg'] = ''
         self.contractkpd['ndatetime']=pd.to_datetime(self.contractkpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.contractkpd.sort_values(by=['ndatetime'],ascending=True)
         self.contractkpd=self.contractkpd.reset_index(drop=True)
@@ -44,8 +42,6 @@ class dataprocess:
         if self.contractkpd.shape[0]==0 or self.tmpcontract==0 or self.tmpcontract==12000 or (tmphour==8 and self.CheckHour==4) or (tmphour==15 and self.CheckHour==13):
             self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,nQty, '', '']],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True)
             self.tmpcontract=nQty
-            # self.contractkpd['high_avg'] = self.contractkpd.high.rolling(11).mean().round(2)
-            # self.contractkpd['low_avg'] = self.contractkpd.low.rolling(11).mean().round(2)
         elif (self.tmpcontract+nQty)>12000:
             self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
             self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
@@ -53,8 +49,6 @@ class dataprocess:
             self.contractkpd.iloc[-1,5]=12000
             self.tmpcontract=self.tmpcontract+nQty-12000
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract,'','']
-            # self.contractkpd['high_avg'] = self.contractkpd.high.rolling(11).mean().round(2)
-            # self.contractkpd['low_avg'] = self.contractkpd.low.rolling(11).mean().round(2)
         else:
             self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
             self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
@@ -69,11 +63,7 @@ class dataprocess:
 
     def Ticks(self,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty):
         nTime=str(nTimehms).zfill(6)
-        # while len(nTime)<6:
-        #     nTime='0'+nTime
         nTimemicro=str(nTimemillismicros).zfill(6)
-        # while len(nTimemicro)<6:
-        #     nTimemicro='0'+nTimemicro
         # nTime=datetime.datetime.strptime(nTime,'%H%M%S').strftime('%H:%M:%S')+"."+nTimemicro.strip()
         ndatetime=datetime.datetime.strptime(str(nDate)+" "+nTime,'%Y%m%d %H%M%S').strftime('%Y-%m-%d %H:%M:%S')+"."+nTimemicro.strip()
         ndate=datetime.datetime.strptime(str(nDate),'%Y%m%d').date()
