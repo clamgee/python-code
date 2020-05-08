@@ -18,12 +18,14 @@ class CandlestickItem(pg.GraphicsObject):
         self.FPS = 0
         self.highavg = ''
         self.lowavg = ''
+        self.len = 0
         self.timelist = []
         self.countK = 60 #設定要顯示多少K線
 
     def set_data(self,data):
         start=pg.time()
         self.data = data.reset_index(drop=True)
+        self.len = self.data.last_valid_index()
         self.low,self.high = (self.data['low'].min(),self.data['high'].max()) if len(data)>0 else (0,1)
         self.generatePicture()
         self.informViewBoundsChanged()
@@ -66,12 +68,16 @@ class CandlestickItem(pg.GraphicsObject):
                 p.setBrush(pg.mkBrush('b'))
                 p.drawLine(QtCore.QPointF(t - 1, self.highavg), QtCore.QPointF(t, x.high_avg))
             # print('圖: ', x.high_avg)
-            self.highavg = x.high_avg
+
             if self.lowavg != '':
                 p.setPen(pg.mkPen('w'))
                 p.setBrush(pg.mkBrush('w'))
                 p.drawLine(QtCore.QPointF(t - 1, self.lowavg), QtCore.QPointF(t, x.low_avg))
-            self.lowavg = x.low_avg
+                # p.drawPoint(int(t), int(x.low_avg))
+
+            if t < self.len:
+                self.lowavg = x.low_avg
+                self.highavg = x.high_avg
             p.end()
             self.pictures.append(picture)
         

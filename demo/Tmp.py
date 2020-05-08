@@ -17,7 +17,7 @@ def avgline(x):
 
 # avgpd['high_avg'] = avgpd.loc[:'high'].rolling(20).mean()
 avgpd['low_avg'] = avgpd.low.rolling(20).mean()
-a = avgpd.low.rolling(20).mean().tail(1).values[0]
-
+# a = avgpd.low.rolling(20).mean().tail(1).values[0]
+a = avgpd.last_valid_index()
 # a = avgpd['high'].iloc[-20:].mean(0)
 print(a)
