@@ -281,3 +281,4 @@ Ticks2020-05-14.txt
 Ticks2020-05-15.txt
 Ticks2020-05-18.txt
 Ticks2020-05-19.txt
+Ticks2020-05-20.txt
