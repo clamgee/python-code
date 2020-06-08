@@ -293,3 +293,5 @@ Ticks2020-06-01.txt
 Ticks2020-06-02.txt
 Ticks2020-06-03.txt
 Ticks2020-06-04.txt
+Ticks2020-06-05.txt
+Ticks2020-06-08.txt
