@@ -298,3 +298,4 @@ Ticks2020-06-08.txt
 Ticks2020-06-09.txt
 Ticks2020-06-10.txt
 Ticks2020-06-11.txt
+Ticks2020-06-12.txt
