@@ -302,3 +302,4 @@ Ticks2020-06-12.txt
 Ticks2020-06-15.txt
 Ticks2020-06-16.txt
 Ticks2020-06-17.txt
+Ticks2020-06-18.txt
