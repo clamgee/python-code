@@ -316,3 +316,4 @@ Ticks2020-07-06.txt
 Ticks2020-07-07.txt
 Ticks2020-07-08.txt
 Ticks2020-07-09.txt
+Ticks2020-07-10.txt
