@@ -323,3 +323,5 @@ Ticks2020-07-15.txt
 Ticks2020-07-16.txt
 Ticks2020-07-17.txt
 Ticks2020-07-20.txt
+Ticks2020-07-21.txt
+Ticks2020-07-23.txt
