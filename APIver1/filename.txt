@@ -342,3 +342,4 @@ Ticks2020-08-11.txt
 Ticks2020-08-12.txt
 Ticks2020-08-13.txt
 Ticks2020-08-14.txt
+Ticks2020-08-17.txt
