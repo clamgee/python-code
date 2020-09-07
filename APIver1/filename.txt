@@ -350,3 +350,10 @@ Ticks2020-08-21.txt
 Ticks2020-08-24.txt
 Ticks2020-08-25.txt
 Ticks2020-08-26.txt
+Ticks2020-08-27.txt
+Ticks2020-08-28.txt
+Ticks2020-08-31.txt
+Ticks2020-09-01.txt
+Ticks2020-09-02.txt
+Ticks2020-09-03.txt
+Ticks2020-09-04.txt
