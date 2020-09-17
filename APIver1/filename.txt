@@ -360,3 +360,9 @@ Ticks2020-09-04.txt
 Ticks2020-09-07.txt
 Ticks2020-09-08.txt
 Ticks2020-09-09.txt
+Ticks2020-09-10.txt
+Ticks2020-09-11.txt
+Ticks2020-09-14.txt
+Ticks2020-09-15.txt
+Ticks2020-09-16.txt
+Ticks2020-09-17.txt
