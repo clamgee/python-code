@@ -366,3 +366,6 @@ Ticks2020-09-14.txt
 Ticks2020-09-15.txt
 Ticks2020-09-16.txt
 Ticks2020-09-17.txt
+Ticks2020-09-18.txt
+Ticks2020-09-21.txt
+Ticks2020-09-22.txt
