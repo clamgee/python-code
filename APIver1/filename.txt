@@ -369,3 +369,7 @@ Ticks2020-09-17.txt
 Ticks2020-09-18.txt
 Ticks2020-09-21.txt
 Ticks2020-09-22.txt
+Ticks2020-09-23.txt
+Ticks2020-09-24.txt
+Ticks2020-09-25.txt
+Ticks2020-09-28.txt
