@@ -375,3 +375,4 @@ Ticks2020-09-25.txt
 Ticks2020-09-28.txt
 Ticks2020-09-29.txt
 Ticks2020-09-30.txt
+Ticks2020-10-05.txt
