@@ -381,3 +381,5 @@ Ticks2020-10-08.txt
 Ticks2020-10-12.txt
 Ticks2020-10-13.txt
 Ticks2020-10-14.txt
+Ticks2020-10-15.txt
+Ticks2020-10-16.txt
