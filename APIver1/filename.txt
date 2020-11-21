@@ -405,3 +405,6 @@ Ticks2020-11-12.txt
 Ticks2020-11-13.txt
 Ticks2020-11-16.txt
 Ticks2020-11-17.txt
+Ticks2020-11-18.txt
+Ticks2020-11-19.txt
+Ticks2020-11-20.txt
