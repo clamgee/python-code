@@ -31,7 +31,7 @@ class MainWindows(QMainWindow):
         self.draw2 = self.l.addPlot()
         self.bar = pg.BarGraphItem(x=data2index,height=data2,width=0.3,bush='r')
         self.draw2.addItem(self.bar)
-
+        self.l.layout.setRowStretchFactor(0, 3)
 
 
 
