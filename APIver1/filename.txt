@@ -410,3 +410,6 @@ Ticks2020-11-19.txt
 Ticks2020-11-20.txt
 Ticks2020-11-23.txt
 Ticks2020-11-24.txt
+Ticks2020-11-25.txt
+Ticks2020-11-26.txt
+Ticks2020-11-27.txt
