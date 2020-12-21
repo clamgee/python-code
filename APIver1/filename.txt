@@ -427,3 +427,5 @@ Ticks2020-12-14.txt
 Ticks2020-12-15.txt
 Ticks2020-12-16.txt
 Ticks2020-12-17.txt
+Ticks2020-12-18.txt
+Ticks2020-12-21.txt
