@@ -22,6 +22,7 @@ TRADESESSIONSET = (
 class dataprocess:
     def __init__(self,inputname):
         self.name=inputname
+        self.MA=87
         # self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
         self.ticksdf=pd.DataFrame(columns=['ndate','ntime','nbid','nask','close','volume'])
         self.ticksdf['ndate']=pd.to_datetime(self.ticksdf['ndate'],format='%Y-%m-%d')
@@ -56,8 +57,8 @@ class dataprocess:
             self.tmpcontract=self.tmpcontract+nQty
             self.contractkpd.iloc[-1,5]=self.tmpcontract
         # self.contractkpd.reset_index(drop=True)
-        self.contractkpd['high_avg'] = self.contractkpd.high.rolling(11).mean().round(2)
-        self.contractkpd['low_avg'] = self.contractkpd.low.rolling(11).mean().round(2)
+        self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)
+        self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
         self.CheckHour=tmphour
         return self.contractkpd.iloc[-1:].values
 
