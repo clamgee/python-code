@@ -31,8 +31,8 @@ class dataprocess:
         self.contractkpd['ndatetime']=pd.to_datetime(self.contractkpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.contractkpd.sort_values(by=['ndatetime'],ascending=True)
         self.contractkpd=self.contractkpd.reset_index(drop=True)
-        self.contractkpd['high_avg'] = self.contractkpd.high.rolling(11).mean().round(2)
-        self.contractkpd['low_avg'] = self.contractkpd.low.rolling(11).mean().round(2)
+        self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)
+        self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
         self.newlist=[]
         self.tmpcontract=0
         self.CheckHour=0
