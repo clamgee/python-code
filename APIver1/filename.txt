@@ -438,3 +438,4 @@ Ticks2020-12-29.txt
 Ticks2020-12-30.txt
 Ticks2020-12-31.txt
 Ticks2021-01-04.txt
+Ticks2021-01-05.txt
