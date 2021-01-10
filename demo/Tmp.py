@@ -1,23 +1,15 @@
 import pandas as pd
+import os
 
-avgpd = pd.read_csv('../APIver1/result.dat')
-avgpd.sort_values(by=['ndatetime'], ascending=True)
-avgpd = avgpd.reset_index(drop=True)
-avgpd['high_avg'] = ''
-avgpd['low_avg'] = ''
-
-def avgline(x):
-    # x = avgpd['high'].iloc[-20:].mean(0)
-    if x.last_valid_index() != x.index[0]:
-        # return x.iloc[-20:].mean(0)
-        return  x.index[0]
-    else:
-        return -1
-
-
-# avgpd['high_avg'] = avgpd.loc[:'high'].rolling(20).mean()
-avgpd['low_avg'] = avgpd.low.rolling(20).mean()
-# a = avgpd.low.rolling(20).mean().tail(1).values[0]
-a = avgpd.last_valid_index()
-# a = avgpd['high'].iloc[-20:].mean(0)
-print(a)
+domain=os.listdir('../APIver1/data')
+print(domain[-1])
+tmp=pd.read_csv('../APIver1/data/'+domain[1])
+tmp.rename(columns={
+    tmp.columns[0]: 'ndate',
+    tmp.columns[1]: 'ntime',
+    tmp.columns[2]: 'nbid',
+    tmp.columns[3]: 'nask',
+    tmp.columns[4]: 'close',
+    tmp.columns[5]: 'volume',
+}, inplace=True)
+print(tmp.tail(5))
