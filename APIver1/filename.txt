@@ -442,3 +442,6 @@ Ticks2021-01-05.txt
 Ticks2021-01-06.txt
 Ticks2021-01-07.txt
 Ticks2021-01-08.txt
+Ticks2021-01-11.txt
+Ticks2021-01-12.txt
+Ticks2021-01-13.txt
