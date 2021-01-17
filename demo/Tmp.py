@@ -3,7 +3,7 @@ import os
 
 domain=os.listdir('../APIver1/data')
 print(domain[-1])
-tmp=pd.read_csv('../APIver1/data/'+domain[1])
+tmp=pd.read_csv('../APIver1/data/'+domain[-1])
 tmp.rename(columns={
     tmp.columns[0]: 'ndate',
     tmp.columns[1]: 'ntime',
