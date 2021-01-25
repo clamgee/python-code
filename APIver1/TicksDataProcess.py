@@ -31,9 +31,11 @@ if df is not None:
     print(df.shape)
     df.sort_values(by=['ndatetime'],ascending=True)
 else:
-    df=pd.read_csv('result.dat')
-    df[0]=pd.to_datetime(df[0],format='%Y-%m-%d %H:%M:%S.%f')
-    df.sort_values(by=['ndatetime'],ascending=True)
+    # df=pd.read_csv('result.dat')
+    # print(df['ndatetime'].tail(5))
+    # df['ndatetime']=pd.to_datetime(df['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+    # print(df.tail(5))
+    # df.sort_values(by=['ndatetime'],ascending=True)
     print('No Data UpDate!!')
 
 class Klineprocess:
