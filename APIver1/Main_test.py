@@ -79,10 +79,10 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.Login.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
         self.Login.setWindowModality(QtCore.Qt.ApplicationModal)  # 設定須先完成對話框，GUI設定無效
         self.Login.show()
-        if self.Login.IDPWCheck.setChecked = Qt
-            # print("AAA")
-            # self.Login.LoginID.text() == "AAA"
-            # self.Login.LoginPw.text() == "123456"
+        # if self.Login.IDPWCheck.setChecked = Qt
+        #     # print("AAA")
+        #     # self.Login.LoginID.text() == "AAA"
+        #     # self.Login.LoginPw.text() == "123456"
         self.Login.LoginConfirmbtn.clicked.connect(self.LoginFunc)
 
     def LoginFunc(self):
