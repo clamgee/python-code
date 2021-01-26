@@ -87,6 +87,7 @@ class Ui_Login(object):
         self.LoginPW.setEchoMode(QtWidgets.QLineEdit.Password)
         self.LoginPW.setObjectName("LoginPW")
         self.horizontalLayout_2.addWidget(self.LoginPW)
+        self.LoginPW.setText('AAA')
 
         self.retranslateUi(Login)
         self.pushButton_2.clicked.connect(self.LoginPW.clear)
