@@ -10,6 +10,7 @@ import json
 class LoginDialog(QDialog):
     def __init__(self):
         super(LoginDialog,self).__init__()
+
         loadUi(r'UI/Login.ui',self)
         if self.IDPWCheck.checkState()==2:
             with open("IDPW.json",mode="r",encoding="utf-8") as file:
