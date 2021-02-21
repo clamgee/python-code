@@ -601,7 +601,7 @@ class SKQuoteLibEvents:
         jTime = QTime(13, 50, 00)
         # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
         if nTime == jTime and SKMain.Future.ticksdf is not None:
-            filename = 'data/Ticks' + str(SKMain.Future.ticksdf.iloc[-1, 0]) + '.txt'
+            filename = '../data/Ticks' + str(SKMain.Future.ticksdf.iloc[-1, 0]) + '.txt'
             SKMain.Future.ticksdf.to_csv(filename, header=False, index=False)
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         # print('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)

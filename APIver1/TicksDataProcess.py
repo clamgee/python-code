@@ -7,9 +7,9 @@ if 'filename.txt' not in df1['filename'].values:
     print('yes')
 else :
     print('no')
-print(os.path.abspath('data'))
-for info in os.listdir('data'):
-    domain=os.path.abspath(r'data')
+print(os.path.abspath('../data'))
+for info in os.listdir('../data'):
+    domain=os.path.abspath(r'../data')
     if info not in df1['filename'].values:
         df1=df1.append(pd.DataFrame([[info]],columns=['filename']),ignore_index=True)
         info=os.path.join(domain,info)
@@ -75,4 +75,4 @@ if df is not None:
     kline=Klineprocess()
     for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows():
         kline.contractk(x.ndatetime,x.close,x.volume)
-    kline.contractkpd.to_csv('result.dat',header=False,index=False,mode='a')
+    kline.contractkpd.to_csv('../result.dat',header=False,index=False,mode='a')

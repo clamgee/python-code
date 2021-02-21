@@ -5,11 +5,15 @@ class decorateClass(object):
     def __call__(self, *args, **kwargs):
         print(f"do something before calling function {self.f.__name__}")
         self.f(*args, **kwargs)
-        print(f"do something after calling function {self.f.__name__}")
+        print(*args, **kwargs)
+        print("AAA")
 
 @decorateClass
 def myFunc():
-    print('主程式')
+    A=1+1
+    A=str(A)
+    return A
+    # print("運算結果: "+str(A))
 
 if __name__ == '__main__':
     myFunc()
