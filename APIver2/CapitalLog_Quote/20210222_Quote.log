@@ -1,0 +1,91 @@
+-----------------------------------------------------------------
+[6192] 2021/02/22 04:12:57.312 OnSessionConnect¡ACode: 0
+[6192] 2021/02/22 04:12:57.312 SKQuoteLib_EnterMonitor starting
+[6192] 2021/02/22 04:12:57.334 market(0)  Ready!
+[6192] 2021/02/22 04:12:57.334 market(2)  Ready!
+[6192] 2021/02/22 04:12:57.349 market(1)  Ready!
+[6192] 2021/02/22 04:12:57.349 market(3)  Ready!
+[6192] 2021/02/22 04:12:57.349 market(2)  Ready!
+[6192] 2021/02/22 04:12:57.349 market(3)  Ready!
+[6192] 2021/02/22 04:12:57.349 market(4)  Ready!
+[6192] 2021/02/22 04:12:57.427 Market Info is OK!
+[6192] 2021/02/22 04:12:57.459 Catalog info is OK!
+[2008] 2021/02/22 04:14:40.493 OnSessionConnect¡ACode: 0
+[2008] 2021/02/22 04:14:40.493 SKQuoteLib_EnterMonitor starting
+[2008] 2021/02/22 04:14:40.528 market(0)  Ready!
+[2008] 2021/02/22 04:14:40.528 market(2)  Ready!
+[2008] 2021/02/22 04:14:40.543 market(1)  Ready!
+[2008] 2021/02/22 04:14:40.543 market(3)  Ready!
+[2008] 2021/02/22 04:14:40.543 market(2)  Ready!
+[2008] 2021/02/22 04:14:40.543 market(3)  Ready!
+[2008] 2021/02/22 04:14:40.543 market(4)  Ready!
+[2008] 2021/02/22 04:14:40.621 Market Info is OK!
+[2008] 2021/02/22 04:14:40.653 Catalog info is OK!
+[2008] 2021/02/22 04:14:49.912  SKQuoteLib_RequestTicks ( 0 , TX00 )
+[2008] 2021/02/22 04:14:49.912 Return PageNo¡G 0 
+[1636] 2021/02/22 04:17:37.453 OnSessionConnect¡ACode: 0
+[1636] 2021/02/22 04:17:37.453 SKQuoteLib_EnterMonitor starting
+[1636] 2021/02/22 04:17:37.479 market(0)  Ready!
+[1636] 2021/02/22 04:17:37.494 market(1)  Ready!
+[1636] 2021/02/22 04:17:37.494 market(3)  Ready!
+[1636] 2021/02/22 04:17:37.494 market(2)  Ready!
+[1636] 2021/02/22 04:17:37.494 market(3)  Ready!
+[1636] 2021/02/22 04:17:37.494 market(4)  Ready!
+[1636] 2021/02/22 04:17:37.494 market(2)  Ready!
+[1636] 2021/02/22 04:17:37.573 Market Info is OK!
+[1636] 2021/02/22 04:17:37.604 Catalog info is OK!
+[1636] 2021/02/22 04:17:48.619  SKQuoteLib_RequestTicks ( 0 , TX00 )
+[1636] 2021/02/22 04:17:48.619 Return PageNo¡G 0 
+[12796] 2021/02/22 04:21:21.587 OnSessionConnect¡ACode: 0
+[12796] 2021/02/22 04:21:21.587 SKQuoteLib_EnterMonitor starting
+[12796] 2021/02/22 04:21:21.613 market(0)  Ready!
+[12796] 2021/02/22 04:21:21.629 market(1)  Ready!
+[12796] 2021/02/22 04:21:21.629 market(3)  Ready!
+[12796] 2021/02/22 04:21:21.629 market(2)  Ready!
+[12796] 2021/02/22 04:21:21.629 market(2)  Ready!
+[12796] 2021/02/22 04:21:21.629 market(3)  Ready!
+[12796] 2021/02/22 04:21:21.629 market(4)  Ready!
+[12796] 2021/02/22 04:21:21.707 Market Info is OK!
+[12796] 2021/02/22 04:21:21.723 Catalog info is OK!
+[12796] 2021/02/22 04:21:27.250  SKQuoteLib_RequestTicks ( 0 , TX00 )
+[12796] 2021/02/22 04:21:27.250 Return PageNo¡G 0 
+[7624] 2021/02/22 04:25:49.058 OnSessionConnect¡ACode: 0
+[7624] 2021/02/22 04:25:49.058 SKQuoteLib_EnterMonitor starting
+[7624] 2021/02/22 04:25:49.084 market(0)  Ready!
+[7624] 2021/02/22 04:25:49.084 market(1)  Ready!
+[7624] 2021/02/22 04:25:49.084 market(2)  Ready!
+[7624] 2021/02/22 04:25:49.099 market(3)  Ready!
+[7624] 2021/02/22 04:25:49.099 market(2)  Ready!
+[7624] 2021/02/22 04:25:49.099 market(4)  Ready!
+[7624] 2021/02/22 04:25:49.099 market(3)  Ready!
+[7624] 2021/02/22 04:25:49.178 Market Info is OK!
+[7624] 2021/02/22 04:25:49.209 Catalog info is OK!
+[7624] 2021/02/22 04:25:54.925  SKQuoteLib_RequestTicks ( 0 , TX00 )
+[7624] 2021/02/22 04:25:54.925 Return PageNo¡G 0 
+[8] 2021/02/22 04:32:16.992  SKQuoteLib_RequestTicks ( 0 , TX00 )
+[8132] 2021/02/22 04:45:23.568 OnSessionConnect¡ACode: 0
+[8132] 2021/02/22 04:45:23.568 SKQuoteLib_EnterMonitor starting
+[8132] 2021/02/22 04:45:23.599 market(0)  Ready!
+[8132] 2021/02/22 04:45:23.599 market(1)  Ready!
+[8132] 2021/02/22 04:45:23.615 market(2)  Ready!
+[8132] 2021/02/22 04:45:23.615 market(3)  Ready!
+[8132] 2021/02/22 04:45:23.630 market(2)  Ready!
+[8132] 2021/02/22 04:45:23.630 market(3)  Ready!
+[8132] 2021/02/22 04:45:23.630 market(4)  Ready!
+[8132] 2021/02/22 04:45:23.709 Market Info is OK!
+[8132] 2021/02/22 04:45:23.740 Catalog info is OK!
+[8132] 2021/02/22 04:45:28.915  SKQuoteLib_RequestTicks ( 0 , TX00 )
+[8132] 2021/02/22 04:45:28.915 Return PageNo¡G 0 
+[8940] 2021/02/22 04:48:37.656 OnSessionConnect¡ACode: 0
+[8940] 2021/02/22 04:48:37.656 SKQuoteLib_EnterMonitor starting
+[8940] 2021/02/22 04:48:37.695 market(0)  Ready!
+[8940] 2021/02/22 04:48:37.695 market(2)  Ready!
+[8940] 2021/02/22 04:48:37.695 market(1)  Ready!
+[8940] 2021/02/22 04:48:37.695 market(3)  Ready!
+[8940] 2021/02/22 04:48:37.710 market(2)  Ready!
+[8940] 2021/02/22 04:48:37.710 market(3)  Ready!
+[8940] 2021/02/22 04:48:37.710 market(4)  Ready!
+[8940] 2021/02/22 04:48:37.773 Market Info is OK!
+[8940] 2021/02/22 04:48:37.804 Catalog info is OK!
+[8940] 2021/02/22 04:48:42.161  SKQuoteLib_RequestTicks ( 0 , TX00 )
+[8940] 2021/02/22 04:48:42.161 Return PageNo¡G 0 

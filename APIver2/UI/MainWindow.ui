@@ -42,7 +42,7 @@
           <item>
            <layout class="QGridLayout" name="GL">
             <item row="0" column="0">
-             <widget class="GraphicsView" name="GV">
+             <widget class="GraphicsView" name="GV1">
               <property name="autoFillBackground">
                <bool>true</bool>
               </property>
