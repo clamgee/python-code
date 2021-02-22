@@ -71,3 +71,41 @@
 [8940] 2021/02/22 04:48:24.884 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
 [8940] 2021/02/22 04:48:24.899 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
 [8940] 2021/02/22 04:48:24.930 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[9648] 2021/02/22 08:15:51.249 OnSessionConnect¡ACode: 0
+[9648] 2021/02/22 08:15:51.359 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[9648] 2021/02/22 08:15:51.395 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[9648] 2021/02/22 08:15:51.433 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[9648] 2021/02/22 08:15:51.471 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[9648] 2021/02/22 08:15:51.503 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[9648] 2021/02/22 08:15:51.541 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[9648] 2021/02/22 08:15:51.572 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[9648] 2021/02/22 08:15:51.604 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[9648] 2021/02/23 00:16:52.452 OnSessionDisconnect¡ACode: 3
+[6268] 2021/02/23 04:34:38.632 OnSessionConnect¡ACode: 0
+[6268] 2021/02/23 04:34:38.835 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[6268] 2021/02/23 04:34:38.858 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[6268] 2021/02/23 04:34:38.884 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[6268] 2021/02/23 04:34:38.912 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[6268] 2021/02/23 04:34:38.942 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[6268] 2021/02/23 04:34:38.968 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[6268] 2021/02/23 04:34:38.993 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[6268] 2021/02/23 04:34:39.017 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[2456] 2021/02/23 04:46:34.558 OnSessionConnect¡ACode: 0
+[2456] 2021/02/23 04:46:34.696 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[2456] 2021/02/23 04:46:34.715 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[2456] 2021/02/23 04:46:34.742 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[2456] 2021/02/23 04:46:34.765 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[2456] 2021/02/23 04:46:34.785 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[2456] 2021/02/23 04:46:34.804 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[2456] 2021/02/23 04:46:34.826 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[2456] 2021/02/23 04:46:34.843 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[7012] 2021/02/23 04:59:58.163 OnSessionConnect¡ACode: 0
+[7012] 2021/02/23 04:59:58.284 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[7012] 2021/02/23 04:59:58.308 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[7012] 2021/02/23 04:59:58.327 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[7012] 2021/02/23 04:59:58.345 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[7012] 2021/02/23 04:59:58.363 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[7012] 2021/02/23 04:59:58.380 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[7012] 2021/02/23 04:59:58.396 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[7012] 2021/02/23 04:59:58.411 Reply Precheck step2 result:{"SaleAcc":[],"RCode":"M000","Status":"SendSubReqeust Successed!"}
+[7012] 2021/02/23 05:09:39.135 OnSessionDisconnect¡ACode: 3

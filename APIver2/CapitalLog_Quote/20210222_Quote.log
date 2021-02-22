@@ -89,3 +89,18 @@
 [8940] 2021/02/22 04:48:37.804 Catalog info is OK!
 [8940] 2021/02/22 04:48:42.161  SKQuoteLib_RequestTicks ( 0 , TX00 )
 [8940] 2021/02/22 04:48:42.161 Return PageNo¡G 0 
+[9648] 2021/02/22 08:34:43.633 OnSessionConnect¡ACode: 0
+[9648] 2021/02/22 08:34:43.633 SKQuoteLib_EnterMonitor starting
+[9648] 2021/02/22 08:34:43.649 market(0)  Ready!
+[9648] 2021/02/22 08:34:43.649 market(3)  Ready!
+[9648] 2021/02/22 08:34:43.649 market(2)  Ready!
+[9648] 2021/02/22 08:34:43.664 market(1)  Ready!
+[9648] 2021/02/22 08:34:43.664 market(2)  Ready!
+[9648] 2021/02/22 08:34:43.664 market(3)  Ready!
+[9648] 2021/02/22 08:34:43.664 market(4)  Ready!
+[9648] 2021/02/22 08:34:43.711 Market Info is OK!
+[9648] 2021/02/22 08:34:43.742 Catalog info is OK!
+[9648] 2021/02/22 08:34:56.936  SKQuoteLib_RequestTicks ( 0 , TX00 )
+[9648] 2021/02/22 08:34:56.936 Return PageNo¡G 0 
+[9648] 2021/02/23 00:16:52.436 OnSessionDisconnect¡ACode: 3
+[9648] 2021/02/23 00:16:52.452 Solace QuoteServer Disconnect:(ex:Without Network)

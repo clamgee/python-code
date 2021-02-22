@@ -41,8 +41,18 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.Bill = []
         self.fOrder = sk.FUTUREORDER()
         # 圖形化設定
+        # 12K圖示宣告
         self.GL12K=pg.GraphicsLayout()
         self.GV1.setCentralItem(self.GL12K)
+        self.drawmain = self.GL12K.addPlot()
+        self.drawmain.showAxis('right',show=True)
+        self.drawmain.showAxis('left',show=False)
+        self.axis_xmin = 0
+        self.axis_xmax = 100
+        self.axis_ymin = 0
+        self.axis_ymax = 100
+        self.drawmain.setXRange(self.axis_xmin,self.axis_xmax)
+        self.drawmain.setYRange(self.axis_ymin,self.axis_ymax)
         # 下單參數 Future structure
         self.trade_act = -1
         self.OrderPrice = ''
@@ -229,12 +239,15 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.TableThrd = TableThread()
         self.TableThrd.start()
         xmax = int(len(self.Kitem.pictures))
+        self.axis_xmax = xmax
         xmin = int(max(0, xmax - self.Kitem.countK))
+        self.axis_xmin = xmin 
         ymin = self.Kitem.data.loc[xmin:xmax, ['low']].values.min()
+        self.axis_ymin = ymin
         ymax = self.Kitem.data.loc[xmin:xmax, ['high']].values.max()
-        self.drawmain = self.GL12K.addPlot()
+        self.axis_ymax = ymax        
         self.drawmain.addItem(self.Kitem)
-        self.Kui.update(xmin, xmax, ymin, ymax, self.Kitem.FPS)
+        
 
     # 商品訂閱結束
     # 委託未平倉回報資料
@@ -632,10 +645,17 @@ class SKQuoteLibEvents:
             SKMain.ndetialmsg.textBrowser.append(strMsg)
             SKMain.Kitem.set_data(SKMain.Future.contractkpd)
             xmax = int(len(SKMain.Kitem.pictures))
-            xmin = int(max(0, xmax - SKMain.Kitem.countK))
-            ymin = SKMain.Kitem.data.loc[xmin:xmax, ['low']].values.min()
-            ymax = SKMain.Kitem.data.loc[xmin:xmax, ['high']].values.max()
-            SKMain.Kui.update(xmin, xmax, ymin, ymax, SKMain.Kitem.FPS)
+            if SKMain.axis_xmax != xmax:
+                SKMain.axis_xmax = xmax
+                xmin = int(max(0, xmax - SKMain.Kitem.countK))
+                SKMain.axis_xmin = xmin 
+            ymin = SKMain.Kitem.data.loc[SKMain.axis_xmin:SKMain.axis_xmax, ['low']].values.min()
+            if SKMain.axis_ymin != ymin:
+                SKMain.axis_ymin = ymin
+            ymax = self.Kitem.data.loc[SKMain.axis_xmin:SKMain.axis_xmax, ['high']].values.max()
+            if SKMain.axis_ymax != ymax:
+                SKMain.axis_ymax = ymax        
+
 
     # def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
     #         total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},

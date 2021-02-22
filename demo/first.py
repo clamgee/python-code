@@ -9,7 +9,7 @@ import os
 
 # pg.GraphicsView
 
-tmp = pd.read_csv('../APIver1/result.dat')
+tmp = pd.read_csv('../result.dat')
 tmp['ndatetime'] = pd.to_datetime(tmp['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
 data = tmp['close'].tolist()
 data2 = tmp['volume'].tolist()
@@ -28,6 +28,12 @@ class MainWindows(QMainWindow):
         self.l = pg.GraphicsLayout()
         self.GV.setCentralItem(self.l)
         self.draw1 = self.l.addPlot(y=data)
+        self.draw1.setTitle('test')
+        self.draw1.showAxis('left',show=False)
+        self.draw1.showAxis('top',show=False)
+        self.draw1.showAxis('right',show=True)
+        self.draw1.setXRange(7100,7500)
+        self.draw1.setYRange(12000,17000)
         self.l.nextRow()
         self.draw2 = self.l.addPlot()
         self.bar = pg.BarGraphItem(x=data2index,height=data2,width=0.3,bush='r')
