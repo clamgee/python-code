@@ -649,12 +649,15 @@ class SKQuoteLibEvents:
                 SKMain.axis_xmax = xmax
                 xmin = int(max(0, xmax - SKMain.Kitem.countK))
                 SKMain.axis_xmin = xmin 
+                SKMain.drawmain.setXRange(SKMain.axis_xmin,SKMain.axis_xmax)
             ymin = SKMain.Kitem.data.loc[SKMain.axis_xmin:SKMain.axis_xmax, ['low']].values.min()
             if SKMain.axis_ymin != ymin:
                 SKMain.axis_ymin = ymin
-            ymax = self.Kitem.data.loc[SKMain.axis_xmin:SKMain.axis_xmax, ['high']].values.max()
+                SKMain.drawmain.setYRange(SKMain.axis_ymin,SKMain.axis_ymax)
+            ymax = SKMain.Kitem.data.loc[SKMain.axis_xmin:SKMain.axis_xmax, ['high']].values.max()
             if SKMain.axis_ymax != ymax:
                 SKMain.axis_ymax = ymax        
+                SKMain.drawmain.setYRange(SKMain.axis_ymin,SKMain.axis_ymax)
 
 
     # def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):

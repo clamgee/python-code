@@ -21,4 +21,4 @@ __pycache__/*
 /APIver2/CapitalLog_Quote
 /APIver2/data/filename.txt
 /APIver2/*.csv
-/APIver2/__pycache__
+APIver2/__pycache__
