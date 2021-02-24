@@ -22,3 +22,4 @@ __pycache__/*
 /APIver2/data/filename.txt
 /APIver2/*.csv
 /APIver2/__pycache__
+/*/__pycache__
