@@ -14,6 +14,7 @@ tmp['ndatetime'] = pd.to_datetime(tmp['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f
 data = tmp['close'].tolist()
 data2 = tmp['volume'].tolist()
 data2index = tmp.index.tolist()
+print(tmp.iloc[-2,-2:])
 
 
 dict_tmp = tmp['ndatetime'].dt.strftime('%Y/%m/%d %H:%M:%S.%f')

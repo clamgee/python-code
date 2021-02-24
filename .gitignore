@@ -9,6 +9,7 @@ Clam-NB.code-workspace
 __pycache__/*
 /.git
 *.json
+*.log
 /__pycache__
 /tmp
 /data/filename.txt

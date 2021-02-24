@@ -79,6 +79,24 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.OrderCancel_btn.clicked.connect(self.OrderCancelFunc)
         self.ClosePositionAll_btn.clicked.connect(self.ClosePositionAllFunc)
 
+    def DrawmainUpdate(self):
+        xmax = int(len(self.Kitem.pictures))
+        if self.axis_xmax != xmax:
+            self.axis_xmax = xmax
+            xmin = int(max(0, xmax - self.Kitem.countK))
+            self.axis_xmin = xmin 
+            self.drawmain.setXRange(self.axis_xmin,self.axis_xmax)
+        ymin = self.Kitem.data.loc[self.axis_xmin:self.axis_xmax, ['low']].values.min()
+        if self.axis_ymin != ymin:
+            self.axis_ymin = ymin
+            self.drawmain.setYRange(self.axis_ymin,self.axis_ymax)
+        ymax = self.Kitem.data.loc[self.axis_xmin:self.axis_xmax, ['high']].values.max()
+        if self.axis_ymax != ymax:
+            self.axis_ymax = ymax        
+            self.drawmain.setYRange(self.axis_ymin,self.axis_ymax)
+
+
+
     # 呼叫系統訊息介面與功能
     def SKMessageFunc(self):
         self.SKMessage = FuncUI.MessageDialog('系統訊息')  # 設定系統訊息介面
@@ -238,16 +256,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # self.HisKlineThrd.start()
         self.TableThrd = TableThread()
         self.TableThrd.start()
-        xmax = int(len(self.Kitem.pictures))
-        self.axis_xmax = xmax
-        xmin = int(max(0, xmax - self.Kitem.countK))
-        self.axis_xmin = xmin 
-        ymin = self.Kitem.data.loc[xmin:xmax, ['low']].values.min()
-        self.axis_ymin = ymin
-        ymax = self.Kitem.data.loc[xmin:xmax, ['high']].values.max()
-        self.axis_ymax = ymax        
-        self.drawmain.addItem(self.Kitem)
-        
+        self.DrawmainUpdate()        
 
     # 商品訂閱結束
     # 委託未平倉回報資料
@@ -645,19 +654,20 @@ class SKQuoteLibEvents:
             SKMain.ndetialmsg.textBrowser.append(strMsg)
             SKMain.Kitem.set_data(SKMain.Future.contractkpd)
             xmax = int(len(SKMain.Kitem.pictures))
-            if SKMain.axis_xmax != xmax:
-                SKMain.axis_xmax = xmax
-                xmin = int(max(0, xmax - SKMain.Kitem.countK))
-                SKMain.axis_xmin = xmin 
-                SKMain.drawmain.setXRange(SKMain.axis_xmin,SKMain.axis_xmax)
-            ymin = SKMain.Kitem.data.loc[SKMain.axis_xmin:SKMain.axis_xmax, ['low']].values.min()
-            if SKMain.axis_ymin != ymin:
-                SKMain.axis_ymin = ymin
-                SKMain.drawmain.setYRange(SKMain.axis_ymin,SKMain.axis_ymax)
-            ymax = SKMain.Kitem.data.loc[SKMain.axis_xmin:SKMain.axis_xmax, ['high']].values.max()
-            if SKMain.axis_ymax != ymax:
-                SKMain.axis_ymax = ymax        
-                SKMain.drawmain.setYRange(SKMain.axis_ymin,SKMain.axis_ymax)
+            SKMain.DrawmainUpdate()
+            # if SKMain.axis_xmax != xmax:
+            #     SKMain.axis_xmax = xmax
+            #     xmin = int(max(0, xmax - SKMain.Kitem.countK))
+            #     SKMain.axis_xmin = xmin 
+            #     SKMain.drawmain.setXRange(SKMain.axis_xmin,SKMain.axis_xmax)
+            # ymin = SKMain.Kitem.data.loc[SKMain.axis_xmin:SKMain.axis_xmax, ['low']].values.min()
+            # if SKMain.axis_ymin != ymin:
+            #     SKMain.axis_ymin = ymin
+            #     SKMain.drawmain.setYRange(SKMain.axis_ymin,SKMain.axis_ymax)
+            # ymax = SKMain.Kitem.data.loc[SKMain.axis_xmin:SKMain.axis_xmax, ['high']].values.max()
+            # if SKMain.axis_ymax != ymax:
+            #     SKMain.axis_ymax = ymax        
+            #     SKMain.drawmain.setYRange(SKMain.axis_ymin,SKMain.axis_ymax)
 
 
     # def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
