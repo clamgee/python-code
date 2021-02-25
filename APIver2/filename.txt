@@ -466,3 +466,4 @@ Ticks2021-02-19.txt
 Ticks2021-02-22.txt
 Ticks2021-02-23.txt
 Ticks2021-02-24.txt
+Ticks2021-02-25.txt

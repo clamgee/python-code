@@ -16,10 +16,12 @@ __pycache__/*
 /BackUp
 /CapitalLog_Quote
 /APIver1/CapitalLog_Quote/*.log
+/APIver1/CapitalLog_Quote/*.txt
 /APIver1/data/filename.txt
 /APIver1/*.csv
 /APIver1/__pycache__
-/APIver2/CapitalLog_Quote
+/APIver2/CapitalLog_Quote/*.log
+/APIver2/CapitalLog_Quote/*.txt
 /APIver2/data/filename.txt
 /APIver2/*.csv
 /APIver2/__pycache__
