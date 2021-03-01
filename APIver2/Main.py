@@ -87,14 +87,11 @@ class SKMainWindow(QMainWindow):  # 主視窗
             self.axis_xmin = xmin 
             self.drawmain.setXRange(self.axis_xmin,self.axis_xmax)
         ymin = self.Kitem.data.loc[self.axis_xmin:self.axis_xmax, ['low']].values.min()
-        if self.axis_ymin != ymin:
-            self.axis_ymin = ymin
-            self.drawmain.setYRange(self.axis_ymin,self.axis_ymax)
         ymax = self.Kitem.data.loc[self.axis_xmin:self.axis_xmax, ['high']].values.max()
-        if self.axis_ymax != ymax:
+        if self.axis_ymin != ymin or self.axis_ymax != ymax:
+            self.axis_ymin = ymin
             self.axis_ymax = ymax        
             self.drawmain.setYRange(self.axis_ymin,self.axis_ymax)
-
 
 
     # 呼叫系統訊息介面與功能
