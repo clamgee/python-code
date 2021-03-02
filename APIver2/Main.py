@@ -237,15 +237,16 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # self.tmpthread=QThread()
         # self.newThread.moveToThread(self.tmpthread)
         # self.tmpthread.start()
-        skQ.SKQuoteLib_RequestTicks(0, nstock)
+        skQ.SKQuoteLib_RequestLiveTick(0, nstock)
         self.ndetialmsg = FuncUI.MessageDialog(nstock)
         self.TDetailbtn.clicked.connect(self.ndetialmsg.show)
         # self.ndetialmsg.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         # self.ndetialmsg.show()
         self.DomTableUI()  # 閃電下單介面
         self.Kitem = KlineUi.CandlestickItem()
-        self.Kui = KlineUi.KlineWidget(nstock)
-        self.Kui.addItem(self.Kitem)
+        # self.Kui = KlineUi.KlineWidget(nstock)
+        # self.Kui.addItem(self.Kitem)
+        self.drawmain.addItem(self.Kitem)
         self.Kitem.set_data(self.Future.contractkpd)
         # self.SKQThread = SKQuoteThread()
         # self.SKQThread.start()
@@ -635,10 +636,10 @@ class SKQuoteLibEvents:
                              nQty, nSimulate):
         if nSimulate == 0:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
-            # print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
-            SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
-            strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
-            SKMain.ndetialmsg.textBrowser.append(strMsg)
+            print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
+            # SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
+            # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
+            # SKMain.ndetialmsg.textBrowser.append(strMsg)
 
     def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty,
                       nSimulate):
@@ -651,7 +652,8 @@ class SKQuoteLibEvents:
             SKMain.ndetialmsg.textBrowser.append(strMsg)
             SKMain.Kitem.set_data(SKMain.Future.contractkpd)
             xmax = int(len(SKMain.Kitem.pictures))
-            SKMain.DrawmainUpdate()
+            if SKMain.axis_xmax != xmax:
+                SKMain.DrawmainUpdate()
             # if SKMain.axis_xmax != xmax:
             #     SKMain.axis_xmax = xmax
             #     xmin = int(max(0, xmax - SKMain.Kitem.countK))
