@@ -40,6 +40,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.statusBar.showMessage('帳號:' + self.SKID)
         self.Bill = []
         self.fOrder = sk.FUTUREORDER()
+        self.timestart = ''
+        self.timeend = ''
         # 圖形化設定
         # 12K圖示宣告
         self.GL12K=pg.GraphicsLayout()
@@ -637,9 +639,16 @@ class SKQuoteLibEvents:
         if nSimulate == 0:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
+            if SKMain.timestart=='':
+                SKMain.timestart = time.time()
             SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
-            strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
-            SKMain.ndetialmsg.textBrowser.append(strMsg)
+            # print(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
+            if SKMain.timeend == '' and lTimehms == 45958:
+                SKMain.timeend = time.time()
+                print(round((SKMain.timeend-SKMain.timestart),3))
+
+            # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
+            # SKMain.ndetialmsg.textBrowser.append(strMsg)
 
     def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty,
                       nSimulate):
@@ -651,7 +660,7 @@ class SKQuoteLibEvents:
             strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
             SKMain.ndetialmsg.textBrowser.append(strMsg)
             SKMain.Kitem.set_data(SKMain.Future.contractkpd)
-            xmax = int(len(SKMain.Kitem.pictures))
+            xmax = SKMain.Future.contractkpd.shape[0]
             if SKMain.axis_xmax != xmax:
                 SKMain.DrawmainUpdate()
             # if SKMain.axis_xmax != xmax:
