@@ -3,42 +3,6 @@ import os
 import time
 import multiprocessing as mp
 
-df=None
-df1=pd.read_csv('filename.txt')
-if 'filename.txt' not in df1['filename'].values:
-    print('yes')
-else :
-    print('no')
-print(os.path.abspath('../data'))
-for info in os.listdir('../data'):
-    domain=os.path.abspath(r'../data')
-    if info not in df1['filename'].values:
-        df1=df1.append(pd.DataFrame([[info]],columns=['filename']),ignore_index=True)
-        info=os.path.join(domain,info)
-        print(info)
-        if df is None:
-            df=pd.read_csv(info,header=None)
-            print(1)        
-        else:        
-            df=df.append(pd.read_csv(info,header=None))
-            print(2)
-print(df1)
-df1.to_csv('filename.txt',index=False)
-if df is not None:
-    df[0]=df[0]+' '+df[1]
-    del df[1]
-    df[0]=pd.to_datetime(df[0],format='%Y-%m-%d %H:%M:%S.%f')
-    df.columns=['ndatetime','nbid','nask','close','volume']
-    print(df.head())
-    print(df.shape)
-    df.sort_values(by=['ndatetime'],ascending=True)
-else:
-    # df=pd.read_csv('result.dat')
-    # print(df['ndatetime'].tail(5))
-    # df['ndatetime']=pd.to_datetime(df['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
-    # print(df.tail(5))
-    # df.sort_values(by=['ndatetime'],ascending=True)
-    print('No Data UpDate!!')
 
 class Klineprocess:
     def __init__(self):
@@ -72,29 +36,81 @@ class Klineprocess:
         # self.contractkpd.reset_index(drop=True)
         self.CheckHour=tmphour
         return self.contractkpd.iloc[-1:].values
-kline=Klineprocess()
-def job(x):
-    # print('job有傳入值嗎: ',x.ndatetime,x.close,x.volume)
-    # for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows():
-    kline.contractk(x.ndatetime,x.close,x.volume)
-    return kline.contractkpd
 
-def multicore():
-    pool = mp.Pool()
-    print('core有傳入值嗎: ',type(df))
-    res=pool.map(job,[x for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows()])
-    print(type(res),res.tail(5))
-    # [pool.apply_async(job,(x,)) for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows()]
-    
+def job(x):
+    # print('job有傳入值嗎: ',df.tail(5))
+    # for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows():
+    res = kline.contractk(x.ndatetime,x.close,x.volume)
+    return res
+
+# def multicore(df):
+#     pool = mp.Pool()
+#     print('core有傳入值嗎: ',type(df),df.shape[0])
+#     # pool.map(job,df)
+#     # res=pool.map(job,[x for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows()
+#     multi_res = [pool.apply_async(job,(x,)) for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows()]
+#     print([res.get() for res in multi_res])
+#     pool.close()
+#     pool.join()
+
 
 
 if __name__=='__main__':
+    kline=Klineprocess()
+    df=None
+    df1=pd.read_csv('filename.txt')
+    if 'filename.txt' not in df1['filename'].values:
+        print('yes')
+    else :
+        print('no')
+    print(os.path.abspath('../data'))
+    for info in os.listdir('../data'):
+        domain=os.path.abspath(r'../data')
+        if info not in df1['filename'].values:
+            df1=df1.append(pd.DataFrame([[info]],columns=['filename']),ignore_index=True)
+            info=os.path.join(domain,info)
+            print(info)
+            if df is None:
+                df=pd.read_csv(info,header=None)
+                print(1)        
+            else:        
+                df=df.append(pd.read_csv(info,header=None))
+                print(2)
+    print(df1.tail(5))
+    df1.to_csv('filename.txt',index=False)
+    if df is not None:
+        df[0]=df[0]+' '+df[1]
+        del df[1]
+        df[0]=pd.to_datetime(df[0],format='%Y-%m-%d %H:%M:%S.%f')
+        df.columns=['ndatetime','nbid','nask','close','volume']
+        print(df.head())
+        print(df.shape)
+        df.sort_values(by=['ndatetime'],ascending=True)
+    else:
+        # df=pd.read_csv('result.dat')
+        # print(df['ndatetime'].tail(5))
+        # df['ndatetime']=pd.to_datetime(df['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+        # print(df.tail(5))
+        # df.sort_values(by=['ndatetime'],ascending=True)
+        print('No Data UpDate!!')
+
     start = time.time()
     if df is not None:
-        multicore()
+        # multicore(df)
+        pool = mp.Pool()
+        multi_res = [pool.map_async(kline.contractk,(x.ndatetime,x.close,x.volume,)) for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows()]
+        # print(multi_res)
+        pool.close()
+        pool.join()
         # print(df.tail(3))
         # p1=mp.Process(target=job,args=(df,))
         # p1.start()
         # p1.join()
     print(time.time()-start)
-    kline.contractkpd.to_csv('../result.dat',header=False,index=False,mode='a')
+    print(kline.contractkpd.tail(5))
+    # MyFile=open('output.txt','w')
+    # for element in res:
+    #     MyFile.write(str(element))
+    #     MyFile.write('\n')
+    # MyFile.close()
+    # kline.contractkpd.to_csv('../result.dat',header=False,index=False,mode='a')
