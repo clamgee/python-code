@@ -463,3 +463,12 @@ Ticks2021-02-05.txt
 Ticks2021-02-17.txt
 Ticks2021-02-18.txt
 Ticks2021-02-19.txt
+Ticks2021-02-22.txt
+Ticks2021-02-23.txt
+Ticks2021-02-24.txt
+Ticks2021-02-25.txt
+Ticks2021-02-26.txt
+Ticks2021-03-02.txt
+Ticks2021-03-03.txt
+Ticks2021-03-04.txt
+Ticks2021-03-08.txt

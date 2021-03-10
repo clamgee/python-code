@@ -6,6 +6,7 @@ from PyQt5.QtGui import QGraphicsLayout
 from PyQt5.uic import loadUi
 import sys
 import os
+
 # pg.GraphicsView
 
 tmp = pd.read_csv('../result.dat')

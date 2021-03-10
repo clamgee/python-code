@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import time
 
 df=None
 df1=pd.read_csv('filename.txt')
@@ -73,6 +74,8 @@ class Klineprocess:
 
 if df is not None:
     kline=Klineprocess()
+    start = time.time()
     for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows():
         kline.contractk(x.ndatetime,x.close,x.volume)
+    print(time.time()-start)
     kline.contractkpd.to_csv('../result.dat',header=False,index=False,mode='a')

@@ -1,5 +1,7 @@
 import pandas as pd
 import os
+import time
+import multiprocessing as mp
 
 df=None
 df1=pd.read_csv('filename.txt')
@@ -70,9 +72,29 @@ class Klineprocess:
         # self.contractkpd.reset_index(drop=True)
         self.CheckHour=tmphour
         return self.contractkpd.iloc[-1:].values
+kline=Klineprocess()
+def job(x):
+    # print('job有傳入值嗎: ',x.ndatetime,x.close,x.volume)
+    # for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows():
+    kline.contractk(x.ndatetime,x.close,x.volume)
+    return kline.contractkpd
 
-if df is not None:
-    kline=Klineprocess()
-    for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows():
-        kline.contractk(x.ndatetime,x.close,x.volume)
+def multicore():
+    pool = mp.Pool()
+    print('core有傳入值嗎: ',type(df))
+    res=pool.map(job,[x for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows()])
+    print(type(res),res.tail(5))
+    # [pool.apply_async(job,(x,)) for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows()]
+    
+
+
+if __name__=='__main__':
+    start = time.time()
+    if df is not None:
+        multicore()
+        # print(df.tail(3))
+        # p1=mp.Process(target=job,args=(df,))
+        # p1.start()
+        # p1.join()
+    print(time.time()-start)
     kline.contractkpd.to_csv('../result.dat',header=False,index=False,mode='a')
