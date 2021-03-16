@@ -2,11 +2,15 @@ import pandas as pd
 import os
 import time
 import multiprocessing as mp
+manager1 = mp.Manager()
+mana
 
 
 class Klineprocess:
     def __init__(self):
-        self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+        self.manager = mp.Manager()
+        self.lock = self.manager.Lock()
+        self.contractkpd=self.manager.pandas.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
         print('DataFrame大小: ',self.contractkpd.shape[0])
         self.contractkpd[['open','high','low','close','volume']]=self.contractkpd[['open','high','low','close','volume']].astype(int)
         self.tmpcontract=0
@@ -40,7 +44,9 @@ class Klineprocess:
 def job(x):
     # print('job有傳入值嗎: ',df.tail(5))
     # for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows():
+    kline.lock.acquire()
     res = kline.contractk(x.ndatetime,x.close,x.volume)
+    kline.lock.release()
     return res
 
 # def multicore(df):

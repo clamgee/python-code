@@ -14,11 +14,27 @@
 # }, inplace=True)
 # print(tmp.tail(5))
 
-import json
-with open("IDPW.json",mode="r",encoding="utf-8") as file:
-    data = json.load(file)
-
-print("ID: ", data["ID"])
-print("PW: ",data["PW"])
-
-
+import time
+import multiprocessing
+# 3. 建立一個測試程式
+def test(idx, test_dict):
+    lock.acquire()
+    row = test_dict['test']
+    row[idx] = idx
+    test_dict['test'] = row
+    lock.release()
+# 4. 建立程序池進行測試
+if __name__ =='__main__':
+    # 1. 建立一個Manger物件
+    manager = multiprocessing.Manager()
+    lock = manager.Lock()
+    # 2. 建立一個dict
+    temp_dict = manager.dict()
+    temp_dict['test'] = {}
+    start = time.time()
+    pool = multiprocessing.Pool()
+    for i in range(10000):
+        pool.apply_async(test, args=(i, temp_dict))
+    pool.close()
+    pool.join()
+    print(time.time()-start,'秒')
