@@ -2,15 +2,11 @@ import pandas as pd
 import os
 import time
 import multiprocessing as mp
-manager1 = mp.Manager()
-mana
 
 
 class Klineprocess:
     def __init__(self):
-        self.manager = mp.Manager()
-        self.lock = self.manager.Lock()
-        self.contractkpd=self.manager.pandas.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+        self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
         print('DataFrame大小: ',self.contractkpd.shape[0])
         self.contractkpd[['open','high','low','close','volume']]=self.contractkpd[['open','high','low','close','volume']].astype(int)
         self.tmpcontract=0
@@ -41,12 +37,43 @@ class Klineprocess:
         self.CheckHour=tmphour
         return self.contractkpd.iloc[-1:].values
 
+def transformK(ndatetime,nClose,nQty):
+    if kline.df is not None:
+        print('有傳入值嗎: ',kline.df.tail(1),kline.df.shape[0])
+    else:
+        print('kline.df不存在')
+    tmpcontract=0
+    CheckHour=0
+    tmphour=ndatetime.hour
+    if kline.df.shape[0]==0 or tmpcontract==0 or tmpcontract==12000 or (tmphour==8 and CheckHour==4) or (tmphour==15 and CheckHour==13):
+        # kline.df.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
+        tmplist=[[ndatetime,nClose,nClose,nClose,nClose,nQty]]
+        kline.df=kline.df.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
+        print(kline.df.tail(1))
+        tmpcontract=nQty
+    elif (tmpcontract+nQty)>12000:
+        kline.df.iloc[-1,2]=max(kline.df.iloc[-1,2],nClose)
+        kline.df.iloc[-1,3]=min(kline.df.iloc[-1,3],nClose)
+        kline.df.iloc[-1,4]=nClose
+        kline.df.iloc[-1,5]=12000
+        tmpcontract=tmpcontract+nQty-12000
+        kline.df.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,tmpcontract]
+    else:
+        kline.df.iloc[-1,2]=max(kline.df.iloc[-1,2],nClose)
+        kline.df.iloc[-1,3]=min(kline.df.iloc[-1,3],nClose)
+        kline.df.iloc[-1,4]=nClose
+        tmpcontract=tmpcontract+nQty
+        kline.df.iloc[-1,5]=tmpcontract
+    # kline.df.reset_index(drop=True)
+    CheckHour=tmphour
+    return kline.df.iloc[-1:].values
+
+
 def job(x):
-    # print('job有傳入值嗎: ',df.tail(5))
+    print('kline.df不存在',x.ndatetime,x.close,x.volume)
     # for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows():
-    kline.lock.acquire()
-    res = kline.contractk(x.ndatetime,x.close,x.volume)
-    kline.lock.release()
+    res = transformK(x.ndatetime,x.close,x.volume)
+        # print(t)
     return res
 
 # def multicore(df):
@@ -62,7 +89,6 @@ def job(x):
 
 
 if __name__=='__main__':
-    kline=Klineprocess()
     df=None
     df1=pd.read_csv('filename.txt')
     if 'filename.txt' not in df1['filename'].values:
@@ -100,11 +126,21 @@ if __name__=='__main__':
         # df.sort_values(by=['ndatetime'],ascending=True)
         print('No Data UpDate!!')
 
+    pool = mp.Pool()
+    lock = mp.Lock()
+    mgr = mp.Manager()
+    kline = mgr.Namespace()
+    dataframe = pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+    kline.df = dataframe
+
+
+
     start = time.time()
     if df is not None:
+        print('進入Multiprocessing',kline.df.head())
+        # pool.map(job,df)
+        multi_res = [pool.apply_async(job,(x,)) for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows()]
         # multicore(df)
-        pool = mp.Pool()
-        multi_res = [pool.map_async(kline.contractk,(x.ndatetime,x.close,x.volume,)) for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows()]
         # print(multi_res)
         pool.close()
         pool.join()
@@ -113,7 +149,8 @@ if __name__=='__main__':
         # p1.start()
         # p1.join()
     print(time.time()-start)
-    print(kline.contractkpd.tail(5))
+    if kline.df is not None:
+        print(kline.df.tail(5))
     # MyFile=open('output.txt','w')
     # for element in res:
     #     MyFile.write(str(element))

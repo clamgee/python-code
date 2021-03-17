@@ -13,28 +13,33 @@
 #     tmp.columns[5]: 'volume',
 # }, inplace=True)
 # print(tmp.tail(5))
+import pandas as pd
+import multiprocessing as mp
 
-import time
-import multiprocessing
-# 3. 建立一個測試程式
-def test(idx, test_dict):
-    lock.acquire()
-    row = test_dict['test']
-    row[idx] = idx
-    test_dict['test'] = row
-    lock.release()
-# 4. 建立程序池進行測試
-if __name__ =='__main__':
-    # 1. 建立一個Manger物件
-    manager = multiprocessing.Manager()
-    lock = manager.Lock()
-    # 2. 建立一個dict
-    temp_dict = manager.dict()
-    temp_dict['test'] = {}
-    start = time.time()
-    pool = multiprocessing.Pool()
-    for i in range(10000):
-        pool.apply_async(test, args=(i, temp_dict))
+df = pd.DataFrame({'ser_no': [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
+                'co_nm': ['aa', 'aa', 'aa', 'bb', 'bb', 'bb', 'bb', 'cc', 'cc', 'cc'],
+                'lat': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                'lon': [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]})
+
+
+
+def calc_dist(x):
+    ret =  pd.DataFrame(
+               [ [grp,
+                  df.loc[c[0]].ser_no,
+                  df.loc[c[1]].ser_no,
+                  vincenty(df.loc[c[0], x],
+                           df.loc[c[1], x])
+                 ]
+                 for grp,lst in df.groupby('co_nm').groups.items()
+                 for c in combinations(lst, 2)
+               ],
+               columns=['co_nm','machineA','machineB','distance'])
+    print(ret)
+    return ret
+
+if __name__ == '__main__':
+    pool = mp.Pool(processes = (mp.cpu_count() - 1))
+    pool.map(calc_dist, ['lat','lon'])
     pool.close()
     pool.join()
-    print(time.time()-start,'秒')
