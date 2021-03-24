@@ -13,4 +13,10 @@
 #     tmp.columns[5]: 'volume',
 # }, inplace=True)
 # print(tmp.tail(5))
-import pandarallel as pdl
+import numpy as np
+import pandas as pd
+df=pd.DataFrame(np.random.randn(4,3),columns=list('bde'),index=['utah','ohio','texas','oregon'])
+print(df)
+f=lambda x:x.max()-x.min()
+t2 = df.apply(f,axis=0)
+print(t2)
