@@ -15,8 +15,11 @@
 # print(tmp.tail(5))
 import numpy as np
 import pandas as pd
+from pandarallel import pandarallel
+pandarallel.initialize(nb_workers=4, progress_bar=True)
+
 df=pd.DataFrame(np.random.randn(4,3),columns=list('bde'),index=['utah','ohio','texas','oregon'])
 print(df)
 f=lambda x:x.max()-x.min()
-t2 = df.apply(f,axis=0)
+t2 = df.pandarallel_apply(f,axis=0)
 print(t2)
