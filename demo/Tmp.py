@@ -17,6 +17,13 @@ del df['ntime']
 df.columns=['ndatetime','nbid','nask','close','volume']
 df['ndatetime'] = pd.to_datetime(df['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
 df.sort_values(by=['ndatetime'],ascending=True)
-df.set_index('ndatetime',drop=False,inplace=True)
+# df.set_index('ndatetime',drop=False,inplace=True)
 # df[0]=pd.to_datetime(df[0],format='%Y-%m-%d %H:%M:%S.%f')
+A=0
+for index ,row in df.iterrows():
+    A += row.volume
+    if A >= 12000:
+        print(row.ndatetime)
+        A = 0
+    
 print(df.head())
