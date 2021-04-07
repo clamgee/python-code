@@ -77,5 +77,5 @@ if df is not None:
     start = time.time()
     for (t,x) in df.loc[:,['ndatetime','close','volume']].iterrows():
         kline.contractk(x.ndatetime,x.close,x.volume)
-    print(time.time()-start)
+    print(time.time()-start,'秒')
     kline.contractkpd.to_csv('../result.dat',header=False,index=False,mode='a')
