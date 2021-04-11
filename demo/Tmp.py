@@ -24,16 +24,20 @@ CheckHour=0
 start = time.time()
 contractkpd = pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
     # return contractkpd.iloc[-1:].values
-print('1:',df.nQty.tail(2)[-1:])
+print('1:',df.nQty[-1:].values[0])
 print('2:',df.nQty.tail(2)[-2:-1])
+df['tmp_nQty']=''
 def func():
-    if df.nQty[-2:-1] is True:
-        if   < 120000:
-            return 
+    if df.index(df.ndatetime)!=0:
+        df.tmp_nQty = df.tmp_nQty[-2:-1]+df.nQty[-1:]
+    else:
+        df.tmp_nQty = df.nQty
+    return df.tmp_nQty
 
-df['2vol']=df.volume.apply(func)
+# df['tmp_nQty']=df.apply(func)
+print('index:',df.loc[df['ndatetime']==df.ndatetime[-1:].values[0]].index[0])
 print(str(time.time()-start)+'秒')
-print(contractkpd.head())
+
 
 # for index ,row in df.iterrows():
 #     tmphour=row.ndatetime.hour
