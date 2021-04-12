@@ -23,42 +23,43 @@ tmpcontract=0
 CheckHour=0
 start = time.time()
 contractkpd = pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
-    # return contractkpd.iloc[-1:].values
-print('1:',df.nQty[-1:].values[0])
-print('2:',df.nQty.tail(2)[-2:-1])
-df['tmp_nQty']=''
-def func():
-    if df.index(df.ndatetime)!=0:
-        df.tmp_nQty = df.tmp_nQty[-2:-1]+df.nQty[-1:]
+for index ,row in df.iterrows():
+    tmphour=row.ndatetime.hour
+    if contractkpd.shape[0]==0 or tmpcontract==0 or tmpcontract==12000 or (tmphour==8 and CheckHour==4) or (tmphour==15 and CheckHour==13):
+        # contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
+        tmplist=[[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,row.nQty]]
+        contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
+        print(contractkpd.tail(1))
+        tmpcontract=row.nQty
+    elif (tmpcontract+row.nQty)>12000:
+        contractkpd.iloc[-1,2]=max(contractkpd.iloc[-1,2],row.nClose)
+        contractkpd.iloc[-1,3]=min(contractkpd.iloc[-1,3],row.nClose)
+        contractkpd.iloc[-1,4]=row.nClose
+        contractkpd.iloc[-1,5]=12000
+        tmpcontract=tmpcontract+row.nQty-12000
+        contractkpd.loc[row.ndatetime]=[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,tmpcontract]
     else:
-        df.tmp_nQty = df.nQty
-    return df.tmp_nQty
+        contractkpd.iloc[-1,2]=max(contractkpd.iloc[-1,2],row.nClose)
+        contractkpd.iloc[-1,3]=min(contractkpd.iloc[-1,3],row.nClose)
+        contractkpd.iloc[-1,4]=row.nClose
+        tmpcontract=tmpcontract+row.nQty
+        contractkpd.iloc[-1,5]=tmpcontract
+    # contractkpd.reset_index(drop=True)
+    CheckHour=tmphour
 
-# df['tmp_nQty']=df.apply(func)
-print('index:',df.loc[df['ndatetime']==df.ndatetime[-1:].values[0]].index[0])
+    # return contractkpd.iloc[-1:].values
+
+print(contractkpd.tail(5))
 print(str(time.time()-start)+'秒')
 
 
-# for index ,row in df.iterrows():
-#     tmphour=row.ndatetime.hour
-#     if contractkpd.shape[0]==0 or tmpcontract==0 or tmpcontract==12000 or (tmphour==8 and CheckHour==4) or (tmphour==15 and CheckHour==13):
-#         # contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
-#         tmplist=[[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,row.nQty]]
-#         contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
-#         print(contractkpd.tail(1))
-#         tmpcontract=row.nQty
-#     elif (tmpcontract+row.nQty)>12000:
-#         contractkpd.iloc[-1,2]=max(contractkpd.iloc[-1,2],row.nClose)
-#         contractkpd.iloc[-1,3]=min(contractkpd.iloc[-1,3],row.nClose)
-#         contractkpd.iloc[-1,4]=row.nClose
-#         contractkpd.iloc[-1,5]=12000
-#         tmpcontract=tmpcontract+row.nQty-12000
-#         contractkpd.loc[row.ndatetime]=[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,tmpcontract]
+#-------------------------------------------------------------
+# def func():
+#     if df.loc[df['ndatetime']==df.ndatetime[-1:].values[0]].index[0]!=0:
+#         df.tmp_nQty = df.tmp_nQty[-2:-1]+df.nQty[-1:]
 #     else:
-#         contractkpd.iloc[-1,2]=max(contractkpd.iloc[-1,2],row.nClose)
-#         contractkpd.iloc[-1,3]=min(contractkpd.iloc[-1,3],row.nClose)
-#         contractkpd.iloc[-1,4]=row.nClose
-#         tmpcontract=tmpcontract+row.nQty
-#         contractkpd.iloc[-1,5]=tmpcontract
-#     # contractkpd.reset_index(drop=True)
-#     CheckHour=tmphour
+#         df.tmp_nQty = df.nQty
+#     # return df.tmp_nQty
+
+# # df['tmp_nQty']=df.apply(func)
+# print('index:',df.loc[df['ndatetime']==df.ndatetime.values[0]].index[0])

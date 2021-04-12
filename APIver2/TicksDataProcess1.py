@@ -70,7 +70,7 @@ class Klineprocess:
             self.contractkpd.iloc[-1,5]=self.tmpcontract
         # self.contractkpd.reset_index(drop=True)
         self.CheckHour=tmphour
-        return self.contractkpd.iloc[-1:].values
+        # return self.contractkpd.iloc[-1:].values
 
 if df is not None:
     kline=Klineprocess()
