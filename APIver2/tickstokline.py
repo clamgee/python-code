@@ -60,7 +60,7 @@ class dataprocess:
         self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)
         self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
         self.CheckHour=tmphour
-        return self.contractkpd.iloc[-1:].values
+        # return self.contractkpd.iloc[-1:].values
 
     def Ticks(self,nDate,nTimehms,nTimemillismicros,nBid,nAsk,nClose,nQty):
         nTime=str(nTimehms).zfill(6)
