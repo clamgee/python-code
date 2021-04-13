@@ -1,6 +1,12 @@
 import pandas as pd
 import os
 import time
+# -----------宣告multiprocess
+import multiprocessing as mp
+mg = mp.Manager()
+ns = mg.Namespace()
+
+
 domain=os.listdir('../data/')
 print(domain[-1])
 df=pd.read_csv('../data/'+domain[-1])
@@ -48,6 +54,10 @@ for index ,row in df.iterrows():
     CheckHour=tmphour
 
     # return contractkpd.iloc[-1:].values
+
+def multicore():
+    P = mp.Pool()
+
 
 print(contractkpd.tail(5))
 print(str(time.time()-start)+'秒')
