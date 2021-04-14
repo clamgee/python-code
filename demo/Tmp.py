@@ -3,8 +3,6 @@ import os
 import time
 # -----------宣告multiprocess
 import multiprocessing as mp
-mg = mp.Manager()
-ns = mg.Namespace()
 
 
 domain=os.listdir('../data/')
@@ -27,40 +25,48 @@ df.sort_values(by=['ndatetime'],ascending=True)
 # df[0]=pd.to_datetime(df[0],format='%Y-%m-%d %H:%M:%S.%f')
 tmpcontract=0
 CheckHour=0
-start = time.time()
-contractkpd = pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
-for index ,row in df.iterrows():
-    tmphour=row.ndatetime.hour
-    if contractkpd.shape[0]==0 or tmpcontract==0 or tmpcontract==12000 or (tmphour==8 and CheckHour==4) or (tmphour==15 and CheckHour==13):
-        # contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
-        tmplist=[[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,row.nQty]]
-        contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
-        print(contractkpd.tail(1))
-        tmpcontract=row.nQty
-    elif (tmpcontract+row.nQty)>12000:
-        contractkpd.iloc[-1,2]=max(contractkpd.iloc[-1,2],row.nClose)
-        contractkpd.iloc[-1,3]=min(contractkpd.iloc[-1,3],row.nClose)
-        contractkpd.iloc[-1,4]=row.nClose
-        contractkpd.iloc[-1,5]=12000
-        tmpcontract=tmpcontract+row.nQty-12000
-        contractkpd.loc[row.ndatetime]=[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,tmpcontract]
-    else:
-        contractkpd.iloc[-1,2]=max(contractkpd.iloc[-1,2],row.nClose)
-        contractkpd.iloc[-1,3]=min(contractkpd.iloc[-1,3],row.nClose)
-        contractkpd.iloc[-1,4]=row.nClose
-        tmpcontract=tmpcontract+row.nQty
-        contractkpd.iloc[-1,5]=tmpcontract
-    # contractkpd.reset_index(drop=True)
-    CheckHour=tmphour
 
-    # return contractkpd.iloc[-1:].values
-
-def multicore():
-    P = mp.Pool()
+def func(df):
+    contractkpd = pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+    for index ,row in df.iterrows():
+        tmphour=row.ndatetime.hour
+        if contractkpd.shape[0]==0 or tmpcontract==0 or tmpcontract==12000 or (tmphour==8 and CheckHour==4) or (tmphour==15 and CheckHour==13):
+            # contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
+            tmplist=[[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,row.nQty]]
+            contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
+            print(contractkpd.tail(1))
+            tmpcontract=row.nQty
+        elif (tmpcontract+row.nQty)>12000:
+            contractkpd.iloc[-1,2]=max(contractkpd.iloc[-1,2],row.nClose)
+            contractkpd.iloc[-1,3]=min(contractkpd.iloc[-1,3],row.nClose)
+            contractkpd.iloc[-1,4]=row.nClose
+            contractkpd.iloc[-1,5]=12000
+            tmpcontract=tmpcontract+row.nQty-12000
+            contractkpd.loc[row.ndatetime]=[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,tmpcontract]
+        else:
+            contractkpd.iloc[-1,2]=max(contractkpd.iloc[-1,2],row.nClose)
+            contractkpd.iloc[-1,3]=min(contractkpd.iloc[-1,3],row.nClose)
+            contractkpd.iloc[-1,4]=row.nClose
+            tmpcontract=tmpcontract+row.nQty
+            contractkpd.iloc[-1,5]=tmpcontract
+        # contractkpd.reset_index(drop=True)
+        CheckHour=tmphour
+    return contractkpd
 
 
-print(contractkpd.tail(5))
-print(str(time.time()-start)+'秒')
+if __name__ == '__main__':
+    with mp.Pool() as P :
+        start = time.time()
+        mg = mp.Manager()
+        ns = mg.Namespace()
+        ns.df=df
+        tart = time.time()
+        newdf = P.map_async(func,ns.df)
+        # P.close()
+        # P.join()
+        print(newdf.get())
+        print('執行時間: ',time.time()-start)
+
 
 
 #-------------------------------------------------------------
