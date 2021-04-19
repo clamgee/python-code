@@ -498,3 +498,5 @@ Ticks2021-04-12.txt
 Ticks2021-04-13.txt
 Ticks2021-04-14.txt
 Ticks2021-04-15.txt
+Ticks2021-04-16.txt
+Ticks2021-04-19.txt
