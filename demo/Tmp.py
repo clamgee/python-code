@@ -39,9 +39,10 @@ def func1(row):
     CheckHour=tmphour
     return contractkpd
 
-def func(df):
+def func(df,lock):
     contractkpd = pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
     for index ,row in df.iterrows():
+        lock.acquire()
         tmphour=row.ndatetime.hour
         if contractkpd.shape[0]==0 or tmpcontract==0 or tmpcontract==12000 or (tmphour==8 and CheckHour==4) or (tmphour==15 and CheckHour==13):
             # contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
@@ -64,8 +65,47 @@ def func(df):
             contractkpd.iloc[-1,5]=tmpcontract
         # contractkpd.reset_index(drop=True)
         CheckHour=tmphour
+        lock.release()
     return contractkpd
 
+def func2(df):
+    contractkpd = pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+    rowindex=0
+    df1=df
+    for index ,row in df.iterrows():
+        tmphour=row.ndatetime.hour
+        if contractkpd.shape[0]==0 or tmpcontract==0 or (tmphour==15 and CheckHour is None):
+            # contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,nQty]
+            # tmplist=[[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,row.nQty]]
+            # contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
+            contractkpd.loc[row.ndatetime]=[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,row.nQty]
+            # print(contractkpd.tail(1),'條件1Index: ',index,'rowindex',rowindex)
+            tmpcontract=row.nQty
+            rowindex=index
+        elif (tmpcontract+row.nQty)==12000 or (tmphour==8 and CheckHour==4) or df1.shape[0]==index+1:
+            contractkpd.iloc[-1,2]=df1.iloc[rowindex:index,3].max()
+            contractkpd.iloc[-1,3]=df1.iloc[rowindex:index,3].min()
+            contractkpd.iloc[-1,4]=row.nClose
+            contractkpd.iloc[-1,5]=tmpcontract+row.nQty
+            print(contractkpd.tail(1),'條件2Index: ',index,'rowindex',rowindex)
+            rowindex=index
+            tmpcontract=0
+
+        elif (tmpcontract+row.nQty)>12000:
+            contractkpd.iloc[-1,2]=df1.iloc[rowindex:index,3].max()
+            contractkpd.iloc[-1,3]=df1.iloc[rowindex:index,3].min()
+            contractkpd.iloc[-1,4]=row.nClose
+            contractkpd.iloc[-1,5]=12000
+            tmpcontract=tmpcontract+row.nQty-12000
+            print(contractkpd.tail(1),'條件3Index: ',index,'rowindex',rowindex)
+            rowindex=index
+            contractkpd.loc[row.ndatetime]=[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,tmpcontract]
+        else:
+            tmpcontract=tmpcontract+row.nQty
+        CheckHour=tmphour
+    contractkpd.sort_values(by=['ndatetime'],ascending=True)
+    contractkpd.reset_index(inplace=True)
+    return contractkpd
 
 if __name__ == '__main__':
     domain=os.listdir('../data/')
@@ -88,14 +128,20 @@ if __name__ == '__main__':
     # df[0]=pd.to_datetime(df[0],format='%Y-%m-%d %H:%M:%S.%f')
 
     start = time.time()
-    P = mp.Pool()
-    mg = mp.Manager()
-    ns = mg.Namespace()
+    # print(df.iloc[0:10,3])
+    newdf=func2(df)
+    # newdf.sort_values(by=['ndatetime'],ascending=True)
+
+    # P = mp.Pool()
+    # mg = mp.Manager()
+    # ns = mg.Namespace()
+    # lock = mp.Lock()
     # ns.df=df
-    tart = time.time()
-    newdf = P.apply_async(func1,[row for index ,row in df.iterrows()])
-    P.close()
-    P.join()
+    # tart = time.time()
+    # newdf = P.starmap(func,(ns.df,lock))
+    # # newdf = P.map(func1,[row for index ,row in df.iterrows()])
+    # P.close()
+    # P.join()
     print(newdf)
     print('執行時間: ',time.time()-start)
 
