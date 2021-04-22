@@ -18,40 +18,37 @@ def func2(df):
     contractkpd['ndatetime'] = pd.to_datetime(contractkpd['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
     contractkpd[['open','high','low','close','volume']] = contractkpd[['open','high','low','close','volume']].astype(int)
     rowindex=0
+    tmpcontract=0
+    CheckHour=None
     df1=df
     for index ,row in df.iterrows():
         tmphour=row.ndatetime.hour
-        if contractkpd.shape[0]==0 or tmpcontract==0 or (tmphour==15 and (CheckHour is None or CheckHour==13)):
+        if tmpcontract==0 or (tmphour==15 and (CheckHour is None or CheckHour==13)):
             tmplist=[[row.ndatetime,row.close,row.close,row.close,row.close,row.volume]]
             contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
             # contractkpd.loc[row.ndatetime]=[row.ndatetime,row.close,row.close,row.close,row.close,row.volume]
             print(contractkpd.tail(1),', 條件1 Index: ',index,' ,rowindex: ',rowindex)
             tmpcontract=row.volume
             rowindex=index
-        elif (tmpcontract+row.volume)==12000 or (tmphour==8 and CheckHour==4) or (df1.shape[0]==index+1 and (tmpcontract+row.volume)<12000) :
-            contractkpd.iloc[-1,2]=df1.iloc[rowindex:index,3].max()
-            contractkpd.iloc[-1,3]=df1.iloc[rowindex:index,3].min()
+        elif (tmpcontract+row.volume)==12000 or (df1.shape[0]==index+1 and (tmpcontract+row.volume)<12000) :
+            contractkpd.iloc[-1,2]=df1.iloc[rowindex+1:index,3].max()
+            contractkpd.iloc[-1,3]=df1.iloc[rowindex+1:index,3].min()
             contractkpd.iloc[-1,4]=row.close
             contractkpd.iloc[-1,5]=tmpcontract+row.volume
+            print(contractkpd.tail(1),', 條件2 Index: ',index,' ,rowindex: ',rowindex)
             rowindex=index
             tmpcontract=0
         
-        elif (tmphour==8 and CheckHour==4) or df1.shape[0]==index+1  :
-            contractkpd.iloc[-1,2]=df1.iloc[rowindex:(index-1),3].max()
-            contractkpd.iloc[-1,3]=df1.iloc[rowindex:(index-1),3].min()
+        elif (tmphour==8 and CheckHour==4) :
+            contractkpd.iloc[-1,2]=df1.iloc[rowindex+1:(index-1),3].max()
+            contractkpd.iloc[-1,3]=df1.iloc[rowindex+1:(index-1),3].min()
             contractkpd.iloc[-1,4]=df1.iloc[(index-1),3]
             contractkpd.iloc[-1,5]=tmpcontract
             rowindex=index
-            tmpcontract=0
-        
-        elif df1.shape[0]==index+1  :
-            contractkpd.iloc[-1,2]=df1.iloc[rowindex:index,3].max()
-            contractkpd.iloc[-1,3]=df1.iloc[rowindex:index,3].min()
-            contractkpd.iloc[-1,4]=row.close
-            contractkpd.iloc[-1,5]=tmpcontract+row.volume
-            rowindex=index
-            tmpcontract=0
-
+            tmpcontract=row.volume
+            tmplist=[[row.ndatetime,row.close,row.close,row.close,row.close,tmpcontract]]
+            contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
+            print(contractkpd.tail(1),', 條件3 Index: ',index,' ,rowindex: ',rowindex)
 
         elif (tmpcontract+row.volume)>12000:
             contractkpd.iloc[-1,2]=df1.iloc[rowindex:index,3].max()
@@ -63,7 +60,7 @@ def func2(df):
             # contractkpd.loc[row.ndatetime]=[row.ndatetime,row.close,row.close,row.close,row.close,tmpcontract]
             tmplist=[[row.ndatetime,row.close,row.close,row.close,row.close,tmpcontract]]
             contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
-            print(contractkpd.tail(1),',條件2 Index: ',index,', rowindex: ',rowindex)
+            print(contractkpd.tail(1),',條件4 Index: ',index,', rowindex: ',rowindex)
         else:
             tmpcontract=tmpcontract+row.volume
         CheckHour=tmphour
