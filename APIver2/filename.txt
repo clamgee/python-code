@@ -395,8 +395,8 @@ Ticks2020-10-29.txt
 Ticks2020-10-30.txt
 Ticks2020-11-02.txt
 Ticks2020-11-03.txt
-Ticks2020-11-05.txt
 Ticks2020-11-04.txt
+Ticks2020-11-05.txt
 Ticks2020-11-06.txt
 Ticks2020-11-09.txt
 Ticks2020-11-10.txt
@@ -449,8 +449,8 @@ Ticks2021-01-15.txt
 Ticks2021-01-18.txt
 Ticks2021-01-19.txt
 Ticks2021-01-20.txt
-Ticks2021-01-22.txt
 Ticks2021-01-21.txt
+Ticks2021-01-22.txt
 Ticks2021-01-25.txt
 Ticks2021-01-26.txt
 Ticks2021-01-27.txt
