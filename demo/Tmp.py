@@ -90,20 +90,20 @@ def func2(df):
             contractkpd.iloc[-1,3]=df1.iloc[rowindex:index,3].min()
             contractkpd.iloc[-1,4]=row.nClose
             contractkpd.iloc[-1,5]=tmpcontract+row.nQty
+            print(contractkpd.tail(1),', 條件2 Index: ',index,' ,rowindex: ',rowindex)
             rowindex=index
             tmpcontract=0
-            print(contractkpd.tail(1),', 條件2 Index: ',index,' ,rowindex: ',rowindex)
 
         elif (tmphour==8 and CheckHour==4) :
             contractkpd.iloc[-1,2]=df1.iloc[rowindex+1:(index-1),3].max()
             contractkpd.iloc[-1,3]=df1.iloc[rowindex+1:(index-1),3].min()
             contractkpd.iloc[-1,4]=df1.iloc[(index-1),3]
             contractkpd.iloc[-1,5]=tmpcontract
-            rowindex=index
-            tmpcontract=row.nQty
             tmplist=[[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,tmpcontract]]
             contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
             print(contractkpd.tail(1),', 條件3 Index: ',index,' ,rowindex: ',rowindex)
+            rowindex=index
+            tmpcontract=row.nQty
 
         elif (tmpcontract+row.nQty)>12000:
             contractkpd.iloc[-1,2]=df1.iloc[rowindex:index,3].max()
@@ -111,11 +111,11 @@ def func2(df):
             contractkpd.iloc[-1,4]=row.nClose
             contractkpd.iloc[-1,5]=12000
             tmpcontract=tmpcontract+row.nQty-12000
-            rowindex=index
             # contractkpd.loc[row.ndatetime]=[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,tmpcontract]
             tmplist=[[row.ndatetime,row.nClose,row.nClose,row.nClose,row.nClose,tmpcontract]]
             contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
             print(contractkpd.tail(1),',條件4 Index: ',index,', rowindex: ',rowindex)
+            rowindex=index
         else:
             tmpcontract=tmpcontract+row.nQty
         CheckHour=tmphour
