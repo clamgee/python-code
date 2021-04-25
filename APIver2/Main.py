@@ -514,9 +514,7 @@ class SKOrderLibEvent:
             print('OnOpenInterest end pass')
             pass
         else:
-            SKMain.openpd = SKMain.openpd.append(pd.DataFrame(Line,
-                                                              columns=['市場別', '帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位',
-                                                                       '平均成本', '一點價值', '單口手續費', '交易稅']))
+            SKMain.openpd = SKMain.openpd.append(pd.DataFrame(Line,columns=['市場別', '帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅']))
         # SKMain.test+=1
         # i=0
         # Line=bstrData.split(',')
@@ -634,8 +632,7 @@ class SKQuoteLibEvents:
         SKMain.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
 
     # @repeatQuote
-    def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose,
-                             nQty, nSimulate):
+    def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
         if nSimulate == 0:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
@@ -650,8 +647,7 @@ class SKQuoteLibEvents:
             # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
             # SKMain.ndetialmsg.textBrowser.append(strMsg)
 
-    def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty,
-                      nSimulate):
+    def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
         # strMsg=str(lDate)+','+str(lTimehms)+','+str(lTimemillismicros)+','+str(nBid)+','+str(nAsk)+','+str(nClose)+','+str(nQty)
         if nSimulate == 0:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
