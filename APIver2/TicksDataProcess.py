@@ -7,8 +7,6 @@ start = time.time()
 df1=pd.read_csv('filename.txt')
 
 def func2(df):
-    df[0]=df[0]+' '+df[1]
-    del df[1]
     df[0]=pd.to_datetime(df[0],format='%Y-%m-%d %H:%M:%S.%f')
     df.columns=['ndatetime','nbid','nask','close','volume']
     df[['nbid','nask','close','volume']]=df[['nbid','nask','close','volume']].astype(int)
@@ -20,7 +18,7 @@ def func2(df):
     rowindex=0
     tmpcontract=0
     CheckHour=None
-    df1=df
+    dfshape=df.shape[0]
     for index ,row in df.iterrows():
         tmphour=row.ndatetime.hour
         if tmpcontract==0 or (tmphour==15 and (CheckHour is None or CheckHour==13)):
@@ -30,9 +28,9 @@ def func2(df):
             print(contractkpd.tail(1),', 條件1 Index: ',index,' ,rowindex: ',rowindex)
             tmpcontract=row.volume
             rowindex=index
-        elif (tmpcontract+row.volume)==12000 or (df1.shape[0]==index+1 and (tmpcontract+row.volume)<12000) :
-            contractkpd.iloc[-1,2]=df1.iloc[rowindex+1:index,3].max()
-            contractkpd.iloc[-1,3]=df1.iloc[rowindex+1:index,3].min()
+        elif (tmpcontract+row.volume)==12000 or (dfshape==index+1 and (tmpcontract+row.volume)<12000) :
+            contractkpd.iloc[-1,2]=df.iloc[rowindex+1:index,3].max()
+            contractkpd.iloc[-1,3]=df.iloc[rowindex+1:index,3].min()
             contractkpd.iloc[-1,4]=row.close
             contractkpd.iloc[-1,5]=tmpcontract+row.volume
             print(contractkpd.tail(1),', 條件2 Index: ',index,' ,rowindex: ',rowindex)
@@ -40,9 +38,9 @@ def func2(df):
             tmpcontract=0
         
         elif (tmphour==8 and CheckHour==4) :
-            contractkpd.iloc[-1,2]=df1.iloc[rowindex+1:(index-1),3].max()
-            contractkpd.iloc[-1,3]=df1.iloc[rowindex+1:(index-1),3].min()
-            contractkpd.iloc[-1,4]=df1.iloc[(index-1),3]
+            contractkpd.iloc[-1,2]=df.iloc[rowindex+1:(index-1),3].max()
+            contractkpd.iloc[-1,3]=df.iloc[rowindex+1:(index-1),3].min()
+            contractkpd.iloc[-1,4]=df.iloc[(index-1),3]
             contractkpd.iloc[-1,5]=tmpcontract
             rowindex=index
             tmpcontract=row.volume
@@ -51,8 +49,8 @@ def func2(df):
             print(contractkpd.tail(1),', 條件3 Index: ',index,' ,rowindex: ',rowindex)
 
         elif (tmpcontract+row.volume)>12000:
-            contractkpd.iloc[-1,2]=df1.iloc[rowindex:index,3].max()
-            contractkpd.iloc[-1,3]=df1.iloc[rowindex:index,3].min()
+            contractkpd.iloc[-1,2]=df.iloc[rowindex:index,3].max()
+            contractkpd.iloc[-1,3]=df.iloc[rowindex:index,3].min()
             contractkpd.iloc[-1,4]=row.close
             contractkpd.iloc[-1,5]=12000
             tmpcontract=tmpcontract+row.volume-12000
@@ -92,21 +90,7 @@ print(df1)
 df1.to_csv('filename.txt',index=False)
 if df is not None:
     print('done!!')
-    # df[0]=df[0]+' '+df[1]
-    # del df[1]
-    # df[0]=pd.to_datetime(df[0],format='%Y-%m-%d %H:%M:%S.%f')
-    # df.columns=['ndatetime','nbid','nask','close','volume']
-    # print(df.head())
-    # print(df.shape)
-    # df[['nbid','nask','close','volume']]=df[['nbid','nask','close','volume']].astype(int)
-    # df.sort_values(by=['ndatetime'],ascending=True)
-    # df.reset_index(drop=True)
 else:
     print('No Data UpDate!!')
 
-# if df is not None:
-#     start = time.time()
-#     contractkpd=func2(df)
-#     contractkpd.to_csv('../result.dat',header=False,index=False,mode='a')
-#     print(time.time()-start,'秒')
 print(time.time()-start,'秒')
