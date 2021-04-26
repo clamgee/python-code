@@ -24,8 +24,8 @@ class dataprocess:
         self.name=inputname
         self.MA=87
         # self.contractkpd=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
-        self.ticksdf=pd.DataFrame(columns=['ndatentime','nbid','nask','close','volume'])
-        self.ticksdf['ndatentime']=pd.to_datetime(self.ticksdf['ndatentime'],format='%Y-%m-%d %H:%M:%S.%f')
+        self.ticksdf=pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume'])
+        self.ticksdf['ndatetime']=pd.to_datetime(self.ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         # self.ticksdf['ntime']=pd.to_datetime(self.ticksdf['ntime'],format='%H:%M:%S.%f')
         self.contractkpd=pd.read_csv('../result.dat')
         self.contractkpd['ndatetime']=pd.to_datetime(self.contractkpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
@@ -34,6 +34,9 @@ class dataprocess:
         self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)
         self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
         self.newlist=[]
+        self.High=0
+        self.Low=0
+        self.lasttick=self.contractkpd.iloc[-1,0]
         self.drawMA = False
         self.tmpcontract=0
         self.CheckHour=None
@@ -43,6 +46,7 @@ class dataprocess:
         tmphour=ndatetime.hour
         if self.tmpcontract==0 or self.tmpcontract==12000 or (tmphour==8 and self.CheckHour==4) or (tmphour==15 and (self.CheckHour is None or self.CheckHour==13)):
             self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,nQty, '', '']],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+            self.High=self.Low=nClose
             self.tmpcontract=nQty
             self.drawMA=True
         elif (self.tmpcontract+nQty)>12000:
@@ -52,10 +56,12 @@ class dataprocess:
             self.contractkpd.iloc[-1,5]=12000
             self.tmpcontract=self.tmpcontract+nQty-12000
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract,'','']
+            self.High=self.Low=nClose
             self.drawMA=True
         else:
-            self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
-            self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
+            if nClose > self.High or nClose < self.Low :
+                self.contractkpd.iloc[-1,2]=self.High=max(self.contractkpd.iloc[-1,2],nClose)
+                self.contractkpd.iloc[-1,3]=self.Low=min(self.contractkpd.iloc[-1,3],nClose)
             self.contractkpd.iloc[-1,4]=nClose
             self.tmpcontract=self.tmpcontract+nQty
             self.contractkpd.iloc[-1,5]=self.tmpcontract
@@ -64,6 +70,7 @@ class dataprocess:
         if self.drawMA :
             self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)
             self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
+        
         self.CheckHour=tmphour
         # return self.contractkpd.iloc[-1:].values
 
@@ -77,8 +84,10 @@ class dataprocess:
         # ntime=datetime.datetime.strptime(nTime+"."+nTimemicro.strip(),'%H%M%S.%f').time()
         self.newlist=[ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]
         tmplist=[[ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]]
-        self.ticksdf=self.ticksdf.append(pd.DataFrame(tmplist,columns=['ndatetime','nbid','nask','close','volume']),ignore_index=True,sort=False)
-        self.contractk(ndatetime,self.newlist[3],self.newlist[4])
+        if ndatetime > self.lasttick:
+            self.ticksdf=self.ticksdf.append(pd.DataFrame(tmplist,columns=['ndatetime','nbid','nask','close','volume']),ignore_index=True,sort=False)
+            self.contractk(ndatetime,self.newlist[3],self.newlist[4])
+            self.lasttick=ndatetime
         return self.newlist
     
 

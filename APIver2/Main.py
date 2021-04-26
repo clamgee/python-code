@@ -255,7 +255,11 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # self.HisKlineThrd=His_KLlineThread()
         # self.HisKlineThrd.start()
         self.TableThrd = TableThread()
-        self.TableThrd.start()
+        if self.TableThrd.isRunning:
+            self.TableThrd.quit()
+            pass
+        else:
+            self.TableThrd.start()
         self.DrawmainUpdate()        
 
     # 商品訂閱結束
@@ -625,7 +629,7 @@ class SKQuoteLibEvents:
         jTime = QTime(13, 50, 00)
         # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
         if nTime == jTime and SKMain.Future.ticksdf is not None:
-            filename = '../data/Ticks' + str(SKMain.Future.ticksdf.iloc[-1, 0]) + '.txt'
+            filename = '../data/Ticks' + SKMain.Future.ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
             SKMain.Future.ticksdf.to_csv(filename, header=False, index=False)
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         # print('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
@@ -674,11 +678,11 @@ class SKQuoteLibEvents:
             #     SKMain.drawmain.setYRange(SKMain.axis_ymin,SKMain.axis_ymax)
 
 
-    # def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
-    #         total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
-    #         'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
-    #         SKMain.TableThrd.Table_signal.emit(SKMain.Future.contractkpd.iloc[-1,4],total_dict)
-    #         # 更新點
+    def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
+        total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
+        'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
+        SKMain.TableThrd.Table_signal.emit(SKMain.Future.contractkpd.iloc[-1,4],total_dict)
+        # 更新點
 
 
 # comtypes使用此方式註冊callback
