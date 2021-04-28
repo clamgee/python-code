@@ -54,8 +54,8 @@ class dataprocess:
             self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
             self.contractkpd.iloc[-1,4]=nClose
             self.contractkpd.iloc[-1,5]=12000
-            self.tmpcontract=self.tmpcontract+nQty-12000
             self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract,'','']
+            self.tmpcontract=self.tmpcontract+nQty-12000
             self.High=self.Low=nClose
             self.drawMA=True
         else:

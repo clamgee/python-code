@@ -224,6 +224,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
     # 報價系統連線功能
     def ConnectFun(self):
         m_nCode = skQ.SKQuoteLib_EnterMonitor()
+        # self.Connectbtn.setStyleSheet(""" QAction { background-color: rgb(49,49,49); color: rgb(255,255,255); border: 1px solid ;} """)
         self.SKMessage.textBrowser.append("EnterMonitor: "+str(m_nCode))
 
     def disconnectFun(self):
@@ -631,6 +632,8 @@ class SKQuoteLibEvents:
         if nTime == jTime and SKMain.Future.ticksdf is not None:
             filename = '../data/Ticks' + SKMain.Future.ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
             SKMain.Future.ticksdf.to_csv(filename, header=False, index=False)
+            SKMain.Future.contractkpd.sort_values(by=['ndatetime'],ascending=True)
+            SKMain.Future.contractkpd.to_csv('../result.dat',header=True, index=False,mode='w')
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         # print('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
         SKMain.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
