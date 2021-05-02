@@ -393,7 +393,7 @@ class KLineWidget(KeyWraper):
 
 
 
-csvpf=pd.read_csv('result.csv')
+csvpf=pd.read_csv('demo/MonKline.dat')
 csvpf['ndatetime']=pd.to_datetime(csvpf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
 print(csvpf.tail(5))
 print(csvpf.info())
