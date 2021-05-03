@@ -632,8 +632,9 @@ class SKQuoteLibEvents:
         if nTime == jTime and SKMain.Future.ticksdf is not None:
             filename = '../data/Ticks' + SKMain.Future.ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
             SKMain.Future.ticksdf.to_csv(filename, header=False, index=False)
-            SKMain.Future.contractkpd.sort_values(by=['ndatetime'],ascending=True)
-            SKMain.Future.contractkpd.to_csv('../result.dat',header=True, index=False,mode='w')
+            result=SKMain.Future.contractkpd.drop(columns=['high_avg','low_avg'])            
+            result.sort_values(by=['ndatetime'],ascending=True)
+            result.to_csv('../result.dat',header=True, index=False,mode='w')
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         # print('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
         SKMain.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)

@@ -24,7 +24,7 @@ class CandlestickItem(pg.GraphicsObject):
 
     def set_data(self,data):
         start=pg.time()
-        self.data = data.reset_index(drop=True)
+        self.data = data
         self.len = self.data.last_valid_index()
         self.low,self.high = (self.data['low'].min(),self.data['high'].max()) if len(data)>0 else (0,1)
         self.generatePicture()
