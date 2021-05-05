@@ -24,8 +24,10 @@ class CandlestickItem(pg.GraphicsObject):
 
     def set_data(self,data):
         start=pg.time()
-        self.data = data
+        self.data = data.reset_index(drop=True)
         self.len = self.data.last_valid_index()
+        # self.len = self.data.shape[0]
+        print(self.len)
         self.low,self.high = (self.data['low'].min(),self.data['high'].max()) if len(data)>0 else (0,1)
         self.generatePicture()
         self.informViewBoundsChanged()
@@ -49,7 +51,7 @@ class CandlestickItem(pg.GraphicsObject):
             self.pictures.pop()
         w = 1.0 / 3.0
         start = len(self.pictures)
-        stop = self.data.shape[0]
+        stop = self.len
 
         for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close', 'high_avg', 'low_avg']].iterrows():
             picture = QtGui.QPicture()
