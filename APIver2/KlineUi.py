@@ -27,7 +27,6 @@ class CandlestickItem(pg.GraphicsObject):
         self.data = data.reset_index(drop=True)
         self.len = self.data.last_valid_index()
         # self.len = self.data.shape[0]
-        print(self.len)
         self.low,self.high = (self.data['low'].min(),self.data['high'].max()) if len(data)>0 else (0,1)
         self.generatePicture()
         self.informViewBoundsChanged()
