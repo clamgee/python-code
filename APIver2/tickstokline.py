@@ -33,7 +33,11 @@ class dataprocess:
         self.contractkpd=self.contractkpd.reset_index(drop=True)
         self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)
         self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
+<<<<<<< HEAD
         self.contractkpdlen = self.contractkpd.last_valid_index()
+=======
+        self.lastidx = self.contractkpd.last_valid_index()
+>>>>>>> 17d936e248d146aa77d1813c48dfd208ce8fbf3b
         self.newlist=[]
         self.High=0
         self.Low=0
@@ -50,16 +54,22 @@ class dataprocess:
             self.High=self.Low=nClose
             self.tmpcontract=nQty
             self.drawMA=True
+            self.lastidx = self.contractkpd.last_valid_index()
         elif (self.tmpcontract+nQty)>12000:
-            self.contractkpd.iloc[-1,2]=max(self.contractkpd.iloc[-1,2],nClose)
-            self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
+            if nClose > self.High or nClose < self.Low :
+                self.contractkpd.iloc[-1,2]=self.High=max(self.contractkpd.iloc[-1,2],nClose)
+                self.contractkpd.iloc[-1,3]=self.Low=min(self.contractkpd.iloc[-1,3],nClose)
             self.contractkpd.iloc[-1,4]=nClose
             self.contractkpd.iloc[-1,5]=12000
             self.tmpcontract=self.tmpcontract+nQty-12000
             self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract, '', '']],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+<<<<<<< HEAD
             # self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract,'','']
+=======
+>>>>>>> 17d936e248d146aa77d1813c48dfd208ce8fbf3b
             self.High=self.Low=nClose
             self.drawMA=True
+            self.lastidx = self.contractkpd.last_valid_index()
         else:
             if nClose > self.High or nClose < self.Low :
                 self.contractkpd.iloc[-1,2]=self.High=max(self.contractkpd.iloc[-1,2],nClose)
