@@ -6,7 +6,7 @@ from pyqtgraph import QtCore,QtGui
 class CandlestickItem(pg.GraphicsObject):
     def __init__(self):
         pg.GraphicsObject.__init__(self)
-        #self.lastbar = None
+        self.lastbar = None
         # self.picture = QtGui.QPicture()
         self.picturemain = QtGui.QPicture() #主K線圖
         self.picturelast = QtGui.QPicture() #最後一根K線圖
@@ -22,9 +22,12 @@ class CandlestickItem(pg.GraphicsObject):
         self.timelist = []
         self.countK = 60 #設定要顯示多少K線
 
-    def set_data(self,data):
+    def set_data(self,data,klen):
         start=pg.time()
-        self.data = data.reset_index(drop=True)
+        if self.lastbar is None:
+            self.data = data.reset_index(drop=True)
+        else:
+            self.data
         self.len = self.data.last_valid_index()
         # self.len = self.data.shape[0]
         print(self.len)

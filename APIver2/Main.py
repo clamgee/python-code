@@ -663,8 +663,8 @@ class SKQuoteLibEvents:
             SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
             strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
             SKMain.ndetialmsg.textBrowser.append(strMsg)
-            SKMain.Kitem.set_data(SKMain.Future.contractkpd)
-            xmax = SKMain.Future.contractkpd.shape[0]
+            SKMain.Kitem.set_data(SKMain.Future.contractkpd,SKMain.Future.contractkpdlen)
+            xmax = SKMain.Future.contractkpdlen
             if SKMain.axis_xmax != xmax:
                 SKMain.DrawmainUpdate()
             # if SKMain.axis_xmax != xmax:

@@ -33,6 +33,7 @@ class dataprocess:
         self.contractkpd=self.contractkpd.reset_index(drop=True)
         self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)
         self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
+        self.contractkpdlen = self.contractkpd.last_valid_index()
         self.newlist=[]
         self.High=0
         self.Low=0
@@ -54,8 +55,9 @@ class dataprocess:
             self.contractkpd.iloc[-1,3]=min(self.contractkpd.iloc[-1,3],nClose)
             self.contractkpd.iloc[-1,4]=nClose
             self.contractkpd.iloc[-1,5]=12000
-            self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract,'','']
             self.tmpcontract=self.tmpcontract+nQty-12000
+            self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract, '', '']],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+            # self.contractkpd.loc[ndatetime]=[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract,'','']
             self.High=self.Low=nClose
             self.drawMA=True
         else:
@@ -68,6 +70,7 @@ class dataprocess:
             self.drawMA=False
         # self.contractkpd.reset_index(drop=True)
         if self.drawMA :
+            self.contractkpdlen = self.contractkpd.last_valid_index()
             self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)
             self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
         

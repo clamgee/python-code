@@ -4,9 +4,17 @@ import pandas as pd
 tmp = pd.read_csv('MonKline.dat')
 
 tmp['ndatetime'] = pd.to_datetime(tmp['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
-print(tmp.head(5))
-tmp=tmp.drop(columns=['open','high','low'])
-print(tmp.tail(5),tmp.last_valid_index())
+# print(tmp.head(5))
+# print(tmp.tail(5),tmp.last_valid_index())
+A = tmp.head(5)
+# A.pop(1)
+# A=A.append(tmp.tail(1))
+# A.loc[A.last_valid_index()]=tmp.loc[tmp.last_valid_index()].values.tolist()
+A.iloc[-1:]=tmp.tail(1).values.tolist()
+# [-1:,0:6] = tmp.iloc[-1:,0:6]
+print(A)
+# print(A.loc[A.last_valid_index()])
+# print(tmp.tail(1).values.tolist())
 # print(np.datetime64('2019-04-16 13:44:59.765'))
 
 # def strtodate(x):
