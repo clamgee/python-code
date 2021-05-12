@@ -92,7 +92,7 @@ class dataprocess:
             self.ticksdf=self.ticksdf.append(pd.DataFrame(tmplist,columns=['ndatetime','nbid','nask','close','volume']),ignore_index=True,sort=False)
             self.contractk(ndatetime,self.newlist[3],self.newlist[4])
             self.lasttick=ndatetime
-        return self.newlist
+        # return self.newlist
     
 
 

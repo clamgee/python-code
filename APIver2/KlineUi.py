@@ -1,11 +1,13 @@
 import numpy as np
 import pandas as pd
 import pyqtgraph as pg
+import numpy as np
 from pyqtgraph import QtCore,QtGui
 
 class CandlestickItem(pg.GraphicsObject):
     def __init__(self):
         pg.GraphicsObject.__init__(self)
+        self.data = None
         self.lastbar = None
         # self.picture = QtGui.QPicture()
         self.picturemain = QtGui.QPicture() #主K線圖
@@ -56,11 +58,7 @@ class CandlestickItem(pg.GraphicsObject):
         else:
             self.timelist.pop(0)
             self.timelist.append((end-start))
-        if sum(self.timelist)!=0 and len(self.timelist)>0:
-            ep=int(1/(sum(self.timelist)/len(self.timelist)))
-        else:
-            ep=0
-        self.FPS = ep
+        self.FPS = int(1/np.mean(self.timelist))
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
