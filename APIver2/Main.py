@@ -250,7 +250,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # self.Kui = KlineUi.KlineWidget(nstock)
         # self.Kui.addItem(self.Kitem)
         self.drawmain.addItem(self.Kitem)
-        self.Kitem.set_data(self.Future.contractkpd)
+        self.Kitem.set_data(self.Future.lastidx,self.Future.High,self.Future.Low,self.Future.contractkpd)
+        # self.Kitem.set_data(self.Future.contractkpd)
         # self.SKQThread = SKQuoteThread()
         # self.SKQThread.start()
         # self.HisKlineThrd=His_KLlineThread()
@@ -663,8 +664,8 @@ class SKQuoteLibEvents:
             SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
             strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
             SKMain.ndetialmsg.textBrowser.append(strMsg)
-            SKMain.Kitem.set_data(SKMain.Future.contractkpd)
-            xmax = SKMain.Future.contractkpd.shape[0]
+            SKMain.Kitem.set_data(SKMain.Future.lastidx,SKMain.Future.High,SKMain.Future.Low,SKMain.Future.contractkpd.tail(SKMain.Future.lastidx+1-SKMain.Kitem.lastidx))
+            xmax = SKMain.Future.lastidx + 1
             if SKMain.axis_xmax != xmax:
                 SKMain.DrawmainUpdate()
             # if SKMain.axis_xmax != xmax:

@@ -18,16 +18,34 @@ class CandlestickItem(pg.GraphicsObject):
         self.FPS = 0
         self.highavg = ''
         self.lowavg = ''
-        self.len = 0
         self.timelist = []
+        self.lastidx = 0
         self.countK = 60 #設定要顯示多少K線
 
-    def set_data(self,data):
+    def set_data(self,nidx,nhigh,nlow,ndata):
         start=pg.time()
-        self.data = data.reset_index(drop=True)
-        self.len = self.data.last_valid_index()
+        if self.lastidx == nidx:
+            if self.high < nhigh :
+                self.data.at[self.lastidx,'high']=self.high=nhigh 
+            if self.low > nlow:
+                self.data.at[self.lastidx,'low']=self.low=nlow
+            self.data.at[self.lastidx,'close'] = ndata.at[self.lastidx,'close']
+            self.data.at[self.lastidx,'volume'] = ndata.at[self.lastidx,'volume']
+        elif nidx > self.lastidx and self.lastidx!=0:
+            col = ndata.columns.tolist()
+            for row in col :
+                self.data.at[self.lastidx,row]=ndata.at[self.lastidx,row]
+            self.data=self.data.append(ndata.tail(nidx-self.lastidx),ignore_index=True)
+            self.lastidx=nidx
+        elif self.lastidx==0:
+            self.data = ndata.reset_index(drop=True)
+            self.high = nhigh
+            self.low = nlow
+            self.lastidx = nidx
+        else :
+            print('繪圖資料有誤!!')
+
         # self.len = self.data.shape[0]
-        self.low,self.high = (self.data['low'].min(),self.data['high'].max()) if len(data)>0 else (0,1)
         self.generatePicture()
         self.informViewBoundsChanged()
         if not self.scene() is None:
@@ -50,7 +68,7 @@ class CandlestickItem(pg.GraphicsObject):
             self.pictures.pop()
         w = 1.0 / 3.0
         start = len(self.pictures)
-        stop = self.len
+        stop = self.lastidx + 1
 
         for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close', 'high_avg', 'low_avg']].iterrows():
             picture = QtGui.QPicture()
@@ -76,7 +94,7 @@ class CandlestickItem(pg.GraphicsObject):
                 p.drawLine(QtCore.QPointF(t - 1, self.lowavg), QtCore.QPointF(t, x.low_avg))
                 # p.drawPoint(int(t), int(x.low_avg))
 
-            if t < self.len:
+            if t < (self.lastidx + 1):
                 self.lowavg = x.low_avg
                 self.highavg = x.high_avg
             p.end()

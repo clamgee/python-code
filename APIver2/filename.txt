@@ -509,3 +509,8 @@ Ticks2021-04-27.txt
 Ticks2021-04-28.txt
 Ticks2021-04-29.txt
 Ticks2021-05-03.txt
+Ticks2021-05-04.txt
+Ticks2021-05-05.txt
+Ticks2021-05-06.txt
+Ticks2021-05-07.txt
+Ticks2021-05-10.txt

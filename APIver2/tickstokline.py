@@ -35,8 +35,8 @@ class dataprocess:
         self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
         self.lastidx = self.contractkpd.last_valid_index()
         self.newlist=[]
-        self.High=0
-        self.Low=0
+        self.High=self.contractkpd.at[self.lastidx,'high']
+        self.Low=self.contractkpd.at[self.lastidx,'low']
         self.lasttick=self.contractkpd.iloc[-1,0]
         self.drawMA = False
         self.tmpcontract=0
