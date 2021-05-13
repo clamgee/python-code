@@ -18,7 +18,8 @@ print(tmp.iloc[-2:])
 
 
 dict_tmp = tmp['ndatetime'].dt.strftime('%Y/%m/%d %H:%M:%S.%f')
-dict_tmp = dict(enumerate(dict_tmp))
+print(dict_tmp.tail())
+# dict_tmp = dict(enumerate(dict_tmp))
 # print(list(dict_tmp.keys()))
 # pg.GraphicsView.setCentralWidget()
 
@@ -36,9 +37,13 @@ class MainWindows(QMainWindow):
         self.draw1.setXRange(7100,7500)
         self.draw1.setYRange(12000,17000)
         self.l.nextRow()
-        self.draw2 = self.l.addPlot()
+        self.MyAxis = pg.AxisItem(orientation='bottom')
+        self.MyAxis.setTicks(dict_tmp)
+        self.draw2 = self.l.addPlot(axisItems={'bottom':self.MyAxis})
+        self.l.nextRow()
+        self.draw3=self.l.addPlot()
         self.bar = pg.BarGraphItem(x=data2index,height=data2,width=0.3,bush='r')
-        self.draw2.addItem(self.bar)
+        self.draw3.addItem(self.bar)
         self.l.layout.setRowStretchFactor(0, 3)
 
 

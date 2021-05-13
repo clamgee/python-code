@@ -53,10 +53,10 @@ class CandlestickItem(pg.GraphicsObject):
         if not self.scene() is None:
             self.scene().update() #強制圖形更新
         end=pg.time()
-        if len(self.timelist)<100:
+        if len(self.timelist)==100:
+            self.timelist.pop(0)
             self.timelist.append((end-start))
         else:
-            self.timelist.pop(0)
             self.timelist.append((end-start))
         self.FPS = int(1/np.mean(self.timelist))
     
