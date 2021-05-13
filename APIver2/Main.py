@@ -42,6 +42,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.fOrder = sk.FUTUREORDER()
         self.timestart = ''
         self.timeend = ''
+        self.timeA=[]
+        self.timeB=[]
         # 圖形化設定
         # 12K圖示宣告
         self.GL12K=pg.GraphicsLayout()
@@ -94,6 +96,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
             self.axis_ymin = ymin
             self.axis_ymax = ymax        
             self.drawmain.setYRange(self.axis_ymin,self.axis_ymax)
+            # xdate = self.Kitem.data.ndatetime.dt.strftime('%Y-%m-%d %H:%M:%S')
+            # myAxis = pg.AxisItem('buttom')
 
 
     # 呼叫系統訊息介面與功能
@@ -663,16 +667,24 @@ class SKQuoteLibEvents:
             # print('ThreadName: ',QThread.currentThread().objectName(),'ThreadID: ',int(QThread.currentThreadId()))
             start = pg.time()
             SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
+            A = pg.time()-start
             strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
             SKMain.ndetialmsg.textBrowser.append(strMsg)
-            A = pg.time()-start
             start = pg.time()
             SKMain.Kitem.set_data(SKMain.Future.lastidx,SKMain.Future.High,SKMain.Future.Low,SKMain.Future.contractkpd.tail(SKMain.Future.lastidx+1-SKMain.Kitem.lastidx))
             xmax = SKMain.Future.lastidx + 1
             if SKMain.axis_xmax != xmax:
                 SKMain.DrawmainUpdate()
             B = pg.time()-start
-            SKMain.drawmain.setLabel('top',str(A)+" , "+str(B))
+            if len(SKMain.timeA)==100 or len(SKMain.timeB)==100:
+                SKMain.timeA.pop(0)
+                SKMain.timeA.append(A)
+                SKMain.timeB.pop(0)
+                SKMain.timeB.append(B)
+            else:
+                SKMain.timeA.append(A)
+                SKMain.timeB.append(B)
+            SKMain.drawmain.setLabel('top',str(np.mean(SKMain.timeA).round(5))+" , "+str(np.mean(SKMain.timeB).round(5)))
             # if SKMain.axis_xmax != xmax:
             #     SKMain.axis_xmax = xmax
             #     xmin = int(max(0, xmax - SKMain.Kitem.countK))
