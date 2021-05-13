@@ -621,6 +621,7 @@ class SKQuoteLibEvents:
     def OnConnection(self, nKind, nCode):
         if (nKind == 3001):
             strMsg = "Connected!"
+            SKMain.commodityFnc()
         elif (nKind == 3002):
             strMsg = "DisConnected!"
         elif (nKind == 3003):
@@ -632,6 +633,9 @@ class SKQuoteLibEvents:
 
     def OnNotifyServerTime(self, sHour, sMinute, sSecond, nTotal):
         nTime = QTime(sHour, sMinute, sSecond)
+        rTime = QTime(8,30,00)
+        if rTime == nTime:
+            SKMain.ConnectFun()
         jTime = QTime(13, 50, 00)
         # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
         if nTime == jTime and SKMain.Future.ticksdf is not None:
