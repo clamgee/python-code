@@ -61,9 +61,9 @@ def func2(df):
     return contractkpd
 
 if __name__ == '__main__':
-    domain=os.listdir('../data/')
-    print(domain[-1])
-    df=pd.read_csv('../data/'+domain[-1],header=None)
+    # domain=os.listdir('../data/')
+    # print(domain[-1])
+    df=pd.read_csv('../data/Ticks2021-05-12.txt',header=None)
     df.columns=['ndatetime','nBid','nAsk','nClose','nQty']
     df['ndatetime'] = pd.to_datetime(df['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
     df.sort_values(by=['ndatetime'],ascending=True)

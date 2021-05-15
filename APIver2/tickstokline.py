@@ -42,14 +42,12 @@ class dataprocess:
 
     def contractk(self,ndatetime,nClose,nQty):
         tmphour=ndatetime.hour
-        if self.tmpcontract>0 and self.tmpcontract<12000:
-            if nClose > self.High or nClose < self.Low :
-                self.contractkpd.at[self.lastidx,'high']=self.High=max(self.contractkpd.at[self.lastidx,'high'],nClose)
-                self.contractkpd.at[self.lastidx,'low']=self.Low=min(self.contractkpd.at[self.lastidx,'low'],nClose)
-            self.contractkpd.at[self.lastidx,'close']=nClose
-            self.tmpcontract=self.tmpcontract+nQty
-            self.contractkpd.at[self.lastidx,'volume']=self.tmpcontract
-            self.drawMA=False
+        if self.tmpcontract==0 or self.tmpcontract==12000 or (tmphour==8 and self.CheckHour==4) or (tmphour==15 and (self.CheckHour is None or self.CheckHour==13)):
+            self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,nQty, '', '']],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+            self.High=self.Low=nClose
+            self.tmpcontract=nQty
+            self.drawMA=True
+            self.lastidx = self.contractkpd.last_valid_index()
         elif (self.tmpcontract+nQty)>12000:
             if nClose > self.High or nClose < self.Low :
                 self.contractkpd.at[self.lastidx,'high']=self.High=max(self.contractkpd.at[self.lastidx,'high'],nClose)
@@ -61,14 +59,16 @@ class dataprocess:
             self.High=self.Low=nClose
             self.drawMA=True
             self.lastidx = self.contractkpd.last_valid_index()
-        elif self.tmpcontract==0 or self.tmpcontract==12000 or (tmphour==8 and self.CheckHour==4) or (tmphour==15 and (self.CheckHour is None or self.CheckHour==13)):
-            self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,nQty, '', '']],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
-            self.High=self.Low=nClose
-            self.tmpcontract=nQty
-            self.drawMA=True
-            self.lastidx = self.contractkpd.last_valid_index()
         else:
-            print('Ticks Error!!: ',ndatetime,',',nClose,',',nQty)
+            if nClose > self.High or nClose < self.Low:
+                self.contractkpd.at[self.lastidx,'high']=self.High=max(self.contractkpd.at[self.lastidx,'high'],nClose)
+                self.contractkpd.at[self.lastidx,'low']=self.Low=min(self.contractkpd.at[self.lastidx,'low'],nClose)
+            self.contractkpd.at[self.lastidx,'close']=nClose
+            # self.tmpcontract=self.tmpcontract+nQty
+            self.contractkpd.at[self.lastidx,'volume']=self.tmpcontract=self.tmpcontract+nQty
+            self.drawMA=False
+        # else:
+        #     print('Ticks Error!!: ',ndatetime,',',nClose,',',nQty)
         
         if self.drawMA :
             self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)

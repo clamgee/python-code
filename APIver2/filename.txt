@@ -514,3 +514,7 @@ Ticks2021-05-05.txt
 Ticks2021-05-06.txt
 Ticks2021-05-07.txt
 Ticks2021-05-10.txt
+Ticks2021-05-11.txt
+Ticks2021-05-12.txt
+Ticks2021-05-13.txt
+Ticks2021-05-14.txt
