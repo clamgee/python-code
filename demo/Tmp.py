@@ -1,12 +1,17 @@
 
 import pandas as pd
-a = []
-a.append([1,2,3])
-a.append([4,5,6])
-a.append([7,8,9])
+import numpy as np
+import datetime
+import time
+a = np.empty(shape=[0,5])
+ndatetime=datetime.datetime.strptime('2021-05-14 15:00:00.054','%Y-%m-%d %H:%M:%S.%f')
+lista=[]
+x=0
+start = time.time()
+for i in range(1,10,1):
+    lista.append([ndatetime,x,15750,15747,187])
+    x=i+1
 
-b = pd.DataFrame(columns=[1,2,3])
-b=b.append(pd.DataFrame(a,columns=[1,2,3]))
-
-print(a)
-print(b)
+for row in lista:
+    print(row[0])
+print(type(lista[-1][0]),time.time()-start)

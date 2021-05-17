@@ -639,9 +639,12 @@ class SKQuoteLibEvents:
             SKMain.ConnectFun()
         jTime = QTime(13, 50, 00)
         # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
-        if nTime == jTime and SKMain.Future.ticksdf is not None:
-            filename = '../data/Ticks' + SKMain.Future.ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
-            SKMain.Future.ticksdf.to_csv(filename, header=False, index=False)
+        if nTime == jTime and SKMain.Future.ticklst is not None:
+            ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume'])
+            ticksdf =ticksdf.append(pd.DataFrame(SKMain.Future.ticklst,columns=['ndatetime','nbid','nask','close','volume']),ignore_index=True,sort=False)
+            ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+            filename = '../data/Ticks' + ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
+            ticksdf.to_csv(filename, header=False, index=False)
             result=SKMain.Future.contractkpd.drop(columns=['high_avg','low_avg'])            
             result.sort_values(by=['ndatetime'],ascending=True)
             result.to_csv('../result.dat',header=True, index=False,mode='w')
