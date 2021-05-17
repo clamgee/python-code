@@ -674,7 +674,7 @@ class SKQuoteLibEvents:
             SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
             A = pg.time()-start
             strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
-            SKMain.ndetialmsg.textBrowser.append(strMsg)
+            # SKMain.ndetialmsg.textBrowser.append(strMsg)
             start = pg.time()
             SKMain.Kitem.set_data(SKMain.Future.lastidx,SKMain.Future.High,SKMain.Future.Low,SKMain.Future.contractkpd.tail(SKMain.Future.lastidx+1-SKMain.Kitem.lastidx))
             xmax = SKMain.Future.lastidx + 1
