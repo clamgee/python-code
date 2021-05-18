@@ -659,11 +659,10 @@ class SKQuoteLibEvents:
             # print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
             if SKMain.timestart=='':
                 SKMain.timestart = time.time()
+            if SKMain.Future.hisbol!=1:
+                SKMain.Future.hisbol=1
             SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
             # print(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
-            if SKMain.timeend == '' and lTimehms == 45958:
-                SKMain.timeend = time.time()
-                print(round((SKMain.timeend-SKMain.timestart),3))
 
             # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
             # SKMain.ndetialmsg.textBrowser.append(strMsg)
@@ -674,9 +673,16 @@ class SKQuoteLibEvents:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print('ThreadName: ',QThread.currentThread().objectName(),'ThreadID: ',int(QThread.currentThreadId()))
             start = pg.time()
-            SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
+            if SKMain.timeend == '' and SKMain.Future.hisbol==1:
+                SKMain.timeend = time.time()
+                SKMain.Future.hisbol=2
+                SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
+                print(round((SKMain.timeend-SKMain.timestart),3))
+                print(SKMain.Future.contractkpd.tail(10))
+            else:
+                SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
             A = pg.time()-start
-            strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
+            # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
             # SKMain.ndetialmsg.textBrowser.append(strMsg)
             start = pg.time()
             SKMain.Kitem.set_data(SKMain.Future.lastidx,SKMain.Future.High,SKMain.Future.Low,SKMain.Future.contractkpd.tail(SKMain.Future.lastidx+1-SKMain.Kitem.lastidx))

@@ -27,7 +27,7 @@ class dataprocess:
         # self.ticksdf=pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume'])
         # self.ticksdf['ndatetime']=pd.to_datetime(self.ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.ticklst = []
-        self.hisbol = False
+        self.hisbol = 1 # 1:下載歷史資料至list, 2: 處理歷史list 3: 即時
         self.contractkpd=pd.read_csv('../result.dat')
         self.contractkpd['ndatetime']=pd.to_datetime(self.contractkpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.contractkpd.sort_values(by=['ndatetime'],ascending=True)
@@ -44,6 +44,7 @@ class dataprocess:
 
     def hisprocess(self,nlist):
         for row in nlist:
+            print(row[0],type(row[0]),self.lasttick,type(self.lasttick))
             if row[0]>self.lasttick:
                 tmphour=row[0].hour
                 if self.tmpcontract==0 or self.tmpcontract==12000 or (tmphour==8 and self.CheckHour==4) or (tmphour==15 and (self.CheckHour is None or self.CheckHour==13)):
@@ -79,7 +80,7 @@ class dataprocess:
                     self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
                 
                 self.CheckHour=tmphour
-        self.hisbol=True
+        self.hisbol=3
 
 
     def contractk(self,ndatetime,nClose,nQty):
@@ -122,10 +123,17 @@ class dataprocess:
         nTime=str(nTimehms).zfill(6)
         nTimemicro=str(nTimemillismicros).zfill(6)
         ndatetime=datetime.datetime.strptime(str(nDate)+" "+nTime+"."+nTimemicro.strip(),'%Y%m%d %H%M%S.%f')
-        if ndatetime > self.lasttick and self.hisbol:
+        if ndatetime > self.lasttick and self.hisbol==1:
+            # self.ticksdf=self.ticksdf.append(pd.DataFrame([[ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]],columns=['ndatetime','nbid','nask','close','volume']),ignore_index=True,sort=False)
+            self.ticklst.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)])
+            # self.contractk(ndatetime,int(nClose/100),int(nQty))
+            self.lasttick=ndatetime
+        elif self.hisbol==2:
+            self.ticklst.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)])
+            self.hisprocess(self.ticklst)
+        if ndatetime > self.lasttick and self.hisbol==3:
             # self.ticksdf=self.ticksdf.append(pd.DataFrame([[ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]],columns=['ndatetime','nbid','nask','close','volume']),ignore_index=True,sort=False)
             self.ticklst.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)])
             self.contractk(ndatetime,int(nClose/100),int(nQty))
             self.lasttick=ndatetime
-        else:
-            self.hisprocess(self.ticklst)
+
