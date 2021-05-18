@@ -48,9 +48,11 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # 12K圖示宣告
         self.GL12K=pg.GraphicsLayout()
         self.GV1.setCentralItem(self.GL12K)
-        self.drawmain = self.GL12K.addPlot()
+        self.MyAxis = pg.AxisItem(orientation='bottom')
+        self.drawmain = self.GL12K.addPlot(axisItems={'bottom': self.MyAxis})
         self.drawmain.showAxis('right',show=True)
         self.drawmain.showAxis('left',show=False)
+        self.drawmain.showGrid(x=True,y=False)
         self.axis_xmin = 0
         self.axis_xmax = 100
         self.axis_ymin = 0
@@ -90,6 +92,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
             xmin = int(max(0, xmax - self.Kitem.countK))
             self.axis_xmin = xmin 
             self.drawmain.setXRange(self.axis_xmin,self.axis_xmax)
+            dict_tmp = self.Kitem.data.ndatetime.to_dict()
+            self.MyAxis.setTicks([dict_tmp.items()])
         ymin = self.Kitem.data.loc[self.axis_xmin:self.axis_xmax, ['low']].values.min()
         ymax = self.Kitem.data.loc[self.axis_xmin:self.axis_xmax, ['high']].values.max()
         if self.axis_ymin != ymin or self.axis_ymax != ymax:

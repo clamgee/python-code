@@ -44,8 +44,7 @@ class dataprocess:
 
     def hisprocess(self,nlist):
         for row in nlist:
-            print(row[0],type(row[0]),self.lasttick,type(self.lasttick))
-            if row[0]>self.lasttick:
+            if row[0]>=self.lasttick:
                 tmphour=row[0].hour
                 if self.tmpcontract==0 or self.tmpcontract==12000 or (tmphour==8 and self.CheckHour==4) or (tmphour==15 and (self.CheckHour is None or self.CheckHour==13)):
                     self.contractkpd=self.contractkpd.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],row[4], '', '']],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
@@ -78,7 +77,7 @@ class dataprocess:
                 if self.drawMA :
                     self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)
                     self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
-                
+                self.lasttick=row[0]
                 self.CheckHour=tmphour
         self.hisbol=3
 
@@ -127,7 +126,7 @@ class dataprocess:
             # self.ticksdf=self.ticksdf.append(pd.DataFrame([[ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]],columns=['ndatetime','nbid','nask','close','volume']),ignore_index=True,sort=False)
             self.ticklst.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)])
             # self.contractk(ndatetime,int(nClose/100),int(nQty))
-            self.lasttick=ndatetime
+            # self.lasttick=ndatetime
         elif self.hisbol==2:
             self.ticklst.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)])
             self.hisprocess(self.ticklst)
