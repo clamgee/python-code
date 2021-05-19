@@ -92,7 +92,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
             xmin = int(max(0, xmax - self.Kitem.countK))
             self.axis_xmin = xmin 
             self.drawmain.setXRange(self.axis_xmin,self.axis_xmax)
-            dict_tmp = self.Kitem.data.ndatetime.to_dict()
+            dict_tmp = self.Kitem.data['ndatetime'][(self.Kitem.data.volume!=12000) & (self.Kitem.data.ndatetime.dt.hour>8) & (self.Kitem.data.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
             self.MyAxis.setTicks([dict_tmp.items()])
         ymin = self.Kitem.data.loc[self.axis_xmin:self.axis_xmax, ['low']].values.min()
         ymax = self.Kitem.data.loc[self.axis_xmin:self.axis_xmax, ['high']].values.max()
@@ -682,7 +682,7 @@ class SKQuoteLibEvents:
                 SKMain.Future.hisbol=2
                 SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
                 print(round((SKMain.timeend-SKMain.timestart),3))
-                print(SKMain.Future.contractkpd.tail(10))
+                # print(SKMain.Future.contractkpd.tail(10))
             else:
                 SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
             A = pg.time()-start
@@ -702,7 +702,7 @@ class SKQuoteLibEvents:
             else:
                 SKMain.timeA.append(A)
                 SKMain.timeB.append(B)
-            SKMain.drawmain.setLabel('top',str(np.mean(SKMain.timeA).round(5))+" , "+str(np.mean(SKMain.timeB).round(5)))
+            SKMain.drawmain.setLabel('top',str(np.mean(SKMain.timeA).round(5))+" , "+str(np.mean(SKMain.timeB).round(5))+" , "+str(SKMain.Kitem.FPS))
             # if SKMain.axis_xmax != xmax:
             #     SKMain.axis_xmax = xmax
             #     xmin = int(max(0, xmax - SKMain.Kitem.countK))
