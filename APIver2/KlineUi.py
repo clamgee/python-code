@@ -38,12 +38,19 @@ class CandlestickItem(pg.GraphicsObject):
             for row in col :
                 self.data.at[self.lastidx,row]=ndata.at[self.lastidx,row]
             self.data=self.data.append(ndata.tail(nidx-self.lastidx),ignore_index=True)
-            self.lastidx=nidx
+            if self.data.last_valid_index()==nidx:
+                self.lastidx = nidx
+            else:
+                print('繪圖Index資料有誤1')
+
         elif self.lastidx==0:
             self.data = ndata.reset_index(drop=True)
             self.high = nhigh
             self.low = nlow
-            self.lastidx = nidx
+            if self.data.last_valid_index()==nidx:
+                self.lastidx = nidx
+            else:
+                print('繪圖Index資料有誤2')
         else :
             print('繪圖資料有誤!!')
 

@@ -32,8 +32,9 @@ class dataprocess:
         self.contractkpd['ndatetime']=pd.to_datetime(self.contractkpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.contractkpd.sort_values(by=['ndatetime'],ascending=True)
         self.contractkpd=self.contractkpd.reset_index(drop=True)
-        self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)
-        self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
+        self.contractkpd[['open','high','low','close','volume']]=self.contractkpd[['open','high','low','close','volume']].astype(int)
+        self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(0)
+        self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(0)
         self.lastidx = self.contractkpd.last_valid_index()
         self.High=self.contractkpd.at[self.lastidx,'high']
         self.Low=self.contractkpd.at[self.lastidx,'low']
@@ -75,8 +76,8 @@ class dataprocess:
                 #     print('Ticks Error!!: ',ndatetime,',',nClose,',',row[4])
                 
                 if self.drawMA :
-                    self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)
-                    self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
+                    self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean()
+                    self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean()
                 self.lasttick=row[0]
                 self.CheckHour=tmphour
         self.hisbol=3
@@ -113,8 +114,8 @@ class dataprocess:
         #     print('Ticks Error!!: ',ndatetime,',',nClose,',',nQty)
         
         if self.drawMA :
-            self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(2)
-            self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(2)
+            self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean().round(0)
+            self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean().round(0)
         
         self.CheckHour=tmphour
 
