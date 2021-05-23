@@ -87,13 +87,13 @@ class CandlestickItem(pg.GraphicsObject):
             else:
                 p.setBrush(pg.mkBrush('w'))
             p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
-            if self.highavg != '':
+            if self.highavg != '' and (stop-start)>1:
                 p.setPen(pg.mkPen('b'))
                 p.setBrush(pg.mkBrush('b'))
                 p.drawLine(QtCore.QPointF(t - 1, self.highavg), QtCore.QPointF(t, x.high_avg))
             # print('圖: ', x.high_avg)
 
-            if self.lowavg != '':
+            if self.lowavg != '' and (stop-start)>1:
                 p.setPen(pg.mkPen('w'))
                 p.setBrush(pg.mkBrush('w'))
                 p.drawLine(QtCore.QPointF(t - 1, self.lowavg), QtCore.QPointF(t, x.low_avg))
