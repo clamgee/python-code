@@ -38,7 +38,6 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.SKID = '未登入'  # 登入帳號
         self.IBAccount = ''  # 期貨帳號
         self.statusBar.showMessage('帳號:' + self.SKID)
-        self.Bill = []
         self.fOrder = sk.FUTUREORDER()
         self.timestart = ''
         self.timeend = ''
@@ -153,20 +152,20 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.Right_TB.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.Right_TB.setHorizontalHeaderLabels(['帳戶餘額', '浮動損益', '已實現費用'])
-        self.Bill = pd.DataFrame(np.arange(39).reshape(39), columns=['Right'])  # 期貨權益數
+        self.Bill = pd.DataFrame(np.arange(39).reshape(39), columns=['Right'])  # 期貨權益數 DataFrame        
         i = 0
         while i < self.Bill.shape[0]:
-            self.Bill.loc[i, 'Right'] = QTableWidgetItem('')
-            self.Bill.loc[i, 'Right'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.Bill.at[i, 'Right'] = QTableWidgetItem('')
+            self.Bill.at[i, 'Right'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
             i += 1
         i = 1
         j = 0
         while i < self.Right_TB.rowCount():
-            self.Right_TB.setItem(i, 0, self.Bill.loc[j, 'Right'])
+            self.Right_TB.setItem(i, 0, self.Bill.at[j, 'Right'])
             j += 1
-            self.Right_TB.setItem(i, 1, self.Bill.loc[j, 'Right'])
+            self.Right_TB.setItem(i, 1, self.Bill.at[j, 'Right'])
             j += 1
-            self.Right_TB.setItem(i, 2, self.Bill.loc[j, 'Right'])
+            self.Right_TB.setItem(i, 2, self.Bill.at[j, 'Right'])
             j += 1
             i += 2
 
@@ -189,28 +188,28 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # while i < self.bestfive.shape[0]:
         i = 0
         while i < 27:
-            self.bestfive.loc[i, 'closeTBitem'] = QTableWidgetItem('')
-            self.DomTable.setItem(i, 1, self.bestfive.loc[i, 'closeTBitem'])
-            self.bestfive.loc[i, 'bidTBitem'] = QTableWidgetItem('')
-            self.DomTable.setItem(i, 0, self.bestfive.loc[i, 'bidTBitem'])
-            self.bestfive.loc[i, 'askTBitem'] = QTableWidgetItem('')
-            self.DomTable.setItem(i, 2, self.bestfive.loc[i, 'askTBitem'])
-            self.bestfive.loc[i, 'closeTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.bestfive.loc[i, 'bidTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.bestfive.loc[i, 'askTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.bestfive.at[i, 'closeTBitem'] = QTableWidgetItem('')
+            self.DomTable.setItem(i, 1, self.bestfive.at[i, 'closeTBitem'])
+            self.bestfive.at[i, 'bidTBitem'] = QTableWidgetItem('')
+            self.DomTable.setItem(i, 0, self.bestfive.at[i, 'bidTBitem'])
+            self.bestfive.at[i, 'askTBitem'] = QTableWidgetItem('')
+            self.DomTable.setItem(i, 2, self.bestfive.at[i, 'askTBitem'])
+            self.bestfive.at[i, 'closeTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.bestfive.at[i, 'bidTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.bestfive.at[i, 'askTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
             i += 1
-        self.bestfive.loc[13, 'closeTBitem'].setBackground(Qt.yellow)
-        self.bestfive.loc[13, 'bidTBitem'].setBackground(Qt.yellow)
-        self.bestfive.loc[13, 'askTBitem'].setBackground(Qt.yellow)
+        self.bestfive.at[13, 'closeTBitem'].setBackground(Qt.yellow)
+        self.bestfive.at[13, 'bidTBitem'].setBackground(Qt.yellow)
+        self.bestfive.at[13, 'askTBitem'].setBackground(Qt.yellow)
 
     def DomTableFillFunc(self, nclose, bid_dict, ask_dict):
-        if self.bestfive.loc[13, 'close'] != nclose:
+        if self.bestfive.at[13, 'close'] != nclose:
             self.bestfive['close'] = self.bestfive['close'].map(
                 lambda x: nclose + 13 - (self.bestfive['close'][self.bestfive['close'] == x].index[0]))
             self.bestfive['closeTBitem'].map(lambda x: x.setText(str(
                 self.bestfive.loc[self.bestfive['closeTBitem'][self.bestfive['closeTBitem'] == x].index[0], 'close'])))
-        self.bestfive['bid'] = self.bestfive['close'].map(bid_dict).fillna(value=0).astype(int)
-        self.bestfive['ask'] = self.bestfive['close'].map(ask_dict).fillna(value=0).astype(int)
+        self.bestfive['bid'] = self.bestfive['close'].map(bid_dict).fillna(value=0)#.astype(int)
+        self.bestfive['ask'] = self.bestfive['close'].map(ask_dict).fillna(value=0)#.astype(int)
         asklist = self.bestfive['ask'][self.bestfive['ask'] != 0].index.tolist()
         bidlist = self.bestfive['bid'][self.bestfive['bid'] != 0].index.tolist()
         # # print('bid: ',self.bestfive['bid'].to_dict())
@@ -423,7 +422,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
                 OderPrice = 'M'
                 Qty = self.openpd.loc[i, '未平倉部位']
                 InterestType = 1
-                self.OrderFunc(self, Account, Commodity, TradeAct, TradeType, OderPrice, Qty, InterestType)
+                self.OrderFunc(Account, Commodity, TradeAct, TradeType, OderPrice, Qty, InterestType)
 
     # 下單功能結束
 
@@ -649,6 +648,11 @@ class SKQuoteLibEvents:
             ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
             filename = '../data/Ticks' + ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
             ticksdf.to_csv(filename, header=False, index=False)
+            df1=pd.read_csv('filename.txt')
+            df1=df1.append(pd.DataFrame([[filename]],columns=['filename']),ignore_index=True)
+            df1.to_csv('filename.txt',index=False)
+            del df1
+            del ticksdf
             result=SKMain.Future.contractkpd.drop(columns=['high_avg','low_avg'])            
             result.sort_values(by=['ndatetime'],ascending=True)
             result.to_csv('../result.dat',header=True, index=False,mode='w')

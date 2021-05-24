@@ -123,17 +123,19 @@ class dataprocess:
         nTime=str(nTimehms).zfill(6)
         nTimemicro=str(nTimemillismicros).zfill(6)
         ndatetime=datetime.datetime.strptime(str(nDate)+" "+nTime+"."+nTimemicro.strip(),'%Y%m%d %H%M%S.%f')
-        if ndatetime > self.lasttick and self.hisbol==1:
+        if ndatetime >= self.lasttick and self.hisbol==1:
             # self.ticksdf=self.ticksdf.append(pd.DataFrame([[ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]],columns=['ndatetime','nbid','nask','close','volume']),ignore_index=True,sort=False)
             self.ticklst.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)])
             # self.contractk(ndatetime,int(nClose/100),int(nQty))
             # self.lasttick=ndatetime
-        elif self.hisbol==2:
-            self.ticklst.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)])
-            self.hisprocess(self.ticklst)
-        if ndatetime > self.lasttick and self.hisbol==3:
+        elif ndatetime >= self.lasttick and self.hisbol==3:
             # self.ticksdf=self.ticksdf.append(pd.DataFrame([[ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]],columns=['ndatetime','nbid','nask','close','volume']),ignore_index=True,sort=False)
             self.ticklst.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)])
             self.contractk(ndatetime,int(nClose/100),int(nQty))
             self.lasttick=ndatetime
+        elif self.hisbol==2:
+            self.ticklst.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)])
+            self.hisprocess(self.ticklst)
+        else:
+            print('Ticks處理發生錯誤',',',self.hisbol,',',ndatetime,',',self.lasttick)
 
