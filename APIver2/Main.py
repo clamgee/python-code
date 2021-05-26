@@ -209,8 +209,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
                 lambda x: nclose + 13 - (self.bestfive['close'][self.bestfive['close'] == x].index[0]))
             self.bestfive['closeTBitem'].map(lambda x: x.setText(str(self.bestfive.at[self.bestfive['closeTBitem'][self.bestfive['closeTBitem'] == x].index[0], 'close'])))
                 # self.bestfive.loc[self.bestfive['closeTBitem'][self.bestfive['closeTBitem'] == x].index[0], 'close'])))
-        self.bestfive['bid'] = self.bestfive['close'].map(bid_dict).fillna(value=0).astype(int)
-        self.bestfive['ask'] = self.bestfive['close'].map(ask_dict).fillna(value=0).astype(int)
+        self.bestfive['bid'] = self.bestfive['close'].map(bid_dict).fillna(value=0)#.astype(int)
+        self.bestfive['ask'] = self.bestfive['close'].map(ask_dict).fillna(value=0)#.astype(int)
         asklist = self.bestfive['ask'][self.bestfive['ask'] != 0].index.tolist()
         bidlist = self.bestfive['bid'][self.bestfive['bid'] != 0].index.tolist()
         # # print('bid: ',self.bestfive['bid'].to_dict())
@@ -706,7 +706,7 @@ class SKQuoteLibEvents:
             else:
                 SKMain.timeA.append(A)
                 SKMain.timeB.append(B)
-            SKMain.drawmain.setLabel('top',"K線: "+str((1/np.mean(SKMain.timeA)))+" ,繪圖: "+str((1/np.mean(SKMain.timeB))))#+" ,閃電: "+str((1/np.mean(SKMain.timeC))))
+            # SKMain.drawmain.setLabel('top',"K線: "+str((1/np.mean(SKMain.timeA)))+" ,繪圖: "+str((1/np.mean(SKMain.timeB))))#+" ,閃電: "+str((1/np.mean(SKMain.timeC))))
             # SKMain.ndetialmsg.textBrowser.append(str(SKMain.Future.ticklst[-1]))
             # if SKMain.axis_xmax != xmax:
             #     SKMain.axis_xmax = xmax
@@ -723,18 +723,19 @@ class SKQuoteLibEvents:
             #     SKMain.drawmain.setYRange(SKMain.axis_ymin,SKMain.axis_ymax)
 
 
-    # def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
-    #     total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
-    #     'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
-    #     # SKMain.TableThrd.Table_signal.emit()
-    #     start = time.time()
-    #     SKMain.DomTableFillFunc(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'close'],total_dict['bid_dict'], total_dict['ask_dict'])
-    #     C = time.time()-start
-    #     if len(SKMain.timeC)==100:
-    #             SKMain.timeC.pop(0)
-    #             SKMain.timeC.append(C)
-    #     else:
-    #         SKMain.timeC.append(C)
+    def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
+        total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
+        'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
+        # SKMain.TableThrd.Table_signal.emit()
+        start = time.time()
+        SKMain.DomTableFillFunc(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'close'],total_dict['bid_dict'], total_dict['ask_dict'])
+        C = time.time()-start
+        if len(SKMain.timeC)==100:
+                SKMain.timeC.pop(0)
+                SKMain.timeC.append(C)
+        else:
+            SKMain.timeC.append(C)
+        SKMain.drawmain.setLabel('top',"閃電: "+str(int(1/np.mean(SKMain.timeC))))
         # 更新點
 
 
