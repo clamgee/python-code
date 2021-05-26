@@ -43,6 +43,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.timeend = ''
         self.timeA=[]
         self.timeB=[]
+        self.timeC=[]
         # 圖形化設定
         # 12K圖示宣告
         self.GL12K=pg.GraphicsLayout()
@@ -206,10 +207,10 @@ class SKMainWindow(QMainWindow):  # 主視窗
         if self.bestfive.at[13, 'close'] != nclose:
             self.bestfive['close'] = self.bestfive['close'].map(
                 lambda x: nclose + 13 - (self.bestfive['close'][self.bestfive['close'] == x].index[0]))
-            self.bestfive['closeTBitem'].map(lambda x: x.setText(str(self.bestfive.at[x.index[0], 'close'])))
+            self.bestfive['closeTBitem'].map(lambda x: x.setText(str(self.bestfive.at[self.bestfive['closeTBitem'][self.bestfive['closeTBitem'] == x].index[0], 'close'])))
                 # self.bestfive.loc[self.bestfive['closeTBitem'][self.bestfive['closeTBitem'] == x].index[0], 'close'])))
-        self.bestfive['bid'] = self.bestfive['close'].map(bid_dict).fillna(value=0)#.astype(int)
-        self.bestfive['ask'] = self.bestfive['close'].map(ask_dict).fillna(value=0)#.astype(int)
+        self.bestfive['bid'] = self.bestfive['close'].map(bid_dict).fillna(value=0).astype(int)
+        self.bestfive['ask'] = self.bestfive['close'].map(ask_dict).fillna(value=0).astype(int)
         asklist = self.bestfive['ask'][self.bestfive['ask'] != 0].index.tolist()
         bidlist = self.bestfive['bid'][self.bestfive['bid'] != 0].index.tolist()
         # # print('bid: ',self.bestfive['bid'].to_dict())
@@ -680,7 +681,7 @@ class SKQuoteLibEvents:
         if nSimulate == 0:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print('ThreadName: ',QThread.currentThread().objectName(),'ThreadID: ',int(QThread.currentThreadId()))
-            start = pg.time()
+            start = time.time()
             if SKMain.timeend == '' and SKMain.Future.hisbol==1:
                 SKMain.timeend = time.time()
                 SKMain.Future.hisbol=2
@@ -689,14 +690,14 @@ class SKQuoteLibEvents:
                 # print(SKMain.Future.contractkpd.tail(10))
             else:
                 SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
-            A = pg.time()-start
+            A = time.time()-start
             # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
-            start = pg.time()
+            start = time.time()
             SKMain.Kitem.set_data(SKMain.Future.lastidx,SKMain.Future.High,SKMain.Future.Low,SKMain.Future.contractkpd.tail(SKMain.Future.lastidx+1-SKMain.Kitem.lastidx))
             xmax = SKMain.Future.lastidx + 1
             if SKMain.axis_xmax != xmax:
                 SKMain.DrawmainUpdate()
-            B = pg.time()-start
+            B = time.time()-start
             if len(SKMain.timeA)==100 or len(SKMain.timeB)==100:
                 SKMain.timeA.pop(0)
                 SKMain.timeA.append(A)
@@ -705,8 +706,8 @@ class SKQuoteLibEvents:
             else:
                 SKMain.timeA.append(A)
                 SKMain.timeB.append(B)
-            SKMain.drawmain.setLabel('top',str(np.mean(SKMain.timeA).round(5))+" , "+str(np.mean(SKMain.timeB).round(5))+" , "+str(SKMain.Kitem.FPS))
-            SKMain.ndetialmsg.textBrowser.append(str(SKMain.Future.ticklst[-1]))
+            SKMain.drawmain.setLabel('top',"K線: "+str((1/np.mean(SKMain.timeA)))+" ,繪圖: "+str((1/np.mean(SKMain.timeB))))#+" ,閃電: "+str((1/np.mean(SKMain.timeC))))
+            # SKMain.ndetialmsg.textBrowser.append(str(SKMain.Future.ticklst[-1]))
             # if SKMain.axis_xmax != xmax:
             #     SKMain.axis_xmax = xmax
             #     xmin = int(max(0, xmax - SKMain.Kitem.countK))
@@ -722,11 +723,18 @@ class SKQuoteLibEvents:
             #     SKMain.drawmain.setYRange(SKMain.axis_ymin,SKMain.axis_ymax)
 
 
-    def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
-        total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
-        'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
-        # SKMain.TableThrd.Table_signal.emit()
-        SKMain.DomTableFillFunc(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'close'],total_dict['bid_dict'], total_dict['ask_dict'])
+    # def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
+    #     total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
+    #     'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
+    #     # SKMain.TableThrd.Table_signal.emit()
+    #     start = time.time()
+    #     SKMain.DomTableFillFunc(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'close'],total_dict['bid_dict'], total_dict['ask_dict'])
+    #     C = time.time()-start
+    #     if len(SKMain.timeC)==100:
+    #             SKMain.timeC.pop(0)
+    #             SKMain.timeC.append(C)
+    #     else:
+    #         SKMain.timeC.append(C)
         # 更新點
 
 
