@@ -698,7 +698,7 @@ class SKQuoteLibEvents:
             if SKMain.axis_xmax != xmax:
                 SKMain.DrawmainUpdate()
             B = time.time()-start
-            if len(SKMain.timeA)==100 or len(SKMain.timeB)==100:
+            if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
                 SKMain.timeA.pop(0)
                 SKMain.timeA.append(A)
                 SKMain.timeB.pop(0)
@@ -706,7 +706,10 @@ class SKQuoteLibEvents:
             else:
                 SKMain.timeA.append(A)
                 SKMain.timeB.append(B)
-            # SKMain.drawmain.setLabel('top',"K線: "+str((1/np.mean(SKMain.timeA)))+" ,繪圖: "+str((1/np.mean(SKMain.timeB))))#+" ,閃電: "+str((1/np.mean(SKMain.timeC))))
+            A = str(int(1/(sum(SKMain.timeA)/len(SKMain.timeA))))
+            B = str(int(1/(sum(SKMain.timeB)/len(SKMain.timeB))))
+            C = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
+            SKMain.drawmain.setLabel('top',"K線: "+ A +" ,繪圖: "+ B +" ,閃電: "+ C)
             # SKMain.ndetialmsg.textBrowser.append(str(SKMain.Future.ticklst[-1]))
             # if SKMain.axis_xmax != xmax:
             #     SKMain.axis_xmax = xmax
@@ -730,12 +733,11 @@ class SKQuoteLibEvents:
         start = time.time()
         SKMain.DomTableFillFunc(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'close'],total_dict['bid_dict'], total_dict['ask_dict'])
         C = time.time()-start
-        if len(SKMain.timeC)==100:
+        if len(SKMain.timeC)==1000:
                 SKMain.timeC.pop(0)
                 SKMain.timeC.append(C)
         else:
             SKMain.timeC.append(C)
-        SKMain.drawmain.setLabel('top',"閃電: "+str(int(1/np.mean(SKMain.timeC))))
         # 更新點
 
 

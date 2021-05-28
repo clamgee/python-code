@@ -99,7 +99,7 @@ class CandlestickItem(pg.GraphicsObject):
                 p.drawLine(QtCore.QPointF(t - 1, self.lowavg), QtCore.QPointF(t, x.low_avg))
                 # p.drawPoint(int(t), int(x.low_avg))
 
-            if t < (self.lastidx + 1):
+            if t < (self.lastidx+1):
                 self.lowavg = x.low_avg
                 self.highavg = x.high_avg
             p.end()
