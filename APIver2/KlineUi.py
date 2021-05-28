@@ -17,15 +17,14 @@ class CandlestickItem(pg.GraphicsObject):
         self.rect = None
         self.low = 0
         self.high = 0
-        self.FPS = 0
+        # self.FPS = 0
         self.highavg = ''
         self.lowavg = ''
-        self.timelist = []
+        # self.timelist = []
         self.lastidx = 0
         self.countK = 60 #設定要顯示多少K線
 
     def set_data(self,nidx,nhigh,nlow,ndata):
-        start=pg.time()
         if self.lastidx == nidx:
             if self.high < nhigh :
                 self.data.at[self.lastidx,'high']=self.high=nhigh 
@@ -38,10 +37,7 @@ class CandlestickItem(pg.GraphicsObject):
             for row in col :
                 self.data.at[self.lastidx,row]=ndata.at[self.lastidx,row]
             self.data=self.data.append(ndata.tail(nidx-self.lastidx),ignore_index=True)
-            if self.data.last_valid_index()==nidx:
-                self.lastidx = nidx
-            else:
-                print('繪圖Index資料有誤1')
+            self.lastidx = nidx
 
         elif self.lastidx==0:
             self.data = ndata.reset_index(drop=True)
@@ -52,20 +48,20 @@ class CandlestickItem(pg.GraphicsObject):
             else:
                 print('繪圖Index資料有誤2')
         else :
-            print('繪圖資料有誤!!')
+            print('繪圖資料有誤!!',nidx)
 
         # self.len = self.data.shape[0]
         self.generatePicture()
         self.informViewBoundsChanged()
         if not self.scene() is None:
             self.scene().update() #強制圖形更新
-        end=pg.time()
-        if len(self.timelist)==100:
-            self.timelist.pop(0)
-            self.timelist.append((end-start))
-        else:
-            self.timelist.append((end-start))
-        self.FPS = int(1/np.mean(self.timelist))
+        # end=pg.time()
+        # if len(self.timelist)==100:
+        #     self.timelist.pop(0)
+        #     self.timelist.append((end-start))
+        # else:
+        #     self.timelist.append((end-start))
+        # self.FPS = int(1/np.mean(self.timelist))
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
