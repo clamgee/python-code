@@ -175,58 +175,55 @@ class SKMainWindow(QMainWindow):  # 主視窗
     def DomTableUI(self):
         self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.DomTable.setHorizontalHeaderLabels(['買價', '成交價', '賣價'])
-        self.bestfive = pd.DataFrame(np.arange(27).reshape(27), columns=['close'])
-        self.bestfive['bid'] = 0
-        self.bestfive['ask'] = 0
+        self.DomTable.setHorizontalHeaderLabels(['數量', '買進', '賣出', '數量'])
+        self.bestfive = pd.DataFrame(np.arange(24).reshape(6,4), columns=['bidQty','nbid','nask','askQty'])
         self.bestfive = self.bestfive.astype(int)
-        self.bestfive['closeTBitem'] = ''
-        self.bestfive['bidTBitem'] = ''
-        self.bestfive['askTBitem'] = ''
-        self.lastclose = []
-        self.lastbidlist = []
-        self.lastasklist = []
+        self.bestfive[['bidQtyitem','nbiditem','naskitem','askQtyitem']]=''
         # while i < self.bestfive.shape[0]:
         i = 0
-        while i < 27:
-            self.bestfive.at[i, 'closeTBitem'] = QTableWidgetItem('')
-            self.DomTable.setItem(i, 1, self.bestfive.at[i, 'closeTBitem'])
-            self.bestfive.at[i, 'bidTBitem'] = QTableWidgetItem('')
-            self.DomTable.setItem(i, 0, self.bestfive.at[i, 'bidTBitem'])
-            self.bestfive.at[i, 'askTBitem'] = QTableWidgetItem('')
-            self.DomTable.setItem(i, 2, self.bestfive.at[i, 'askTBitem'])
-            self.bestfive.at[i, 'closeTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.bestfive.at[i, 'bidTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.bestfive.at[i, 'askTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            i += 1
-        self.bestfive.at[13, 'closeTBitem'].setBackground(Qt.yellow)
-        self.bestfive.at[13, 'bidTBitem'].setBackground(Qt.yellow)
-        self.bestfive.at[13, 'askTBitem'].setBackground(Qt.yellow)
+        while i < 6:
+            self.bestfive.at[i, 'bidQtyitem'] = QTableWidgetItem('')
+            self.DomTable.setItem(i, 0, self.bestfive.at[i, 'bidQtyitem'])
+            self.bestfive.at[i, 'nbiditem'] = QTableWidgetItem('')
+            self.DomTable.setItem(i, 1, self.bestfive.at[i, 'nbiditem'])
+            self.bestfive.at[i, 'naskitem'] = QTableWidgetItem('')
+            self.DomTable.setItem(i, 2, self.bestfive.at[i, 'naskitem'])
+            self.bestfive.at[i, 'askQtyitem'] = QTableWidgetItem('')
+            self.DomTable.setItem(i, 3, self.bestfive.at[i, 'askQtyitem'])
 
-    def DomTableFillFunc(self, nclose, bid_dict, ask_dict):
-        if self.bestfive.at[13, 'close'] != nclose:
-            self.bestfive['close'] = self.bestfive['close'].map(
-                lambda x: nclose + 13 - (self.bestfive['close'][self.bestfive['close'] == x].index[0]))
-            self.bestfive['closeTBitem'].map(lambda x: x.setText(str(self.bestfive.at[self.bestfive['closeTBitem'][self.bestfive['closeTBitem'] == x].index[0], 'close'])))
-                # self.bestfive.loc[self.bestfive['closeTBitem'][self.bestfive['closeTBitem'] == x].index[0], 'close'])))
-        self.bestfive['bid'] = self.bestfive['close'].map(bid_dict).fillna(value=0)#.astype(int)
-        self.bestfive['ask'] = self.bestfive['close'].map(ask_dict).fillna(value=0)#.astype(int)
-        asklist = self.bestfive['ask'][self.bestfive['ask'] != 0].index.tolist()
-        bidlist = self.bestfive['bid'][self.bestfive['bid'] != 0].index.tolist()
-        # # print('bid: ',self.bestfive['bid'].to_dict())
-        self.lastbidlist = list(set(self.lastbidlist + bidlist))
-        self.lastasklist = list(set(self.lastasklist + asklist))
-        self.bestfive.loc[self.lastbidlist, 'bidTBitem'].map(lambda x: x.setText(
-            str(self.bestfive.loc[self.bestfive['bidTBitem'][self.bestfive['bidTBitem'] == x].index[0], 'bid'])) if
-        self.bestfive.loc[
-            self.bestfive['bidTBitem'][self.bestfive['bidTBitem'] == x].index[0], 'bid'] != 0 else x.setText(''))
-        self.bestfive.loc[self.lastasklist, 'askTBitem'].map(lambda x: x.setText(
-            str(self.bestfive.loc[self.bestfive['askTBitem'][self.bestfive['askTBitem'] == x].index[0], 'ask'])) if
-        self.bestfive.loc[
-            self.bestfive['askTBitem'][self.bestfive['askTBitem'] == x].index[0], 'ask'] != 0 else x.setText(''))
-        # self.lastclose=self.bestfive['close'].tolist()
-        self.lastbidlist = bidlist
-        self.lastasklist = asklist
+            # self.bestfive.at[i, 'closeTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            # self.bestfive.at[i, 'bidTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            # self.bestfive.at[i, 'askTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            i += 1
+        # self.bestfive.at[13, 'closeTBitem'].setBackground(Qt.yellow)
+        # self.bestfive.at[13, 'bidTBitem'].setBackground(Qt.yellow)
+        # self.bestfive.at[13, 'askTBitem'].setBackground(Qt.yellow)
+
+    def DomTableFillFunc(self,total_dict):
+        self.bestfive.loc[0:4,['bidQty','nbid','nask','askQty']]=self.bestfive['bidQty','nbid','nask','askQty'].map(total_dict)
+        # if self.bestfive.at[13, 'close'] != nclose:
+        #     self.bestfive['close'] = self.bestfive['close'].map(
+        #         lambda x: nclose + 13 - (self.bestfive['close'][self.bestfive['close'] == x].index[0]))
+        #     self.bestfive['closeTBitem'].map(lambda x: x.setText(str(self.bestfive.at[self.bestfive['closeTBitem'][self.bestfive['closeTBitem'] == x].index[0], 'close'])))
+        #         # self.bestfive.loc[self.bestfive['closeTBitem'][self.bestfive['closeTBitem'] == x].index[0], 'close'])))
+        # self.bestfive['bid'] = self.bestfive['close'].map(bid_dict).fillna(value=0)#.astype(int)
+        # self.bestfive['ask'] = self.bestfive['close'].map(ask_dict).fillna(value=0)#.astype(int)
+        # asklist = self.bestfive['ask'][self.bestfive['ask'] != 0].index.tolist()
+        # bidlist = self.bestfive['bid'][self.bestfive['bid'] != 0].index.tolist()
+        # # # print('bid: ',self.bestfive['bid'].to_dict())
+        # self.lastbidlist = list(set(self.lastbidlist + bidlist))
+        # self.lastasklist = list(set(self.lastasklist + asklist))
+        # self.bestfive.loc[self.lastbidlist, 'bidTBitem'].map(lambda x: x.setText(
+        #     str(self.bestfive.loc[self.bestfive['bidTBitem'][self.bestfive['bidTBitem'] == x].index[0], 'bid'])) if
+        # self.bestfive.loc[
+        #     self.bestfive['bidTBitem'][self.bestfive['bidTBitem'] == x].index[0], 'bid'] != 0 else x.setText(''))
+        # self.bestfive.loc[self.lastasklist, 'askTBitem'].map(lambda x: x.setText(
+        #     str(self.bestfive.loc[self.bestfive['askTBitem'][self.bestfive['askTBitem'] == x].index[0], 'ask'])) if
+        # self.bestfive.loc[
+        #     self.bestfive['askTBitem'][self.bestfive['askTBitem'] == x].index[0], 'ask'] != 0 else x.setText(''))
+        # # self.lastclose=self.bestfive['close'].tolist()
+        # self.lastbidlist = bidlist
+        # self.lastasklist = asklist
 
     # 閃電下單結束
     # 報價系統連線功能
@@ -708,8 +705,8 @@ class SKQuoteLibEvents:
                 SKMain.timeB.append(B)
             A = str(int(1/(sum(SKMain.timeA)/len(SKMain.timeA))))
             B = str(int(1/(sum(SKMain.timeB)/len(SKMain.timeB))))
-            C = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
-            SKMain.drawmain.setLabel('top',"K線: "+ A +" ,繪圖: "+ B +" ,閃電: "+ C)
+            # C = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
+            SKMain.drawmain.setLabel('top',"K線: "+ A +" ,繪圖: "+ B)
             # SKMain.ndetialmsg.textBrowser.append(str(SKMain.Future.ticklst[-1]))
             # if SKMain.axis_xmax != xmax:
             #     SKMain.axis_xmax = xmax
@@ -727,11 +724,15 @@ class SKQuoteLibEvents:
 
 
     def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
-        total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
-        'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
-        # SKMain.TableThrd.Table_signal.emit()
+        # total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
+        # 'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
+        total_dict={'bidQty':[int(nBestBidQty1),int(nBestBidQty2),int(nBestBidQty3),int(nBestBidQty4),int(nBestBidQty5)],
+                    'nbid':[int(nBestBid1/100),int(nBestBid2/100),int(nBestBid3/100),int(nBestBid4/100),int(nBestBid5/100)],
+                    'nask':[int(nBestAsk1/100),int(nBestAsk2/100),int(nBestAsk3/100),int(nBestAsk4/100),int(nBestAsk5/100)],
+                    'askQty':[int(nBestAskQty1),int(nBestAskQty2),int(nBestAskQty3),int(nBestAskQty4),int(nBestAskQty5)]}
+        
         start = time.time()
-        SKMain.DomTableFillFunc(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'close'],total_dict['bid_dict'], total_dict['ask_dict'])
+        SKMain.DomTableFillFunc(total_dict)
         C = time.time()-start
         if len(SKMain.timeC)==1000:
                 SKMain.timeC.pop(0)

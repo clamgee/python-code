@@ -121,10 +121,10 @@
                <enum>Qt::ElideMiddle</enum>
               </property>
               <property name="rowCount">
-               <number>27</number>
+               <number>6</number>
               </property>
               <property name="columnCount">
-               <number>3</number>
+               <number>4</number>
               </property>
               <attribute name="horizontalHeaderVisible">
                <bool>false</bool>
@@ -133,7 +133,10 @@
                <bool>true</bool>
               </attribute>
               <attribute name="horizontalHeaderMinimumSectionSize">
-               <number>24</number>
+               <number>22</number>
+              </attribute>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>86</number>
               </attribute>
               <attribute name="verticalHeaderVisible">
                <bool>false</bool>
@@ -150,27 +153,7 @@
               <row/>
               <row/>
               <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
+              <column/>
               <column/>
               <column/>
               <column/>
