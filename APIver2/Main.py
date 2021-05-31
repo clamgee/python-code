@@ -200,7 +200,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # self.bestfive.at[13, 'askTBitem'].setBackground(Qt.yellow)
 
     def DomTableFillFunc(self,total_dict):
-        self.bestfive.loc[0:4,['bidQty','nbid','nask','askQty']]=self.bestfive['bidQty','nbid','nask','askQty'].map(total_dict)
+        self.bestfive.loc[0:4,['bidQty','nbid','nask','askQty']]=pd.DataFrame.from_dict(total_dict)
         # if self.bestfive.at[13, 'close'] != nclose:
         #     self.bestfive['close'] = self.bestfive['close'].map(
         #         lambda x: nclose + 13 - (self.bestfive['close'][self.bestfive['close'] == x].index[0]))
@@ -723,23 +723,23 @@ class SKQuoteLibEvents:
             #     SKMain.drawmain.setYRange(SKMain.axis_ymin,SKMain.axis_ymax)
 
 
-    def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
-        # total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
-        # 'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
-        total_dict={'bidQty':[int(nBestBidQty1),int(nBestBidQty2),int(nBestBidQty3),int(nBestBidQty4),int(nBestBidQty5)],
-                    'nbid':[int(nBestBid1/100),int(nBestBid2/100),int(nBestBid3/100),int(nBestBid4/100),int(nBestBid5/100)],
-                    'nask':[int(nBestAsk1/100),int(nBestAsk2/100),int(nBestAsk3/100),int(nBestAsk4/100),int(nBestAsk5/100)],
-                    'askQty':[int(nBestAskQty1),int(nBestAskQty2),int(nBestAskQty3),int(nBestAskQty4),int(nBestAskQty5)]}
+    # def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
+    #     # total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
+    #     # 'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
+    #     total_dict={'bidQty':[int(nBestBidQty1),int(nBestBidQty2),int(nBestBidQty3),int(nBestBidQty4),int(nBestBidQty5)],
+    #                 'nbid':[int(nBestBid1/100),int(nBestBid2/100),int(nBestBid3/100),int(nBestBid4/100),int(nBestBid5/100)],
+    #                 'nask':[int(nBestAsk1/100),int(nBestAsk2/100),int(nBestAsk3/100),int(nBestAsk4/100),int(nBestAsk5/100)],
+    #                 'askQty':[int(nBestAskQty1),int(nBestAskQty2),int(nBestAskQty3),int(nBestAskQty4),int(nBestAskQty5)]}
         
-        start = time.time()
-        SKMain.DomTableFillFunc(total_dict)
-        C = time.time()-start
-        if len(SKMain.timeC)==1000:
-                SKMain.timeC.pop(0)
-                SKMain.timeC.append(C)
-        else:
-            SKMain.timeC.append(C)
-        # 更新點
+    #     start = time.time()
+    #     SKMain.DomTableFillFunc(total_dict)
+    #     C = time.time()-start
+    #     if len(SKMain.timeC)==1000:
+    #             SKMain.timeC.pop(0)
+    #             SKMain.timeC.append(C)
+    #     else:
+    #         SKMain.timeC.append(C)
+    #     # 更新點
 
 
 # comtypes使用此方式註冊callback
