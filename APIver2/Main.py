@@ -193,11 +193,11 @@ class SKMainWindow(QMainWindow):  # 主視窗
             self.DomTable.setItem(i, 2, self.bestfive.at[i, 'naskitem'])
             self.bestfive.at[i, 'askQtyitem'] = QTableWidgetItem('')
             self.DomTable.setItem(i, 3, self.bestfive.at[i, 'askQtyitem'])
+            self.bestfive.at[i, 'bidQtyitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.bestfive.at[i, 'nbiditem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.bestfive.at[i, 'naskitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.bestfive.at[i, 'askQtyitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
             i += 1
-
-            # self.bestfive.at[i, 'closeTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            # self.bestfive.at[i, 'bidTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            # self.bestfive.at[i, 'askTBitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         # self.bestfive.at[13, 'closeTBitem'].setBackground(Qt.yellow)
         # self.bestfive.at[13, 'bidTBitem'].setBackground(Qt.yellow)
         # self.bestfive.at[13, 'askTBitem'].setBackground(Qt.yellow)
@@ -730,8 +730,8 @@ class SKQuoteLibEvents:
         # total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
         # 'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
         total_dict={'bidQtyitem':{0:nBestBidQty1,1:nBestBidQty2,2:nBestBidQty3,3:nBestBidQty4,4:nBestBidQty5},
-                    'nbiditem':{0:nBestBid1,1:nBestBid2,2:nBestBid3,3:nBestBid4,4:nBestBid5},
-                    'naskitem':{0:nBestAsk1,1:nBestAsk2,2:nBestAsk3,3:nBestAsk4,4:nBestAsk5},
+                    'nbiditem':{0:int(nBestBid1/100),1:int(nBestBid2/100),2:int(nBestBid3/100),3:int(nBestBid4/100),4:int(nBestBid5/100)},
+                    'naskitem':{0:int(nBestAsk1/100),1:int(nBestAsk2/100),2:int(nBestAsk3/100),3:int(nBestAsk4/100),4:int(nBestAsk5/100)},
                     'askQtyitem':{0:nBestAskQty1,1:nBestAskQty2,2:nBestAskQty3,3:nBestAskQty4,4:nBestAskQty5}}
         
         start = time.time()
@@ -739,15 +739,18 @@ class SKQuoteLibEvents:
         SKMain.bestfive.loc[0:4,'nbiditem'].map(lambda x: x.setText(str(total_dict['nbiditem'][SKMain.bestfive['nbiditem'][SKMain.bestfive['nbiditem'] == x].index[0]])))
         SKMain.bestfive.loc[0:4,'naskitem'].map(lambda x: x.setText(str(total_dict['naskitem'][SKMain.bestfive['naskitem'][SKMain.bestfive['naskitem'] == x].index[0]])))
         SKMain.bestfive.loc[0:4,'askQtyitem'].map(lambda x: x.setText(str(total_dict['askQtyitem'][SKMain.bestfive['askQtyitem'][SKMain.bestfive['askQtyitem'] == x].index[0]])))
-
+        bidQty = total_dict['bidQtyitem'].values()
+        askQty = total_dict['askQtyitem'].values()
+        SKMain.bestfive.at[5,'bidQtyitem'].setText(str(int(sum(bidQty))))
+        SKMain.bestfive.at[5,'askQtyitem'].setText(str(int(sum(askQty))))
         C = time.time()-start
         if len(SKMain.timeC)==1000:
                 SKMain.timeC.pop(0)
                 SKMain.timeC.append(C)
         else:
             SKMain.timeC.append(C)
-        C = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
-        SKMain.drawmain.setLabel('top','5檔: '+C)
+        Cavg = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
+        SKMain.drawmain.setLabel('top','5檔: '+Cavg)
         # 更新點
 
 

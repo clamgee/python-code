@@ -54,7 +54,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,13,1,1,1,1,1">
+           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,6,6,1,1,1,1,1">
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,4">
               <item>
@@ -132,11 +132,11 @@
               <attribute name="horizontalHeaderCascadingSectionResizes">
                <bool>true</bool>
               </attribute>
-              <attribute name="horizontalHeaderMinimumSectionSize">
-               <number>22</number>
-              </attribute>
               <attribute name="horizontalHeaderDefaultSectionSize">
                <number>86</number>
+              </attribute>
+              <attribute name="horizontalHeaderMinimumSectionSize">
+               <number>22</number>
               </attribute>
               <attribute name="verticalHeaderVisible">
                <bool>false</bool>
@@ -158,6 +158,9 @@
               <column/>
               <column/>
              </widget>
+            </item>
+            <item>
+             <widget class="QTableWidget" name="MPTable"/>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2,1,2">
@@ -1170,7 +1173,7 @@
      <x>0</x>
      <y>0</y>
      <width>1052</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
