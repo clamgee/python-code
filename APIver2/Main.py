@@ -67,6 +67,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.SKLoginUI()  # 登入介面
         self.SKMessageFunc()  # 系統訊息介面
         self.RightUI()  # 權益數介面
+        # self.MPTableUI()
         # ManuBar連結
         self.actionLogin.triggered.connect(self.Login.show)  # 登入介面連結
         # ToolBar連結
@@ -176,6 +177,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.DomTable.setHorizontalHeaderLabels(['數量', '買進', '賣出', '數量'])
+        self.DomTable.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
+
         self.bestfive = pd.DataFrame(np.arange(24).reshape(6,4), columns=['bidQty','nbid','nask','askQty'])
         self.bestfive = self.bestfive.astype(int)
         self.bestfive['bidQtyitem']=''
@@ -201,6 +204,16 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # self.bestfive.at[13, 'closeTBitem'].setBackground(Qt.yellow)
         # self.bestfive.at[13, 'bidTBitem'].setBackground(Qt.yellow)
         # self.bestfive.at[13, 'askTBitem'].setBackground(Qt.yellow)
+    def MPTableUI(self):
+        self.MPTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.MPTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.MPTable.setHorizontalHeaderLabels(['委口', '委筆', '成筆', '成口'])
+        self.MPTable.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
+        self.MPTable.setverticalHeaderLabels(['買進', '賣出', '差', '總口數'])
+        self.MPTable.verticalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
+
+
+
 
     # def DomTableFillFunc(self,total_dict):
     #     self.bestfive.loc[0:4,['bidQty','nbid','nask','askQty']]=pd.DataFrame.from_dict(total_dict)
@@ -735,10 +748,16 @@ class SKQuoteLibEvents:
                     'askQtyitem':{0:nBestAskQty1,1:nBestAskQty2,2:nBestAskQty3,3:nBestAskQty4,4:nBestAskQty5}}
         
         start = time.time()
-        SKMain.bestfive.loc[0:4,'bidQtyitem'].map(lambda x: x.setText(str(total_dict['bidQtyitem'][SKMain.bestfive['bidQtyitem'][SKMain.bestfive['bidQtyitem'] == x].index[0]])))
-        SKMain.bestfive.loc[0:4,'nbiditem'].map(lambda x: x.setText(str(total_dict['nbiditem'][SKMain.bestfive['nbiditem'][SKMain.bestfive['nbiditem'] == x].index[0]])))
-        SKMain.bestfive.loc[0:4,'naskitem'].map(lambda x: x.setText(str(total_dict['naskitem'][SKMain.bestfive['naskitem'][SKMain.bestfive['naskitem'] == x].index[0]])))
-        SKMain.bestfive.loc[0:4,'askQtyitem'].map(lambda x: x.setText(str(total_dict['askQtyitem'][SKMain.bestfive['askQtyitem'][SKMain.bestfive['askQtyitem'] == x].index[0]])))
+        # SKMain.bestfive.loc[0:4,'bidQtyitem'].map(lambda x: x.setText(str(total_dict['bidQtyitem'][SKMain.bestfive['bidQtyitem'][SKMain.bestfive['bidQtyitem'] == x].index[0]])))
+        # SKMain.bestfive.loc[0:4,'nbiditem'].map(lambda x: x.setText(str(total_dict['nbiditem'][SKMain.bestfive['nbiditem'][SKMain.bestfive['nbiditem'] == x].index[0]])))
+        # SKMain.bestfive.loc[0:4,'naskitem'].map(lambda x: x.setText(str(total_dict['naskitem'][SKMain.bestfive['naskitem'][SKMain.bestfive['naskitem'] == x].index[0]])))
+        # SKMain.bestfive.loc[0:4,'askQtyitem'].map(lambda x: x.setText(str(total_dict['askQtyitem'][SKMain.bestfive['askQtyitem'][SKMain.bestfive['askQtyitem'] == x].index[0]])))
+        for (t, x) in SKMain.bestfive.loc[0:4,['bidQtyitem','nbiditem','naskitem','askQtyitem']].iterrows():
+            x.bidQtyitem.setText(str(total_dict['bidQtyitem'][t]))
+            x.nbiditem.setText(str(total_dict['nbiditem'][t]))
+            x.naskitem.setText(str(total_dict['naskitem'][t]))
+            x.askQtyitem.setText(str(total_dict['askQtyitem'][t]))
+
         bidQty = total_dict['bidQtyitem'].values()
         askQty = total_dict['askQtyitem'].values()
         SKMain.bestfive.at[5,'bidQtyitem'].setText(str(int(sum(bidQty))))
@@ -752,7 +771,8 @@ class SKQuoteLibEvents:
         Cavg = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
         SKMain.drawmain.setLabel('top','5檔: '+Cavg)
         # 更新點
-
+    def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount): 
+        print(nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount)
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
