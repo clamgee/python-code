@@ -87,6 +87,7 @@ class Ui_CapitalAPI(object):
         self.DomTable.verticalHeader().setVisible(False)
         self.DomTable.verticalHeader().setCascadingSectionResizes(True)
         self.DomTable.verticalHeader().setMinimumSectionSize(12)
+        self.DomTable.setVerticalHeader().setStyl
         self.verticalLayout.addWidget(self.DomTable)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")

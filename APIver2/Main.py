@@ -67,7 +67,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.SKLoginUI()  # 登入介面
         self.SKMessageFunc()  # 系統訊息介面
         self.RightUI()  # 權益數介面
-        # self.MPTableUI()
+        self.DomTableUI()  # 閃電下單介面
+        self.MPTableUI()    #多空力道
         # ManuBar連結
         self.actionLogin.triggered.connect(self.Login.show)  # 登入介面連結
         # ToolBar連結
@@ -175,17 +176,11 @@ class SKMainWindow(QMainWindow):  # 主視窗
     # 閃電下單
     def DomTableUI(self):
         self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.DomTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.DomTable.setHorizontalHeaderLabels(['數量', '買進', '賣出', '數量'])
         self.DomTable.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
-
-        self.bestfive = pd.DataFrame(np.arange(24).reshape(6,4), columns=['bidQty','nbid','nask','askQty'])
-        self.bestfive = self.bestfive.astype(int)
-        self.bestfive['bidQtyitem']=''
-        self.bestfive['nbiditem']=''
-        self.bestfive['naskitem']=''
-        self.bestfive['askQtyitem']=''
-        # while i < self.bestfive.shape[0]:
+        self.bestfive = pd.DataFrame(np.arange(24).reshape(6,4), columns=['bidQtyitem','nbiditem','naskitem','askQtyitem'])
         i = 0
         while i < 6:
             self.bestfive.at[i, 'bidQtyitem'] = QTableWidgetItem('')
@@ -206,11 +201,30 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # self.bestfive.at[13, 'askTBitem'].setBackground(Qt.yellow)
     def MPTableUI(self):
         self.MPTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.MPTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.MPTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.MPTable.verticalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.MPTable.setHorizontalHeaderLabels(['委口', '委筆', '成筆', '成口'])
         self.MPTable.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
-        self.MPTable.setverticalHeaderLabels(['買進', '賣出', '差', '總口數'])
+        self.MPTable.setVerticalHeaderLabels(['買進', '賣出', '差', '總口數'])
         self.MPTable.verticalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
+        self.MPower = pd.DataFrame(np.arange(16).reshape(4,4), columns=['ComCont','ComTa','DealTa','DealCon'])
+        i=0
+        while i < 4 :
+            self.MPower.at[i,'ComCont'] = QTableWidgetItem('')
+            self.MPower.at[i,'ComCont'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.MPTable.setItem(i, 0, self.MPower.at[i,'ComCont'])
+            self.MPower.at[i,'ComTa'] = QTableWidgetItem('')
+            self.MPower.at[i,'ComTa'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.MPTable.setItem(i, 1, self.MPower.at[i,'ComTa'])
+            self.MPower.at[i,'DealTa'] = QTableWidgetItem('')
+            self.MPower.at[i,'DealTa'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.MPTable.setItem(i, 2, self.MPower.at[i,'DealTa'])
+            self.MPower.at[i,'DealCon'] = QTableWidgetItem('')
+            self.MPower.at[i,'DealCon'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.MPTable.setItem(i, 3, self.MPower.at[i,'DealCon'])
+            i+=1
+
 
 
 
@@ -262,11 +276,11 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # self.newThread.moveToThread(self.tmpthread)
         # self.tmpthread.start()
         skQ.SKQuoteLib_RequestTicks(0, nstock)
+        skQ.SKQuoteLib_RequestFutureTradeInfo(comtypes.automation.c_short(0),nstock)
         self.ndetialmsg = FuncUI.MessageDialog(nstock)
         self.TDetailbtn.clicked.connect(self.ndetialmsg.show)
         # self.ndetialmsg.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         # self.ndetialmsg.show()
-        self.DomTableUI()  # 閃電下單介面
         self.Kitem = KlineUi.CandlestickItem()
         # self.Kui = KlineUi.KlineWidget(nstock)
         # self.Kui.addItem(self.Kitem)
@@ -719,8 +733,8 @@ class SKQuoteLibEvents:
             else:
                 SKMain.timeA.append(A)
                 SKMain.timeB.append(B)
-            A = str(int(1/(sum(SKMain.timeA)/len(SKMain.timeA))))
-            B = str(int(1/(sum(SKMain.timeB)/len(SKMain.timeB))))
+            # A = str(int(1/(sum(SKMain.timeA)/len(SKMain.timeA))))
+            # B = str(int(1/(sum(SKMain.timeB)/len(SKMain.timeB))))
             # C = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
             # SKMain.drawmain.setLabel('top',"K線: "+ A +" ,繪圖: "+ B)
             # SKMain.ndetialmsg.textBrowser.append(str(SKMain.Future.ticklst[-1]))
@@ -772,7 +786,17 @@ class SKQuoteLibEvents:
         SKMain.drawmain.setLabel('top','5檔: '+Cavg)
         # 更新點
     def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount): 
-        print(nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount)
+        # print(nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount)
+        # 'ComCont','ComTa','DealTa','DealCon'
+        MP_dict = {'ComCont':{0:nBuyTotalCount,1:nSellTotalCount,2:int(nBuyTotalCount-nSellTotalCount)},
+        'ComTa':{0:nBuyTotalQty,1:nSellTotalQty,2:int(nBuyTotalQty-nSellTotalQty)},
+        'DealTa':{0:nBuyDealTotalCount,1:nSellDealTotalCount,2:int(nBuyDealTotalCount-nSellDealTotalCount)}}
+        # 'DealCon':{0:nBuyTotalCount,1:nSellTotalCount,2:str(int(nBuyTotalCount-nSellTotalCount))
+        for (t, x) in SKMain.MPower.loc[0:2,['ComCont','ComTa','DealTa']].iterrows():
+            x.ComCont.setText(str(MP_dict['ComCont'][t]))
+            x.ComTa.setText(str(MP_dict['ComTa'][t]))
+            x.DealTa.setText(str(MP_dict['DealTa'][t]))
+
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
