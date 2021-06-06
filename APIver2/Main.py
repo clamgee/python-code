@@ -681,7 +681,7 @@ class SKQuoteLibEvents:
             df1.to_csv('filename.txt',index=False)
             del df1
             del ticksdf
-            result=SKMain.Future.contractkpd.drop(columns=['high_avg','low_avg'])            
+            result=SKMain.Future.contractkpd.drop(columns=['high_avg','low_avg','dealbid','dealask','dealminus'])            
             result.sort_values(by=['ndatetime'],ascending=True)
             result.to_csv('../result.dat',header=True, index=False,mode='w')
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
@@ -708,7 +708,7 @@ class SKQuoteLibEvents:
         if nSimulate == 0:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print('ThreadName: ',QThread.currentThread().objectName(),'ThreadID: ',int(QThread.currentThreadId()))
-            start = time.time()
+            # start = time.time()
             if SKMain.timeend == '' and SKMain.Future.hisbol==1:
                 SKMain.timeend = time.time()
                 SKMain.Future.hisbol=2
@@ -717,22 +717,26 @@ class SKQuoteLibEvents:
                 # print(SKMain.Future.contractkpd.tail(10))
             else:
                 SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
-            A = time.time()-start
+            # A = time.time()-start
             # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
-            start = time.time()
+            # start = time.time()
             SKMain.Kitem.set_data(SKMain.Future.lastidx,SKMain.Future.High,SKMain.Future.Low,SKMain.Future.contractkpd.tail(SKMain.Future.lastidx+1-SKMain.Kitem.lastidx))
             xmax = SKMain.Future.lastidx + 1
             if SKMain.axis_xmax != xmax:
                 SKMain.DrawmainUpdate()
-            B = time.time()-start
-            if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
-                SKMain.timeA.pop(0)
-                SKMain.timeA.append(A)
-                SKMain.timeB.pop(0)
-                SKMain.timeB.append(B)
-            else:
-                SKMain.timeA.append(A)
-                SKMain.timeB.append(B)
+            SKMain.MPower.at[0,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
+            SKMain.MPower.at[1,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
+            SKMain.MPower.at[2,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
+            SKMain.MPower.at[3,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']+SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
+            # B = time.time()-start
+            # if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
+            #     SKMain.timeA.pop(0)
+            #     SKMain.timeA.append(A)
+            #     SKMain.timeB.pop(0)
+            #     SKMain.timeB.append(B)
+            # else:
+            #     SKMain.timeA.append(A)
+            #     SKMain.timeB.append(B)
             # A = str(int(1/(sum(SKMain.timeA)/len(SKMain.timeA))))
             # B = str(int(1/(sum(SKMain.timeB)/len(SKMain.timeB))))
             # C = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
@@ -776,6 +780,11 @@ class SKQuoteLibEvents:
         askQty = total_dict['askQtyitem'].values()
         SKMain.bestfive.at[5,'bidQtyitem'].setText(str(int(sum(bidQty))))
         SKMain.bestfive.at[5,'askQtyitem'].setText(str(int(sum(askQty))))
+        SKMain.MPower.at[0,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
+        SKMain.MPower.at[1,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
+        SKMain.MPower.at[2,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
+        SKMain.MPower.at[3,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']+SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
+
         C = time.time()-start
         if len(SKMain.timeC)==1000:
                 SKMain.timeC.pop(0)
