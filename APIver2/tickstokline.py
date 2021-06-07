@@ -61,7 +61,7 @@ class dataprocess:
                         if row[3]==row[1]: #買價成交判定空方
                             self.contractkpd.at[self.lastidx,'dealbid']=0
                             self.contractkpd.at[self.lastidx,'dealask']=row[4]
-                            self.contractkpd.at[self.lastidx,'dealminus']=-row[4]
+                            self.contractkpd.at[self.lastidx,'dealminus']=0-row[4]
                             print('1')
                         elif row[3]==row[2]: #賣價成交判定多方
                             self.contractkpd.at[self.lastidx,'dealbid']=row[4]
@@ -70,12 +70,12 @@ class dataprocess:
                             print('2')
                     else :
                         if row[3]==row[1]:
-                            self.contractkpd.at[self.lastidx,'dealask']+=row[4]
-                            self.contractkpd.at[self.lastidx,'dealminus']-=row[4]
+                            self.contractkpd.at[self.lastidx,'dealask']=self.contractkpd.at[self.lastidx,'dealask']+row[4]
+                            self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']-row[4]
                             print('3')
                         elif row[3]==row[2]:
-                            self.contractkpd.at[self.lastidx,'dealbid']+=row[4]
-                            self.contractkpd.at[self.lastidx,'dealminus']+=row[4]
+                            self.contractkpd.at[self.lastidx,'dealbid']=self.contractkpd.at[self.lastidx,'dealbid']+row[4]
+                            self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']+row[4]
                             print('4')
 
                 elif (self.tmpcontract+row[4])>12000:
@@ -87,24 +87,24 @@ class dataprocess:
                     self.tmpcontract=self.tmpcontract+row[4]-12000
                     tmpdealQty = row[4] - self.tmpcontract
                     if row[3]==row[1]:
-                        self.contractkpd.at[self.lastidx,'dealask']+=tmpdealQty
-                        self.contractkpd.at[self.lastidx,'dealminus']-=tmpdealQty
+                        self.contractkpd.at[self.lastidx,'dealask']=self.contractkpd.at[self.lastidx,'dealask']+tmpdealQty
+                        self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']-tmpdealQty
                         print('5')
                     elif row[3]==row[2]:
-                        self.contractkpd.at[self.lastidx,'dealbid']+=tmpdealQty
-                        self.contractkpd.at[self.lastidx,'dealminus']+=tmpdealQty
+                        self.contractkpd.at[self.lastidx,'dealbid']=self.contractkpd.at[self.lastidx,'dealbid']+tmpdealQty
+                        self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']+tmpdealQty
                         print('6')
                     self.contractkpd=self.contractkpd.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],self.tmpcontract,0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
                     self.High=self.Low=row[3]
                     self.drawMA=True
                     self.lastidx = self.contractkpd.last_valid_index()
                     if row[3]==row[1]:
-                        self.contractkpd.at[self.lastidx,'dealask']+=self.tmpcontract
-                        self.contractkpd.at[self.lastidx,'dealminus']-=self.tmpcontract
+                        self.contractkpd.at[self.lastidx,'dealask']=self.contractkpd.at[self.lastidx,'dealask']+self.tmpcontract
+                        self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']-self.tmpcontract
                         print('7')
                     elif row[3]==row[2]:
-                        self.contractkpd.at[self.lastidx,'dealbid']+=self.tmpcontract
-                        self.contractkpd.at[self.lastidx,'dealminus']+=self.tmpcontract
+                        self.contractkpd.at[self.lastidx,'dealbid']=self.contractkpd.at[self.lastidx,'dealbid']+self.tmpcontract
+                        self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']+self.tmpcontract
                         print('8')
 
                 else:
@@ -116,12 +116,12 @@ class dataprocess:
                     self.contractkpd.at[self.lastidx,'volume']=self.tmpcontract=self.tmpcontract+row[4]
                     self.drawMA=False
                     if row[3]==row[1]:
-                        self.contractkpd.at[self.lastidx,'dealask']+=row[4]
-                        self.contractkpd.at[self.lastidx,'dealminus']-=row[4]
+                        self.contractkpd.at[self.lastidx,'dealask']=self.contractkpd.at[self.lastidx,'dealask']+row[4]
+                        self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']-row[4]
                         print('9')
                     elif row[3]==row[2]:
-                        self.contractkpd.at[self.lastidx,'dealbid']+=row[4]
-                        self.contractkpd.at[self.lastidx,'dealminus']+=row[4]
+                        self.contractkpd.at[self.lastidx,'dealbid']=self.contractkpd.at[self.lastidx,'dealbid']+row[4]
+                        self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']+row[4]
                         print('10')
 
                 if self.drawMA :
@@ -144,18 +144,22 @@ class dataprocess:
                 if nClose==nBid: #買價成交判定空方
                     self.contractkpd.at[self.lastidx,'dealbid']=0
                     self.contractkpd.at[self.lastidx,'dealask']=nQty
-                    self.contractkpd.at[self.lastidx,'dealminus']=-nQty
+                    self.contractkpd.at[self.lastidx,'dealminus']=0-nQty
+                    print('11')
                 elif nClose==nAsk: #賣價成交判定多方
                     self.contractkpd.at[self.lastidx,'dealbid']=nQty
                     self.contractkpd.at[self.lastidx,'dealask']=0
                     self.contractkpd.at[self.lastidx,'dealminus']=nQty
+                    print('12')
             else :
                 if nClose==nBid:
-                    self.contractkpd.at[self.lastidx,'dealask']+=nQty
-                    self.contractkpd.at[self.lastidx,'dealminus']-=nQty
+                    self.contractkpd.at[self.lastidx,'dealask']=self.contractkpd.at[self.lastidx,'dealask']+nQty
+                    self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']-nQty
+                    print('13')
                 elif nClose==nAsk:
-                    self.contractkpd.at[self.lastidx,'dealbid']+=nQty
-                    self.contractkpd.at[self.lastidx,'dealminus']+=nQty
+                    self.contractkpd.at[self.lastidx,'dealbid']=self.contractkpd.at[self.lastidx,'dealbid']+nQty
+                    self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']+nQty
+                    print('14')
 
         elif (self.tmpcontract+nQty)>12000:
             if nClose > self.High or nClose < self.Low :
@@ -166,21 +170,25 @@ class dataprocess:
             self.tmpcontract=self.tmpcontract+nQty-12000
             tmpdealQty = nQty - self.tmpcontract
             if nClose==nBid:
-                self.contractkpd.at[self.lastidx,'dealask']+=tmpdealQty
-                self.contractkpd.at[self.lastidx,'dealminus']-=tmpdealQty
+                self.contractkpd.at[self.lastidx,'dealask']=self.contractkpd.at[self.lastidx,'dealask']+tmpdealQty
+                self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']-tmpdealQty
+                print('15')
             elif nClose==nAsk:
-                self.contractkpd.at[self.lastidx,'dealbid']+=tmpdealQty
-                self.contractkpd.at[self.lastidx,'dealminus']+=tmpdealQty
+                self.contractkpd.at[self.lastidx,'dealbid']=self.contractkpd.at[self.lastidx,'dealbid']+tmpdealQty
+                self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']+tmpdealQty
+                print('16')
             self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract, '', '']],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
             self.High=self.Low=nClose
             self.drawMA=True
             self.lastidx = self.contractkpd.last_valid_index()
             if nClose==nBid:
-                self.contractkpd.at[self.lastidx,'dealask']+=self.tmpcontract
-                self.contractkpd.at[self.lastidx,'dealminus']-=self.tmpcontract
+                self.contractkpd.at[self.lastidx,'dealask']=self.contractkpd.at[self.lastidx,'dealask']+self.tmpcontract
+                self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']-self.tmpcontract
+                print('17')
             elif nClose==nAsk:
-                self.contractkpd.at[self.lastidx,'dealbid']+=self.tmpcontract
-                self.contractkpd.at[self.lastidx,'dealminus']+=self.tmpcontract
+                self.contractkpd.at[self.lastidx,'dealbid']=self.contractkpd.at[self.lastidx,'dealbid']+self.tmpcontract
+                self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']+self.tmpcontract
+                print('18')
 
         else:
             if nClose > self.High or nClose < self.Low:
@@ -190,11 +198,13 @@ class dataprocess:
             # self.tmpcontract=self.tmpcontract+nQty
             self.contractkpd.at[self.lastidx,'volume']=self.tmpcontract=self.tmpcontract+nQty
             if nClose==nBid:
-                self.contractkpd.at[self.lastidx,'dealask']+=nQty
-                self.contractkpd.at[self.lastidx,'dealminus']-=nQty
+                self.contractkpd.at[self.lastidx,'dealask']=self.contractkpd.at[self.lastidx,'dealask']+nQty
+                self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']-nQty
+                print('19,'+str(self.contractkpd.at[self.lastidx,'dealminus'])+','+str(nQty))
             elif nClose==nAsk:
-                self.contractkpd.at[self.lastidx,'dealbid']+=nQty
-                self.contractkpd.at[self.lastidx,'dealminus']+=nQty
+                self.contractkpd.at[self.lastidx,'dealbid']=self.contractkpd.at[self.lastidx,'dealbid']+nQty
+                self.contractkpd.at[self.lastidx,'dealminus']=self.contractkpd.at[self.lastidx,'dealminus']+nQty
+                print('20,'+str(self.contractkpd.at[self.lastidx,'dealminus'])+','+str(nQty))
             self.drawMA=False
         # else:
         #     print('Ticks Error!!: ',ndatetime,',',nClose,',',nQty)
