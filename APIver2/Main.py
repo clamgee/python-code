@@ -208,21 +208,21 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.MPTable.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
         self.MPTable.setVerticalHeaderLabels(['買進', '賣出', '差', '總口數'])
         self.MPTable.verticalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
-        self.MPower = pd.DataFrame(np.arange(16).reshape(4,4), columns=['ComCont','ComTa','DealTa','DealCon'])
+        self.MPower = pd.DataFrame(np.arange(16).reshape(4,4), columns=['ComQty','ComCont','DealCont','DealQty'])
         i=0
         while i < 4 :
+            self.MPower.at[i,'ComQty'] = QTableWidgetItem('')
+            self.MPower.at[i,'ComQty'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.MPTable.setItem(i, 0, self.MPower.at[i,'ComQty'])
             self.MPower.at[i,'ComCont'] = QTableWidgetItem('')
             self.MPower.at[i,'ComCont'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.MPTable.setItem(i, 0, self.MPower.at[i,'ComCont'])
-            self.MPower.at[i,'ComTa'] = QTableWidgetItem('')
-            self.MPower.at[i,'ComTa'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.MPTable.setItem(i, 1, self.MPower.at[i,'ComTa'])
-            self.MPower.at[i,'DealTa'] = QTableWidgetItem('')
-            self.MPower.at[i,'DealTa'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.MPTable.setItem(i, 2, self.MPower.at[i,'DealTa'])
-            self.MPower.at[i,'DealCon'] = QTableWidgetItem('')
-            self.MPower.at[i,'DealCon'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.MPTable.setItem(i, 3, self.MPower.at[i,'DealCon'])
+            self.MPTable.setItem(i, 1, self.MPower.at[i,'ComCont'])
+            self.MPower.at[i,'DealCont'] = QTableWidgetItem('')
+            self.MPower.at[i,'DealCont'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.MPTable.setItem(i, 2, self.MPower.at[i,'DealCont'])
+            self.MPower.at[i,'DealQty'] = QTableWidgetItem('')
+            self.MPower.at[i,'DealQty'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.MPTable.setItem(i, 3, self.MPower.at[i,'DealQty'])
             i+=1
 
 
@@ -724,10 +724,14 @@ class SKQuoteLibEvents:
             xmax = SKMain.Future.lastidx + 1
             if SKMain.axis_xmax != xmax:
                 SKMain.DrawmainUpdate()
-            SKMain.MPower.at[0,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
-            SKMain.MPower.at[1,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
-            SKMain.MPower.at[2,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
-            SKMain.MPower.at[3,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']+SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
+            SKMain.MPower.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
+            SKMain.MPower.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
+            SKMain.MPower.at[2,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
+            if SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus'] > 0:
+                SKMain.MPower.at[2,'DealQty'].setBackground(Qt.red)
+            else:
+                SKMain.MPower.at[2,'DealQty'].setBackground(Qt.green)
+            SKMain.MPower.at[3,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']+SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
             # B = time.time()-start
             # if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
             #     SKMain.timeA.pop(0)
@@ -780,10 +784,6 @@ class SKQuoteLibEvents:
         askQty = total_dict['askQtyitem'].values()
         SKMain.bestfive.at[5,'bidQtyitem'].setText(str(int(sum(bidQty))))
         SKMain.bestfive.at[5,'askQtyitem'].setText(str(int(sum(askQty))))
-        SKMain.MPower.at[0,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
-        SKMain.MPower.at[1,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
-        SKMain.MPower.at[2,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
-        SKMain.MPower.at[3,'DealCon'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']+SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
 
         C = time.time()-start
         if len(SKMain.timeC)==1000:
@@ -796,15 +796,30 @@ class SKQuoteLibEvents:
         # 更新點
     def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount): 
         # print(nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount)
-        # 'ComCont','ComTa','DealTa','DealCon'
+        # 'ComQty','ComCont','DealCont','DealQty'
         MP_dict = {'ComCont':{0:nBuyTotalCount,1:nSellTotalCount,2:int(nBuyTotalCount-nSellTotalCount)},
-        'ComTa':{0:nBuyTotalQty,1:nSellTotalQty,2:int(nBuyTotalQty-nSellTotalQty)},
-        'DealTa':{0:nBuyDealTotalCount,1:nSellDealTotalCount,2:int(nBuyDealTotalCount-nSellDealTotalCount)}}
+        'ComQty':{0:nBuyTotalQty,1:nSellTotalQty,2:int(nBuyTotalQty-nSellTotalQty)},
+        'DealCont':{0:nBuyDealTotalCount,1:nSellDealTotalCount,2:int(nBuyDealTotalCount-nSellDealTotalCount)}}
         # 'DealCon':{0:nBuyTotalCount,1:nSellTotalCount,2:str(int(nBuyTotalCount-nSellTotalCount))
-        for (t, x) in SKMain.MPower.loc[0:2,['ComCont','ComTa','DealTa']].iterrows():
+        for (t, x) in SKMain.MPower.loc[0:2,['ComQty','ComCont','DealCont']].iterrows():
+            x.ComQty.setText(str(MP_dict['ComQty'][t]))
             x.ComCont.setText(str(MP_dict['ComCont'][t]))
-            x.ComTa.setText(str(MP_dict['ComTa'][t]))
-            x.DealTa.setText(str(MP_dict['DealTa'][t]))
+            x.DealCont.setText(str(MP_dict['DealCont'][t]))
+            if t == 2:
+                if MP_dict['ComQty'][t]>0:
+                    x.ComQty.setBackground(Qt.red)
+                else:
+                    x.ComQty.setBackground(Qt.green)
+                if MP_dict['ComCont'][t]<0:
+                    x.ComCont.setBackground(Qt.red)
+                else:
+                    x.ComCont.setBackground(Qt.green)
+                if MP_dict['DealCont'][t]<0:
+                    x.DealCont.setBackground(Qt.red)
+                else:
+                    x.DealCont.setBackground(Qt.green)
+
+
 
 
 # comtypes使用此方式註冊callback
