@@ -731,7 +731,7 @@ class SKQuoteLibEvents:
                 SKMain.MPower.at[2,'DealQty'].setBackground(Qt.red)
             else:
                 SKMain.MPower.at[2,'DealQty'].setBackground(Qt.green)
-            SKMain.MPower.at[3,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']+SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
+            SKMain.MPower.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
             # B = time.time()-start
             # if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
             #     SKMain.timeA.pop(0)

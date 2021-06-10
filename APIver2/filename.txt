@@ -534,3 +534,6 @@ Ticks2021-05-24.txt
 ../data/Ticks2021-06-03.txt
 ../data/Ticks2021-06-04.txt
 ../data/Ticks2021-06-07.txt
+../data/Ticks2021-06-08.txt
+../data/Ticks2021-06-09.txt
+../data/Ticks2021-06-10.txt
