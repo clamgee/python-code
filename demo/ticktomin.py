@@ -150,10 +150,13 @@ class MainWindows(QMainWindow):
         # self.MyAxis.setTicks([dict_tmp.items()])
         # self.draw1(axisItems={'bottom': self.MyAxis})
         self.kitem = CandlestickItem()
+        line=17159
         self.draw1 = self.l.addPlot()
+        self.draw1.plot(line, fillLevel=0, brush=(50,50,200,100))
         self.draw1.addItem(self.kitem)
-        data = mindf.loc[1065:1365,['ndatetime','open','high','low','close']]
-        data = data.reset_index(drop=True)
+        data = mindf.loc[1065:1365,['ndatetime','open','high','low','close']].reset_index(drop=True)
+        # data =data.reindex(list(range(0,300)))
+        # data = data.reset_index(drop=True)
         print(data)
         self.kitem.set_data(data.last_valid_index(),data.high.max(),data.low.min(),data)
         # self.draw1 = self.l.addPlot(axisItems={'bottom': self.MyAxis},y=data)
