@@ -1,18 +1,12 @@
-# import pyqtgraph.examples
-# pyqtgraph.examples.run()
-
-import numpy as np
-import pyqtgraph as pg
-
-data = 1000
-pg.plot(1000, fillLevel=0, brush=(50,50,200,100))
-
-# data = np.random.normal(size=(500,500))
-# pg.image(data, title="Simplest possible image example")
+def mouseMoved(evt): 
+    pos = evt[0] 
+    if signalgraph.sceneBoundingRect().contains(pos): 
+     mousePoint = vb.mapSceneToView(pos) 
+     index = int(mousePoint.x()) 
+     if index > 0 and index < len(x): 
+      label.setText("<span style='font-size: 12pt'>x=%0.1f, <span style='color: red'>y1=%0.1f</span>" % (mousePoint.x(), y[index], data2[index])) 
+     vLine.setPos(mousePoint.x()) 
+     hLine.setPos(mousePoint.y()) 
 
 
-## Start Qt event loop unless running in interactive mode or using pyside.
-if __name__ == '__main__':
-    import sys
-    if sys.flags.interactive != 1 or not hasattr(QtCore, 'PYQT_VERSION'):
-        pg.QtGui.QApplication.exec_()
+signalgraph.scene().sigMouseMoved.connect(mouseMoved) 

@@ -17,11 +17,17 @@ dayticks = pd.read_csv(direct+'\\'+file[-1],header=None,names=['ndatetime','nbid
 dayticks['ndatetime']=pd.to_datetime(dayticks['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
 dayticks.sort_values(by=['ndatetime'],ascending=True)
 dayticks.index = dayticks.ndatetime
-mindf=dayticks.resample('60s', how={'close': 'ohlc'})
+ohlc_dict = {'open':'first', 'high':'max', 'low':'min', 'close': 'last'}
+mindf=dayticks['close'].resample('1min',closed='right').ohlc()
+print(mindf.head())
 mindf=mindf.rename_axis('ndatetime').reset_index()
 mindf.columns = ['ndatetime','open','high','low','close']
 mindf['ndatetime'] = pd.to_datetime(mindf['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
-# mindf[['open','high','low','close']]= mindf[['open','high','low','close']].fillna(0.0).astype(int)
+mindf[['open','high','low','close']]= mindf[['open','high','low','close']].fillna(0.0).astype(int)
+data = mindf.loc[1065:1365]#
+data=data.reset_index(drop=True)
+# data.reindex(np.arange(data.shape[0]))
+print(data.head())
 
 class CandlestickItem(pg.GraphicsObject):
     def __init__(self):
@@ -48,7 +54,7 @@ class CandlestickItem(pg.GraphicsObject):
                 self.data.at[self.lastidx,'low']=self.low=nlow
             self.data.at[self.lastidx,'close'] = ndata.at[self.lastidx,'close']
             self.data.at[self.lastidx,'volume'] = ndata.at[self.lastidx,'volume']
-        elif nidx > self.lastidx and self.lastidx!=0:
+        elif nidx is not None and nidx > self.lastidx and self.lastidx!=0:
             col = ndata.columns.tolist()
             for row in col :
                 self.data.at[self.lastidx,row]=ndata.at[self.lastidx,row]
@@ -78,9 +84,11 @@ class CandlestickItem(pg.GraphicsObject):
             self.pictures.pop()
         w = 1.0 / 3.0
         start = len(self.pictures)
+        if self.lastidx is None:
+            self.lastidx=0
         stop = self.lastidx + 1
 
-        for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close', 'high_avg', 'low_avg']].iterrows():
+        for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
             p.setPen(pg.mkPen('w'))
@@ -97,16 +105,6 @@ class CandlestickItem(pg.GraphicsObject):
                 p.setBrush(pg.mkBrush('b'))
                 p.drawLine(QtCore.QPointF(t - 1, self.highavg), QtCore.QPointF(t, x.high_avg))
             # print('圖: ', x.high_avg)
-
-            if self.lowavg != '' and (stop-start)>1:
-                p.setPen(pg.mkPen('w'))
-                p.setBrush(pg.mkBrush('w'))
-                p.drawLine(QtCore.QPointF(t - 1, self.lowavg), QtCore.QPointF(t, x.low_avg))
-                # p.drawPoint(int(t), int(x.low_avg))
-
-            if t < (self.lastidx+1):
-                self.lowavg = x.low_avg
-                self.highavg = x.high_avg
             p.end()
             self.pictures.append(picture)
         
@@ -150,14 +148,16 @@ class MainWindows(QMainWindow):
         # self.MyAxis.setTicks([dict_tmp.items()])
         # self.draw1(axisItems={'bottom': self.MyAxis})
         self.kitem = CandlestickItem()
-        line=17159
+        YCline = pg.InfiniteLine(angle=0, movable=False)
+        YCline.setPos(17159)
         self.draw1 = self.l.addPlot()
-        self.draw1.plot(line, fillLevel=0, brush=(50,50,200,100))
         self.draw1.addItem(self.kitem)
-        data = mindf.loc[1065:1365,['ndatetime','open','high','low','close']].reset_index(drop=True)
+        # data = mindf.loc[1065:1365,['ndatetime','open','high','low','close']].reset_index(drop=True)
+        
+        self.draw1.addItem(YCline)
         # data =data.reindex(list(range(0,300)))
         # data = data.reset_index(drop=True)
-        print(data)
+        
         self.kitem.set_data(data.last_valid_index(),data.high.max(),data.low.min(),data)
         # self.draw1 = self.l.addPlot(axisItems={'bottom': self.MyAxis},y=data)
         self.draw1.setTitle('test')
