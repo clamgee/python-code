@@ -19,15 +19,18 @@ dayticks.sort_values(by=['ndatetime'],ascending=True)
 dayticks.index = dayticks.ndatetime
 ohlc_dict = {'open':'first', 'high':'max', 'low':'min', 'close': 'last'}
 mindf=dayticks['close'].resample('1min',closed='right').ohlc()
-print(mindf.head())
+mindf=mindf.dropna()
 mindf=mindf.rename_axis('ndatetime').reset_index()
 mindf.columns = ['ndatetime','open','high','low','close']
 mindf['ndatetime'] = pd.to_datetime(mindf['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
-mindf[['open','high','low','close']]= mindf[['open','high','low','close']].fillna(0.0).astype(int)
-data = mindf.loc[1065:1365]#
+mindf[['open','high','low','close']]= mindf[['open','high','low','close']].astype(int)
+
+data =mindf[(mindf.ndatetime.dt.hour>8) & (mindf.ndatetime.dt.hour <15)]
 data=data.reset_index(drop=True)
-# data.reindex(np.arange(data.shape[0]))
+# # data.reindex(np.arange(data.shape[0]))
 print(data.head())
+print(data.tail())
+print(data.info())
 
 class CandlestickItem(pg.GraphicsObject):
     def __init__(self):
