@@ -22,6 +22,7 @@ with open(direct+'\\'+file[-1]) as file :
 
 tick2min=pd.DataFrame(line,columns=['ndatetime','nbid','nask','close','volume'])
 tick2min['ndatetime']= pd.to_datetime(tick2min['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
+# tick2min=tick2min[(tick2min.ndatetime.dt.hour>8) & (tick2min.ndatetime.dt.hour<15)]
 tick2min=tick2min.sort_values(by=['ndatetime'],ascending=True)
 tick2min=tick2min.reset_index(drop=True)
 tick2min[['nbid','nask','close','volume']]=tick2min[['nbid','nask','close','volume']].astype(int)
@@ -32,7 +33,7 @@ df1min[['open','high','low','close','volume']]=df1min[['open','high','low','clos
 
 mm=0
 mm1=0
-interval=30
+interval=1
 high=0
 low=0
 lastidx=0
@@ -54,7 +55,7 @@ for idx,row in tick2min.iterrows():
         print('有錯誤:',mm,',',mm1,',',idx,row.ndatetime)
 print('消耗: ',time.time()-start)
 df1min=df1min.dropna()
-data=df1min[(df1min.ndatetime.dt.hour>8) & (df1min.ndatetime.dt.hour<15)]
+data=df1min[(df1min.ndatetime.dt.hour>=15) | (df1min.ndatetime.dt.hour<8)]
 data=data.reset_index(drop=True)
 print(data.head())
 print(data.tail())
