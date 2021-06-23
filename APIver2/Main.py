@@ -674,8 +674,8 @@ class SKQuoteLibEvents:
             ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume'])
             ticksdf =ticksdf.append(pd.DataFrame(SKMain.Future.ticklst,columns=['ndatetime','nbid','nask','close','volume']),ignore_index=True,sort=False)
             ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
-            filename = '../data/Ticks' + ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
-            ticksdf.to_csv(filename, header=False, index=False)
+            filename = ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
+            ticksdf.to_csv('../data/Ticks'+filename, header=False, index=False)
             df1=pd.read_csv('filename.txt')
             df1=df1.append(pd.DataFrame([[filename]],columns=['filename']),ignore_index=True)
             df1.to_csv('filename.txt',index=False)
