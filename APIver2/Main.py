@@ -671,8 +671,8 @@ class SKQuoteLibEvents:
         jTime = QTime(13, 50, 00)
         # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
         if nTime == jTime and SKMain.Future.ticklst is not None:
-            ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume'])
-            ticksdf =ticksdf.append(pd.DataFrame(SKMain.Future.ticklst,columns=['ndatetime','nbid','nask','close','volume']),ignore_index=True,sort=False)
+            ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume','deal'])
+            ticksdf =ticksdf.append(pd.DataFrame(SKMain.Future.ticklst,columns=['ndatetime','nbid','nask','close','volume','deal']),ignore_index=True,sort=False)
             ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
             filename = ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
             ticksdf.to_csv('../data/Ticks'+filename, header=False, index=False)

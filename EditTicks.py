@@ -7,7 +7,7 @@ import gc
 
 start = time.time()
 # 修改要抓期交所資料的檔案，手動修改檔案名稱
-df = pd.read_csv('Daily_2021_05_10.csv', encoding='big5', error_bad_lines=False, warn_bad_lines=True)
+df = pd.read_csv('Daily_2021_06_25.csv', encoding='big5', error_bad_lines=False, warn_bad_lines=True)
 df.rename(columns={
     df.columns[0]: 'ndate',
     df.columns[1]: 'product',
@@ -21,7 +21,7 @@ df.rename(columns={
 }, inplace=True)
 df.drop(['lastmon', 'farmon', 'open'], axis=1, inplace=True)
 df = df[df['product'].str.strip() == 'TX']  # 目標商品
-df = df[df['Month'].str.strip() == '202105']  # 手動修改目標月份
+df = df[df['Month'].str.strip() == '202107']  # 手動修改目標月份
 df[['ndate', 'ntime']] = df[['ndate', 'ntime']].astype(str)
 df.drop(['product', 'Month'], axis=1, inplace=True)
 
@@ -40,6 +40,22 @@ df['ndate']=df['ndate']+' '+df['ntime']
 del df['ntime']
 df['ndate']=pd.to_datetime(df['ndate'],format='%Y-%m-%d %H:%M:%S.%f')
 df = df.reset_index(drop=True)
+tmpdf = df['close'].drop(index=df.index)
+tmpdf.columns='close'
+tmpdf.loc[0]=0
+tmpdf = tmpdf.append(df.close,ignore_index=True)
+tmpdf = tmpdf.reset_index(drop=True)
+print(tmpdf.head(),len(tmpdf))
+df['lclose']=0
+df['lclose']=tmpdf.map(lambda x:x)
+def dealfunc(arrLike,nBid,nAsk,nClose,nQty,lClose):
+    if arrLike[lClose]!=0 and arrLike[nClose]>arrLike[lClose]:
+        deal = arrLike[nQty]
+    elif arrLike[lClose]!=0 and arrLike[nClose]<arrLike[lClose]:
+        deal = 0-arrLike[nQty]
+    else:
+        deal=arrLike[nQty]
+    return deal
 filename = 'data/Ticks' + str(df.iloc[-1, 0].date()) + '.txt'
 
 print(df.columns.values)
