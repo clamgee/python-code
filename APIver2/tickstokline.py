@@ -156,7 +156,7 @@ class dataprocess:
             #     self.contractkpd.at[self.lastidx,'dealminus']=nQty
         
         elif self.tmpcontract==0 or self.tmpcontract==12000 :
-            self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,nQty,0,0,self.contractkpd.at[self.lastidx,'dealbid'],self.contractkpd.at[self.lastidx,'dealask'],self.contractkpd.at[self.lastidx,'dealcount']]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg','dealbid','dealask','dealminus']),ignore_index=True,sort=False)
+            self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,nQty,0,0,self.contractkpd.at[self.lastidx,'dealbid'],self.contractkpd.at[self.lastidx,'dealask'],self.contractkpd.at[self.lastidx,'dealminus']]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg','dealbid','dealask','dealminus']),ignore_index=True,sort=False)
             self.High=self.Low=nClose
             self.ticksum+=nQty
             self.tmpcontract=nQty
