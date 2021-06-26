@@ -27,7 +27,7 @@ class dataprocess:
         self.ticklst = []
         self.tickclose = 0
         self.hisbol = 1 # 1:下載歷史資料至list, 2: 處理歷史list 3: 即時
-        self.contractkpd=pd.read_csv('../result.dat')
+        self.contractkpd=pd.read_csv('../result.dat',low_memory=False)
         self.contractkpd['ndatetime']=pd.to_datetime(self.contractkpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.contractkpd.sort_values(by=['ndatetime'],ascending=True)
         self.contractkpd=self.contractkpd.reset_index(drop=True)

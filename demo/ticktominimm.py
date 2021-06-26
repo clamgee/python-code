@@ -12,24 +12,24 @@ import pyqtgraph as pg
 
 direct=os.path.abspath('../data')
 file = os.listdir('../data')
-print(direct+'\\'+file[-1])
+print(direct+'\\'+file[-3])
 line=[]
-with open(direct+'\\'+file[-1]) as file :
+with open(direct+'\\'+file[-3]) as file :
     lines = file.read().splitlines()
     for rows in lines:
         row=rows.split(',')
-        line.append([row[0],row[1],row[2],row[3],row[4]])
+        line.append([row[0],row[1],row[2],row[3],row[4],row[5]])
 
-tick2min=pd.DataFrame(line,columns=['ndatetime','nbid','nask','close','volume'])
+tick2min=pd.DataFrame(line,columns=['ndatetime','nbid','nask','close','volume','deal'])
 tick2min['ndatetime']= pd.to_datetime(tick2min['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
 # tick2min=tick2min[(tick2min.ndatetime.dt.hour>8) & (tick2min.ndatetime.dt.hour<15)]
 tick2min=tick2min.sort_values(by=['ndatetime'],ascending=True)
 tick2min=tick2min.reset_index(drop=True)
-tick2min[['nbid','nask','close','volume']]=tick2min[['nbid','nask','close','volume']].astype(int)
+tick2min[['nbid','nask','close','volume','deal']]=tick2min[['nbid','nask','close','volume','deal']].astype(int)
 
-df1min=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
+df1min=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume','dealminus'])
 df1min['ndatetime']= pd.to_datetime(df1min['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
-df1min[['open','high','low','close','volume']]=df1min[['open','high','low','close','volume']].astype(int)
+df1min[['open','high','low','close','volume','dealminus']]=df1min[['open','high','low','close','volume','dealminus']].astype(int)
 
 mm=0
 mm1=0
@@ -42,12 +42,17 @@ for idx,row in tick2min.iterrows():
     if (idx==0 or mm==0) or row.ndatetime>=mm1:
         mm=row.ndatetime.replace(second=0,microsecond=0)
         mm1=mm+datetime.timedelta(minutes=interval)
-        df1min=df1min.append(pd.DataFrame([[mm,row[3],row[3],row[3],row[3],row[4]]],columns=['ndatetime','open','high','low','close','volume']),ignore_index=True,sort=False)
+        if lastidx ==0 :
+            tmpdeal=row[5]
+        else:
+            tmpdeal=df1min.at[lastidx,'dealminus']+row[5]
+        df1min=df1min.append(pd.DataFrame([[mm,row[3],row[3],row[3],row[3],row[4],tmpdeal]],columns=['ndatetime','open','high','low','close','volume','dealminus']),ignore_index=True,sort=False)
         high = low = row[3]
         lastidx=df1min.last_valid_index()
     elif row.ndatetime < mm1 :
         df1min.at[lastidx,'close']=row[3]
         df1min.at[lastidx,'volume']+=row[4]
+        df1min.at[lastidx,'dealminus']+=row[5]
         if high < row[3] or low > row[3]:
             df1min.at[lastidx,'high']=high=max(high,row[3])
             df1min.at[lastidx,'low']=low=min(low,row[3])
@@ -55,7 +60,7 @@ for idx,row in tick2min.iterrows():
         print('有錯誤:',mm,',',mm1,',',idx,row.ndatetime)
 print('消耗: ',time.time()-start)
 df1min=df1min.dropna()
-data=df1min[(df1min.ndatetime.dt.hour>=15) | (df1min.ndatetime.dt.hour<8)]
+data=df1min[(df1min.ndatetime.dt.hour<15) & (df1min.ndatetime.dt.hour>=8)]
 data=data.reset_index(drop=True)
 print(data.head())
 print(data.tail())
@@ -183,7 +188,6 @@ class MainWindows(QMainWindow):
         self.draw1 = self.l.addPlot()
         self.draw1.addItem(self.kitem)
         # data = mindf.loc[1065:1365,['ndatetime','open','high','low','close']].reset_index(drop=True)
-        
         self.draw1.addItem(YCline)
         # data =data.reindex(list(range(0,300)))
         # data = data.reset_index(drop=True)
@@ -194,13 +198,24 @@ class MainWindows(QMainWindow):
         self.draw1.showAxis('left',show=False)
         self.draw1.showAxis('top',show=False)
         self.draw1.showAxis('right',show=True)
+        self.l.nextRow()
+        self.draw2=self.l.addPlot()
+        baridx=data.index.tolist()
+        bardeal=data.dealminus.tolist()
+        self.bar = pg.BarGraphItem(x=baridx,height=bardeal,width=0.3,bush='r')
+        self.draw2.addItem(self.bar)
+        self.draw2.setXLink(self.draw1)
+        self.draw2.showAxis('left',show=False)
+        self.draw2.showAxis('top',show=False)
+        self.draw2.showAxis('right',show=True)
+
         # self.draw1.setXRange(7100,7500)
         # self.draw1.setYRange(12000,17000)
         # self.l.nextRow()
         # self.draw3=self.l.addPlot()
         # self.bar = pg.BarGraphItem(x=data2index,height=data2,width=0.3,bush='r')
         # self.draw3.addItem(self.bar)
-        # self.l.layout.setRowStretchFactor(0, 3)
+        self.l.layout.setRowStretchFactor(0, 3)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

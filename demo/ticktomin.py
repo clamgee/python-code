@@ -12,20 +12,26 @@ import pyqtgraph as pg
 
 direct=os.path.abspath('../data')
 file = os.listdir('../data')
-print(direct+'\\'+file[-1])
-dayticks = pd.read_csv(direct+'\\'+file[-1],header=None,names=['ndatetime','nbid','nask','close','volume'])
+print(direct+'\\'+file[-3])
+dayticks = pd.read_csv(direct+'\\'+file[-3],header=None,names=['ndatetime','nbid','nask','close','volume','deal'])
 dayticks['ndatetime']=pd.to_datetime(dayticks['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
 dayticks.sort_values(by=['ndatetime'],ascending=True)
 dayticks.index = dayticks.ndatetime
-ohlc_dict = {'open':'first', 'high':'max', 'low':'min', 'close': 'last'}
 mindf=dayticks['close'].resample('1min',closed='right').ohlc()
+tmpdf=dayticks['deal'].resample('1min').sum()
+print(tmpdf)
+mindf=pd.concat([mindf,tmpdf],axis=1)
 mindf=mindf.dropna()
+print(mindf.head())
+mindf['dealminus']=mindf['deal'].cumsum()
+del mindf['deal']
 mindf=mindf.rename_axis('ndatetime').reset_index()
-mindf.columns = ['ndatetime','open','high','low','close']
+mindf.columns = ['ndatetime','open','high','low','close','dealminus']
 mindf['ndatetime'] = pd.to_datetime(mindf['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
-mindf[['open','high','low','close']]= mindf[['open','high','low','close']].astype(int)
 
-data =mindf[(mindf.ndatetime.dt.hour>8) & (mindf.ndatetime.dt.hour <15)]
+mindf[['open','high','low','close','dealminus']]= mindf[['open','high','low','close','dealminus']].astype(int)
+
+data =mindf[(mindf.ndatetime.dt.hour>=8) & (mindf.ndatetime.dt.hour <15)]
 data=data.reset_index(drop=True)
 # # data.reindex(np.arange(data.shape[0]))
 print(data.head())

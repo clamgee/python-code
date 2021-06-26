@@ -7,7 +7,7 @@ import gc
 
 start = time.time()
 # 修改要抓期交所資料的檔案，手動修改檔案名稱
-df = pd.read_csv('Daily_2021_06_25.csv', encoding='big5', error_bad_lines=False, warn_bad_lines=True)
+df = pd.read_csv('Daily_2021_06_25.csv', encoding='big5', error_bad_lines=False, warn_bad_lines=True,low_memory=False)
 df.rename(columns={
     df.columns[0]: 'ndate',
     df.columns[1]: 'product',
@@ -25,10 +25,8 @@ df = df[df['Month'].str.strip() == '202107']  # 手動修改目標月份
 df[['ndate', 'ntime']] = df[['ndate', 'ntime']].astype(str)
 df.drop(['product', 'Month'], axis=1, inplace=True)
 
-
 def fx(x):
     return x.zfill(6) + '.000'
-
 
 df.ntime = df.ntime.apply(fx)
 
@@ -39,29 +37,43 @@ df = df[['ndate', 'ntime', 'nbid', 'nask', 'price', 'volume']]
 df['ndate']=df['ndate']+' '+df['ntime']
 del df['ntime']
 df['ndate']=pd.to_datetime(df['ndate'],format='%Y-%m-%d %H:%M:%S.%f')
+df.sort_values(by=['ndate'],ascending=True)
 df = df.reset_index(drop=True)
-tmpdf = df['close'].drop(index=df.index)
+# -----處理多空力道
+tmpdf = df['price'].drop(index=df.index)
 tmpdf.columns='close'
 tmpdf.loc[0]=0
-tmpdf = tmpdf.append(df.close,ignore_index=True)
+tmpdf = tmpdf.append(df.price,ignore_index=True)
 tmpdf = tmpdf.reset_index(drop=True)
-print(tmpdf.head(),len(tmpdf))
 df['lclose']=0
 df['lclose']=tmpdf.map(lambda x:x)
 def dealfunc(arrLike,nBid,nAsk,nClose,nQty,lClose):
-    if arrLike[lClose]!=0 and arrLike[nClose]>arrLike[lClose]:
-        deal = arrLike[nQty]
-    elif arrLike[lClose]!=0 and arrLike[nClose]<arrLike[lClose]:
-        deal = 0-arrLike[nQty]
+    if arrLike[nBid]==arrLike[nAsk]:
+        if arrLike[lClose]!=0 and arrLike[nClose]>arrLike[lClose]:
+            deal = arrLike[nQty]
+        elif arrLike[lClose]!=0 and arrLike[nClose]<arrLike[lClose]:
+            deal = 0-arrLike[nQty]
+        else:
+            deal=arrLike[nQty]
     else:
-        deal=arrLike[nQty]
+        if arrLike[lClose]!=0 and (arrLike[nClose]>arrLike[lClose] or arrLike[nClose]>=arrLike[nAsk]):
+            deal = arrLike[nQty]
+        elif arrLike[lClose]!=0 and (arrLike[nClose]<arrLike[lClose] or arrLike[nClose]<=arrLike[nBid]):
+            deal = 0-arrLike[nQty]
+        else:
+            if arrLike[nClose]>=arrLike[nAsk]:
+                deal=arrLike[nQty]
+            else:
+                deal = 0-arrLike[nQty]
     return deal
-filename = 'data/Ticks' + str(df.iloc[-1, 0].date()) + '.txt'
-
+start = time.time()
+df['deal']=df.apply(dealfunc,axis=1,args=('nbid', 'nask', 'price', 'volume','lclose'))
+del df['lclose']
 print(df.columns.values)
 print(df.shape)
 print(df.info())
 print(df.head(5))
+filename = 'data/Ticks' + str(df.iloc[-1, 0].date()) + '.txt'
 print(filename)
 df.to_csv(filename, header=False, index=False)
 end = time.time()
