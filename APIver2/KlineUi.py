@@ -74,8 +74,9 @@ class CandlestickItem(pg.GraphicsObject):
         for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close', 'high_avg', 'low_avg']].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
-            p.setPen(pg.mkPen('w'))
+            p.setPen(pg.mkPen(color='w'))
             p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
+            p.setPen(pg.mkPen(color='w',width=0.1))
             if x.open>x.close:
                 p.setBrush(pg.mkBrush('g'))
             elif x.open<x.close:

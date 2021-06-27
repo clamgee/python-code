@@ -22,7 +22,8 @@ with open(direct+'\\'+file[-3]) as file :
 
 tick2min=pd.DataFrame(line,columns=['ndatetime','nbid','nask','close','volume','deal'])
 tick2min['ndatetime']= pd.to_datetime(tick2min['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
-# tick2min=tick2min[(tick2min.ndatetime.dt.hour>8) & (tick2min.ndatetime.dt.hour<15)]
+tick2min=tick2min[(tick2min.ndatetime.dt.hour>=8) & (tick2min.ndatetime.dt.hour<15)]
+# data=df1min[(df1min.ndatetime.dt.hour<15) & (df1min.ndatetime.dt.hour>=8)]
 tick2min=tick2min.sort_values(by=['ndatetime'],ascending=True)
 tick2min=tick2min.reset_index(drop=True)
 tick2min[['nbid','nask','close','volume','deal']]=tick2min[['nbid','nask','close','volume','deal']].astype(int)
@@ -39,10 +40,10 @@ low=0
 lastidx=0
 start=time.time()
 for idx,row in tick2min.iterrows():
-    if (idx==0 or mm==0) or row.ndatetime>=mm1:
+    if idx==0 or row.ndatetime>=mm1:
         mm=row.ndatetime.replace(second=0,microsecond=0)
         mm1=mm+datetime.timedelta(minutes=interval)
-        if lastidx ==0 :
+        if idx ==0 :
             tmpdeal=row[5]
         else:
             tmpdeal=df1min.at[lastidx,'dealminus']+row[5]
@@ -59,8 +60,7 @@ for idx,row in tick2min.iterrows():
     else:
         print('有錯誤:',mm,',',mm1,',',idx,row.ndatetime)
 print('消耗: ',time.time()-start)
-df1min=df1min.dropna()
-data=df1min[(df1min.ndatetime.dt.hour<15) & (df1min.ndatetime.dt.hour>=8)]
+data=df1min.dropna()
 data=data.reset_index(drop=True)
 print(data.head())
 print(data.tail())
