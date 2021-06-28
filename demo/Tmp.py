@@ -1,3 +1,3 @@
 import datetime
-A=datetime.time()
-print(A,A.minute)
+import time
+print(time.localtime(time.time()).tm_hour)

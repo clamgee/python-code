@@ -45,6 +45,12 @@ class dataprocess:
         self.drawMA = False
         self.tmpcontract=0
         self.CheckHour=None
+        self.mindf = None
+        self.mm=0
+        self.mm1=0
+        self.minlastidx=0
+        self.minhigh=0
+        self.minlow=0
 
     def hisprocess(self,nlist):
         for row in nlist:
@@ -55,30 +61,14 @@ class dataprocess:
                 self.High=self.Low=row[3]
                 self.tmpcontract=row[4]
                 self.ticksum=row[4]
-                self.drawMA=True
                 self.lastidx = self.contractkpd.last_valid_index()
-                # if row[3]<=row[1]: #買價成交判定空方
-                #     self.contractkpd.at[self.lastidx,'dealbid']=0
-                #     self.contractkpd.at[self.lastidx,'dealask']=row[4]
-                #     self.contractkpd.at[self.lastidx,'dealminus']=-row[4]
-                # elif row[3]>=row[2]: #賣價成交判定多方
-                #     self.contractkpd.at[self.lastidx,'dealbid']=row[4]
-                #     self.contractkpd.at[self.lastidx,'dealask']=0
-                #     self.contractkpd.at[self.lastidx,'dealminus']=row[4]
 
             elif self.tmpcontract==0 or self.tmpcontract==12000 :
                 self.contractkpd=self.contractkpd.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],row[4],0,0,self.contractkpd.at[self.lastidx,'dealbid'],self.contractkpd.at[self.lastidx,'dealask'],self.contractkpd.at[self.lastidx,'dealminus']]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg','dealbid','dealask','dealminus']),ignore_index=True,sort=False)
                 self.High=self.Low=row[3]
                 self.tmpcontract=row[4]
                 self.ticksum+=row[4]
-                self.drawMA=True
                 self.lastidx = self.contractkpd.last_valid_index()
-                # if row[3]<=row[1]:
-                #     self.contractkpd.at[self.lastidx,'dealask']+=row[4]
-                #     self.contractkpd.at[self.lastidx,'dealminus']-=row[4]
-                # elif row[3]>=row[2]:
-                #     self.contractkpd.at[self.lastidx,'dealbid']+=row[4]
-                #     self.contractkpd.at[self.lastidx,'dealminus']+=row[4]
 
             elif (self.tmpcontract+row[4])>12000:
                 if row[3] > self.High or row[3] < self.Low :
@@ -88,23 +78,9 @@ class dataprocess:
                 self.contractkpd.at[self.lastidx,'volume']=12000
                 self.ticksum+=row[4]
                 self.tmpcontract=self.tmpcontract+row[4]-12000
-                # tmpdealQty = row[4] - self.tmpcontract
-                # if row[3]<=row[1]:
-                #     self.contractkpd.at[self.lastidx,'dealask']+=tmpdealQty
-                #     self.contractkpd.at[self.lastidx,'dealminus']-=tmpdealQty
-                # elif row[3]>=row[2]:
-                #     self.contractkpd.at[self.lastidx,'dealbid']+=tmpdealQty
-                #     self.contractkpd.at[self.lastidx,'dealminus']+=tmpdealQty
                 self.contractkpd=self.contractkpd.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],self.tmpcontract,0,0,self.contractkpd.at[self.lastidx,'dealbid'],self.contractkpd.at[self.lastidx,'dealask'],self.contractkpd.at[self.lastidx,'dealminus']]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg','dealbid','dealask','dealminus']),ignore_index=True,sort=False)
                 self.High=self.Low=row[3]
-                self.drawMA=True
                 self.lastidx = self.contractkpd.last_valid_index()
-                # if row[3]<=row[1]:
-                #     self.contractkpd.at[self.lastidx,'dealask']+=self.tmpcontract
-                #     self.contractkpd.at[self.lastidx,'dealminus']-=self.tmpcontract
-                # elif row[3]>=row[2]:
-                #     self.contractkpd.at[self.lastidx,'dealbid']+=self.tmpcontract
-                #     self.contractkpd.at[self.lastidx,'dealminus']+=self.tmpcontract
 
             else:
                 if row[3] > self.High or row[3] < self.Low:
@@ -113,13 +89,6 @@ class dataprocess:
                 self.contractkpd.at[self.lastidx,'close']=row[3]
                 self.ticksum+=row[4]
                 self.contractkpd.at[self.lastidx,'volume']=self.tmpcontract=self.tmpcontract+row[4]
-                self.drawMA=False
-                # if row[3]<=row[1]:
-                #     self.contractkpd.at[self.lastidx,'dealask']+=row[4]
-                #     self.contractkpd.at[self.lastidx,'dealminus']-=row[4]
-                # elif row[3]>=row[2]:
-                #     self.contractkpd.at[self.lastidx,'dealbid']+=row[4]
-                #     self.contractkpd.at[self.lastidx,'dealminus']+=row[4]
 
             if row[5]>0:
                 self.contractkpd.at[self.lastidx,'dealbid']+=row[5]
@@ -127,14 +96,54 @@ class dataprocess:
                 self.contractkpd.at[self.lastidx,'dealask']-=row[5]
             self.contractkpd.at[self.lastidx,'dealminus']+=row[5]
 
-            if self.drawMA :
-                self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean()
-                self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean()
-
             self.lasttick=row[0]
             self.CheckHour=tmphour
 
-        self.hisbol=3
+        self.contractkpd['high_avg'] = self.contractkpd.high.rolling(self.MA).mean()
+        self.contractkpd['low_avg'] = self.contractkpd.low.rolling(self.MA).mean()
+
+    def histicktomin(self,nlist):
+        dayticks = pd.DataFrame(nlist,columns=['ndatetime','nbid','nask','close','volume','deal'])
+        dayticks['ndatetime']=pd.to_datetime(dayticks['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+        print('1')
+        now = time.localtime(time.time()).tm_hour
+        if now>14 or now<8 :
+            dayticks=dayticks[(dayticks.ndatetime.dt.hour>14) | (dayticks.ndatetime.dt.hour<8)] # 夜盤
+        elif now>=8 and now<15:
+            dayticks=dayticks[(dayticks.ndatetime.dt.hour>=8) & (dayticks.ndatetime.dt.hour<15)] # 日盤
+        dayticks.sort_values(by=['ndatetime'],ascending=True)
+        dayticks.index = dayticks.ndatetime
+        self.mindf=dayticks['close'].resample('1min',closed='right').ohlc()
+        print('2')
+        tmpdf=dayticks['deal'].resample('1min').sum()
+        self.mindf=pd.concat([self.mindf,tmpdf],axis=1)
+        self.mindf=self.mindf.dropna()
+        self.mindf['dealminus']=self.mindf['deal'].cumsum()
+        del self.mindf['deal']
+        self.mindf=self.mindf.rename_axis('ndatetime').reset_index()
+        self.mindf['ndatetime'] = pd.to_datetime(self.mindf['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
+        self.mindf[['open','high','low','close','dealminus']]= self.mindf[['open','high','low','close','dealminus']].astype(int)
+
+    def tick2min:(self,ndatetime,nBid,nAsk,nClose,nQty,deal):
+        if self.minlastidx==0 or self.mindf.ndatetime>=self.mm1:
+            self.mm=mindf.ndatetime.replace(second=0,microsecond=0)
+            self.mm1=self.mm+datetime.timedelta(minutes=interval)
+        if self.minlastidx==0 :
+            tmpdeal=deal
+        else:
+            tmpdeal=self.mindf.at[self.minlastidx,'dealminus']+deal
+        self.mindf=self.mindf.append(pd.DataFrame([[self.mm,nClose,nClose,nClose,nClose,nQty,tmpdeal]],columns=['ndatetime','open','high','low','close','volume','dealminus']),ignore_index=True,sort=False)
+        self.minhigh = self.minlow = nClose
+        self.minlastidx=self.mindf.last_valid_index()
+    elif self.mindf.ndatetime < mm1 :
+        self.mindf.at[lastidx,'close']=nClose
+        self.mindf.at[lastidx,'volume']+=nQty
+        self.mindf.at[lastidx,'dealminus']+=deal
+        if self.minhigh < nClose or self.minlow > nClose:
+            self.mindf.at[self.minlastidx,'high']=self.minhigh=max(self.minhigh,nClose)
+            self.mindf.at[self.minlastidx,'low']=self.minlow=min(self.minlow,nClose)
+    else:
+        print('有錯誤:',self.mm,',',self.mm1,',',self.minlastidx,self.mindf.ndatetime)
 
 
     def contractk(self,ndatetime,nBid,nAsk,nClose,nQty,deal):
@@ -146,14 +155,6 @@ class dataprocess:
             self.ticksum=nQty
             self.drawMA=True
             self.lastidx = self.contractkpd.last_valid_index()
-            # if nClose<=nBid: #買價成交判定空方
-            #     self.contractkpd.at[self.lastidx,'dealbid']=0
-            #     self.contractkpd.at[self.lastidx,'dealask']=nQty
-            #     self.contractkpd.at[self.lastidx,'dealminus']=-nQty
-            # elif nClose>=nAsk: #賣價成交判定多方
-            #     self.contractkpd.at[self.lastidx,'dealbid']=nQty
-            #     self.contractkpd.at[self.lastidx,'dealask']=0
-            #     self.contractkpd.at[self.lastidx,'dealminus']=nQty
         
         elif self.tmpcontract==0 or self.tmpcontract==12000 :
             self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,nQty,0,0,self.contractkpd.at[self.lastidx,'dealbid'],self.contractkpd.at[self.lastidx,'dealask'],self.contractkpd.at[self.lastidx,'dealminus']]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg','dealbid','dealask','dealminus']),ignore_index=True,sort=False)
@@ -162,12 +163,6 @@ class dataprocess:
             self.tmpcontract=nQty
             self.drawMA=True
             self.lastidx = self.contractkpd.last_valid_index()
-            if nClose<=nBid:
-                self.contractkpd.at[self.lastidx,'dealask']+=nQty
-                self.contractkpd.at[self.lastidx,'dealminus']-=nQty
-            elif nClose>=nAsk:
-                self.contractkpd.at[self.lastidx,'dealbid']+=nQty
-                self.contractkpd.at[self.lastidx,'dealminus']+=nQty
 
         elif (self.tmpcontract+nQty)>12000:
             if nClose > self.High or nClose < self.Low :
@@ -177,24 +172,10 @@ class dataprocess:
             self.contractkpd.at[self.lastidx,'volume']=12000
             self.ticksum+=nQty
             self.tmpcontract=self.tmpcontract+nQty-12000
-            self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract,0,0,self.contractkpd.at[self.lastidx,'dealbid'],self.contractkpd.at[self.lastidx,'dealask'],self.contractkpd.at[self.lastidx,'dealcount']]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg','dealbid','dealask','dealminus']),ignore_index=True,sort=False)
-            # tmpdealQty = nQty - self.tmpcontract
-            # if nClose<=nBid:
-            #     self.contractkpd.at[self.lastidx,'dealask']+=tmpdealQty
-            #     self.contractkpd.at[self.lastidx,'dealminus']-=tmpdealQty
-            # elif nClose>=nAsk:
-            #     self.contractkpd.at[self.lastidx,'dealbid']+=tmpdealQty
-            #     self.contractkpd.at[self.lastidx,'dealminus']+=tmpdealQty
-            # self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract,0,0,self.contractkpd.at[self.lastidx,'dealbid'],self.contractkpd.at[self.lastidx,'dealask'],self.contractkpd.at[self.lastidx,'dealminus']]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg','dealbid','dealask','dealminus']),ignore_index=True,sort=False)
-            # self.High=self.Low=nClose
-            # self.drawMA=True
-            # self.lastidx = self.contractkpd.last_valid_index()
-            # if nClose<=nBid:
-            #     self.contractkpd.at[self.lastidx,'dealask']+=self.tmpcontract
-            #     self.contractkpd.at[self.lastidx,'dealminus']-=self.tmpcontract
-            # elif nClose>=nAsk:
-            #     self.contractkpd.at[self.lastidx,'dealbid']+=self.tmpcontract
-            #     self.contractkpd.at[self.lastidx,'dealminus']+=self.tmpcontract
+            self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,self.tmpcontract,0,0,self.contractkpd.at[self.lastidx,'dealbid'],self.contractkpd.at[self.lastidx,'dealask'],self.contractkpd.at[self.lastidx,'dealminus']]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg','dealbid','dealask','dealminus']),ignore_index=True,sort=False)
+            self.lastidx = self.contractkpd.last_valid_index()
+            self.High=self.Low=nClose
+            self.drawMA=True
 
         else:
             if nClose > self.High or nClose < self.Low:
@@ -250,6 +231,9 @@ class dataprocess:
         elif self.hisbol==2:
             self.ticklst.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
             self.hisprocess(self.ticklst)
+            self.histicktomin(self.ticklst)
+            self.hisbol=3
+
         else:
             print('Ticks處理發生錯誤',',',self.hisbol,',',ndatetime,',',self.lasttick)
 

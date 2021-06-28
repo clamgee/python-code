@@ -8,8 +8,8 @@ df1=pd.read_csv('filename.txt')
 
 def func2(df):
     df[0]=pd.to_datetime(df[0],format='%Y-%m-%d %H:%M:%S.%f')
-    df.columns=['ndatetime','nbid','nask','close','volume']
-    df[['nbid','nask','close','volume']]=df[['nbid','nask','close','volume']].astype(int)
+    df.columns=['ndatetime','nbid','nask','close','volume','dealminus']
+    df[['nbid','nask','close','volume','dealminus']]=df[['nbid','nask','close','volume','dealminus']].astype(int)
     df.sort_values(by=['ndatetime'],ascending=True)
     df.reset_index(drop=True)
     contractkpd = pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])

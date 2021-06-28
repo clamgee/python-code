@@ -15,12 +15,12 @@ file = os.listdir('../data')
 print(direct+'\\'+file[-3])
 dayticks = pd.read_csv(direct+'\\'+file[-3],header=None,names=['ndatetime','nbid','nask','close','volume','deal'])
 dayticks['ndatetime']=pd.to_datetime(dayticks['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
-dayticks=dayticks[(dayticks.ndatetime.dt.hour>=8) & (dayticks.ndatetime.dt.hour<15)]
+dayticks=dayticks[(dayticks.ndatetime.dt.hour>14) | (dayticks.ndatetime.dt.hour<8)] # 夜盤
+# dayticks=dayticks[(dayticks.ndatetime.dt.hour>=8) & (dayticks.ndatetime.dt.hour<15)] # 日盤
 dayticks.sort_values(by=['ndatetime'],ascending=True)
 dayticks.index = dayticks.ndatetime
 mindf=dayticks['close'].resample('1min',closed='right').ohlc()
 tmpdf=dayticks['deal'].resample('1min').sum()
-print(tmpdf)
 mindf=pd.concat([mindf,tmpdf],axis=1)
 mindf=mindf.dropna()
 print(mindf.head())
@@ -29,12 +29,8 @@ del mindf['deal']
 mindf=mindf.rename_axis('ndatetime').reset_index()
 mindf.columns = ['ndatetime','open','high','low','close','dealminus']
 mindf['ndatetime'] = pd.to_datetime(mindf['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
-
 mindf[['open','high','low','close','dealminus']]= mindf[['open','high','low','close','dealminus']].astype(int)
-
-data =mindf[(mindf.ndatetime.dt.hour>=8) & (mindf.ndatetime.dt.hour <15)]
-data=data.reset_index(drop=True)
-# # data.reindex(np.arange(data.shape[0]))
+data=mindf.reset_index(drop=True)
 print(data.head())
 print(data.tail())
 print(data.info())
@@ -278,7 +274,7 @@ class MainWindows(QMainWindow):
         self.bar = BarItem()
         self.draw2.addItem(self.bar)
         print(data[['ndatetime','dealminus']].head())
-        self.bar.set_data(data.last_valid_index(),data[['ndatetime','dealminus']])
+        self.bar.set_data(data.last_valid_index(),data.at[data.last_valid_index(),'dealminus'],data[['ndatetime','dealminus']])
         self.draw2.setXLink(self.draw1)
         self.draw2.showAxis('left',show=False)
         self.draw2.showAxis('top',show=False)

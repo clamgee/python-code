@@ -674,8 +674,8 @@ class SKQuoteLibEvents:
             ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume','deal'])
             ticksdf =ticksdf.append(pd.DataFrame(SKMain.Future.ticklst,columns=['ndatetime','nbid','nask','close','volume','deal']),ignore_index=True,sort=False)
             ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
-            filename = ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
-            ticksdf.to_csv('../data/Ticks'+filename, header=False, index=False)
+            filename = 'Ticks' + ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
+            ticksdf.to_csv('../data/'+filename, header=False, index=False)
             df1=pd.read_csv('filename.txt')
             df1=df1.append(pd.DataFrame([[filename]],columns=['filename']),ignore_index=True)
             df1.to_csv('filename.txt',index=False)
@@ -791,8 +791,11 @@ class SKQuoteLibEvents:
                 SKMain.timeC.append(C)
         else:
             SKMain.timeC.append(C)
-        Cavg = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
-        SKMain.drawmain.setLabel('top','5檔: '+Cavg)
+        if (sum(SKMain.timeC)/len(SKMain.timeC))>0:
+            Cavg = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
+            SKMain.drawmain.setLabel('top','5檔: '+Cavg)
+        else:
+            pass
         # 更新點
     def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount): 
         # print(nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount)
@@ -800,7 +803,6 @@ class SKQuoteLibEvents:
         MP_dict = {'ComCont':{0:nBuyTotalCount,1:nSellTotalCount,2:int(nBuyTotalCount-nSellTotalCount)},
         'ComQty':{0:nBuyTotalQty,1:nSellTotalQty,2:int(nBuyTotalQty-nSellTotalQty)},
         'DealCont':{0:nBuyDealTotalCount,1:nSellDealTotalCount,2:int(nBuyDealTotalCount-nSellDealTotalCount)}}
-        # 'DealCon':{0:nBuyTotalCount,1:nSellTotalCount,2:str(int(nBuyTotalCount-nSellTotalCount))
         for (t, x) in SKMain.MPower.loc[0:2,['ComQty','ComCont','DealCont']].iterrows():
             x.ComQty.setText(str(MP_dict['ComQty'][t]))
             x.ComCont.setText(str(MP_dict['ComCont'][t]))

@@ -138,6 +138,104 @@ class CandlestickItem(pg.GraphicsObject):
     def boundingRect(self):
         return QtCore.QRectF(0,self.low,len(self.pictures),(self.high-self.low)) 
 
+class BarItem(pg.GraphicsObject):
+    def __init__(self):
+        pg.GraphicsObject.__init__(self)
+        self.data = None
+        self.lastbar = None
+        self.picturemain = QtGui.QPicture() #主K線圖
+        self.picturelast = QtGui.QPicture() #最後一根K線圖
+        self.pictures = []
+        self.setFlag(self.ItemUsesExtendedStyleOption)
+        self.rect = None
+        self.low = 0
+        self.high = 0
+        self.highavg = ''
+        self.lowavg = ''
+        self.lastidx = 0
+        self.countK = 60 #設定要顯示多少K線
+
+    def set_data(self,nidx,dealminus,ndata):
+        if self.lastidx == nidx:
+            self.data.at[self.lastidx,'dealminus'] = ndata.at[self.lastidx,'dealminus']
+        elif nidx is not None and nidx > self.lastidx and self.lastidx!=0:
+            col = ndata.columns.tolist()
+            for row in col :
+                self.data.at[self.lastidx,row]=ndata.at[self.lastidx,row]
+            self.data=self.data.append(ndata.tail(nidx-self.lastidx),ignore_index=True)
+            self.lastidx = nidx
+
+        elif self.lastidx==0:
+            self.data = ndata.reset_index(drop=True)
+            if self.data.last_valid_index()==nidx:
+                self.lastidx = nidx
+            else:
+                print('繪圖Index資料有誤2')
+        else :
+            print('繪圖資料有誤!!',nidx)
+        if self.data.dealminus.max()>self.high:
+            self.high=self.data.dealminus.max()
+        if self.data.dealminus.min()<self.low:
+            self.low=self.data.dealminus.min()
+
+        # self.len = self.data.shape[0]
+        self.generatePicture()
+        self.informViewBoundsChanged()
+        if not self.scene() is None:
+            self.scene().update() #強制圖形更新
+    
+    def generatePicture(self):    
+        # 重畫或者最後一根K線
+        if int(len(self.pictures))>1:
+            self.pictures.pop()
+        w = 1.0 / 3.0
+        start = len(self.pictures)
+        if self.lastidx is None:
+            self.lastidx=0
+        stop = self.lastidx + 1
+
+        for (t, x) in self.data.loc[start:stop, ['dealminus']].iterrows():
+            picture = QtGui.QPicture()
+            p = QtGui.QPainter(picture)
+            p.setPen(pg.mkPen(color='w',width=0.1))
+            if x.dealminus<0:
+                p.setBrush(pg.mkBrush('g'))
+            elif x.dealminus>0:
+                p.setBrush(pg.mkBrush('r'))
+            else:
+                p.setBrush(pg.mkBrush('w'))
+            p.drawRect(QtCore.QRectF(t-w, 0, w*2, x.dealminus))
+            p.end()
+            self.pictures.append(picture)
+        
+    def paint(self, painter, opt, w):
+        rect = opt.exposedRect
+        xmin,xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
+        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None:# or self.lastbar != self.data.index.values[-1]:
+            self.rect = (rect.left(),rect.right())
+            self.picturemain = self.createPic(xmin,xmax-1)
+            self.picturemain.play(painter)
+            self.picturelast = self.createPic(xmax-1,xmax)
+            self.picturelast.play(painter)
+            # print('重繪')            
+        elif not self.picturemain is None:
+            self.picturemain.play(painter)
+            self.picturelast = self.createPic(xmax-1,xmax)
+            self.picturelast.play(painter)
+            # print('快圖')
+
+    # 缓存图片
+    #----------------------------------------------------------------------
+    def createPic(self,xmin,xmax):
+        picture = QtGui.QPicture()
+        p = QtGui.QPainter(picture)
+        [pic.play(p) for pic in self.pictures[xmin:xmax]]
+        p.end()
+        return picture
+    
+    def boundingRect(self):
+        return QtCore.QRectF(0,self.low,len(self.pictures),(self.high-self.low)) 
+
 class KlineWidget(pg.PlotWidget):
     def __init__(self,name):
         pg.PlotWidget.__init__(self)
