@@ -51,6 +51,7 @@ class dataprocess:
         self.minlastidx=0
         self.minhigh=0
         self.minlow=0
+        self.interval=1
 
     def hisprocess(self,nlist):
         for row in nlist:
@@ -115,38 +116,48 @@ class dataprocess:
         dayticks.index = dayticks.ndatetime
         self.mindf=dayticks['close'].resample('1min',closed='right').ohlc()
         print('2')
+        tmpdf=dayticks['volume'].resample('1min').sum()
+        self.mindf=pd.concat([self.mindf,tmpdf],axis=1)
+        del tmpdf
         tmpdf=dayticks['deal'].resample('1min').sum()
         self.mindf=pd.concat([self.mindf,tmpdf],axis=1)
+        del tmpdf
         self.mindf=self.mindf.dropna()
         self.mindf['dealminus']=self.mindf['deal'].cumsum()
         del self.mindf['deal']
         self.mindf=self.mindf.rename_axis('ndatetime').reset_index()
         self.mindf['ndatetime'] = pd.to_datetime(self.mindf['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
-        self.mindf[['open','high','low','close','dealminus']]= self.mindf[['open','high','low','close','dealminus']].astype(int)
-
-    def tick2min:(self,ndatetime,nBid,nAsk,nClose,nQty,deal):
-        if self.minlastidx==0 or self.mindf.ndatetime>=self.mm1:
-            self.mm=mindf.ndatetime.replace(second=0,microsecond=0)
-            self.mm1=self.mm+datetime.timedelta(minutes=interval)
-        if self.minlastidx==0 :
-            tmpdeal=deal
-        else:
-            tmpdeal=self.mindf.at[self.minlastidx,'dealminus']+deal
-        self.mindf=self.mindf.append(pd.DataFrame([[self.mm,nClose,nClose,nClose,nClose,nQty,tmpdeal]],columns=['ndatetime','open','high','low','close','volume','dealminus']),ignore_index=True,sort=False)
-        self.minhigh = self.minlow = nClose
+        self.mindf[['open','high','low','close','volume','dealminus']]= self.mindf[['open','high','low','close','volume','dealminus']].astype(int)
         self.minlastidx=self.mindf.last_valid_index()
-    elif self.mindf.ndatetime < mm1 :
-        self.mindf.at[lastidx,'close']=nClose
-        self.mindf.at[lastidx,'volume']+=nQty
-        self.mindf.at[lastidx,'dealminus']+=deal
-        if self.minhigh < nClose or self.minlow > nClose:
-            self.mindf.at[self.minlastidx,'high']=self.minhigh=max(self.minhigh,nClose)
-            self.mindf.at[self.minlastidx,'low']=self.minlow=min(self.minlow,nClose)
-    else:
-        print('有錯誤:',self.mm,',',self.mm1,',',self.minlastidx,self.mindf.ndatetime)
+        if self.minlastidx!=0:
+            self.mm=self.mindf.at[self.minlastidx,'ndatetime'].replace(second=0,microsecond=0)
+            self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
+            self.minhigh=self.mindf.at[self.minlastidx,'high']
+            self.minlow=self.mindf.at[self.minlastidx,'low']
+
+        print(self.mindf.tail())
+
+    def tick2min(self,ndatetime,nClose,nQty,deal):
+        if self.minlastidx==0 or ndatetime>=self.mm1:
+            self.mm=ndatetime.replace(second=0,microsecond=0)
+            self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
+            print(self.mindf.tail(1))
+            tmpdeal=self.mindf.at[self.minlastidx,'dealminus']+deal
+            self.mindf=self.mindf.append(pd.DataFrame([[self.mm,nClose,nClose,nClose,nClose,nQty,tmpdeal]],columns=['ndatetime','open','high','low','close','volume','dealminus']),ignore_index=True,sort=False)
+            self.minhigh = self.minlow = nClose
+            self.minlastidx=self.mindf.last_valid_index()
+        elif ndatetime < self.mm1 :
+            self.mindf.at[self.minlastidx,'close']=nClose
+            self.mindf.at[self.minlastidx,'volume']+=nQty
+            self.mindf.at[self.minlastidx,'dealminus']+=deal
+            if self.minhigh < nClose or self.minlow > nClose:
+                self.mindf.at[self.minlastidx,'high']=self.minhigh=max(self.minhigh,nClose)
+                self.mindf.at[self.minlastidx,'low']=self.minlow=min(self.minlow,nClose)
+        else:
+            print('有錯誤:',self.mm,',',self.mm1,',',self.minlastidx,ndatetime)
 
 
-    def contractk(self,ndatetime,nBid,nAsk,nClose,nQty,deal):
+    def contractk(self,ndatetime,nClose,nQty,deal):
         tmphour=ndatetime.hour
         if (tmphour==8 and self.CheckHour==4) or (tmphour==15 and (self.CheckHour is None or self.CheckHour==13)):
             self.contractkpd=self.contractkpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,nQty,0,0,0,0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg','dealbid','dealask','dealminus']),ignore_index=True,sort=False)
@@ -184,12 +195,6 @@ class dataprocess:
             self.contractkpd.at[self.lastidx,'close']=nClose
             self.ticksum+=nQty
             self.contractkpd.at[self.lastidx,'volume']=self.tmpcontract=self.tmpcontract+nQty
-            # if nClose<=nBid:
-            #     self.contractkpd.at[self.lastidx,'dealask']+=nQty
-            #     self.contractkpd.at[self.lastidx,'dealminus']-=nQty
-            # elif nClose>=nAsk:
-            #     self.contractkpd.at[self.lastidx,'dealbid']+=+nQty
-            #     self.contractkpd.at[self.lastidx,'dealminus']+=nQty
             self.drawMA=False
         if deal > 0 :
             self.contractkpd.at[self.lastidx,'dealbid']+=deal
@@ -226,7 +231,8 @@ class dataprocess:
         elif self.hisbol==3:
             # self.ticksdf=self.ticksdf.append(pd.DataFrame([[ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty)]],columns=['ndatetime','nbid','nask','close','volume']),ignore_index=True,sort=False)
             self.ticklst.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
-            self.contractk(ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal))
+            self.tick2min(ndatetime,int(nClose/100),int(nQty),int(deal))
+            self.contractk(ndatetime,int(nClose/100),int(nQty),int(deal))
             self.lasttick=ndatetime
         elif self.hisbol==2:
             self.ticklst.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])

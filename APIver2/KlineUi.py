@@ -71,7 +71,7 @@ class CandlestickItem(pg.GraphicsObject):
         start = len(self.pictures)
         stop = self.lastidx + 1
 
-        for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close', 'high_avg', 'low_avg']].iterrows():
+        for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
             p.setPen(pg.mkPen(color='w'))
@@ -84,22 +84,7 @@ class CandlestickItem(pg.GraphicsObject):
             else:
                 p.setBrush(pg.mkBrush('w'))
             p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
-            if self.highavg != '' and (stop-start)>1:
-                p.setPen(pg.mkPen('b'))
-                p.setBrush(pg.mkBrush('b'))
-                p.drawLine(QtCore.QPointF(t - 1, self.highavg), QtCore.QPointF(t, x.high_avg))
-            # print('圖: ', x.high_avg)
 
-            if self.lowavg != '' and (stop-start)>1:
-                p.setPen(pg.mkPen('w'))
-                p.setBrush(pg.mkBrush('w'))
-                p.drawLine(QtCore.QPointF(t - 1, self.lowavg), QtCore.QPointF(t, x.low_avg))
-                # p.drawPoint(int(t), int(x.low_avg))
-
-            if t < (self.lastidx+1):
-                self.lowavg = x.low_avg
-                self.highavg = x.high_avg
-            p.end()
             self.pictures.append(picture)
         
     def paint(self, painter, opt, w):

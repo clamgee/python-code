@@ -548,3 +548,6 @@ Ticks2021-06-23.txt
 Ticks2021-06-24.txt
 Ticks2021-06-25.txt
 Ticks2021-06-28.txt
+Ticks2021-06-29.txt
+Ticks2021-06-30.txt
+Ticks2021-07-01.txt

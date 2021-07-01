@@ -708,7 +708,7 @@ class SKQuoteLibEvents:
         if nSimulate == 0:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print('ThreadName: ',QThread.currentThread().objectName(),'ThreadID: ',int(QThread.currentThreadId()))
-            # start = time.time()
+            start = time.time()
             if SKMain.timeend == '' and SKMain.Future.hisbol==1:
                 SKMain.timeend = time.time()
                 SKMain.Future.hisbol=2
@@ -717,9 +717,9 @@ class SKQuoteLibEvents:
                 # print(SKMain.Future.contractkpd.tail(10))
             else:
                 SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
-            # A = time.time()-start
+            A = time.time()-start
             # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
-            # start = time.time()
+            start = time.time()
             SKMain.Kitem.set_data(SKMain.Future.lastidx,SKMain.Future.High,SKMain.Future.Low,SKMain.Future.contractkpd.tail(SKMain.Future.lastidx+1-SKMain.Kitem.lastidx))
             xmax = SKMain.Future.lastidx + 1
             if SKMain.axis_xmax != xmax:
@@ -732,19 +732,20 @@ class SKQuoteLibEvents:
             else:
                 SKMain.MPower.at[2,'DealQty'].setBackground(Qt.green)
             SKMain.MPower.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
-            # B = time.time()-start
-            # if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
-            #     SKMain.timeA.pop(0)
-            #     SKMain.timeA.append(A)
-            #     SKMain.timeB.pop(0)
-            #     SKMain.timeB.append(B)
-            # else:
-            #     SKMain.timeA.append(A)
-            #     SKMain.timeB.append(B)
-            # A = str(int(1/(sum(SKMain.timeA)/len(SKMain.timeA))))
-            # B = str(int(1/(sum(SKMain.timeB)/len(SKMain.timeB))))
-            # C = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
-            # SKMain.drawmain.setLabel('top',"K線: "+ A +" ,繪圖: "+ B)
+            B = time.time()-start
+            if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
+                SKMain.timeA.pop(0)
+                SKMain.timeA.append(A)
+                SKMain.timeB.pop(0)
+                SKMain.timeB.append(B)
+            else:
+                SKMain.timeA.append(A)
+                SKMain.timeB.append(B)
+            A = str(int(1/(sum(SKMain.timeA)/len(SKMain.timeA))))
+            B = str(int(1/(sum(SKMain.timeB)/len(SKMain.timeB))))
+            C = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
+            SKMain.drawmain.setLabel('top','K線: '+ A +' ,繪圖: '+ B+' ,5檔: '+ C)
+            
             # SKMain.ndetialmsg.textBrowser.append(str(SKMain.Future.ticklst[-1]))
             # if SKMain.axis_xmax != xmax:
             #     SKMain.axis_xmax = xmax
@@ -791,11 +792,11 @@ class SKQuoteLibEvents:
                 SKMain.timeC.append(C)
         else:
             SKMain.timeC.append(C)
-        if (sum(SKMain.timeC)/len(SKMain.timeC))>0:
-            Cavg = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
-            SKMain.drawmain.setLabel('top','5檔: '+Cavg)
-        else:
-            pass
+        # if (sum(SKMain.timeC)/len(SKMain.timeC))>0:
+        #     Cavg = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
+            # SKMain.drawmain.setLabel('top','5檔: '+Cavg)
+        # else:
+        #     pass
         # 更新點
     def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount): 
         # print(nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount)
