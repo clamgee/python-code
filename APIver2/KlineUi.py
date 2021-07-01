@@ -76,7 +76,7 @@ class CandlestickItem(pg.GraphicsObject):
             p = QtGui.QPainter(picture)
             p.setPen(pg.mkPen(color='w'))
             p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
-            p.setPen(pg.mkPen(color='w',width=0.1))
+            p.setPen(pg.mkPen(color='w',width=0.01))
             if x.open>x.close:
                 p.setBrush(pg.mkBrush('g'))
             elif x.open<x.close:
@@ -84,7 +84,6 @@ class CandlestickItem(pg.GraphicsObject):
             else:
                 p.setBrush(pg.mkBrush('w'))
             p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
-
             self.pictures.append(picture)
         
     def paint(self, painter, opt, w):
@@ -140,7 +139,7 @@ class BarItem(pg.GraphicsObject):
         self.lastidx = 0
         self.countK = 60 #設定要顯示多少K線
 
-    def set_data(self,nidx,dealminus,ndata):
+    def set_data(self,nidx,ndata):
         if self.lastidx == nidx:
             self.data.at[self.lastidx,'dealminus'] = ndata.at[self.lastidx,'dealminus']
         elif nidx is not None and nidx > self.lastidx and self.lastidx!=0:

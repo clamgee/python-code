@@ -11,14 +11,20 @@ from pyqtgraph import QtCore,QtGui
 import pyqtgraph as pg
 
 direct=os.path.abspath('../data')
-file = os.listdir('../data')
-print(direct+'\\'+file[-3])
-dayticks = pd.read_csv(direct+'\\'+file[-3],header=None,names=['ndatetime','nbid','nask','close','volume','deal'])
+filelist = os.listdir('../data')
+file = filelist[-1]
+file2=filelist[-2]
+print(direct+'\\'+file)
+tmpdf = pd.read_csv(direct+'\\'+file2,header=None,names=['ndatetime','nbid','nask','close','volume','deal'])
+lastclose = tmpdf.at[tmpdf.last_valid_index(),'close']
+del tmpdf
+dayticks = pd.read_csv(direct+'\\'+file,header=None,names=['ndatetime','nbid','nask','close','volume','deal'])
 dayticks['ndatetime']=pd.to_datetime(dayticks['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
-dayticks=dayticks[(dayticks.ndatetime.dt.hour>14) | (dayticks.ndatetime.dt.hour<8)] # 夜盤
-# dayticks=dayticks[(dayticks.ndatetime.dt.hour>=8) & (dayticks.ndatetime.dt.hour<15)] # 日盤
+# dayticks=dayticks[(dayticks.ndatetime.dt.hour>14) | (dayticks.ndatetime.dt.hour<8)] # 夜盤
+dayticks=dayticks[(dayticks.ndatetime.dt.hour>=8) & (dayticks.ndatetime.dt.hour<15)] # 日盤
 dayticks.sort_values(by=['ndatetime'],ascending=True)
 dayticks.index = dayticks.ndatetime
+print(dayticks.tail())
 mindf=dayticks['close'].resample('1min',closed='right').ohlc()
 tmpdf=dayticks['deal'].resample('1min').sum()
 mindf=pd.concat([mindf,tmpdf],axis=1)
@@ -249,7 +255,7 @@ class MainWindows(QMainWindow):
         self.GV.setCentralItem(self.l)
         self.kitem = CandlestickItem()
         YCline = pg.InfiniteLine(angle=0, movable=False)
-        YCline.setPos(17159)
+        YCline.setPos(lastclose)
         self.MyAxis = pg.AxisItem(orientation='bottom')
         self.draw1 = self.l.addPlot(axisItems={'bottom': self.MyAxis})
         # self.draw1 = self.l.addPlot()
@@ -270,7 +276,8 @@ class MainWindows(QMainWindow):
         self.l.nextRow()
         self.MyAxis2 = pg.AxisItem(orientation='bottom')
         self.draw2=self.l.addPlot(axisItems={'bottom': self.MyAxis2})
-        self.MyAxis.setTicks([dict_tmp.items()])
+        self.MyAxis2.setTicks([dict_tmp.items()])
+        # self.draw2=self.l.addPlot()
         self.bar = BarItem()
         self.draw2.addItem(self.bar)
         print(data[['ndatetime','dealminus']].head())
