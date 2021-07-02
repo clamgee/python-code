@@ -106,7 +106,6 @@ class dataprocess:
     def histicktomin(self,nlist):
         dayticks = pd.DataFrame(nlist,columns=['ndatetime','nbid','nask','close','volume','deal'])
         dayticks['ndatetime']=pd.to_datetime(dayticks['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
-        print('1')
         now = time.localtime(time.time()).tm_hour
         if now>14 or now<8 :
             dayticks=dayticks[(dayticks.ndatetime.dt.hour>14) | (dayticks.ndatetime.dt.hour<8)] # 夜盤
@@ -115,7 +114,6 @@ class dataprocess:
         dayticks.sort_values(by=['ndatetime'],ascending=True)
         dayticks.index = dayticks.ndatetime
         self.mindf=dayticks['close'].resample('1min',closed='right').ohlc()
-        print('2')
         tmpdf=dayticks['volume'].resample('1min').sum()
         self.mindf=pd.concat([self.mindf,tmpdf],axis=1)
         del tmpdf
@@ -134,7 +132,6 @@ class dataprocess:
             self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
             self.minhigh=self.mindf.at[self.minlastidx,'high']
             self.minlow=self.mindf.at[self.minlastidx,'low']
-
         print(self.mindf.tail())
 
     def tick2min(self,ndatetime,nClose,nQty,deal):

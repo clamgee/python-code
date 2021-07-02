@@ -67,12 +67,10 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.drawmink.showAxis('right',show=True)
         self.drawmink.showAxis('left',show=False)
         self.drawmink.showGrid(x=False,y=True)
+        self.axismin_ch = 0 #圖形邊界更新
         self.axismink_xmin = 0
-        self.axismink_xmax = 100
         self.axismink_ymin = 0
         self.axismink_ymax = 100
-        self.drawmink.setXRange(self.axismink_xmin,self.axismink_xmax)
-        self.drawmink.setYRange(self.axismink_ymin,self.axismink_ymax)
         self.GLminK.nextRow()
         self.Axisdealminus = pg.AxisItem(orientation='bottom')
         self.drawdealminus = self.GLminK.addPlot(axisItems={'bottom': self.Axisdealminus})
@@ -80,13 +78,25 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.drawdealminus.showAxis('left',show=False)
         self.drawdealminus.showGrid(x=False,y=True)
         self.axisdealminus_xmin = 0
+        if time.localtime(time.time()).tm_hour >= 15 or time.localtime(time.time()).tm_hour < 8:
+            self.axismink_xmax = 827
+            self.axisdealminus_xmax = 827
+        elif time.localtime(time.time()).tm_hour >=8 and time.localtime(time.time()).tm_hour < 15:
+            self.axismink_xmax = 300
+            self.axisdealminus_xmax = 300
+        else:
+            print('當沖邊界錯誤!!')
+
         self.axisdealminus_xmax = 100
         self.axisdealminus_ymin = 0
         self.axisdealminus_ymax = 100
+        self.GLminK.layout.setRowStretchFactor(0,3) #當沖第 1 圖框大小
+        self.GLminK.layout.setRowStretchFactor(1,1) #當沖第 2 圖框大小
+        self.drawmink.setXRange(self.axismink_xmin,self.axismink_xmax)
+        self.drawmink.setYRange(self.axismink_ymin,self.axismink_ymax)
         self.drawdealminus.setXRange(self.axisdealminus_xmin,self.axisdealminus_xmax)
         self.drawdealminus.setYRange(self.axisdealminus_ymin,self.axisdealminus_ymax)
         self.drawdealminus.setXLink(self.drawmink)
-        self.GLminK.layout.setRowStretchFactor(0,3)
         # 下單參數 Future structure
         self.trade_act = -1
         self.OrderPrice = ''
@@ -134,26 +144,20 @@ class SKMainWindow(QMainWindow):  # 主視窗
             # axis12k = pg.AxisItem('buttom')
     def DrawminkUpdate(self):
         xmax = int(len(self.minKitem.pictures))
-        if self.axismink_xmax != xmax:
-            self.axismink_xmax = xmax
-            self.axisdealminus_xmax = xmax
-            xmin = 0
-            self.axismink_xmin = xmin
-            self.axisdealminus_xmin = xmin
-            self.drawmink.setXRange(self.axismink_xmin,self.axismink_xmax)
-            self.drawdealminus.setXRange(self.axisdealminus_xmin,self.axisdealminus_xmax)
+        if self.axismin_ch != xmax:
+            self.axismin_ch = xmax
             dict_tmp=self.minKitem.data['ndatetime'][self.minKitem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
             self.Axismink.setTicks([dict_tmp.items()])
             self.Axisdealminus.setTicks([dict_tmp.items()])
-        ymin = self.minKitem.data.loc[self.axismink_xmin:self.axismink_xmax, ['low']].values.min()
-        ymax = self.minKitem.data.loc[self.axismink_xmin:self.axismink_xmax, ['high']].values.max()        
-        dealbar_ymin=self.dealminusbar.data.loc[self.axisdealminus_xmin:self.axisdealminus_xmax,['dealminus']].values.min()
-        dealbar_ymax=self.dealminusbar.data.loc[self.axisdealminus_xmin:self.axisdealminus_xmax,['dealminus']].values.max()
+        ymin = self.minKitem.data.loc[self.axismink_xmin:self.minKitem.lastidx, ['low']].values.min()
+        ymax = self.minKitem.data.loc[self.axismink_xmin:self.minKitem.lastidx, ['high']].values.max()        
+        dealbar_ymin=self.dealminusbar.data.loc[self.axisdealminus_xmin:self.dealminusbar.lastidx,['dealminus']].values.min()
+        dealbar_ymax=self.dealminusbar.data.loc[self.axisdealminus_xmin:self.dealminusbar.lastidx,['dealminus']].values.max()
         if self.axismink_ymin != ymin or self.axismink_ymax != ymax:
             self.axismink_ymin = ymin
             self.axismink_ymax = ymax        
             self.drawmink.setYRange(self.axismink_ymin,self.axismink_ymax)
-        if self.axisdealminus_ymin != ymin or self.axisdealminus_ymax != ymax:
+        if self.axisdealminus_ymin != dealbar_ymin or self.axisdealminus_ymax != dealbar_ymax:
             self.axisdealminus_ymin = dealbar_ymin
             self.axisdealminus_ymax = dealbar_ymax        
             self.drawdealminus.setYRange(self.axisdealminus_ymin,self.axisdealminus_ymax)
@@ -338,7 +342,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # self.ndetialmsg.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         # self.ndetialmsg.show()
         self.Kitem = KlineUi.CandlestickItem()
-        self.minKitem = KlineUi.CandlestickItem()
+        self.minKitem = KlineUi.CandleminuteItem()
         self.dealminusbar = KlineUi.BarItem()
         # self.Kui = KlineUi.KlineWidget(nstock)
         # self.Kui.addItem(self.Kitem)
@@ -791,7 +795,7 @@ class SKQuoteLibEvents:
             minkmax = SKMain.Future.minlastidx + 1
             if SKMain.axis12k_xmax != xmax:
                 SKMain.Draw12kUpdate()
-            if SKMain.axismink_xmax != minkmax:
+            if SKMain.axismin_ch != minkmax:
                 SKMain.DrawminkUpdate()
             SKMain.MPower.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
             SKMain.MPower.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))

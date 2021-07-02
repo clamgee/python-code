@@ -20,8 +20,8 @@ lastclose = tmpdf.at[tmpdf.last_valid_index(),'close']
 del tmpdf
 dayticks = pd.read_csv(direct+'\\'+file,header=None,names=['ndatetime','nbid','nask','close','volume','deal'])
 dayticks['ndatetime']=pd.to_datetime(dayticks['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
-# dayticks=dayticks[(dayticks.ndatetime.dt.hour>14) | (dayticks.ndatetime.dt.hour<8)] # 夜盤
-dayticks=dayticks[(dayticks.ndatetime.dt.hour>=8) & (dayticks.ndatetime.dt.hour<15)] # 日盤
+dayticks=dayticks[(dayticks.ndatetime.dt.hour>14) | (dayticks.ndatetime.dt.hour<8)] # 夜盤
+# dayticks=dayticks[(dayticks.ndatetime.dt.hour>=8) & (dayticks.ndatetime.dt.hour<15)] # 日盤
 dayticks.sort_values(by=['ndatetime'],ascending=True)
 dayticks.index = dayticks.ndatetime
 print(dayticks.tail())
@@ -103,7 +103,7 @@ class CandlestickItem(pg.GraphicsObject):
         for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
-            p.setPen(pg.mkPen(color='w'))
+            p.setPen(pg.mkPen(color='w',width=0.6))
             p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
             p.setPen(pg.mkPen(color='w',width=0.1))
             if x.open>x.close:
@@ -289,6 +289,8 @@ class MainWindows(QMainWindow):
 
 
         self.l.layout.setRowStretchFactor(0, 3)
+        self.l.layout.setRowStretchFactor(1, 1)
+
 
 
 
