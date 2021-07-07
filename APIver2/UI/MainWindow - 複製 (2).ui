@@ -54,7 +54,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,0,6,1,1,1,1,1">
+           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,6,6,1,1,1,1,1">
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,4">
               <item>
@@ -113,18 +113,30 @@
              </layout>
             </item>
             <item>
-             <widget class="QTableView" name="DomTable">
+             <widget class="QTableWidget" name="DomTable">
               <property name="alternatingRowColors">
                <bool>true</bool>
               </property>
               <property name="textElideMode">
                <enum>Qt::ElideMiddle</enum>
               </property>
+              <property name="rowCount">
+               <number>6</number>
+              </property>
+              <property name="columnCount">
+               <number>4</number>
+              </property>
+              <attribute name="horizontalHeaderVisible">
+               <bool>true</bool>
+              </attribute>
               <attribute name="horizontalHeaderCascadingSectionResizes">
                <bool>true</bool>
               </attribute>
-              <attribute name="horizontalHeaderStretchLastSection">
-               <bool>false</bool>
+              <attribute name="horizontalHeaderMinimumSectionSize">
+               <number>22</number>
+              </attribute>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>86</number>
               </attribute>
               <attribute name="verticalHeaderVisible">
                <bool>false</bool>
@@ -132,9 +144,19 @@
               <attribute name="verticalHeaderCascadingSectionResizes">
                <bool>true</bool>
               </attribute>
-              <attribute name="verticalHeaderStretchLastSection">
-               <bool>false</bool>
+              <attribute name="verticalHeaderMinimumSectionSize">
+               <number>12</number>
               </attribute>
+              <row/>
+              <row/>
+              <row/>
+              <row/>
+              <row/>
+              <row/>
+              <column/>
+              <column/>
+              <column/>
+              <column/>
              </widget>
             </item>
             <item>
@@ -462,7 +484,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1,0,6,1,1,1,1,1">
+           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1,6,6,1,1,1,1,1">
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="0,4">
               <item>
@@ -521,16 +543,50 @@
              </layout>
             </item>
             <item>
-             <widget class="QTableView" name="DomTable_pawn">
+             <widget class="QTableWidget" name="DomTable_pawn">
               <property name="alternatingRowColors">
                <bool>true</bool>
               </property>
               <property name="textElideMode">
                <enum>Qt::ElideMiddle</enum>
               </property>
+              <property name="rowCount">
+               <number>6</number>
+              </property>
+              <property name="columnCount">
+               <number>4</number>
+              </property>
+              <attribute name="horizontalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="horizontalHeaderCascadingSectionResizes">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="horizontalHeaderMinimumSectionSize">
+               <number>22</number>
+              </attribute>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>86</number>
+              </attribute>
               <attribute name="verticalHeaderVisible">
                <bool>false</bool>
               </attribute>
+              <attribute name="verticalHeaderCascadingSectionResizes">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="verticalHeaderMinimumSectionSize">
+               <number>12</number>
+              </attribute>
+              <row/>
+              <row/>
+              <row/>
+              <row/>
+              <row/>
+              <row/>
+              <column/>
+              <column/>
+              <column/>
+              <column/>
              </widget>
             </item>
             <item>

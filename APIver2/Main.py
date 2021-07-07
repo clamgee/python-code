@@ -162,10 +162,6 @@ class SKMainWindow(QMainWindow):  # 主視窗
             self.axisdealminus_ymax = dealbar_ymax        
             self.drawdealminus.setYRange(self.axisdealminus_ymin,self.axisdealminus_ymax)
 
-
-
-
-
     # 呼叫系統訊息介面與功能
     def SKMessageFunc(self):
         self.SKMessage = FuncUI.MessageDialog('系統訊息')  # 設定系統訊息介面
@@ -235,27 +231,53 @@ class SKMainWindow(QMainWindow):  # 主視窗
     # 權益數介面結束
     # 閃電下單
     def DomTableUI(self):
+        self.bestfive = pd.DataFrame(np.arange(24).reshape(6,4), columns=['bidQtyitem','nbiditem','naskitem','askQtyitem'])
+        self.bestfive[['bidQtyitem','nbiditem','naskitem','askQtyitem']]=self.bestfive[['bidQtyitem','nbiditem','naskitem','askQtyitem']].astype(str)
+        self.Dom1model=PandasModel()
+        self.Dom1model.setdata(self.bestfive)
+        self.DomTable.setModel(self.Dom1model)
         self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.DomTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.DomTable.setHorizontalHeaderLabels(['數量', '買進', '賣出', '數量'])
-        self.DomTable.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
-        self.bestfive = pd.DataFrame(np.arange(24).reshape(6,4), columns=['bidQtyitem','nbiditem','naskitem','askQtyitem'])
-        i = 0
-        while i < 6:
-            self.bestfive.at[i, 'bidQtyitem'] = QTableWidgetItem('')
-            self.DomTable.setItem(i, 0, self.bestfive.at[i, 'bidQtyitem'])
-            self.bestfive.at[i, 'nbiditem'] = QTableWidgetItem('')
-            self.DomTable.setItem(i, 1, self.bestfive.at[i, 'nbiditem'])
-            self.bestfive.at[i, 'naskitem'] = QTableWidgetItem('')
-            self.DomTable.setItem(i, 2, self.bestfive.at[i, 'naskitem'])
-            self.bestfive.at[i, 'askQtyitem'] = QTableWidgetItem('')
-            self.DomTable.setItem(i, 3, self.bestfive.at[i, 'askQtyitem'])
-            self.bestfive.at[i, 'bidQtyitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.bestfive.at[i, 'nbiditem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.bestfive.at[i, 'naskitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.bestfive.at[i, 'askQtyitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            i += 1
+        # self.Dom1model.setdata(self.bestfive)
+        self.DomTable_pawn.setModel(self.Dom1model)
+        self.DomTable_pawn.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.DomTable_pawn.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.DomTable_pawn.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        # # TickKDom
+        # self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.DomTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        # self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.DomTable.setHorizontalHeaderLabels(['數量', '買進', '賣出', '數量'])
+        # self.DomTable.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
+        # # 當沖Dom
+        # self.DomTable_pawn.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.DomTable_pawn.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        # self.DomTable_pawn.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.DomTable_pawn.setHorizontalHeaderLabels(['數量', '買進', '賣出', '數量'])
+        # self.DomTable_pawn.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
+        # self.bestfive = pd.DataFrame(np.arange(24).reshape(6,4), columns=['bidQtyitem','nbiditem','naskitem','askQtyitem'])
+
+        # i = 0
+        # while i < 6:
+        #     self.bestfive.at[i, 'bidQtyitem'] = QTableWidgetItem('')
+        #     self.DomTable.setItem(i, 0, self.bestfive.at[i, 'bidQtyitem'])
+        #     self.DomTable_pawn.setItem(i, 0, self.bestfive.at[i, 'bidQtyitem'])
+        #     self.bestfive.at[i, 'nbiditem'] = QTableWidgetItem('')
+        #     self.DomTable.setItem(i, 1, self.bestfive.at[i, 'nbiditem'])
+        #     self.DomTable_pawn.setItem(i, 1, self.bestfive.at[i, 'nbiditem'])
+        #     self.bestfive.at[i, 'naskitem'] = QTableWidgetItem('')
+        #     self.DomTable.setItem(i, 2, self.bestfive.at[i, 'naskitem'])
+        #     self.DomTable_pawn.setItem(i, 2, self.bestfive.at[i, 'naskitem'])
+        #     self.bestfive.at[i, 'askQtyitem'] = QTableWidgetItem('')
+        #     self.DomTable.setItem(i, 3, self.bestfive.at[i, 'askQtyitem'])
+        #     self.DomTable_pawn.setItem(i, 3, self.bestfive.at[i, 'askQtyitem'])
+        #     self.bestfive.at[i, 'bidQtyitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        #     self.bestfive.at[i, 'nbiditem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        #     self.bestfive.at[i, 'naskitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        #     self.bestfive.at[i, 'askQtyitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        #     i += 1
         # self.bestfive.at[13, 'closeTBitem'].setBackground(Qt.yellow)
         # self.bestfive.at[13, 'bidTBitem'].setBackground(Qt.yellow)
         # self.bestfive.at[13, 'askTBitem'].setBackground(Qt.yellow)
@@ -269,20 +291,33 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.MPTable.setVerticalHeaderLabels(['買進', '賣出', '差', '總口數'])
         self.MPTable.verticalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
         self.MPower = pd.DataFrame(np.arange(16).reshape(4,4), columns=['ComQty','ComCont','DealCont','DealQty'])
+        # self.MPTable_pawn.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.MPTable_pawn.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        # self.MPTable_pawn.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.MPTable_pawn.verticalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        # self.MPTable_pawn.setHorizontalHeaderLabels(['委口', '委筆', '成筆', '成口'])
+        # self.MPTable_pawn.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
+        # self.MPTable_pawn.setVerticalHeaderLabels(['買進', '賣出', '差', '總口數'])
+        # self.MPTable_pawn.verticalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
+
         i=0
         while i < 4 :
             self.MPower.at[i,'ComQty'] = QTableWidgetItem('')
             self.MPower.at[i,'ComQty'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
             self.MPTable.setItem(i, 0, self.MPower.at[i,'ComQty'])
+            # self.MPTable_pawn.setItem(i, 0, self.MPower.at[i,'ComQty'])
             self.MPower.at[i,'ComCont'] = QTableWidgetItem('')
             self.MPower.at[i,'ComCont'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
             self.MPTable.setItem(i, 1, self.MPower.at[i,'ComCont'])
+            # self.MPTable_pawn.setItem(i, 1, self.MPower.at[i,'ComCont'])
             self.MPower.at[i,'DealCont'] = QTableWidgetItem('')
             self.MPower.at[i,'DealCont'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
             self.MPTable.setItem(i, 2, self.MPower.at[i,'DealCont'])
+            # self.MPTable_pawn.setItem(i, 2, self.MPower.at[i,'DealCont'])
             self.MPower.at[i,'DealQty'] = QTableWidgetItem('')
             self.MPower.at[i,'DealQty'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
             self.MPTable.setItem(i, 3, self.MPower.at[i,'DealQty'])
+            # self.MPTable_pawn.setItem(i, 3, self.MPower.at[i,'DealQty'])
             i+=1
 
 
@@ -849,15 +884,24 @@ class SKQuoteLibEvents:
         # SKMain.bestfive.loc[0:4,'naskitem'].map(lambda x: x.setText(str(total_dict['naskitem'][SKMain.bestfive['naskitem'][SKMain.bestfive['naskitem'] == x].index[0]])))
         # SKMain.bestfive.loc[0:4,'askQtyitem'].map(lambda x: x.setText(str(total_dict['askQtyitem'][SKMain.bestfive['askQtyitem'][SKMain.bestfive['askQtyitem'] == x].index[0]])))
         for (t, x) in SKMain.bestfive.loc[0:4,['bidQtyitem','nbiditem','naskitem','askQtyitem']].iterrows():
-            x.bidQtyitem.setText(str(total_dict['bidQtyitem'][t]))
-            x.nbiditem.setText(str(total_dict['nbiditem'][t]))
-            x.naskitem.setText(str(total_dict['naskitem'][t]))
-            x.askQtyitem.setText(str(total_dict['askQtyitem'][t]))
+            SKMain.bestfive.at[t,'bidQtyitem']=str(total_dict['bidQtyitem'][t])
+            SKMain.bestfive.at[t,'nbiditem']=str(total_dict['nbiditem'][t])
+            SKMain.bestfive.at[t,'naskitem']=str(total_dict['naskitem'][t])
+            SKMain.bestfive.at[t,'askQtyitem']=str(total_dict['askQtyitem'][t])
+            # print(x.bidQtyitem,x.nbiditem,x.naskitem, x.askQtyitem)
+            # x.bidQtyitem.setText(str(total_dict['bidQtyitem'][t]))
+            # x.nbiditem.setText(str(total_dict['nbiditem'][t]))
+            # x.naskitem.setText(str(total_dict['naskitem'][t]))
+            # x.askQtyitem.setText(str(total_dict['askQtyitem'][t]))
 
         bidQty = total_dict['bidQtyitem'].values()
         askQty = total_dict['askQtyitem'].values()
-        SKMain.bestfive.at[5,'bidQtyitem'].setText(str(int(sum(bidQty))))
-        SKMain.bestfive.at[5,'askQtyitem'].setText(str(int(sum(askQty))))
+        SKMain.bestfive.at[5,'bidQtyitem']=str(int(sum(bidQty)))
+        SKMain.bestfive.at[5,'askQtyitem']=str(int(sum(askQty)))
+        SKMain.bestfive.at[5,'nbiditem']=str('')
+        SKMain.bestfive.at[5,'naskitem']=str('')
+        # print(SKMain.bestfive)
+        SKMain.Dom1model.setdata(SKMain.bestfive)
 
         C = time.time()-start
         if len(SKMain.timeC)==1000:

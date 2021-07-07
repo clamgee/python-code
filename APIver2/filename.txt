@@ -552,3 +552,6 @@ Ticks2021-06-29.txt
 Ticks2021-06-30.txt
 Ticks2021-07-01.txt
 Ticks2021-07-02.txt
+Ticks2021-07-05.txt
+Ticks2021-07-06.txt
+Ticks2021-07-07.txt

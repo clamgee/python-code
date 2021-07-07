@@ -138,7 +138,7 @@ class dataprocess:
         if self.minlastidx==0 or ndatetime>=self.mm1:
             self.mm=ndatetime.replace(second=0,microsecond=0)
             self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
-            print(self.mindf.tail(1))
+            # print(self.mindf.tail(1))
             tmpdeal=self.mindf.at[self.minlastidx,'dealminus']+deal
             self.mindf=self.mindf.append(pd.DataFrame([[self.mm,nClose,nClose,nClose,nClose,nQty,tmpdeal]],columns=['ndatetime','open','high','low','close','volume','dealminus']),ignore_index=True,sort=False)
             self.minhigh = self.minlow = nClose
