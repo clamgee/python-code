@@ -3,6 +3,7 @@ import datetime
 import time
 import numpy as np
 import pandas as pd
+import os
 # from mpl_finance import candlestick2_ohlc
 # import matplotlib.dates as mdates
 # import matplotlib.pyplot as plt
@@ -26,6 +27,12 @@ class dataprocess:
         self.ticksum = 0
         self.ticklst = []
         self.tickclose = 0
+        direct=os.path.abspath('../data')
+        filelist = os.listdir('../data')
+        file = filelist[-1]
+        tmpdf = pd.read_csv(direct+'\\'+file,header=None,names=['ndatetime','nbid','nask','close','volume','deal'])
+        self.yesterdayclose = tmpdf.at[tmpdf.last_valid_index(),'close']
+        del tmpdf
         self.hisbol = 1 # 1:下載歷史資料至list, 2: 處理歷史list 3: 即時
         self.contractkpd=pd.read_csv('../result.dat',low_memory=False)
         self.contractkpd['ndatetime']=pd.to_datetime(self.contractkpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
@@ -132,7 +139,7 @@ class dataprocess:
             self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
             self.minhigh=self.mindf.at[self.minlastidx,'high']
             self.minlow=self.mindf.at[self.minlastidx,'low']
-        print(self.mindf.tail())
+        # print(self.mindf.tail())
 
     def tick2min(self,ndatetime,nClose,nQty,deal):
         if self.minlastidx==0 or ndatetime>=self.mm1:

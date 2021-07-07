@@ -149,6 +149,15 @@ class SKMainWindow(QMainWindow):  # 主視窗
             dict_tmp=self.minKitem.data['ndatetime'][self.minKitem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
             self.Axismink.setTicks([dict_tmp.items()])
             self.Axisdealminus.setTicks([dict_tmp.items()])
+            self.YCline = pg.InfiniteLine(angle=0, movable=False)
+            self.YCline.setPos(self.Future.yesterdayclose)
+            self.drawmink.addItem(self.YCline)
+            self.curve=self.drawmink.plot(pen='y')
+            tmpline=self.minKitem.data.close.cumsum()
+            self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
+            self.curve.setData(self.avgline)
+            del tmpline
+
         ymin = self.minKitem.data.loc[self.axismink_xmin:self.minKitem.lastidx, ['low']].values.min()
         ymax = self.minKitem.data.loc[self.axismink_xmin:self.minKitem.lastidx, ['high']].values.max()        
         dealbar_ymin=self.dealminusbar.data.loc[self.axisdealminus_xmin:self.dealminusbar.lastidx,['dealminus']].values.min()
@@ -282,8 +291,10 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # self.bestfive.at[13, 'bidTBitem'].setBackground(Qt.yellow)
         # self.bestfive.at[13, 'askTBitem'].setBackground(Qt.yellow)
     def MPTableUI(self):
+        self.MPTable.horizontalHeader().setVisible(True)
         self.MPTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.MPTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.MPTable.verticalHeader().setVisible(True)
         self.MPTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.MPTable.verticalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.MPTable.setHorizontalHeaderLabels(['委口', '委筆', '成筆', '成口'])
@@ -291,33 +302,44 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.MPTable.setVerticalHeaderLabels(['買進', '賣出', '差', '總口數'])
         self.MPTable.verticalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
         self.MPower = pd.DataFrame(np.arange(16).reshape(4,4), columns=['ComQty','ComCont','DealCont','DealQty'])
-        # self.MPTable_pawn.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        # self.MPTable_pawn.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        # self.MPTable_pawn.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        # self.MPTable_pawn.verticalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        # self.MPTable_pawn.setHorizontalHeaderLabels(['委口', '委筆', '成筆', '成口'])
-        # self.MPTable_pawn.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
-        # self.MPTable_pawn.setVerticalHeaderLabels(['買進', '賣出', '差', '總口數'])
-        # self.MPTable_pawn.verticalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
+        self.MPTable_pawn.horizontalHeader().setVisible(True)
+        self.MPTable_pawn.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.MPTable_pawn.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.MPTable_pawn.verticalHeader().setVisible(True)
+        self.MPTable_pawn.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.MPTable_pawn.verticalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.MPTable_pawn.setHorizontalHeaderLabels(['委口', '委筆', '成筆', '成口'])
+        self.MPTable_pawn.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
+        self.MPTable_pawn.setVerticalHeaderLabels(['買進', '賣出', '差', '總口數'])
+        self.MPTable_pawn.verticalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
+        self.MPower_pawn = pd.DataFrame(np.arange(16).reshape(4,4), columns=['ComQty','ComCont','DealCont','DealQty'])
 
         i=0
         while i < 4 :
-            self.MPower.at[i,'ComQty'] = QTableWidgetItem('')
-            self.MPower.at[i,'ComQty'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.MPTable.setItem(i, 0, self.MPower.at[i,'ComQty'])
-            # self.MPTable_pawn.setItem(i, 0, self.MPower.at[i,'ComQty'])
-            self.MPower.at[i,'ComCont'] = QTableWidgetItem('')
-            self.MPower.at[i,'ComCont'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.MPTable.setItem(i, 1, self.MPower.at[i,'ComCont'])
-            # self.MPTable_pawn.setItem(i, 1, self.MPower.at[i,'ComCont'])
-            self.MPower.at[i,'DealCont'] = QTableWidgetItem('')
-            self.MPower.at[i,'DealCont'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.MPTable.setItem(i, 2, self.MPower.at[i,'DealCont'])
-            # self.MPTable_pawn.setItem(i, 2, self.MPower.at[i,'DealCont'])
-            self.MPower.at[i,'DealQty'] = QTableWidgetItem('')
-            self.MPower.at[i,'DealQty'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.MPTable.setItem(i, 3, self.MPower.at[i,'DealQty'])
-            # self.MPTable_pawn.setItem(i, 3, self.MPower.at[i,'DealQty'])
+            j=0
+            while j < 4:
+                self.MPower.at[i,self.MPower.columns[j]] = QTableWidgetItem('')
+                self.MPower.at[i,self.MPower.columns[j]].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+                self.MPTable.setItem(i, j, self.MPower.at[i,self.MPower.columns[j]])
+                self.MPower_pawn.at[i,self.MPower_pawn.columns[j]] = QTableWidgetItem('')
+                self.MPower_pawn.at[i,self.MPower_pawn.columns[j]].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+                self.MPTable_pawn.setItem(i, j, self.MPower_pawn.at[i,self.MPower_pawn.columns[j]])
+                j+=1
+            # self.MPower.at[i,'ComQty'] = QTableWidgetItem('')
+            # self.MPower.at[i,'ComQty'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            # # self.MPTable_pawn.setItem(i, 0, self.MPower.at[i,'ComQty'])
+            # self.MPower.at[i,'ComCont'] = QTableWidgetItem('')
+            # self.MPower.at[i,'ComCont'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            # self.MPTable.setItem(i, 1, self.MPower.at[i,'ComCont'])
+            # # self.MPTable_pawn.setItem(i, 1, self.MPower.at[i,'ComCont'])
+            # self.MPower.at[i,'DealCont'] = QTableWidgetItem('')
+            # self.MPower.at[i,'DealCont'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            # self.MPTable.setItem(i, 2, self.MPower.at[i,'DealCont'])
+            # # self.MPTable_pawn.setItem(i, 2, self.MPower.at[i,'DealCont'])
+            # self.MPower.at[i,'DealQty'] = QTableWidgetItem('')
+            # self.MPower.at[i,'DealQty'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            # self.MPTable.setItem(i, 3, self.MPower.at[i,'DealQty'])
+            # # self.MPTable_pawn.setItem(i, 3, self.MPower.at[i,'DealQty'])
             i+=1
 
 
@@ -604,7 +626,7 @@ class PandasModel(QAbstractTableModel):
     def data(self, index, role=Qt.DisplayRole):
         if index.isValid():
             if role == Qt.DisplayRole:
-                return str(self._data.iloc[index.row(), index.column()])
+                return str(self._data.at[index.row(), self._data.columns[index.column()]])
         return None
 
     def headerData(self, col, orientation, role):
@@ -835,6 +857,10 @@ class SKQuoteLibEvents:
             SKMain.MPower.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
             SKMain.MPower.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
             SKMain.MPower.at[2,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
+            SKMain.MPower_pawn.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
+            SKMain.MPower_pawn.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
+            SKMain.MPower_pawn.at[2,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
+
             if SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus'] > 0:
                 SKMain.MPower.at[2,'DealQty'].setBackground(Qt.red)
             else:
@@ -921,6 +947,13 @@ class SKQuoteLibEvents:
         MP_dict = {'ComCont':{0:nBuyTotalCount,1:nSellTotalCount,2:int(nBuyTotalCount-nSellTotalCount)},
         'ComQty':{0:nBuyTotalQty,1:nSellTotalQty,2:int(nBuyTotalQty-nSellTotalQty)},
         'DealCont':{0:nBuyDealTotalCount,1:nSellDealTotalCount,2:int(nBuyDealTotalCount-nSellDealTotalCount)}}
+        # columns=['ComQty','ComCont','DealCont','DealQty']
+        for key in MP_dict:
+            i = 0
+            while i < 3:
+                # SKMain.MPower.at[i,key]=MP_dict[key][i]
+                SKMain.MPower_pawn.at[i,key].setText(str(MP_dict[key][i]))
+                i+=1
         for (t, x) in SKMain.MPower.loc[0:2,['ComQty','ComCont','DealCont']].iterrows():
             x.ComQty.setText(str(MP_dict['ComQty'][t]))
             x.ComCont.setText(str(MP_dict['ComCont'][t]))
