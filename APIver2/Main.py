@@ -94,6 +94,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.GLminK.layout.setRowStretchFactor(1,1) #當沖第 2 圖框大小
         self.drawmink.setXRange(self.axismink_xmin,self.axismink_xmax)
         self.drawmink.setYRange(self.axismink_ymin,self.axismink_ymax)
+        self.YCline = pg.InfiniteLine(angle=0, movable=False)
+        self.drawmink.addItem(self.YCline)
         self.drawdealminus.setXRange(self.axisdealminus_xmin,self.axisdealminus_xmax)
         self.drawdealminus.setYRange(self.axisdealminus_ymin,self.axisdealminus_ymax)
         self.drawdealminus.setXLink(self.drawmink)
@@ -149,9 +151,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
             dict_tmp=self.minKitem.data['ndatetime'][self.minKitem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
             self.Axismink.setTicks([dict_tmp.items()])
             self.Axisdealminus.setTicks([dict_tmp.items()])
-            self.YCline = pg.InfiniteLine(angle=0, movable=False)
             self.YCline.setPos(self.Future.yesterdayclose)
-            self.drawmink.addItem(self.YCline)
             self.curve=self.drawmink.plot(pen='y')
             tmpline=self.minKitem.data.close.cumsum()
             self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))

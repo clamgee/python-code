@@ -32,6 +32,7 @@ class dataprocess:
         file = filelist[-1]
         tmpdf = pd.read_csv(direct+'\\'+file,header=None,names=['ndatetime','nbid','nask','close','volume','deal'])
         self.yesterdayclose = tmpdf.at[tmpdf.last_valid_index(),'close']
+        print(self.yesterdayclose)
         del tmpdf
         self.hisbol = 1 # 1:下載歷史資料至list, 2: 處理歷史list 3: 即時
         self.contractkpd=pd.read_csv('../result.dat',low_memory=False)
