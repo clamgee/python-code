@@ -159,7 +159,9 @@ class SKMainWindow(QMainWindow):  # 主視窗
             del tmpline
 
         ymin = self.minKitem.data.loc[self.axismink_xmin:self.minKitem.lastidx, ['low']].values.min()
-        ymax = self.minKitem.data.loc[self.axismink_xmin:self.minKitem.lastidx, ['high']].values.max()        
+        ymin = min(ymin,self.Future.yesterdayclose)
+        ymax = self.minKitem.data.loc[self.axismink_xmin:self.minKitem.lastidx, ['high']].values.max()
+        ymax = max(ymax,self.Future.yesterdayclose)        
         dealbar_ymin=self.dealminusbar.data.loc[self.axisdealminus_xmin:self.dealminusbar.lastidx,['dealminus']].values.min()
         dealbar_ymax=self.dealminusbar.data.loc[self.axisdealminus_xmin:self.dealminusbar.lastidx,['dealminus']].values.max()
         if self.axismink_ymin != ymin or self.axismink_ymax != ymax:
@@ -842,9 +844,7 @@ class SKQuoteLibEvents:
                 # print(SKMain.Future.contractkpd.tail(10))
             else:
                 SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
-            A = time.time()-start
             # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
-            start = time.time()
             SKMain.Kitem.set_data(SKMain.Future.lastidx,SKMain.Future.High,SKMain.Future.Low,SKMain.Future.contractkpd.tail(SKMain.Future.lastidx+1-SKMain.Kitem.lastidx))
             SKMain.minKitem.set_data(SKMain.Future.minlastidx,SKMain.Future.minhigh,SKMain.Future.minlow,SKMain.Future.mindf.tail(SKMain.Future.minlastidx+1-SKMain.minKitem.lastidx))
             SKMain.dealminusbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','dealminus']].tail(SKMain.Future.minlastidx+1-SKMain.dealminusbar.lastidx))
@@ -854,6 +854,8 @@ class SKQuoteLibEvents:
                 SKMain.Draw12kUpdate()
             if SKMain.axismin_ch != minkmax:
                 SKMain.DrawminkUpdate()
+            A = time.time()-start
+            start = time.time()
             SKMain.MPower.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
             SKMain.MPower.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
             SKMain.MPower.at[2,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
@@ -863,9 +865,12 @@ class SKQuoteLibEvents:
 
             if SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus'] > 0:
                 SKMain.MPower.at[2,'DealQty'].setBackground(Qt.red)
+                SKMain.MPower_pawn.at[2,'DealQty'].setBackground(Qt.red)
             else:
                 SKMain.MPower.at[2,'DealQty'].setBackground(Qt.green)
+                SKMain.MPower_pawn.at[2,'DealQty'].setBackground(Qt.green)
             SKMain.MPower.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
+            SKMain.MPower_pawn.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
             B = time.time()-start
             if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
                 SKMain.timeA.pop(0)
