@@ -248,12 +248,11 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.Dom1model.setdata(self.bestfive)
         self.DomTable.setModel(self.Dom1model)
         self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.DomTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        # self.DomTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        # self.Dom1model.setdata(self.bestfive)
         self.DomTable_pawn.setModel(self.Dom1model)
         self.DomTable_pawn.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.DomTable_pawn.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        # self.DomTable_pawn.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.DomTable_pawn.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # # TickKDom
@@ -846,16 +845,17 @@ class SKQuoteLibEvents:
                 SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
             # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
             SKMain.Kitem.set_data(SKMain.Future.lastidx,SKMain.Future.High,SKMain.Future.Low,SKMain.Future.contractkpd.tail(SKMain.Future.lastidx+1-SKMain.Kitem.lastidx))
+            A = time.time()-start
+            start = time.time()
             SKMain.minKitem.set_data(SKMain.Future.minlastidx,SKMain.Future.minhigh,SKMain.Future.minlow,SKMain.Future.mindf.tail(SKMain.Future.minlastidx+1-SKMain.minKitem.lastidx))
             SKMain.dealminusbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','dealminus']].tail(SKMain.Future.minlastidx+1-SKMain.dealminusbar.lastidx))
+            B = time.time()-start
             xmax = SKMain.Future.lastidx + 1
             minkmax = SKMain.Future.minlastidx + 1
             if SKMain.axis12k_xmax != xmax:
                 SKMain.Draw12kUpdate()
             if SKMain.axismin_ch != minkmax:
                 SKMain.DrawminkUpdate()
-            A = time.time()-start
-            start = time.time()
             SKMain.MPower.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
             SKMain.MPower.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
             SKMain.MPower.at[2,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
@@ -871,7 +871,6 @@ class SKQuoteLibEvents:
                 SKMain.MPower_pawn.at[2,'DealQty'].setBackground(Qt.green)
             SKMain.MPower.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
             SKMain.MPower_pawn.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
-            B = time.time()-start
             if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
                 SKMain.timeA.pop(0)
                 SKMain.timeA.append(A)
