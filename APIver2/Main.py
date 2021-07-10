@@ -835,7 +835,6 @@ class SKQuoteLibEvents:
         if nSimulate == 0:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print('ThreadName: ',QThread.currentThread().objectName(),'ThreadID: ',int(QThread.currentThreadId()))
-            start = time.time()
             if SKMain.timeend == '' and SKMain.Future.hisbol==1:
                 SKMain.timeend = time.time()
                 SKMain.Future.hisbol=2
@@ -845,17 +844,21 @@ class SKQuoteLibEvents:
             else:
                 SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
             # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
+            start = time.time()
             SKMain.Kitem.set_data(SKMain.Future.lastidx,SKMain.Future.High,SKMain.Future.Low,SKMain.Future.contractkpd.tail(SKMain.Future.lastidx+1-SKMain.Kitem.lastidx))
+            A = time.time()-start
+            start = time.time()
             SKMain.minKitem.set_data(SKMain.Future.minlastidx,SKMain.Future.minhigh,SKMain.Future.minlow,SKMain.Future.mindf.tail(SKMain.Future.minlastidx+1-SKMain.minKitem.lastidx))
+            B = time.time()-start
+            start = time.time()
             SKMain.dealminusbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','dealminus']].tail(SKMain.Future.minlastidx+1-SKMain.dealminusbar.lastidx))
+            C = time.time()-start
             xmax = SKMain.Future.lastidx + 1
             minkmax = SKMain.Future.minlastidx + 1
             if SKMain.axis12k_xmax != xmax:
                 SKMain.Draw12kUpdate()
             if SKMain.axismin_ch != minkmax:
                 SKMain.DrawminkUpdate()
-            A = time.time()-start
-            start = time.time()
             SKMain.MPower.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
             SKMain.MPower.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
             SKMain.MPower.at[2,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
@@ -871,19 +874,22 @@ class SKQuoteLibEvents:
                 SKMain.MPower_pawn.at[2,'DealQty'].setBackground(Qt.green)
             SKMain.MPower.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
             SKMain.MPower_pawn.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
-            B = time.time()-start
             if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
                 SKMain.timeA.pop(0)
                 SKMain.timeA.append(A)
                 SKMain.timeB.pop(0)
                 SKMain.timeB.append(B)
+                SKMain.timeC.pop(0)
+                SKMain.timeC.append(C)
+
             else:
                 SKMain.timeA.append(A)
                 SKMain.timeB.append(B)
+                SKMain.timeC.append(C)
             A = str(int(1/(sum(SKMain.timeA)/len(SKMain.timeA))))
             B = str(int(1/(sum(SKMain.timeB)/len(SKMain.timeB))))
             C = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
-            SKMain.draw12k.setLabel('top','K線: '+ A +' ,繪圖: '+ B+' ,5檔: '+ C)
+            SKMain.draw12k.setLabel('top','12K線: '+ A +' ,分鐘: '+ B+' ,Bar : '+ C)
             
             # SKMain.ndetialmsg.textBrowser.append(str(SKMain.Future.ticklst[-1]))
             # if SKMain.axis12k_xmax != xmax:
@@ -909,7 +915,7 @@ class SKQuoteLibEvents:
                     'naskitem':{0:int(nBestAsk1/100),1:int(nBestAsk2/100),2:int(nBestAsk3/100),3:int(nBestAsk4/100),4:int(nBestAsk5/100)},
                     'askQtyitem':{0:nBestAskQty1,1:nBestAskQty2,2:nBestAskQty3,3:nBestAskQty4,4:nBestAskQty5}}
         
-        start = time.time()
+        # start = time.time()
         # SKMain.bestfive.loc[0:4,'bidQtyitem'].map(lambda x: x.setText(str(total_dict['bidQtyitem'][SKMain.bestfive['bidQtyitem'][SKMain.bestfive['bidQtyitem'] == x].index[0]])))
         # SKMain.bestfive.loc[0:4,'nbiditem'].map(lambda x: x.setText(str(total_dict['nbiditem'][SKMain.bestfive['nbiditem'][SKMain.bestfive['nbiditem'] == x].index[0]])))
         # SKMain.bestfive.loc[0:4,'naskitem'].map(lambda x: x.setText(str(total_dict['naskitem'][SKMain.bestfive['naskitem'][SKMain.bestfive['naskitem'] == x].index[0]])))
@@ -934,12 +940,12 @@ class SKQuoteLibEvents:
         # print(SKMain.bestfive)
         SKMain.Dom1model.setdata(SKMain.bestfive)
 
-        C = time.time()-start
-        if len(SKMain.timeC)==1000:
-                SKMain.timeC.pop(0)
-                SKMain.timeC.append(C)
-        else:
-            SKMain.timeC.append(C)
+        # C = time.time()-start
+        # if len(SKMain.timeC)==1000:
+        #         SKMain.timeC.pop(0)
+        #         SKMain.timeC.append(C)
+        # else:
+        #     SKMain.timeC.append(C)
         # if (sum(SKMain.timeC)/len(SKMain.timeC))>0:
         #     Cavg = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
             # SKMain.draw12k.setLabel('top','5檔: '+Cavg)
