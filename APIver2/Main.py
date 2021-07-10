@@ -248,12 +248,11 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.Dom1model.setdata(self.bestfive)
         self.DomTable.setModel(self.Dom1model)
         self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.DomTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        # self.DomTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        # self.Dom1model.setdata(self.bestfive)
         self.DomTable_pawn.setModel(self.Dom1model)
         self.DomTable_pawn.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.DomTable_pawn.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        # self.DomTable_pawn.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.DomTable_pawn.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # # TickKDom
