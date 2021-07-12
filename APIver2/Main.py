@@ -245,7 +245,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.bestfive = pd.DataFrame(np.arange(24).reshape(6,4), columns=['bidQtyitem','nbiditem','naskitem','askQtyitem'])
         self.bestfive[['bidQtyitem','nbiditem','naskitem','askQtyitem']]=self.bestfive[['bidQtyitem','nbiditem','naskitem','askQtyitem']].astype(str)
         self.Dom1model=PandasModel()
-        self.Dom1model.setdata(self.bestfive)
+        self.Dom1model.UpdateData(self.bestfive)
         self.DomTable.setModel(self.Dom1model)
         self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         # self.DomTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
@@ -611,7 +611,7 @@ class PandasModel(QAbstractTableModel):
     def __init__(self):
         QAbstractTableModel.__init__(self)
 
-    def setdata(self, data):
+    def UpdateData(self, data):
         self._data = data
         self.layoutAboutToBeChanged.emit()  # 建立變更資料通知訊號發射
         self.dataChanged.emit(self.createIndex(0, 0),
@@ -628,6 +628,8 @@ class PandasModel(QAbstractTableModel):
         if index.isValid():
             if role == Qt.DisplayRole:
                 return str(self._data.at[index.row(), self._data.columns[index.column()]])
+            elif role == Qt.TextAlignmentRole:
+                return int(Qt.AlignCenter | Qt.AlignVCenter)
         return None
 
     def headerData(self, col, orientation, role):
@@ -676,7 +678,7 @@ class SKOrderLibEvent:
             print('No Data pass')
             pass
         elif Line[0] == '##':
-            SKMain.OpenCRpdMode.setdata(SKMain.openpd)
+            SKMain.OpenCRpdMode.UpdateData(SKMain.openpd)
             SKMain.Open_TBW.setModel(SKMain.OpenCRpdMode)
             print('OnOpenInterest end pass')
             pass
@@ -707,7 +709,7 @@ class SKReplyLibEvent:
         return sComfirmCode
 
     def OnComplete(self, bstrUserID):
-        SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
+        SKMain.ReplyCRpdMode.UpdateData(SKMain.replypd)
         SKMain.Reply_TBW.setModel(SKMain.ReplyCRpdMode)
         SKMain.ReplyComplete = True
         # print(SKMain.replypd)
@@ -760,7 +762,7 @@ class SKReplyLibEvent:
                                                                          '取消口數', '倉位', '條件', '價位格式', '委託序號', '委託書號',
                                                                          '委託日期', '委託時間', '交易時段']), ignore_index=True)
         if SKMain.ReplyComplete == True:
-            SKMain.ReplyCRpdMode.setdata(SKMain.replypd)
+            SKMain.ReplyCRpdMode.UpdateData(SKMain.replypd)
 
     def OnSmartData(self, bstrUserID, bstrData):
         print(bstrUserID, '智動回報:', bstrData)
@@ -937,7 +939,7 @@ class SKQuoteLibEvents:
         SKMain.bestfive.at[5,'nbiditem']=str('')
         SKMain.bestfive.at[5,'naskitem']=str('')
         # print(SKMain.bestfive)
-        SKMain.Dom1model.setdata(SKMain.bestfive)
+        SKMain.Dom1model.UpdateData(SKMain.bestfive)
 
         # C = time.time()-start
         # if len(SKMain.timeC)==1000:

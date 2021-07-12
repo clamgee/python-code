@@ -1,17 +1,12 @@
-# import datetime
-import time
-# print(time.localtime(time.time()).tm_hour)
-import pyqtgraph.examples
-import sys
-from PyQt5 import QtGui, QtCore
-import pandas as pd
-import numpy as np
+import threading as td
+import multiprocessing as mp
 
-lista = ['r1c1', 'r1c2', 'r1c3']
-listb = ['r2c1', 'r2c2', 'r1c3']
-listc = ['r3c1', 'r3c2', 'r3c3']
-mystruct = {'row1':lista, 'row2':listb, 'row3':listc}
+def Func(a,b):
+    print(a,b)
 
-
-for key in mystruct:
-    print(key)
+t1 = td.Thread(target=Func,args=('clam','sivve'))
+t1.start()
+p1 = mp.Process(target=t1,args=())
+p1.start()
+t1.join()
+p1.join()
