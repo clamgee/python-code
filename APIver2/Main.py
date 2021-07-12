@@ -59,7 +59,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.axis12k_ymax = 100
         self.draw12k.setXRange(self.axis12k_xmin,self.axis12k_xmax)
         self.draw12k.setYRange(self.axis12k_ymin,self.axis12k_ymax)
-        # 當沖圖形宣告
+        # 分鐘K當沖圖形宣告，X軸共用，最小值為0
         self.GLminK=pg.GraphicsLayout()
         self.GV_pawn.setCentralItem(self.GLminK)
         self.Axismink = pg.AxisItem(orientation='bottom')
@@ -68,37 +68,58 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.drawmink.showAxis('left',show=False)
         self.drawmink.showGrid(x=False,y=True)
         self.axismin_ch = 0 #圖形邊界更新
-        self.axismink_xmin = 0
+        if time.localtime(time.time()).tm_hour >= 15 or time.localtime(time.time()).tm_hour < 8:
+            self.axismink_xmax = 827
+        elif time.localtime(time.time()).tm_hour >=8 and time.localtime(time.time()).tm_hour < 15:
+            self.axismink_xmax = 300
+        else:
+            print('當沖邊界錯誤!!')
         self.axismink_ymin = 0
         self.axismink_ymax = 100
-        self.GLminK.nextRow()
+        self.drawmink.setXRange(0,self.axismink_xmax)
+        self.drawmink.setYRange(self.axismink_ymin,self.axismink_ymax)
+        self.YCline = pg.InfiniteLine(angle=0, movable=False)
+        self.drawmink.addItem(self.YCline)
+        self.GLminK.nextRow()#新增一個副圖Layout 多空力道
         self.Axisdealminus = pg.AxisItem(orientation='bottom')
         self.drawdealminus = self.GLminK.addPlot(axisItems={'bottom': self.Axisdealminus})
         self.drawdealminus.showAxis('right',show=True)
         self.drawdealminus.showAxis('left',show=False)
         self.drawdealminus.showGrid(x=False,y=True)
-        self.axisdealminus_xmin = 0
-        if time.localtime(time.time()).tm_hour >= 15 or time.localtime(time.time()).tm_hour < 8:
-            self.axismink_xmax = 827
-            self.axisdealminus_xmax = 827
-        elif time.localtime(time.time()).tm_hour >=8 and time.localtime(time.time()).tm_hour < 15:
-            self.axismink_xmax = 300
-            self.axisdealminus_xmax = 300
-        else:
-            print('當沖邊界錯誤!!')
-
-        self.axisdealminus_xmax = 100
         self.axisdealminus_ymin = 0
         self.axisdealminus_ymax = 100
         self.GLminK.layout.setRowStretchFactor(0,3) #當沖第 1 圖框大小
         self.GLminK.layout.setRowStretchFactor(1,1) #當沖第 2 圖框大小
-        self.drawmink.setXRange(self.axismink_xmin,self.axismink_xmax)
-        self.drawmink.setYRange(self.axismink_ymin,self.axismink_ymax)
-        self.YCline = pg.InfiniteLine(angle=0, movable=False)
-        self.drawmink.addItem(self.YCline)
-        self.drawdealminus.setXRange(self.axisdealminus_xmin,self.axisdealminus_xmax)
+        self.drawdealminus.setXRange(0,self.axismink_xmax)
         self.drawdealminus.setYRange(self.axisdealminus_ymin,self.axisdealminus_ymax)
         self.drawdealminus.setXLink(self.drawmink)
+        self.GLminK.nextRow()#新增一個副圖Layout 大單
+        self.AxisBigDeal = pg.AxisItem(orientation='bottom')
+        self.drawBigDeal = self.GLminK.addPlot(axisItems={'bottom': self.AxisBigDeal})
+        self.drawBigDeal.showAxis('right',show=True)
+        self.drawBigDeal.showAxis('left',show=False)
+        self.drawBigDeal.showGrid(x=False,y=True)
+        self.axisBigDeal_ymin = 0
+        self.axisBigDeal_ymax = 100
+        self.drawBigDeal.setXRange(0,self.axismink_xmax)
+        self.drawBigDeal.setYRange(self.axisBigDeal_ymin,self.axisBigDeal_ymax)
+        self.drawBigDeal.setXLink(self.drawmink)
+        self.GLminK.nextRow()#新增一個副圖Layout 小單
+        self.AxisRetailInvestors = pg.AxisItem(orientation='bottom')
+        self.drawRetailInvestors = self.GLminK.addPlot(axisItems={'bottom': self.AxisRetailInvestors})
+        self.drawRetailInvestors.showAxis('right',show=True)
+        self.drawRetailInvestors.showAxis('left',show=False)
+        self.drawRetailInvestors.showGrid(x=False,y=True)
+        self.axisRetailInvestors_ymin = 0
+        self.axisRetailInvestors_ymax = 100
+        self.drawRetailInvestors.setXRange(0,self.axismink_xmax)
+        self.drawRetailInvestors.setYRange(self.axisRetailInvestors_ymin,self.axisRetailInvestors_ymax)
+        self.drawRetailInvestors.setXLink(self.drawmink)
+        self.GLminK.layout.setRowStretchFactor(0,7) #當沖第 1 分鐘K線圖框大小
+        self.GLminK.layout.setRowStretchFactor(1,1) #當沖第 2 多空力道圖框大小
+        self.GLminK.layout.setRowStretchFactor(2,1) #當沖第 3 大單主力圖框大小
+        self.GLminK.layout.setRowStretchFactor(3,1) #當沖第 4 小單散戶圖框大小
+
         # 下單參數 Future structure
         self.trade_act = -1
         self.OrderPrice = ''
@@ -136,6 +157,10 @@ class SKMainWindow(QMainWindow):  # 主視窗
             self.draw12k.setXRange(self.axis12k_xmin,self.axis12k_xmax)
             dict_tmp = self.Kitem.data['ndatetime'][(self.Kitem.data.volume!=12000) & (self.Kitem.data.ndatetime.dt.hour>8) & (self.Kitem.data.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
             self.Axis12k.setTicks([dict_tmp.items()])
+            self.MAHighLine=self.draw12k.plot(pen='y')
+            self.MALowLine=self.draw12k.plot(pen='b')
+            self.MAHighLine.setData(self.Kitem.data.high_avg)
+            self.MALowLine.setData(self.Kitem.data.low_avg)
         ymin = self.Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
         ymax = self.Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
         if self.axis12k_ymin != ymin or self.axis12k_ymax != ymax:
@@ -158,12 +183,12 @@ class SKMainWindow(QMainWindow):  # 主視窗
             self.curve.setData(self.avgline)
             del tmpline
 
-        ymin = self.minKitem.data.loc[self.axismink_xmin:self.minKitem.lastidx, ['low']].values.min()
+        ymin = self.minKitem.data.loc[0:self.minKitem.lastidx, ['low']].values.min()
         ymin = min(ymin,self.Future.yesterdayclose)
-        ymax = self.minKitem.data.loc[self.axismink_xmin:self.minKitem.lastidx, ['high']].values.max()
+        ymax = self.minKitem.data.loc[0:self.minKitem.lastidx, ['high']].values.max()
         ymax = max(ymax,self.Future.yesterdayclose)        
-        dealbar_ymin=self.dealminusbar.data.loc[self.axisdealminus_xmin:self.dealminusbar.lastidx,['dealminus']].values.min()
-        dealbar_ymax=self.dealminusbar.data.loc[self.axisdealminus_xmin:self.dealminusbar.lastidx,['dealminus']].values.max()
+        dealbar_ymin=self.dealminusbar.data.loc[0:self.dealminusbar.lastidx,['dealminus']].values.min()
+        dealbar_ymax=self.dealminusbar.data.loc[0:self.dealminusbar.lastidx,['dealminus']].values.max()
         if self.axismink_ymin != ymin or self.axismink_ymax != ymax:
             self.axismink_ymin = ymin
             self.axismink_ymax = ymax        
@@ -313,7 +338,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.MPTable_pawn.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
         self.MPTable_pawn.setVerticalHeaderLabels(['買進', '賣出', '差', '總口數'])
         self.MPTable_pawn.verticalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
-        self.MPower_pawn = pd.DataFrame(np.arange(16).reshape(4,4), columns=['ComQty','ComCont','DealCont','DealQty'])
+        self.MPower_pawndf = pd.DataFrame(np.arange(20).reshape(4,5), columns=['ComQty','ComCont','DealCont','DealQty','ndatetime'])
+        self.MPower_pawndf['ndatetime'] = pd.to_datetime(self.MPower_pawndf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
 
         i=0
         while i < 4 :
@@ -322,9 +348,9 @@ class SKMainWindow(QMainWindow):  # 主視窗
                 self.MPower.at[i,self.MPower.columns[j]] = QTableWidgetItem('')
                 self.MPower.at[i,self.MPower.columns[j]].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
                 self.MPTable.setItem(i, j, self.MPower.at[i,self.MPower.columns[j]])
-                self.MPower_pawn.at[i,self.MPower_pawn.columns[j]] = QTableWidgetItem('')
-                self.MPower_pawn.at[i,self.MPower_pawn.columns[j]].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-                self.MPTable_pawn.setItem(i, j, self.MPower_pawn.at[i,self.MPower_pawn.columns[j]])
+                self.MPower_pawndf.at[i,self.MPower_pawndf.columns[j]] = QTableWidgetItem('')
+                self.MPower_pawndf.at[i,self.MPower_pawndf.columns[j]].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+                self.MPTable_pawn.setItem(i, j, self.MPower_pawndf.at[i,self.MPower_pawndf.columns[j]])
                 j+=1
             # self.MPower.at[i,'ComQty'] = QTableWidgetItem('')
             # self.MPower.at[i,'ComQty'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
@@ -863,18 +889,18 @@ class SKQuoteLibEvents:
             SKMain.MPower.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
             SKMain.MPower.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
             SKMain.MPower.at[2,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
-            SKMain.MPower_pawn.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
-            SKMain.MPower_pawn.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
-            SKMain.MPower_pawn.at[2,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
+            SKMain.MPower_pawndf.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
+            SKMain.MPower_pawndf.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
+            SKMain.MPower_pawndf.at[2,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
 
             if SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus'] > 0:
                 SKMain.MPower.at[2,'DealQty'].setBackground(Qt.red)
-                SKMain.MPower_pawn.at[2,'DealQty'].setBackground(Qt.red)
+                SKMain.MPower_pawndf.at[2,'DealQty'].setBackground(Qt.red)
             else:
                 SKMain.MPower.at[2,'DealQty'].setBackground(Qt.green)
-                SKMain.MPower_pawn.at[2,'DealQty'].setBackground(Qt.green)
+                SKMain.MPower_pawndf.at[2,'DealQty'].setBackground(Qt.green)
             SKMain.MPower.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
-            SKMain.MPower_pawn.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
+            SKMain.MPower_pawndf.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
             if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
                 SKMain.timeA.pop(0)
                 SKMain.timeA.append(A)
@@ -964,7 +990,7 @@ class SKQuoteLibEvents:
             i = 0
             while i < 3:
                 # SKMain.MPower.at[i,key]=MP_dict[key][i]
-                SKMain.MPower_pawn.at[i,key].setText(str(MP_dict[key][i]))
+                SKMain.MPower_pawndf.at[i,key].setText(str(MP_dict[key][i]))
                 i+=1
         for (t, x) in SKMain.MPower.loc[0:2,['ComQty','ComCont','DealCont']].iterrows():
             x.ComQty.setText(str(MP_dict['ComQty'][t]))

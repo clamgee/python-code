@@ -30,7 +30,7 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -54,7 +54,10 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,0,6,1,1,1,1,1">
+           <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,6,6,1,1,1,1,1">
+            <property name="spacing">
+             <number>9</number>
+            </property>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,4">
               <item>
@@ -465,7 +468,10 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1,0,6,1,1,1,1,1">
+           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1,6,6,1,1,1,1,1">
+            <property name="spacing">
+             <number>9</number>
+            </property>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="0,4">
               <item>
