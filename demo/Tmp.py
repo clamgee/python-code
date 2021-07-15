@@ -1,25 +1,51 @@
-import threading as td
 import multiprocessing as mp
+import queue
+import threading as td
 import time
-import os
 
-def Func(a,b):
-    i=0
-    while i<20:
+
+def funcq(q):
+    for i in range(10):
+        res = i+i**2
+        q.put(res)
+        # time.sleep(2)
+
+def funcget(q):
+    i=1
+    while q.qsize!=0:
+        b=q.qsize()
+        a=q.get()
         print(i,a,b)
-        time.sleep(3)
-        print('process id:', os.getpid())
         i+=1
 
-def ThdFucn():
-    t1 = td.Thread(target=Func,args=('clam','sivve'))
+def fucntd(q):
+    t1=td.Thread(target=funcget,args=(q,))
     t1.start()
-    print('Thread.daemon = %s' % t1.daemon)
-
-    # t1.join()
 
 if __name__=='__main__':
-    p1 = mp.Process(target=ThdFucn)
-    p1.start()
-    print('Process.daemon = %s' % p1.daemon)
-    print('process id:', os.getpid())
+    q=mp.Queue()
+    # fucntd(q)
+    w1 = mp.Process(target=fucntd,args=(q,))
+    w1.start()
+    funcq(q)
+
+
+
+
+
+
+
+
+# def job(q):
+#     res=0
+#     for i in range(1000):
+#         res+=i+i**2+i**3
+#     q.put(res)
+
+# if __name__=='__main__':
+#     q = mp.Queue()
+#     p1=mp.Process(target=job,args=(q,))
+#     p1.start()
+#     p1.join()
+#     res1 = q.get()
+#     print(res1)
