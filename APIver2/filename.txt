@@ -558,3 +558,6 @@ Ticks2021-07-07.txt
 Ticks2021-07-08.txt
 Ticks2021-07-09.txt
 Ticks2021-07-12.txt
+Ticks2021-07-13.txt
+Ticks2021-07-14.txt
+Ticks2021-07-15.txt

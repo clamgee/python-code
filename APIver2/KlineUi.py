@@ -74,16 +74,19 @@ class CandlestickItem(pg.GraphicsObject):
         for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
-            p.setPen(pg.mkPen(color='w'))
-            p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
-            p.setPen(pg.mkPen(color='w',width=0.01))
+            # p.setPen(pg.mkPen(color='w'))
+            # p.setPen(pg.mkPen(color='w',width=0.01))
             if x.open>x.close:
                 p.setBrush(pg.mkBrush('g'))
+                p.setPen(pg.mkPen(color='g',width=0.6))
             elif x.open<x.close:
                 p.setBrush(pg.mkBrush('r'))
+                p.setPen(pg.mkPen(color='r',width=0.6))
             else:
                 p.setBrush(pg.mkBrush('w'))
+                p.setPen(pg.mkPen(color='w',width=0.6))
             p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
+            p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
             self.pictures.append(picture)
         
     def paint(self, painter, opt, w):
@@ -192,16 +195,19 @@ class CandleminuteItem(pg.GraphicsObject):
         for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
-            p.setPen(pg.mkPen(color='w',width=0.6))
-            p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
-            p.setPen(pg.mkPen(color='w',width=0.1))
+            # p.setPen(pg.mkPen(color='w',width=0.4))
+            # p.setPen(pg.mkPen(color='w',width=0.1))
             if x.open>x.close:
                 p.setBrush(pg.mkBrush('g'))
+                p.setPen(pg.mkPen(color='g',width=0.4))
             elif x.open<x.close:
                 p.setBrush(pg.mkBrush('r'))
+                p.setPen(pg.mkPen(color='r',width=0.4))
             else:
                 p.setBrush(pg.mkBrush('w'))
+                p.setPen(pg.mkPen(color='w',width=0.4))
             p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
+            p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
             self.pictures.append(picture)
         
     def paint(self, painter, opt, w):
