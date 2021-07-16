@@ -561,3 +561,4 @@ Ticks2021-07-12.txt
 Ticks2021-07-13.txt
 Ticks2021-07-14.txt
 Ticks2021-07-15.txt
+Ticks2021-07-16.txt
