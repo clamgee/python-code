@@ -1,51 +1,20 @@
 import multiprocessing as mp
-import queue
 import threading as td
-import time
 
-
-def funcq(q):
-    for i in range(10):
-        res = i+i**2
-        q.put(res)
-        # time.sleep(2)
-
-def funcget(q):
-    i=1
-    while q.qsize!=0:
-        b=q.qsize()
+def a(q):
+    while q.qsize()!=0:
         a=q.get()
-        print(i,a,b)
-        i+=1
+        print(a)
 
-def fucntd(q):
-    t1=td.Thread(target=funcget,args=(q,))
+def b(func,q):
+    t1 =td.Thread(target=func,args=(q,))
     t1.start()
 
 if __name__=='__main__':
     q=mp.Queue()
-    # fucntd(q)
-    w1 = mp.Process(target=fucntd,args=(q,))
+    q.put('第一步')
+    w1 = mp.Process(target=b,args=(a,q,))
     w1.start()
-    funcq(q)
+    q.put('第二步')
 
-
-
-
-
-
-
-
-# def job(q):
-#     res=0
-#     for i in range(1000):
-#         res+=i+i**2+i**3
-#     q.put(res)
-
-# if __name__=='__main__':
-#     q = mp.Queue()
-#     p1=mp.Process(target=job,args=(q,))
-#     p1.start()
-#     p1.join()
-#     res1 = q.get()
-#     print(res1)
+    w1.join()
