@@ -8,7 +8,7 @@ def funcq(q):
     for i in range(10):
         res = i+i**2
         q.put(res)
-        # time.sleep(2)
+        time.sleep(2)
 
 def funcget(q):
     i=1
