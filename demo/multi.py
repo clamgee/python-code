@@ -31,6 +31,52 @@ if __name__=='__main__':
     w1.join()
 
 
+#############方法二
+import multiprocessing as mp
+import threading as td
+import os
+import time
+
+def a(*args):
+    while True:
+        with args[1]:
+            a=args[0].get()
+            b=os.getpid()
+            print(a,str(b)+'a程式')
+
+def b(*args):
+    td.Thread(target=args[0],args=(args[1],args[2])).start()
+
+def c(*args):
+    while True:
+        args[1].acquire()
+        a=args[0].get()
+        b=os.getpid()
+        print(a,str(b)+'c程式')
+        args[1].release()
+
+def d(*args):
+    td.Thread(target=args[0],args=(args[1],args[2])).start()
+
+def multiwork(func,*args):
+    pool.apply(func,(args[0],args[1],args[2],))
+
+
+
+if __name__=='__main__':
+    pool = mp.Pool()
+    l=mp.Manager().Lock()
+    l2=mp.Manager().Lock()
+    q=mp.Manager().Queue()
+    q2=mp.Manager().Queue()
+    multiwork(b,a,q,l)
+    multiwork(d,c,q2,l2)
+    pool.close()
+    for i in range(10):
+        Astr='第 '+str(i)+' 步'
+        q.put(Astr)
+        q2.put(Astr)
+    pool.join()
 
 
 
