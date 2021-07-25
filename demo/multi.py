@@ -78,5 +78,65 @@ if __name__=='__main__':
         q2.put(Astr)
     pool.join()
 
+# ==========第三種
+import multiprocessing as mp
+from multiprocessing.process import current_process
+import threading as td
+import os
+import time
+
+def a(q):
+    res = []
+    while q.qsize()!=0:
+        # l.acquire()
+        a=q.get()
+        res.append([a,current_process().name,current_process().pid])
+        # l.release()
+    print(res[5],len(res))
+    
+
+def c(a):
+    b=current_process().name
+    c=current_process().pid 
+    return [a,b,c]
+        
+
+def b(q):
+    td.Thread(target=a,args=(q,)).start()
+
+
+if __name__=='__main__':
+    multiq = mp.Manager().Queue()
+    q=mp.Queue()
+    q1=mp.Queue()
+    q2=mp.Queue()
+    l = mp.Manager().RLock()
+    for i in range(30000):
+        res = i
+        q.put(res)
+        q1.put(res)
+        q2.put(res)
+        multiq.put(res)
+
+    # start = time.time()
+    # a(q)
+    # print('Normal時間: ',time.time()-start)
+    # start = time.time()
+    # p1 = mp.Process(target=b,args=(q2,))
+    # p1.start()
+    # p1.join()
+    # print('Process時間: ',time.time()-start)
+    start = time.time()
+    with mp.Pool() as pool:
+        res=[]
+        while multiq.qsize()!=0:
+            a=multiq.get()
+            res.append(pool.apply_async(c,(a,)).get())
+        pool.close()
+        pool.join()
+        print(res[5],len(res))
+        
+
+    print('Pool時間: ',time.time()-start)
 
 

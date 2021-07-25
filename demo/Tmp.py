@@ -4,60 +4,54 @@ import threading as td
 import os
 import time
 
-def a(q):
-    res = []
-    print(current_process())
-    while q.qsize()!=0:
-        # l.acquire()
-        a=q.get()
-        res=str(a) + str(current_process())+str(os.getpid())  
-        # l.release()
-    
+def a(*args):
+    while args[0].qsize!=0:
+        with args[1]:
+            a=args[0].get()
+            b=os.getpid()
+            print(a,str(b)+'a程式, 程序: ',current_process().name)
 
-def c(a):
-    res = str(a) + str(current_process())+str(os.getpid())
-    # print(res)
-    return res
+def b(*args):
+    td.Thread(target=args[0],args=(args[1],args[2])).start()
 
-        
+def c(*args):
+    while True:
+        args[1].acquire()
+        a=args[0].get()
+        b=os.getpid()
+        print(a,str(b)+'c程式, 程序: ',current_process().name)
+        args[1].release()
 
-def b(q):
-    td.Thread(target=a,args=(q,)).start()
+def d(*args):
+    td.Thread(target=args[0],args=(args[1],args[2])).start()
+
+def Pwork(func,*args):
+    start = time.time()
+    p1=mp.Process(target=func,args=(args[0],args[1],args[2],))
+    p1.start()
+    p1.join()
+    end = time.time()
+    print('process時間: ',end - start)
+
+def multiwork(func,*args):
+    start = time.time()
+    with mp.Pool() as pool:
+        pool.apply(func,(args[0],args[1],args[2],))
+    end = time.time()
+    print('pool時間: ',end - start)
+
 
 
 if __name__=='__main__':
-    multiq = mp.Manager().Queue()
+    # pool = mp.Pool()
+    l=mp.Lock()
+    l2=mp.Manager().RLock()
     q=mp.Queue()
-    q1=mp.Queue()
-    q2=mp.Queue()
-    l = mp.Manager().Lock()
-    for i in range(30000):
-        res = i
-        q.put(res)
-        q1.put(res)
-        q2.put(res)
-        multiq.put(res)
-
-    start = time.time()
-    a(q)
-    print('Normal時間: ',time.time()-start)
-    start = time.time()
-    b(q1)
-    print('Thread時間: ',time.time()-start)
-    start = time.time()
-    p1 = mp.Process(target=b,args=(q2,))
-    p1.start()
-    p1.join()
-    print('Process時間: ',time.time()-start)
-    start = time.time()
-    with mp.Pool() as pool:
-        res=[]
-        while multiq.qsize()!=0:
-            a=multiq.get()
-            res.append(pool.apply_async(c,(a,)))
-        pool.close()
-        pool.join()
-    print(res[9].get())
-
-    print('Pool時間: ',time.time()-start)
+    q2=mp.Manager().Queue()
+    for i in range(10):
+        Astr='第 '+str(i)+' 步'
+        q.put(Astr)
+        q2.put(Astr)
+    Pwork(b,a,q,l)
+    multiwork(d,c,q2,l2)
 
