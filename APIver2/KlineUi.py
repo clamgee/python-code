@@ -266,7 +266,7 @@ class BarItem(pg.GraphicsObject):
 
     def set_data(self,nidx,ndata):
         if self.lastidx == nidx:
-            self.data.at[self.lastidx,'dealminus'] = ndata.at[self.lastidx,'dealminus']
+            self.data.at[self.lastidx,self.data.columns[-1]] = ndata.at[self.lastidx,ndata.columns[-1]]
         elif nidx is not None and nidx > self.lastidx and self.lastidx!=0:
             col = ndata.columns.tolist()
             for row in col :
@@ -303,7 +303,7 @@ class BarItem(pg.GraphicsObject):
             self.lastidx=0
         stop = self.lastidx + 1
 
-        for (t, x) in self.data.loc[start:stop, ['dealminus']].iterrows():
+        for (t, x) in self.data.loc[start:stop, [self.data.columns[-1]]].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
             p.setPen(pg.mkPen(color='w',width=0.1))

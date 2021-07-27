@@ -189,6 +189,11 @@ class SKMainWindow(QMainWindow):  # 主視窗
         ymax = max(ymax,self.Future.yesterdayclose)        
         dealbar_ymin=self.dealminusbar.data.loc[0:self.dealminusbar.lastidx,['dealminus']].values.min()
         dealbar_ymax=self.dealminusbar.data.loc[0:self.dealminusbar.lastidx,['dealminus']].values.max()
+        Bigbar_ymin=self.bigbar.data.loc[0:self.bigbar.lastidx,['big']].values.min()
+        Bigbar_ymax=self.bigbar.data.loc[0:self.bigbar.lastidx,['big']].values.max()
+        RetailInvestorsbar_ymin=self.RetailInvestorsbar.data.loc[0:self.RetailInvestorsbar.lastidx,['small']].values.min()
+        RetailInvestorsbar_ymax=self.RetailInvestorsbar.data.loc[0:self.RetailInvestorsbar.lastidx,['small']].values.max()
+
         if self.axismink_ymin != ymin or self.axismink_ymax != ymax:
             self.axismink_ymin = ymin
             self.axismink_ymax = ymax        
@@ -197,6 +202,16 @@ class SKMainWindow(QMainWindow):  # 主視窗
             self.axisdealminus_ymin = dealbar_ymin
             self.axisdealminus_ymax = dealbar_ymax        
             self.drawdealminus.setYRange(self.axisdealminus_ymin,self.axisdealminus_ymax)
+        if self.axisBigDeal_ymin != Bigbar_ymin or self.axisBigDeal_ymax != Bigbar_ymax:
+            self.axisBigDeal_ymin != Bigbar_ymin
+            self.axisBigDeal_ymax != Bigbar_ymax        
+            self.drawBigDeal.setYRange(self.axisBigDeal_ymin,self.axisBigDeal_ymax)
+        if self.axisRetailInvestors_ymin != RetailInvestorsbar_ymin or self.axisRetailInvestors_ymax != RetailInvestorsbar_ymax:
+            self.axisRetailInvestors_ymin != RetailInvestorsbar_ymin
+            self.axisRetailInvestors_ymax != RetailInvestorsbar_ymax       
+            self.drawRetailInvestors.setYRange(self.axisRetailInvestors_ymin,self.axisRetailInvestors_ymax)
+
+
 
     # 呼叫系統訊息介面與功能
     def SKMessageFunc(self):
@@ -428,12 +443,16 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.Kitem = KlineUi.CandlestickItem()
         self.minKitem = KlineUi.CandleminuteItem()
         self.dealminusbar = KlineUi.BarItem()
+        self.bigbar = KlineUi.BarItem()
+        self.RetailInvestorsbar = KlineUi.BarItem()
         # self.Kui = KlineUi.KlineWidget(nstock)
         # self.Kui.addItem(self.Kitem)
         self.draw12k.addItem(self.Kitem)
         self.Kitem.set_data(self.Future.lastidx,self.Future.High,self.Future.Low,self.Future.contractkpd)
         self.drawmink.addItem(self.minKitem)
         self.drawdealminus.addItem(self.dealminusbar)
+        self.drawBigDeal.addItem(self.bigbar)
+        self.drawRetailInvestors.addItem(self.RetailInvestorsbar)
         # while self.Future.mindf.any()==False:
         #     sleep(1000)
         # self.minKitem.set_data(self.Future.minlastidx,self.Future.minhigh,self.Future.minlow,self.Future.mindf)
@@ -879,6 +898,8 @@ class SKQuoteLibEvents:
             B = time.time()-start
             start = time.time()
             SKMain.dealminusbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','dealminus']].tail(SKMain.Future.minlastidx+1-SKMain.dealminusbar.lastidx))
+            SKMain.dealminusbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','big']].tail(SKMain.Future.minlastidx+1-SKMain.bigbar.lastidx))
+            SKMain.dealminusbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','small']].tail(SKMain.Future.minlastidx+1-SKMain.RetailInvestorsbar.lastidx))
             C = time.time()-start
             xmax = SKMain.Future.lastidx + 1
             minkmax = SKMain.Future.minlastidx + 1
@@ -997,6 +1018,8 @@ class SKQuoteLibEvents:
             x.ComCont.setText(str(MP_dict['ComCont'][t]))
             x.DealCont.setText(str(MP_dict['DealCont'][t]))
             if t == 2:
+                SKMain.Future.mindf.at[SKMain.Future.minlastidx,'big']=MP_dict['ComQty'][t]
+                SKMain.Future.mindf.at[SKMain.Future.minlastidx,'small']=MP_dict['ComCont'][t]
                 if MP_dict['ComQty'][t]>0:
                     x.ComQty.setBackground(Qt.red)
                 else:

@@ -133,7 +133,9 @@ class dataprocess:
         del self.mindf['deal']
         self.mindf=self.mindf.rename_axis('ndatetime').reset_index()
         self.mindf['ndatetime'] = pd.to_datetime(self.mindf['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
-        self.mindf[['open','high','low','close','volume','dealminus']]= self.mindf[['open','high','low','close','volume','dealminus']].astype(int)
+        self.mindf['big']=0
+        self.mindf['small']=0
+        self.mindf[['open','high','low','close','volume','dealminus','big','small']]= self.mindf[['open','high','low','close','volume','dealminus','big','small']].astype(int)
         self.minlastidx=self.mindf.last_valid_index()
         if self.minlastidx!=0:
             self.mm=self.mindf.at[self.minlastidx,'ndatetime'].replace(second=0,microsecond=0)
@@ -148,7 +150,7 @@ class dataprocess:
             self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
             # print(self.mindf.tail(1))
             tmpdeal=self.mindf.at[self.minlastidx,'dealminus']+deal
-            self.mindf=self.mindf.append(pd.DataFrame([[self.mm,nClose,nClose,nClose,nClose,nQty,tmpdeal]],columns=['ndatetime','open','high','low','close','volume','dealminus']),ignore_index=True,sort=False)
+            self.mindf=self.mindf.append(pd.DataFrame([[self.mm,nClose,nClose,nClose,nClose,nQty,tmpdeal,self.mindf.at[self.minlastidx,'big'],self.mindf.at[self.minlastidx,'small']]],columns=['ndatetime','open','high','low','close','volume','dealminus','big','small']),ignore_index=True,sort=False)
             self.minhigh = self.minlow = nClose
             self.minlastidx=self.mindf.last_valid_index()
         elif ndatetime < self.mm1 :
