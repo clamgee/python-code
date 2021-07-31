@@ -78,13 +78,13 @@ class CandlestickItem(pg.GraphicsObject):
             # p.setPen(pg.mkPen(color='w',width=0.01))
             if x.open>x.close:
                 p.setBrush(pg.mkBrush('g'))
-                p.setPen(pg.mkPen(color='g',width=0.6))
+                p.setPen(pg.mkPen(color='g'))
             elif x.open<x.close:
                 p.setBrush(pg.mkBrush('r'))
-                p.setPen(pg.mkPen(color='r',width=0.6))
+                p.setPen(pg.mkPen(color='r'))
             else:
                 p.setBrush(pg.mkBrush('w'))
-                p.setPen(pg.mkPen(color='w',width=0.6))
+                p.setPen(pg.mkPen(color='w'))
             p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
             p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
             self.pictures.append(picture)
@@ -146,7 +146,7 @@ class CandleminuteItem(pg.GraphicsObject):
         self.countK = 60 #設定要顯示多少K線
 
     def set_data(self,nidx,nhigh,nlow,ndata):
-        if self.lastidx == nidx:
+        if self.lastidx == nidx and self.data is not None:
             if self.high < nhigh :
                 self.data.at[self.lastidx,'high']=self.high=nhigh 
             if self.low > nlow:
@@ -160,7 +160,7 @@ class CandleminuteItem(pg.GraphicsObject):
             self.data=self.data.append(ndata.tail(nidx-self.lastidx),ignore_index=True)
             self.lastidx = nidx
 
-        elif self.lastidx==0:
+        elif self.lastidx==0 and self.data is None:
             self.data = ndata.reset_index(drop=True)
             self.high = nhigh
             self.low = nlow
@@ -176,13 +176,6 @@ class CandleminuteItem(pg.GraphicsObject):
         self.informViewBoundsChanged()
         if not self.scene() is None:
             self.scene().update() #強制圖形更新
-        # end=pg.time()
-        # if len(self.timelist)==100:
-        #     self.timelist.pop(0)
-        #     self.timelist.append((end-start))
-        # else:
-        #     self.timelist.append((end-start))
-        # self.FPS = int(1/np.mean(self.timelist))
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
@@ -199,13 +192,13 @@ class CandleminuteItem(pg.GraphicsObject):
             # p.setPen(pg.mkPen(color='w',width=0.1))
             if x.open>x.close:
                 p.setBrush(pg.mkBrush('g'))
-                p.setPen(pg.mkPen(color='g',width=0.4))
+                p.setPen(pg.mkPen(color='g'))
             elif x.open<x.close:
                 p.setBrush(pg.mkBrush('r'))
-                p.setPen(pg.mkPen(color='r',width=0.4))
+                p.setPen(pg.mkPen(color='r'))
             else:
                 p.setBrush(pg.mkBrush('w'))
-                p.setPen(pg.mkPen(color='w',width=0.4))
+                p.setPen(pg.mkPen(color='w'))
             p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
             p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
             self.pictures.append(picture)
@@ -251,7 +244,7 @@ class BarItem(pg.GraphicsObject):
     def __init__(self):
         pg.GraphicsObject.__init__(self)
         self.data = None
-        self.lastbar = None
+        self.columnname = None
         self.picturemain = QtGui.QPicture() #主K線圖
         self.picturelast = QtGui.QPicture() #最後一根K線圖
         self.pictures = []
@@ -259,14 +252,12 @@ class BarItem(pg.GraphicsObject):
         self.rect = None
         self.low = 0
         self.high = 0
-        self.highavg = ''
-        self.lowavg = ''
         self.lastidx = 0
         self.countK = 60 #設定要顯示多少K線
 
     def set_data(self,nidx,ndata):
-        if self.lastidx == nidx:
-            self.data.at[self.lastidx,self.data.columns[-1]] = ndata.at[self.lastidx,ndata.columns[-1]]
+        if self.lastidx == nidx and self.data is not None:
+            self.data.at[self.lastidx,self.columnname] = ndata.at[self.lastidx,self.columnname]
         elif nidx is not None and nidx > self.lastidx and self.lastidx!=0:
             col = ndata.columns.tolist()
             for row in col :
@@ -274,18 +265,19 @@ class BarItem(pg.GraphicsObject):
             self.data=self.data.append(ndata.tail(nidx-self.lastidx),ignore_index=True)
             self.lastidx = nidx
 
-        elif self.lastidx==0:
+        elif self.data is None:
             self.data = ndata.reset_index(drop=True)
             if self.data.last_valid_index()==nidx:
                 self.lastidx = nidx
+                self.columnname = self.data.columns[-1]
             else:
                 print('繪圖Index資料有誤2')
         else :
             print('繪圖資料有誤!!',nidx)
-        if self.data.dealminus.max()>self.high:
-            self.high=self.data.dealminus.max()
-        if self.data.dealminus.min()<self.low:
-            self.low=self.data.dealminus.min()
+        if self.data[self.columnname].max()>self.high:
+            self.high=self.data[self.columnname].max()
+        if self.data[self.columnname].min()<self.low:
+            self.low=self.data[self.columnname].min()
 
         # self.len = self.data.shape[0]
         self.generatePicture()
@@ -303,17 +295,17 @@ class BarItem(pg.GraphicsObject):
             self.lastidx=0
         stop = self.lastidx + 1
 
-        for (t, x) in self.data.loc[start:stop, [self.data.columns[-1]]].iterrows():
+        for (t, x) in self.data.loc[start:stop, [self.columnname]].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
             p.setPen(pg.mkPen(color='w',width=0.1))
-            if x.dealminus<0:
+            if x[-1]<0:
                 p.setBrush(pg.mkBrush('g'))
-            elif x.dealminus>0:
+            elif x[-1]>0:
                 p.setBrush(pg.mkBrush('r'))
             else:
                 p.setBrush(pg.mkBrush('w'))
-            p.drawRect(QtCore.QRectF(t-w, 0, w*2, x.dealminus))
+            p.drawRect(QtCore.QRectF(t-w, 0, w*2, x[-1]))
             p.end()
             self.pictures.append(picture)
         

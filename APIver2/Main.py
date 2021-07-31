@@ -88,8 +88,6 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.drawdealminus.showGrid(x=False,y=True)
         self.axisdealminus_ymin = 0
         self.axisdealminus_ymax = 100
-        self.GLminK.layout.setRowStretchFactor(0,3) #當沖第 1 圖框大小
-        self.GLminK.layout.setRowStretchFactor(1,1) #當沖第 2 圖框大小
         self.drawdealminus.setXRange(0,self.axismink_xmax)
         self.drawdealminus.setYRange(self.axisdealminus_ymin,self.axisdealminus_ymax)
         self.drawdealminus.setXLink(self.drawmink)
@@ -176,6 +174,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
             dict_tmp=self.minKitem.data['ndatetime'][self.minKitem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
             self.Axismink.setTicks([dict_tmp.items()])
             self.Axisdealminus.setTicks([dict_tmp.items()])
+            self.AxisBigDeal.setTicks([dict_tmp.items()])
+            self.AxisRetailInvestors.setTicks([dict_tmp.items()])
             self.YCline.setPos(self.Future.yesterdayclose)
             self.curve=self.drawmink.plot(pen='y')
             tmpline=self.minKitem.data.close.cumsum()
@@ -193,7 +193,6 @@ class SKMainWindow(QMainWindow):  # 主視窗
         Bigbar_ymax=self.bigbar.data.loc[0:self.bigbar.lastidx,['big']].values.max()
         RetailInvestorsbar_ymin=self.RetailInvestorsbar.data.loc[0:self.RetailInvestorsbar.lastidx,['small']].values.min()
         RetailInvestorsbar_ymax=self.RetailInvestorsbar.data.loc[0:self.RetailInvestorsbar.lastidx,['small']].values.max()
-
         if self.axismink_ymin != ymin or self.axismink_ymax != ymax:
             self.axismink_ymin = ymin
             self.axismink_ymax = ymax        
@@ -203,12 +202,12 @@ class SKMainWindow(QMainWindow):  # 主視窗
             self.axisdealminus_ymax = dealbar_ymax        
             self.drawdealminus.setYRange(self.axisdealminus_ymin,self.axisdealminus_ymax)
         if self.axisBigDeal_ymin != Bigbar_ymin or self.axisBigDeal_ymax != Bigbar_ymax:
-            self.axisBigDeal_ymin != Bigbar_ymin
-            self.axisBigDeal_ymax != Bigbar_ymax        
+            self.axisBigDeal_ymin = Bigbar_ymin
+            self.axisBigDeal_ymax = Bigbar_ymax
             self.drawBigDeal.setYRange(self.axisBigDeal_ymin,self.axisBigDeal_ymax)
         if self.axisRetailInvestors_ymin != RetailInvestorsbar_ymin or self.axisRetailInvestors_ymax != RetailInvestorsbar_ymax:
-            self.axisRetailInvestors_ymin != RetailInvestorsbar_ymin
-            self.axisRetailInvestors_ymax != RetailInvestorsbar_ymax       
+            self.axisRetailInvestors_ymin = RetailInvestorsbar_ymin
+            self.axisRetailInvestors_ymax = RetailInvestorsbar_ymax
             self.drawRetailInvestors.setYRange(self.axisRetailInvestors_ymin,self.axisRetailInvestors_ymax)
 
 
@@ -898,8 +897,8 @@ class SKQuoteLibEvents:
             B = time.time()-start
             start = time.time()
             SKMain.dealminusbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','dealminus']].tail(SKMain.Future.minlastidx+1-SKMain.dealminusbar.lastidx))
-            SKMain.dealminusbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','big']].tail(SKMain.Future.minlastidx+1-SKMain.bigbar.lastidx))
-            SKMain.dealminusbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','small']].tail(SKMain.Future.minlastidx+1-SKMain.RetailInvestorsbar.lastidx))
+            SKMain.bigbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','big']].tail(SKMain.Future.minlastidx+1-SKMain.bigbar.lastidx))
+            SKMain.RetailInvestorsbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','small']].tail(SKMain.Future.minlastidx+1-SKMain.RetailInvestorsbar.lastidx))
             C = time.time()-start
             xmax = SKMain.Future.lastidx + 1
             minkmax = SKMain.Future.minlastidx + 1
