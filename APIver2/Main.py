@@ -439,8 +439,9 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.TDetailbtn.clicked.connect(self.ndetialmsg.show)
         # self.ndetialmsg.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
         # self.ndetialmsg.show()
-        self.Kitem = KlineUi.CandlestickItem()
-        self.minKitem = KlineUi.CandleminuteItem()
+        # self.Kitem = KlineUi.CandlestickItem()
+        self.Kitem = KlineUi.CandleItem()
+        self.minKitem = KlineUi.CandleItem()
         self.dealminusbar = KlineUi.BarItem()
         self.bigbar = KlineUi.BarItem()
         self.RetailInvestorsbar = KlineUi.BarItem()
@@ -678,7 +679,8 @@ class PandasModel(QAbstractTableModel):
 
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return self._data.columns[col]
+            return ['買量','買價','賣價','賣量'][col]
+            # return self._data.columns[col]
         return None
 
 
@@ -1002,9 +1004,9 @@ class SKQuoteLibEvents:
     def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount): 
         # print(nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount)
         # 'ComQty','ComCont','DealCont','DealQty'
-        MP_dict = {'ComCont':{0:nBuyTotalCount,1:nSellTotalCount,2:int(nBuyTotalCount-nSellTotalCount)},
+        MP_dict = {'ComCont':{0:nBuyTotalCount,1:nSellTotalCount,2:int(nSellTotalCount-nBuyTotalCount)},
         'ComQty':{0:nBuyTotalQty,1:nSellTotalQty,2:int(nBuyTotalQty-nSellTotalQty)},
-        'DealCont':{0:nBuyDealTotalCount,1:nSellDealTotalCount,2:int(nBuyDealTotalCount-nSellDealTotalCount)}}
+        'DealCont':{0:nBuyDealTotalCount,1:nSellDealTotalCount,2:int(nSellDealTotalCount-nBuyDealTotalCount)}}
         # columns=['ComQty','ComCont','DealCont','DealQty']
         for key in MP_dict:
             i = 0
@@ -1016,21 +1018,27 @@ class SKQuoteLibEvents:
             x.ComQty.setText(str(MP_dict['ComQty'][t]))
             x.ComCont.setText(str(MP_dict['ComCont'][t]))
             x.DealCont.setText(str(MP_dict['DealCont'][t]))
-            if t == 2:
+            if t == 2 and SKMain.Future.mindf is not None:
                 SKMain.Future.mindf.at[SKMain.Future.minlastidx,'big']=MP_dict['ComQty'][t]
                 SKMain.Future.mindf.at[SKMain.Future.minlastidx,'small']=MP_dict['ComCont'][t]
                 if MP_dict['ComQty'][t]>0:
                     x.ComQty.setBackground(Qt.red)
+                    SKMain.MPower_pawndf.at[t,'ComQty'].setBackground(Qt.red)
                 else:
                     x.ComQty.setBackground(Qt.green)
-                if MP_dict['ComCont'][t]<0:
+                    SKMain.MPower_pawndf.at[t,'ComQty'].setBackground(Qt.green)
+                if MP_dict['ComCont'][t]>0:
                     x.ComCont.setBackground(Qt.red)
+                    SKMain.MPower_pawndf.at[t,'ComCont'].setBackground(Qt.red)
                 else:
                     x.ComCont.setBackground(Qt.green)
-                if MP_dict['DealCont'][t]<0:
+                    SKMain.MPower_pawndf.at[t,'ComCont'].setBackground(Qt.green)
+                if MP_dict['DealCont'][t]>0:
                     x.DealCont.setBackground(Qt.red)
+                    SKMain.MPower_pawndf.at[t,'DealCont'].setBackground(Qt.red)
                 else:
                     x.DealCont.setBackground(Qt.green)
+                    SKMain.MPower_pawndf.at[t,'DealCont'].setBackground(Qt.green)
 
 
 

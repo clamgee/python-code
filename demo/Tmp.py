@@ -1,50 +1,42 @@
-from multiprocessing import Process, Queue, current_process
-# from PyQt5 import QThread,pyqtSignal,QMainWindow
-from PyQt5.QtCore import pyqtSlot, QDate, QTime, QDateTime, QTimer, Qt, QThread, pyqtSignal, \
-    QAbstractTableModel  # 插入資訊模組
-from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMainWindow, QGraphicsScene, QHeaderView, \
-    QTableWidgetItem, QMessageBox  # PyQt5介面與繪圖模組
-from PyQt5 import QtCore, QtGui, QtWidgets
-import time
+import sys
+import random
+from PySide6 import QtCore,QtWidgets,QtGui
+from PySide6.QtUiTools import QUiLoader
 
-class communicate_Thread(QThread):
-
-    communicate_singal = pyqtSignal(int)
-    exit_signal = pyqtSignal()
-
-    def __init__(self, parent=None):
-        QThread.__init__(self, parent)
-    def setData(self,q):
-        self.q = q
-
-    def run(self):
-       while self.q.qsize()>0:
-           res=self.q.get()
-           print('Thread',res)
-
-class App(QMainWindow):
+class MyWidget(QtWidgets.QWidget):
     def __init__(self):
-        super(App, self).__init__()
-        self.q = Queue()
-        self.xxx=communicate_Thread()
-        yyyprocess(self.xxx,self.q)
+        super().__init__()
+
+        self.hello = ["Hallo Welt", "Hei maailma", "Hola Mundo", "Привет мир"]
+
+        self.button = QtWidgets.QPushButton("Click me!")
+        self.text = QtWidgets.QLabel("Hello World",
+                                     alignment=QtCore.Qt.AlignCenter)
+
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.addWidget(self.text)
+        self.layout.addWidget(self.button)
+
+        self.button.clicked.connect(self.magic)
 
 
-    def dosomething(self,res):
-        self.count+=res
-        print(self.count,res)
+class SKMainWindow(QtWidgets.QMainWindow):  # 主視窗
+    def __init__(self):
+        super(SKMainWindow, self).__init__()
+        self.loadUi = QUiLoader()
+        self.loadUi.load(r'../APIver2/UI/MainWindow.ui', self)
+        self.showMaximized()
 
-def yyyprocess(*args):
-    print(args)
-    # Process(target=args[0].setData,args=(args[1],)).start()
 
-            
 
-if __name__ == '__main__':
-    import sys
-    A = QApplication(sys.argv)
-    QMain = App()
-    QMain.show()
-    # QMain.yyy.start()
-    # QMain.yyy.join()
-    sys.exit(A.exec_())
+    @QtCore.Slot()
+    def magic(self):
+        self.text.setText(random.choice(self.hello))
+if __name__ == "__main__":
+    app = QtWidgets.QApplication([])
+
+    widget = SKMainWindow()
+    # widget.resize(800, 600)
+    widget.show()
+
+    sys.exit(app.exec())
