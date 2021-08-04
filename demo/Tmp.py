@@ -1,42 +1,46 @@
 import sys
-import random
 from PySide6 import QtCore,QtWidgets,QtGui
 from PySide6.QtUiTools import QUiLoader
 
-class MyWidget(QtWidgets.QWidget):
-    def __init__(self):
-        super().__init__()
+from wigglywidget import WigglyWidget
 
-        self.hello = ["Hallo Welt", "Hei maailma", "Hola Mundo", "Привет мир"]
-
-        self.button = QtWidgets.QPushButton("Click me!")
-        self.text = QtWidgets.QLabel("Hello World",
-                                     alignment=QtCore.Qt.AlignCenter)
-
-        self.layout = QtWidgets.QVBoxLayout(self)
-        self.layout.addWidget(self.text)
-        self.layout.addWidget(self.button)
-
-        self.button.clicked.connect(self.magic)
+import QtDesigner
 
 
-class SKMainWindow(QtWidgets.QMainWindow):  # 主視窗
+TOOLTIP = "A cool wiggly widget (Python)"
+DOM_XML = """
+<ui language='c++'>
+    <widget class='WigglyWidget' name='wigglyWidget'>
+        <property name='geometry'>
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>400</width>
+                <height>200</height>
+            </rect>
+        </property>
+        <property name='text'>
+            <string>Hello, world</string>
+        </property>
+    </widget>
+</ui>
+"""
+
+QtDesigner.QPyDesignerCustomWidgetCollection.registerCustomWidget(WigglyWidget, module="wigglywidget",tool_tip=TOOLTIP, xml=DOM_XML)
+
+class SKMainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(SKMainWindow, self).__init__()
         self.loadUi = QUiLoader()
-        self.loadUi.load(r'../APIver2/UI/MainWindow.ui', self)
-        self.showMaximized()
+        self.loadUi.load(r'../APIver3/UI/MainWindow.ui')
 
 
 
-    @QtCore.Slot()
-    def magic(self):
-        self.text.setText(random.choice(self.hello))
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
+    SKMain = SKMainWindow()
+    # SKMain.showMaximized()
+    SKMain.show()
 
-    widget = SKMainWindow()
-    # widget.resize(800, 600)
-    widget.show()
 
     sys.exit(app.exec())

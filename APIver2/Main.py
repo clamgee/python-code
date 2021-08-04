@@ -281,8 +281,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
     # 權益數介面結束
     # 閃電下單
     def DomTableUI(self):
-        self.bestfive = pd.DataFrame(np.arange(24).reshape(6,4), columns=['bidQtyitem','nbiditem','naskitem','askQtyitem'])
-        self.bestfive[['bidQtyitem','nbiditem','naskitem','askQtyitem']]=self.bestfive[['bidQtyitem','nbiditem','naskitem','askQtyitem']].astype(str)
+        self.bestfive = pd.DataFrame(np.arange(24).reshape(6,4), columns=['買量','買價','賣價','賣量'])
+        self.bestfive[['買量','買價','賣價','賣量']]=self.bestfive[['買量','買價','賣價','賣量']].astype(str)
         self.Dom1model=PandasModel()
         self.Dom1model.UpdateData(self.bestfive)
         self.DomTable.setModel(self.Dom1model)
@@ -306,26 +306,26 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # self.DomTable_pawn.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         # self.DomTable_pawn.setHorizontalHeaderLabels(['數量', '買進', '賣出', '數量'])
         # self.DomTable_pawn.horizontalHeader().setStyleSheet('QHeaderView::section{background:yellow}')
-        # self.bestfive = pd.DataFrame(np.arange(24).reshape(6,4), columns=['bidQtyitem','nbiditem','naskitem','askQtyitem'])
+        # self.bestfive = pd.DataFrame(np.arange(24).reshape(6,4), columns=['買量','買價','賣價','賣量'])
 
         # i = 0
         # while i < 6:
-        #     self.bestfive.at[i, 'bidQtyitem'] = QTableWidgetItem('')
-        #     self.DomTable.setItem(i, 0, self.bestfive.at[i, 'bidQtyitem'])
-        #     self.DomTable_pawn.setItem(i, 0, self.bestfive.at[i, 'bidQtyitem'])
-        #     self.bestfive.at[i, 'nbiditem'] = QTableWidgetItem('')
-        #     self.DomTable.setItem(i, 1, self.bestfive.at[i, 'nbiditem'])
-        #     self.DomTable_pawn.setItem(i, 1, self.bestfive.at[i, 'nbiditem'])
-        #     self.bestfive.at[i, 'naskitem'] = QTableWidgetItem('')
-        #     self.DomTable.setItem(i, 2, self.bestfive.at[i, 'naskitem'])
-        #     self.DomTable_pawn.setItem(i, 2, self.bestfive.at[i, 'naskitem'])
-        #     self.bestfive.at[i, 'askQtyitem'] = QTableWidgetItem('')
-        #     self.DomTable.setItem(i, 3, self.bestfive.at[i, 'askQtyitem'])
-        #     self.DomTable_pawn.setItem(i, 3, self.bestfive.at[i, 'askQtyitem'])
-        #     self.bestfive.at[i, 'bidQtyitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        #     self.bestfive.at[i, 'nbiditem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        #     self.bestfive.at[i, 'naskitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        #     self.bestfive.at[i, 'askQtyitem'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        #     self.bestfive.at[i, '買量'] = QTableWidgetItem('')
+        #     self.DomTable.setItem(i, 0, self.bestfive.at[i, '買量'])
+        #     self.DomTable_pawn.setItem(i, 0, self.bestfive.at[i, '買量'])
+        #     self.bestfive.at[i, '買價'] = QTableWidgetItem('')
+        #     self.DomTable.setItem(i, 1, self.bestfive.at[i, '買價'])
+        #     self.DomTable_pawn.setItem(i, 1, self.bestfive.at[i, '買價'])
+        #     self.bestfive.at[i, '賣價'] = QTableWidgetItem('')
+        #     self.DomTable.setItem(i, 2, self.bestfive.at[i, '賣價'])
+        #     self.DomTable_pawn.setItem(i, 2, self.bestfive.at[i, '賣價'])
+        #     self.bestfive.at[i, '賣量'] = QTableWidgetItem('')
+        #     self.DomTable.setItem(i, 3, self.bestfive.at[i, '賣量'])
+        #     self.DomTable_pawn.setItem(i, 3, self.bestfive.at[i, '賣量'])
+        #     self.bestfive.at[i, '買量'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        #     self.bestfive.at[i, '買價'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        #     self.bestfive.at[i, '賣價'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        #     self.bestfive.at[i, '賣量'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         #     i += 1
         # self.bestfive.at[13, 'closeTBitem'].setBackground(Qt.yellow)
         # self.bestfive.at[13, 'bidTBitem'].setBackground(Qt.yellow)
@@ -679,8 +679,7 @@ class PandasModel(QAbstractTableModel):
 
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return ['買量','買價','賣價','賣量'][col]
-            # return self._data.columns[col]
+            return self._data.columns[col]
         return None
 
 
@@ -959,33 +958,33 @@ class SKQuoteLibEvents:
     def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
         # total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
         # 'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
-        total_dict={'bidQtyitem':{0:nBestBidQty1,1:nBestBidQty2,2:nBestBidQty3,3:nBestBidQty4,4:nBestBidQty5},
-                    'nbiditem':{0:int(nBestBid1/100),1:int(nBestBid2/100),2:int(nBestBid3/100),3:int(nBestBid4/100),4:int(nBestBid5/100)},
-                    'naskitem':{0:int(nBestAsk1/100),1:int(nBestAsk2/100),2:int(nBestAsk3/100),3:int(nBestAsk4/100),4:int(nBestAsk5/100)},
-                    'askQtyitem':{0:nBestAskQty1,1:nBestAskQty2,2:nBestAskQty3,3:nBestAskQty4,4:nBestAskQty5}}
+        total_dict={'買量':{0:nBestBidQty1,1:nBestBidQty2,2:nBestBidQty3,3:nBestBidQty4,4:nBestBidQty5},
+                    '買價':{0:int(nBestBid1/100),1:int(nBestBid2/100),2:int(nBestBid3/100),3:int(nBestBid4/100),4:int(nBestBid5/100)},
+                    '賣價':{0:int(nBestAsk1/100),1:int(nBestAsk2/100),2:int(nBestAsk3/100),3:int(nBestAsk4/100),4:int(nBestAsk5/100)},
+                    '賣量':{0:nBestAskQty1,1:nBestAskQty2,2:nBestAskQty3,3:nBestAskQty4,4:nBestAskQty5}}
         
         # start = time.time()
-        # SKMain.bestfive.loc[0:4,'bidQtyitem'].map(lambda x: x.setText(str(total_dict['bidQtyitem'][SKMain.bestfive['bidQtyitem'][SKMain.bestfive['bidQtyitem'] == x].index[0]])))
-        # SKMain.bestfive.loc[0:4,'nbiditem'].map(lambda x: x.setText(str(total_dict['nbiditem'][SKMain.bestfive['nbiditem'][SKMain.bestfive['nbiditem'] == x].index[0]])))
-        # SKMain.bestfive.loc[0:4,'naskitem'].map(lambda x: x.setText(str(total_dict['naskitem'][SKMain.bestfive['naskitem'][SKMain.bestfive['naskitem'] == x].index[0]])))
-        # SKMain.bestfive.loc[0:4,'askQtyitem'].map(lambda x: x.setText(str(total_dict['askQtyitem'][SKMain.bestfive['askQtyitem'][SKMain.bestfive['askQtyitem'] == x].index[0]])))
-        for (t, x) in SKMain.bestfive.loc[0:4,['bidQtyitem','nbiditem','naskitem','askQtyitem']].iterrows():
-            SKMain.bestfive.at[t,'bidQtyitem']=str(total_dict['bidQtyitem'][t])
-            SKMain.bestfive.at[t,'nbiditem']=str(total_dict['nbiditem'][t])
-            SKMain.bestfive.at[t,'naskitem']=str(total_dict['naskitem'][t])
-            SKMain.bestfive.at[t,'askQtyitem']=str(total_dict['askQtyitem'][t])
-            # print(x.bidQtyitem,x.nbiditem,x.naskitem, x.askQtyitem)
-            # x.bidQtyitem.setText(str(total_dict['bidQtyitem'][t]))
-            # x.nbiditem.setText(str(total_dict['nbiditem'][t]))
-            # x.naskitem.setText(str(total_dict['naskitem'][t]))
-            # x.askQtyitem.setText(str(total_dict['askQtyitem'][t]))
+        # SKMain.bestfive.loc[0:4,'買量'].map(lambda x: x.setText(str(total_dict['買量'][SKMain.bestfive['買量'][SKMain.bestfive['買量'] == x].index[0]])))
+        # SKMain.bestfive.loc[0:4,'買價'].map(lambda x: x.setText(str(total_dict['買價'][SKMain.bestfive['買價'][SKMain.bestfive['買價'] == x].index[0]])))
+        # SKMain.bestfive.loc[0:4,'賣價'].map(lambda x: x.setText(str(total_dict['賣價'][SKMain.bestfive['賣價'][SKMain.bestfive['賣價'] == x].index[0]])))
+        # SKMain.bestfive.loc[0:4,'賣量'].map(lambda x: x.setText(str(total_dict['賣量'][SKMain.bestfive['賣量'][SKMain.bestfive['賣量'] == x].index[0]])))
+        for (t, x) in SKMain.bestfive.loc[0:4,['買量','買價','賣價','賣量']].iterrows():
+            SKMain.bestfive.at[t,'買量']=str(total_dict['買量'][t])
+            SKMain.bestfive.at[t,'買價']=str(total_dict['買價'][t])
+            SKMain.bestfive.at[t,'賣價']=str(total_dict['賣價'][t])
+            SKMain.bestfive.at[t,'賣量']=str(total_dict['賣量'][t])
+            # print(x.買量,x.買價,x.賣價, x.賣量)
+            # x.買量.setText(str(total_dict['買量'][t]))
+            # x.買價.setText(str(total_dict['買價'][t]))
+            # x.賣價.setText(str(total_dict['賣價'][t]))
+            # x.賣量.setText(str(total_dict['賣量'][t]))
 
-        bidQty = total_dict['bidQtyitem'].values()
-        askQty = total_dict['askQtyitem'].values()
-        SKMain.bestfive.at[5,'bidQtyitem']=str(int(sum(bidQty)))
-        SKMain.bestfive.at[5,'askQtyitem']=str(int(sum(askQty)))
-        SKMain.bestfive.at[5,'nbiditem']=str('')
-        SKMain.bestfive.at[5,'naskitem']=str('')
+        bidQty = total_dict['買量'].values()
+        askQty = total_dict['賣量'].values()
+        SKMain.bestfive.at[5,'買量']=str(int(sum(bidQty)))
+        SKMain.bestfive.at[5,'賣量']=str(int(sum(askQty)))
+        SKMain.bestfive.at[5,'買價']=str('')
+        SKMain.bestfive.at[5,'賣價']=str('')
         # print(SKMain.bestfive)
         SKMain.Dom1model.UpdateData(SKMain.bestfive)
 
