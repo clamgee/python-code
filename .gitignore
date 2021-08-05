@@ -12,6 +12,7 @@ __pycache__/*
 *.log
 /__pycache__
 /tmp
+/env
 /data/filename.txt
 /BackUp
 /CapitalLog_Quote
