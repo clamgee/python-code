@@ -39,7 +39,7 @@ class CandleItem(pg.GraphicsObject):
             self.data=self.data.append(ndata.tail(nidx-self.lastidx),ignore_index=True)
             self.lastidx = nidx
 
-        elif self.lastidx==0 and self.data is None:
+        elif self.data is None:
             self.data = ndata.reset_index(drop=True)
             self.high = nhigh
             self.low = nlow
