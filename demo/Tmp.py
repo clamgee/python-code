@@ -1,25 +1,47 @@
+
+# import os
+# import PySide2
+# dirname = os.path.dirname(PySide2.__file__)
+# plugin_path = os.path.join(dirname, 'plugins', 'platforms')
+# os.environ['PYSIDE_DESIGNER_PLUGINS'] = plugin_path
+# print(plugin_path)
+
+
 import sys
-from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QFile, QIODevice
 import os
-envpath = r'C:/Users/Owner/AppData/Local/Programs/Python/Python37/Lib/site-packages/PySide6/plugins/designer/PySidePlugin.dll'
-os.environ["PYSIDE_DESIGNER_PLUGINS"] = envpath
+import PySide6
+from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtCore import QFile
+from PySide6.QtUiTools import QUiLoader
+from ui_MainWindow import Ui_CapitalAPI
+# os.environ['PYSIDE_DESIGNER_PLUGINS'] = "C:\\Users\\Gary\\anaconda3\\Lib\\site-packages\\PySide6\\plugins'"
+dirname = os.path.dirname(PySide6.__file__)
+plugin_path = os.path.join(dirname, 'plugins')
+os.environ['PYSIDE_DESIGNER_PLUGINS'] = plugin_path
+print(plugin_path)
+
+
+class MyMainWindow(QMainWindow):
+    def __init__(self):
+        super(MyMainWindow, self).__init__()
+        self.load_ui()
+    
+    def load_ui(self):
+        self.ui = Ui_CapitalAPI()
+        self.ui.setupUI(self)
+
+    # def load_ui(self):
+    #     loader = QUiLoader()
+    #     path = os.path.join(os.path.dirname(__file__), "../APIver3/UI/MainWindow.ui")
+    #     ui_file = QFile(path)
+    #     ui_file.open(QFile.ReadOnly)
+    #     loader.load(ui_file, self)
+    #     ui_file.close()
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-
-    ui_file_name = "../APIver3/UI/MainWindow.ui"
-    ui_file = QFile(ui_file_name)
-    if not ui_file.open(QIODevice.ReadOnly):
-        print(f"Cannot open {ui_file_name}: {ui_file.errorString()}")
-        sys.exit(-1)
-    loader = QUiLoader()
-    window = loader.load(ui_file)
-    ui_file.close()
-    if not window:
-        print(loader.errorString())
-        sys.exit(-1)
-    window.show()
-
+    app = QApplication([])
+    widget = MyMainWindow()
+    widget.show()
     sys.exit(app.exec())
+
+
