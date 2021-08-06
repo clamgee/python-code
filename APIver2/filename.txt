@@ -576,3 +576,4 @@ Ticks2021-08-02.txt
 Ticks2021-08-03.txt
 Ticks2021-08-04.txt
 Ticks2021-08-05.txt
+Ticks2021-08-06.txt
