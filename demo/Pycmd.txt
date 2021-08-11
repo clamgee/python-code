@@ -1,0 +1,8 @@
+所有模組升級更新
+pip list --format freeze | %{pip install --upgrade $_.split('==')[0]}
+
+將安裝過的模組輸出到文字檔
+pip freeze > requirements.txt
+
+讀取先前列出模組進行安裝
+pip install -r requirements.txt

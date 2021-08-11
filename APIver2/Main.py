@@ -261,7 +261,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.Right_TB.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.Right_TB.setHorizontalHeaderLabels(['帳戶餘額', '浮動損益', '已實現費用'])
-        self.Bill = pd.DataFrame(np.arange(39).reshape(39), columns=['Right'])  # 期貨權益數 DataFrame        
+        self.Bill = pd.DataFrame(np.arange(41).reshape(41), columns=['Right'])  # 期貨權益數 DataFrame        
         i = 0
         while i < self.Bill.shape[0]:
             self.Bill.at[i, 'Right'] = QTableWidgetItem('')
@@ -272,10 +272,16 @@ class SKMainWindow(QMainWindow):  # 主視窗
         while i < self.Right_TB.rowCount():
             self.Right_TB.setItem(i, 0, self.Bill.at[j, 'Right'])
             j += 1
+            if j >= self.Bill.shape[0]:
+                break
             self.Right_TB.setItem(i, 1, self.Bill.at[j, 'Right'])
             j += 1
+            if j >= self.Bill.shape[0]:
+                break
             self.Right_TB.setItem(i, 2, self.Bill.at[j, 'Right'])
             j += 1
+            if j >= self.Bill.shape[0]:
+                break
             i += 2
 
     # 權益數介面結束
@@ -898,8 +904,9 @@ class SKQuoteLibEvents:
             B = time.time()-start
             start = time.time()
             SKMain.dealminusbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','dealminus']].tail(SKMain.Future.minlastidx+1-SKMain.dealminusbar.lastidx))
-            SKMain.bigbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','big']].tail(SKMain.Future.minlastidx+1-SKMain.bigbar.lastidx))
-            SKMain.RetailInvestorsbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','small']].tail(SKMain.Future.minlastidx+1-SKMain.RetailInvestorsbar.lastidx))
+            if SKMain.Future.mindf is not None:
+                SKMain.bigbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','big']].tail(SKMain.Future.minlastidx+1-SKMain.bigbar.lastidx))
+                SKMain.RetailInvestorsbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','small']].tail(SKMain.Future.minlastidx+1-SKMain.RetailInvestorsbar.lastidx))
             C = time.time()-start
             xmax = SKMain.Future.lastidx + 1
             minkmax = SKMain.Future.minlastidx + 1

@@ -157,11 +157,11 @@
               <attribute name="horizontalHeaderCascadingSectionResizes">
                <bool>true</bool>
               </attribute>
-              <attribute name="horizontalHeaderDefaultSectionSize">
-               <number>59</number>
-              </attribute>
               <attribute name="horizontalHeaderMinimumSectionSize">
                <number>10</number>
+              </attribute>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>59</number>
               </attribute>
               <attribute name="verticalHeaderVisible">
                <bool>false</bool>
@@ -169,11 +169,11 @@
               <attribute name="verticalHeaderCascadingSectionResizes">
                <bool>true</bool>
               </attribute>
-              <attribute name="verticalHeaderDefaultSectionSize">
-               <number>31</number>
-              </attribute>
               <attribute name="verticalHeaderMinimumSectionSize">
                <number>10</number>
+              </attribute>
+              <attribute name="verticalHeaderDefaultSectionSize">
+               <number>31</number>
               </attribute>
               <row/>
               <row/>
@@ -568,11 +568,11 @@
               <attribute name="horizontalHeaderCascadingSectionResizes">
                <bool>true</bool>
               </attribute>
-              <attribute name="horizontalHeaderDefaultSectionSize">
-               <number>59</number>
-              </attribute>
               <attribute name="horizontalHeaderMinimumSectionSize">
                <number>10</number>
+              </attribute>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>59</number>
               </attribute>
               <attribute name="verticalHeaderVisible">
                <bool>false</bool>
@@ -580,11 +580,11 @@
               <attribute name="verticalHeaderCascadingSectionResizes">
                <bool>true</bool>
               </attribute>
-              <attribute name="verticalHeaderDefaultSectionSize">
-               <number>31</number>
-              </attribute>
               <attribute name="verticalHeaderMinimumSectionSize">
                <number>10</number>
+              </attribute>
+              <attribute name="verticalHeaderDefaultSectionSize">
+               <number>31</number>
               </attribute>
               <row/>
               <row/>
@@ -931,7 +931,7 @@
                <bool>true</bool>
               </property>
               <property name="rowCount">
-               <number>26</number>
+               <number>28</number>
               </property>
               <property name="columnCount">
                <number>3</number>
@@ -942,6 +942,8 @@
               <attribute name="verticalHeaderVisible">
                <bool>false</bool>
               </attribute>
+              <row/>
+              <row/>
               <row/>
               <row/>
               <row/>
@@ -1607,6 +1609,22 @@
                 <set>AlignCenter</set>
                </property>
               </item>
+              <item row="26" column="0">
+               <property name="text">
+                <string>登入帳號</string>
+               </property>
+               <property name="textAlignment">
+                <set>AlignCenter</set>
+               </property>
+              </item>
+              <item row="26" column="1">
+               <property name="text">
+                <string>期貨帳號</string>
+               </property>
+               <property name="textAlignment">
+                <set>AlignCenter</set>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>
@@ -1625,7 +1643,7 @@
      <x>0</x>
      <y>0</y>
      <width>1052</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
