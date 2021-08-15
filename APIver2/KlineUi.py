@@ -151,7 +151,7 @@ class BarItem(pg.GraphicsObject):
                 self.lastidx = nidx
                 self.columnname = self.data.columns[-1]
             else:
-                print('繪圖Index資料有誤2')
+                print('繪圖Index資料有誤2:',self.name)
         else :
             print('繪圖資料有誤!!',nidx)
         if self.data[self.columnname].max()>self.high:
