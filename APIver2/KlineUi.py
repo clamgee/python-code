@@ -120,8 +120,9 @@ class CandleItem(pg.GraphicsObject):
 
 
 class BarItem(pg.GraphicsObject):
-    def __init__(self):
+    def __init__(self,inputname):
         pg.GraphicsObject.__init__(self)
+        self.name = inputname
         self.data = None
         self.columnname = None
         self.picturemain = QtGui.QPicture() #主K線圖
