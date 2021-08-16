@@ -6,11 +6,9 @@
 /com
 *.code-workspace
 Clam-NB.code-workspace
-__pycache__/*
 /.git
 *.json
 *.log
-/__pycache__
 /tmp
 /env
 /data/filename.txt
@@ -20,10 +18,9 @@ __pycache__/*
 /APIver1/CapitalLog_Quote/*.txt
 /APIver1/data/filename.txt
 /APIver1/*.csv
-/APIver1/__pycache__
 /APIver2/CapitalLog_Quote/*.log
 /APIver2/CapitalLog_Quote/*.txt
 /APIver2/data/filename.txt
 /APIver2/*.csv
-/APIver2/__pycache__
-/*/__pycache__
+*/__pycache__
+/APIver3/UI/__pycache__
