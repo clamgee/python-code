@@ -13,12 +13,21 @@ SCRIPT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 class SKMainWindow(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
+<<<<<<< HEAD
         # self.MainUi=Ui_CapitalAPI()
         # self.MainUi.setupUi(self)
         self.MainWindowUiFile = QFile(os.path.join(SCRIPT_DIRECTORY, 'UI\MainWindow.ui'))
         self.MainWindowUiFile.open(QFile.ReadOnly)
         self.MainUi=UiLoader(self.MainWindowUiFile, self)
         self.MainWindowUiFile.close()
+=======
+        self.MainUi=Ui_CapitalAPI()
+        self.MainUi.setupUi(self)
+        # self.MainWindowUiFile = QFile(os.path.join(SCRIPT_DIRECTORY, 'UI\MainWindow.ui'))
+        # # self.MainWindowUiFile.open(QFile.ReadOnly)
+        # UiLoader(self.MainWindowUiFile, self)
+        # # self.MainWindowUiFile.close()
+>>>>>>> ffbbc14eedf0cd1c5207b2ec2e44895d7b62ff5e
 
 
 if __name__=='__main__':

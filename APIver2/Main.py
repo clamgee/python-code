@@ -448,9 +448,15 @@ class SKMainWindow(QMainWindow):  # 主視窗
         # self.Kitem = KlineUi.CandlestickItem()
         self.Kitem = KlineUi.CandleItem()
         self.minKitem = KlineUi.CandleItem()
+<<<<<<< HEAD
         self.dealminusbar = KlineUi.BarItem('dealminusbar')
         self.bigbar = KlineUi.BarItem('bigbar')
         self.RetailInvestorsbar = KlineUi.BarItem('RetailInvestorsbar')
+=======
+        self.dealminusbar = KlineUi.BarItem()
+        self.bigbar = KlineUi.BarItem()
+        self.RetailInvestorsbar = KlineUi.BarItem()
+>>>>>>> ffbbc14eedf0cd1c5207b2ec2e44895d7b62ff5e
         # self.Kui = KlineUi.KlineWidget(nstock)
         # self.Kui.addItem(self.Kitem)
         self.draw12k.addItem(self.Kitem)
