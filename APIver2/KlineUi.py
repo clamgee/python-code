@@ -136,30 +136,26 @@ class BarItem(pg.GraphicsObject):
         self.countK = 60 #設定要顯示多少K線
 
     def set_data(self,nidx,ndata):
-        if self.lastidx == nidx and self.data is not None:
+        if self.data is None:
+            self.data = ndata.reset_index(drop=True)
+            self.lastidx = nidx
+            self.columnname = self.data.columns[-1]
+        elif self.lastidx == nidx and self.data is not None:
             self.data.at[self.lastidx,self.columnname] = ndata.at[self.lastidx,self.columnname]
-        elif nidx is not None and nidx > self.lastidx and self.lastidx!=0:
+        elif nidx is not None and nidx > self.lastidx and self.data is not None:
             col = ndata.columns.tolist()
             for row in col :
                 self.data.at[self.lastidx,row]=ndata.at[self.lastidx,row]
             self.data=self.data.append(ndata.tail(nidx-self.lastidx),ignore_index=True)
             self.lastidx = nidx
-
-        elif self.data is None:
-            self.data = ndata.reset_index(drop=True)
-            if self.data.last_valid_index()==nidx:
-                self.lastidx = nidx
-                self.columnname = self.data.columns[-1]
-            else:
-                print('繪圖Index資料有誤2:',self.name)
         else :
             print('繪圖資料有誤!!',self.name,nidx)
+            pass
         if self.data[self.columnname].max()>self.high:
             self.high=self.data[self.columnname].max()
         if self.data[self.columnname].min()<self.low:
             self.low=self.data[self.columnname].min()
 
-        # self.len = self.data.shape[0]
         self.generatePicture()
         self.informViewBoundsChanged()
         if not self.scene() is None:
@@ -192,7 +188,7 @@ class BarItem(pg.GraphicsObject):
     def paint(self, painter, opt, w):
         rect = opt.exposedRect
         xmin,xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
-        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None:# or self.lastbar != self.data.index.values[-1]:
+        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None:
             self.rect = (rect.left(),rect.right())
             self.picturemain = self.createPic(xmin,xmax-1)
             self.picturemain.play(painter)
