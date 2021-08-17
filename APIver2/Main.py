@@ -484,7 +484,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
                      '委託時間', '交易時段'])
         self.ReplyCRpdMode = PandasModel()
         self.openpd = pd.DataFrame(
-            columns=['市場別', '帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位', '平均成本', '一點價值', '單口手續費', '交易稅'])
+            columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位', '平均成本', '一點價值', '單口手續費', '交易稅','登入帳號'])
         self.OpenCRpdMode = PandasModel()
         self.test = 0
 
@@ -703,7 +703,7 @@ class SKOrderLibEvent:
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
             m_nCode = skR.SKReplyLib_ConnectByID(bstrLogInID)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
-            m_nCode = skO.GetOpenInterest(bstrLogInID, SKMain.IBAccount)
+            m_nCode = skO.GetOpenInterestWithFormat(bstrLogInID, SKMain.IBAccount,3)
             SKMain.SKMessage.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
 
     def OnAsyncOrder(self, nThreadID, nCode, bstrMessage):
@@ -723,7 +723,6 @@ class SKOrderLibEvent:
             i += 1
 
     def OnOpenInterest(self, bstrData):
-        # print('持倉回報: ',bstrData,' 次數:',SKMain.test)
         Line = bstrData.split(',')
         if Line[0] == 'M003 NO DATA':
             print('No Data pass')
@@ -734,10 +733,10 @@ class SKOrderLibEvent:
             print('OnOpenInterest end pass')
             pass
         else:
-            SKMain.openpd = SKMain.openpd.append(pd.DataFrame(Line,columns=['市場別', '帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅']))
-        # SKMain.test+=1
+            SKMain.openpd = SKMain.openpd.append(pd.DataFrame([Line],columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅','登入帳號']))
+        SKMain.test+=1
         # i=0
-        # Line=bstrData.split(',')
+        # print(Line)
         # for row in Line:
         #     print('次數: ', SKMain.test, '欄位:',i,'數值:',row)
         #     i+=1

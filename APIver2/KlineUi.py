@@ -25,28 +25,25 @@ class CandleItem(pg.GraphicsObject):
         self.countK = 60 #設定要顯示多少K線
 
     def set_data(self,nidx,nhigh,nlow,ndata):
-        if self.lastidx == nidx and self.data is not None:
+        if self.data is None:
+            self.data = ndata.reset_index(drop=True)
+            self.high = nhigh
+            self.low = nlow
+            if self.data.last_valid_index()==nidx:
+                self.lastidx = nidx
+        elif self.lastidx == nidx:
             if self.high < nhigh :
                 self.data.at[self.lastidx,'high']=self.high=nhigh 
             if self.low > nlow:
                 self.data.at[self.lastidx,'low']=self.low=nlow
             self.data.at[self.lastidx,'close'] = ndata.at[self.lastidx,'close']
             self.data.at[self.lastidx,'volume'] = ndata.at[self.lastidx,'volume']
-        elif nidx > self.lastidx and self.lastidx!=0:
+        elif nidx > self.lastidx:
             col = ndata.columns.tolist()
             for row in col :
                 self.data.at[self.lastidx,row]=ndata.at[self.lastidx,row]
             self.data=self.data.append(ndata.tail(nidx-self.lastidx),ignore_index=True)
             self.lastidx = nidx
-
-        elif self.data is None:
-            self.data = ndata.reset_index(drop=True)
-            self.high = nhigh
-            self.low = nlow
-            if self.data.last_valid_index()==nidx:
-                self.lastidx = nidx
-            else:
-                print('繪圖Index資料有誤2')
         else :
             print('繪圖資料有誤!!',nidx)
 
