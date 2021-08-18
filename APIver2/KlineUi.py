@@ -29,8 +29,7 @@ class CandleItem(pg.GraphicsObject):
             self.data = ndata.reset_index(drop=True)
             self.high = nhigh
             self.low = nlow
-            if self.data.last_valid_index()==nidx:
-                self.lastidx = nidx
+            self.lastidx = nidx
         elif self.lastidx == nidx:
             if self.high < nhigh :
                 self.data.at[self.lastidx,'high']=self.high=nhigh 

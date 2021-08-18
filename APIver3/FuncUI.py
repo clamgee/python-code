@@ -20,6 +20,10 @@ class LoginDialog(QtCore.QObject):
                 data = json.load(file)
             self.ui.LoginID.setText(data["ID"])
             self.ui.LoginPW.setText(data["PW"])
+    def resetIDPW(self):
+        self.ui.LoginID.setText('')
+        self.ui.LoginPW.setText('')
+        self.ui.IDPWCheck.setChecked(False)
 
 # class MessageDialog(QDialog):
 #     def __init__(self,gname):
