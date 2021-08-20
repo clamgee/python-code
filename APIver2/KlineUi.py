@@ -67,14 +67,14 @@ class CandleItem(pg.GraphicsObject):
             # p.setPen(pg.mkPen(color='w',width=0.1))
             if x.open>x.close:
                 p.setBrush(pg.mkBrush('g'))
-                p.setPen(pg.mkPen(color='g'))
+                # p.setPen(pg.mkPen(color='g'))
             elif x.open<x.close:
                 p.setBrush(pg.mkBrush('r'))
-                p.setPen(pg.mkPen(color='r'))
+                # p.setPen(pg.mkPen(color='r'))
             else:
                 p.setBrush(pg.mkBrush('w'))
-                p.setPen(pg.mkPen(color='w'))
             p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
+            p.setPen(pg.mkPen(color='w'))
             p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
             self.pictures.append(picture)
         

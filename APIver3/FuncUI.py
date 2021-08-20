@@ -9,30 +9,35 @@ import json
 
 class LoginDialog(QtCore.QObject):
     def __init__(self):
-        self.UiFile = QtCore.QFile('UI/Login.ui')
+        UiFile = QtCore.QFile('UI/Login.ui')
         Loader = QUiLoader()
-        self.UiFile.open(QtCore.QFile.ReadOnly)
-        DialogUi=Loader.load(self.UiFile)
-        self.UiFile.close()
-        self.ui = DialogUi
+        UiFile.open(QtCore.QFile.ReadOnly)
+        self.ui=Loader.load(UiFile)
+        self.UiFile.close()         
         if self.ui.IDPWCheck.checkState()==2:
             with open("IDPW.json",mode="r",encoding="utf-8") as file:
                 data = json.load(file)
             self.ui.LoginID.setText(data["ID"])
             self.ui.LoginPW.setText(data["PW"])
+
     def resetIDPW(self):
         self.ui.LoginID.setText('')
         self.ui.LoginPW.setText('')
         self.ui.IDPWCheck.setChecked(False)
 
-# class MessageDialog(QDialog):
-#     def __init__(self,gname):
-#         super(MessageDialog,self).__init__()
-#         self.setWindowTitle(gname)
-#         loadUi(r'UI/Message.ui',self)
+class MessageDialog(QDialog):
+    def __init__(self,gname):
+        UiFile = QtCore.QFile('UI/Message.ui')
+        self.setWindowTitle(gname)
+        Loader = QUiLoader()
+        UiFile.open(QtCore.QFile.ReadOnly)
+        self.ui = Loader.load(UiFile)
+        UiFile.close()
 
 if __name__ == "__main__":
-    LoginApp=QApplication(sys.argv)
-    SKLogin=LoginDialog()
+    LoginApp = QApplication(sys.argv)
+    SKLogin = LoginDialog()
     SKLogin.ui.show()
+    SKMessage = MessageDialog()
+    SKMessage.ui.show()
     sys.exit(LoginApp.exec_())

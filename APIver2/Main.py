@@ -829,15 +829,17 @@ class SKQuoteLibEvents:
 
     def OnConnection(self, nKind, nCode):
         if (nKind == 3001):
-            strMsg = "Connected!"
+            strMsg = "Connected!, "+str(nCode)
         elif (nKind == 3002):
-            strMsg = "DisConnected!"
+            strMsg = "DisConnected!, "+str(nCode)
         elif (nKind == 3003):
-            strMsg = "Stocks ready!"
+            strMsg = "Stocks ready!, "+str(nCode)
             time.sleep(5)
             SKMain.commodityFnc()
         elif (nKind == 3021):
-            strMsg = "Connect Error!"
+            strMsg = "Connect Error!, "+str(nCode)
+        else:
+            strMsg = nCode
         print(strMsg)
         SKMain.SKMessage.textBrowser.append(strMsg)
 
