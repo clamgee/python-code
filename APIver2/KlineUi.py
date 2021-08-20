@@ -59,39 +59,28 @@ class CandleItem(pg.GraphicsObject):
         w = 1.0 / 3.0
         start = len(self.pictures)
         stop = self.lastidx + 1
-
         for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
-            # p.setPen(pg.mkPen(color='w',width=0.4))
-            # p.setPen(pg.mkPen(color='w',width=0.1))
             if x.open>x.close:
-                p.setBrush(pg.mkBrush('g'))
-                # p.setPen(pg.mkPen(color='g'))
+                Rcolor = 'g'
             elif x.open<x.close:
-                p.setBrush(pg.mkBrush('r'))
-                # p.setPen(pg.mkPen(color='r'))
+                Rcolor = 'r'
             else:
-                p.setBrush(pg.mkBrush('w'))
-            p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
-            p.setPen(pg.mkPen(color='w'))
+                Rcolor = 'w'
+            p.setPen(pg.mkPen(Rcolor))
             p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
+            p.setBrush(pg.mkBrush(Rcolor))
+            p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
+            p.end()
             self.pictures.append(picture)
         
     def paint(self, painter, opt, w):
         rect = opt.exposedRect
         xmin,xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
-        # self.rect = (rect.left(),rect.right())
-        # self.picture = self.createPic(xmin,xmax)
-        # self.picture.play(painter)
         if not self.rect == (rect.left(),rect.right()) or self.picturemain is None:# or self.lastbar != self.data.index.values[-1]:
             self.rect = (rect.left(),rect.right())
-            #self.lastbar = self.data.index.values[-1]
-            # print('rect: ',self.rect)
-            # if (xmax-121)<0:
             self.picturemain = self.createPic(xmin,xmax-1)
-            # else:
-            #     self.picturemain = self.createPic(xmax-121,xmax-1)
             self.picturemain.play(painter)
             self.picturelast = self.createPic(xmax-1,xmax)
             self.picturelast.play(painter)
@@ -129,7 +118,6 @@ class BarItem(pg.GraphicsObject):
         self.low = 0
         self.high = 0
         self.lastidx = 0
-        self.countK = 60 #設定要顯示多少K線
 
     def set_data(self,nidx,ndata):
         if self.data is None:
@@ -166,7 +154,6 @@ class BarItem(pg.GraphicsObject):
         if self.lastidx is None:
             self.lastidx=0
         stop = self.lastidx + 1
-
         for (t, x) in self.data.loc[start:stop, [self.columnname]].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)

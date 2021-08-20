@@ -1,7 +1,7 @@
-import pyqtgraph
-import pyqtgraph.examples
+# import pyqtgraph
+# import pyqtgraph.examples
 
-pyqtgraph.examples.run()
+# pyqtgraph.examples.run()
 
 # import os
 # import PySide2
