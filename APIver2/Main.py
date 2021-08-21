@@ -254,8 +254,8 @@ class SKMainWindow(QMainWindow):  # 主視窗
             self.SKMessage.textBrowser.append('發生錯誤:' + e)
             # print('系統錯誤:'+e)
             pass
-
     # 登入功能結束
+    
     # 權益數介面
     def RightUI(self):
         self.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -658,15 +658,13 @@ class His_KLlineThread(QtCore.QObject):
 
 
 class PandasModel(QAbstractTableModel):
-
     def __init__(self):
         QAbstractTableModel.__init__(self)
 
     def UpdateData(self, data):
         self._data = data
         self.layoutAboutToBeChanged.emit()  # 建立變更資料通知訊號發射
-        self.dataChanged.emit(self.createIndex(0, 0),
-                              self.createIndex(self.rowCount(), self.columnCount()))  # 資料變更區域訊號發射
+        self.dataChanged.emit(self.createIndex(0, 0),self.createIndex(self.rowCount(), self.columnCount()))  # 資料變更區域訊號發射
         self.layoutChanged.emit()  # 資料變更訊號發射
 
     def rowCount(self, parent=None):

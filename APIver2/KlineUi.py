@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import pyqtgraph as pg
 import numpy as np
@@ -9,18 +8,14 @@ class CandleItem(pg.GraphicsObject):
         pg.GraphicsObject.__init__(self)
         self.data = None
         self.lastbar = None
-        # self.picture = QtGui.QPicture()
         self.picturemain = QtGui.QPicture() #主K線圖
         self.picturelast = QtGui.QPicture() #最後一根K線圖
         self.pictures = []
+        self.PaintChange = False
         self.setFlag(self.ItemUsesExtendedStyleOption)
         self.rect = None
         self.low = 0
         self.high = 0
-        # self.FPS = 0
-        self.highavg = ''
-        self.lowavg = ''
-        # self.timelist = []
         self.lastidx = 0
         self.countK = 60 #設定要顯示多少K線
 
@@ -30,6 +25,7 @@ class CandleItem(pg.GraphicsObject):
             self.high = nhigh
             self.low = nlow
             self.lastidx = nidx
+            self.PaintChange = True
         elif self.lastidx == nidx:
             if self.high < nhigh :
                 self.data.at[self.lastidx,'high']=self.high=nhigh 
@@ -43,14 +39,15 @@ class CandleItem(pg.GraphicsObject):
                 self.data.at[self.lastidx,row]=ndata.at[self.lastidx,row]
             self.data=self.data.append(ndata.tail(nidx-self.lastidx),ignore_index=True)
             self.lastidx = nidx
+            self.PaintChange = True
         else :
             print('繪圖資料有誤!!',nidx)
 
         # self.len = self.data.shape[0]
         self.generatePicture()
         self.informViewBoundsChanged()
-        if not self.scene() is None:
-            self.scene().update() #強制圖形更新
+        # if not self.scene() is None:
+        self.scene().update() #強制圖形更新
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
@@ -75,19 +72,26 @@ class CandleItem(pg.GraphicsObject):
             p.end()
             self.pictures.append(picture)
         
-    def paint(self, painter, opt, w):
-        rect = opt.exposedRect
-        xmin,xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
-        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None:# or self.lastbar != self.data.index.values[-1]:
-            self.rect = (rect.left(),rect.right())
-            self.picturemain = self.createPic(xmin,xmax-1)
+    # def paint(self, painter, opt, w):
+    #     rect = opt.exposedRect
+    #     xmin,xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
+    #     if not self.rect == (rect.left(),rect.right()) or self.picturemain is None:# or self.lastbar != self.data.index.values[-1]:
+    def paint(self,painter,*args):
+        if self.PaintChange:
+            # self.rect = (rect.left(),rect.right())
+            # self.picturemain = self.createPic(xmin,xmax-1)
+            self.picturemain = self.createPic(0,self.lastidx-1)
             self.picturemain.play(painter)
-            self.picturelast = self.createPic(xmax-1,xmax)
+            # self.picturelast = self.createPic(xmax-1,xmax)
+            self.picturelast = self.createPic(self.lastidx-1,self.lastidx)
             self.picturelast.play(painter)
+            self.PaintChange = False
             # print('重繪')            
-        elif not self.picturemain is None:
+        # elif not self.picturemain is None:
+        else:
             self.picturemain.play(painter)
-            self.picturelast = self.createPic(xmax-1,xmax)
+            # self.picturelast = self.createPic(xmax-1,xmax)
+            self.picturelast = self.createPic(self.lastidx-1,self.lastidx)
             self.picturelast.play(painter)
             # print('快圖')
 
