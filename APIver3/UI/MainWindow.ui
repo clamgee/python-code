@@ -48,10 +48,10 @@
           <item row="0" column="0">
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
-             <widget class="QTableView" name="tableView"/>
+             <widget class="QTableView" name="Reply_TBW"/>
             </item>
             <item>
-             <widget class="QTableView" name="tableView_2"/>
+             <widget class="QTableView" name="Open_TBW"/>
             </item>
            </layout>
           </item>
@@ -633,7 +633,7 @@
    <addaction name="menu_3"/>
    <addaction name="menu_4"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
@@ -645,6 +645,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="SysDetail"/>
+   <addaction name="Connectbtn"/>
+   <addaction name="actionDisconnectbtn"/>
   </widget>
   <action name="actionLogin">
    <property name="text">
@@ -665,6 +667,35 @@
    </property>
    <property name="toolTip">
     <string>系統詳細資訊</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="Connectbtn">
+   <property name="text">
+    <string>報價連線</string>
+   </property>
+   <property name="toolTip">
+    <string>建立報價連線回報機制</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionDisconnectbtn">
+   <property name="text">
+    <string>報價清除</string>
+   </property>
+   <property name="iconText">
+    <string>停止報價</string>
+   </property>
+   <property name="toolTip">
+    <string>斷開或情除報價連線狀態</string>
    </property>
    <property name="font">
     <font>

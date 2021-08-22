@@ -1,4 +1,5 @@
 *.csv
+.gitignore
 /x64
 /PythonExample
 *.swp
@@ -20,7 +21,11 @@ Clam-NB.code-workspace
 /APIver1/*.csv
 /APIver2/CapitalLog_Quote/*.log
 /APIver2/CapitalLog_Quote/*.txt
+/APIver2/CapitalLog_Quote/*.log
+/APIver2/CapitalLog_Quote/*.txt
 /APIver2/data/filename.txt
 /APIver2/*.csv
 */__pycache__
 /APIver3/UI/__pycache__
+/APIver3/CapitalLog_Quote/*.log
+/APIver3/CapitalLog_Quote/*.txt

@@ -12,38 +12,35 @@ class LoginDialog(QtCore.QObject):
         UiFile = QtCore.QFile('UI/Login.ui')
         Loader = QUiLoader()
         UiFile.open(QtCore.QFile.ReadOnly)
-        self.LoginUI=Loader.load(UiFile)
+        self.ui=Loader.load(UiFile)
         UiFile.close()
-        self.LoginUI.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
-        self.LoginUI.setWindowModality(QtCore.Qt.ApplicationModal)  # 設定須先完成對話框，其他介面設定無效
-        self.LoginUI.show()
-        self.LoginUI.LoginConfirmbtn.accepted.connect(self.LoginFuncAccept)
-
-        self.LoginUI.LoginConfirmbtn.rejected.connect(self.resetIDPW)        
-        if self.LoginUI.IDPWCheck.checkState()==2:
+        self.ui.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
+        self.ui.setWindowModality(QtCore.Qt.ApplicationModal)  # 設定須先完成對話框，其他介面設定無效
+        self.ui.LoginConfirmbtn.rejected.connect(self.resetIDPW)        
+        if self.ui.IDPWCheck.checkState()==2:
             with open("IDPW.json",mode="r",encoding="utf-8") as file:
                 data = json.load(file)
-            self.LoginUI.LoginID.setText(data["ID"])
-            self.LoginUI.LoginPW.setText(data["PW"])
-
+            self.ui.LoginID.setText(data["ID"])
+            self.ui.LoginPW.setText(data["PW"])
+    @QtCore.Slot()
     def resetIDPW(self):
-        self.LoginUI.LoginID.setText('')
-        self.LoginUI.LoginPW.setText('')
-        self.LoginUI.IDPWCheck.setChecked(False)
+        self.ui.LoginID.setText('')
+        self.ui.LoginPW.setText('')
+        self.ui.IDPWCheck.setChecked(False)
 
-class MessageDialog(QDialog):
+class MessageDialog(QtCore.QObject):
     def __init__(self,gname):
         UiFile = QtCore.QFile('UI/Message.ui')
         Loader = QUiLoader()
         UiFile.open(QtCore.QFile.ReadOnly)
-        self.MessageUI = Loader.load(UiFile)
+        self.ui = Loader.load(UiFile)
         UiFile.close()
-        self.MessageUI.setWindowTitle(gname)
+        self.ui.setWindowTitle(gname)
 
-if __name__ == "__main__":
-    FuncUIApp = QApplication(sys.argv)
-    SKLogin = LoginDialog()
-    SKLogin.LoginUI.show()
-    SKMessage = MessageDialog()
-    SKMessage.MessageUI.show()
-    sys.exit(FuncUIApp.exec_())
+# if __name__ == "__main__":
+#     FuncUIApp = QApplication(sys.argv)
+#     SKLogin = LoginDialog()
+#     SKLogin.ui.show()
+#     SKMessage = MessageDialog()
+#     SKMessage.ui.show()
+#     sys.exit(FuncUIApp.exec_())

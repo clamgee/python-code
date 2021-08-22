@@ -1,5 +1,4 @@
-# import pyqtgraph
-# import pyqtgraph.examples
+print(type(0)==int)
 
 # pyqtgraph.examples.run()
 
