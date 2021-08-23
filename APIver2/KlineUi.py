@@ -80,10 +80,10 @@ class CandleItem(pg.GraphicsObject):
         if self.PaintChange:
             # self.rect = (rect.left(),rect.right())
             # self.picturemain = self.createPic(xmin,xmax-1)
-            self.picturemain = self.createPic(0,self.lastidx-1)
+            self.picturemain = self.createPic(0,self.lastidx)
             self.picturemain.play(painter)
             # self.picturelast = self.createPic(xmax-1,xmax)
-            self.picturelast = self.createPic(self.lastidx-1,self.lastidx)
+            self.picturelast = self.createPic(self.lastidx,self.lastidx+1)
             self.picturelast.play(painter)
             self.PaintChange = False
             # print('重繪')            
@@ -91,7 +91,7 @@ class CandleItem(pg.GraphicsObject):
         else:
             self.picturemain.play(painter)
             # self.picturelast = self.createPic(xmax-1,xmax)
-            self.picturelast = self.createPic(self.lastidx-1,self.lastidx)
+            self.picturelast = self.createPic(self.lastidx,self.lastidx+1)
             self.picturelast.play(painter)
             # print('快圖')
 
