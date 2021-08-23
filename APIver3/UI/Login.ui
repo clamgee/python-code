@@ -61,7 +61,7 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -103,7 +103,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -153,9 +153,9 @@
  <connections>
   <connection>
    <sender>LoginConfirmbtn</sender>
-   <signal>accepted()</signal>
-   <receiver>LoginUI</receiver>
-   <slot>accept()</slot>
+   <signal>rejected()</signal>
+   <receiver>LoginID</receiver>
+   <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>248</x>
@@ -163,7 +163,39 @@
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
-     <y>274</y>
+     <y>33</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LoginConfirmbtn</sender>
+   <signal>rejected()</signal>
+   <receiver>LoginPW</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>73</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LoginConfirmbtn</sender>
+   <signal>rejected()</signal>
+   <receiver>IDPWCheck</receiver>
+   <slot>toggle()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>160</x>
+     <y>165</y>
     </hint>
    </hints>
   </connection>

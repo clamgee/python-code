@@ -17,7 +17,9 @@ class Ui_MessageUI(object):
     def setupUi(self, MessageUI):
         if not MessageUI.objectName():
             MessageUI.setObjectName(u"MessageUI")
+        MessageUI.setWindowModality(Qt.WindowModal)
         MessageUI.resize(640, 360)
+        MessageUI.setSizeGripEnabled(True)
         self.gridLayout = QGridLayout(MessageUI)
         self.gridLayout.setObjectName(u"gridLayout")
         self.textBrowser = QTextBrowser(MessageUI)
