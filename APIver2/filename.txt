@@ -591,3 +591,4 @@ Ticks2021-08-18.txt
 Ticks2021-08-19.txt
 Ticks2021-08-20.txt
 Ticks2021-08-23.txt
+Ticks2021-08-24.txt

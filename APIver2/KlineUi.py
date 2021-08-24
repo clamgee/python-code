@@ -65,10 +65,10 @@ class CandleItem(pg.GraphicsObject):
                 Rcolor = 'r'
             else:
                 Rcolor = 'w'
-            p.setPen(pg.mkPen(Rcolor))
-            p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
             p.setBrush(pg.mkBrush(Rcolor))
             p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
+            p.setPen(pg.mkPen(Rcolor))
+            p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
             p.end()
             self.pictures.append(picture)
         
