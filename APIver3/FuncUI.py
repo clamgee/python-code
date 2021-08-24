@@ -16,17 +16,11 @@ class LoginDialog(QtCore.QObject):
         UiFile.close()
         self.ui.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
         self.ui.setWindowModality(QtCore.Qt.ApplicationModal)  # 設定須先完成對話框，其他介面設定無效
-        self.ui.LoginConfirmbtn.rejected.connect(self.resetIDPW)        
         if self.ui.IDPWCheck.checkState()==2:
             with open("IDPW.json",mode="r",encoding="utf-8") as file:
                 data = json.load(file)
             self.ui.LoginID.setText(data["ID"])
             self.ui.LoginPW.setText(data["PW"])
-    @QtCore.Slot()
-    def resetIDPW(self):
-        self.ui.LoginID.setText('')
-        self.ui.LoginPW.setText('')
-        self.ui.IDPWCheck.setChecked(False)
 
 class MessageDialog(QtCore.QObject):
     def __init__(self,gname):
@@ -36,6 +30,8 @@ class MessageDialog(QtCore.QObject):
         self.ui = Loader.load(UiFile)
         UiFile.close()
         self.ui.setWindowTitle(gname)
+        # 顯示最大最小化按鍵
+        self.ui.setWindowFlags(QtCore.Qt.WindowMinMaxButtonsHint|QtCore.Qt.WindowCloseButtonHint)
 
 # if __name__ == "__main__":
 #     FuncUIApp = QApplication(sys.argv)

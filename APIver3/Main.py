@@ -25,16 +25,18 @@ class SKMainWindow(QMainWindow):
         self.MainUi.setupUi(self)
         self.showMaximized() #主視窗最大化
         # 介面導入
-        self.SKLoginUI()  # 登入介面
         self.SKMessageFunc()  # 系統訊息介面
+        self.SKLoginUI()  # 登入介面
         self.RightUI() #權益數介面
         # ManuBar連結
         self.MainUi.actionLogin.triggered.connect(self.Login.ui.show)  # 登入介面連結
         self.MainUi.SysDetail.triggered.connect(self.SKMessage.ui.show) #系統資訊連結
+        self.MainUi.Connectbtn.triggered.connect(self.ConnectFun) #SKCom 報價連線
+        self.MainUi.Disconnectbtn.triggered.connect(self.disconnectFun) #SKCom 報價斷線
         # 帳號處理
         self.SKID = '未登入'  # 登入帳號
         self.IBAccount = ''  # 期貨帳號
-        # self.statusBar.showMessage('帳號:' + self.SKID)
+        self.MainUi.statusBar.showMessage('帳號:' + self.SKID)
     
     def SKLoginUI(self):
         self.Login = FuncUI.LoginDialog() #登入介面
@@ -43,17 +45,16 @@ class SKMainWindow(QMainWindow):
     
     def SKMessageFunc(self):
         self.SKMessage = FuncUI.MessageDialog('系統訊息')  # 設定系統訊息介面
-        self.SKMessage.ui.setWindowModality(QtCore.Qt.WindowModal)  # 設定須先關閉對話框，GUI設定無效
         self.SKMessage.ui.show()
-    
+    @Slot()
     def LoginFuncAccept(self):
         try:
             skC.SKCenterLib_SetLogPath(os.path.split(os.path.realpath(__file__))[0] + "\\CapitalLog_Quote")
-            ID = self.Login.ui.LoginID.text().replace(' ', '')
-            PW = self.Login.ui.LoginPW.text().replace(' ', '')
-            m_nCode1 = skC.SKCenterLib_Login(ID, PW)
+            __ID = self.Login.ui.LoginID.text().replace(' ', '')
+            __PW = self.Login.ui.LoginPW.text().replace(' ', '')
+            m_nCode1 = skC.SKCenterLib_Login(__ID, __PW)
             if m_nCode1 == 0:
-                self.SKID = ID
+                self.SKID = __ID
                 self.MainUi.statusBar.showMessage('帳號:' + str(self.SKID))
                 self.SKMessage.ui.textBrowser.append('登入成功，帳號: ' + str(self.SKID))
             else:
@@ -65,6 +66,7 @@ class SKMainWindow(QMainWindow):
             self.SKMessage.ui.textBrowser.append("GetUserAccount: "+str(m_nCode3))
             if (m_nCode1+m_nCode2+m_nCode3) == 0:
                 self.Reply_Open_Fnc()
+                self.Login.ui.close()
             else:
                 self.SKMessage.ui.textBrowser.append('登入失敗，程式未觸發')
                 ID = '未登入'
@@ -110,6 +112,23 @@ class SKMainWindow(QMainWindow):
                 break
             i += 2
     # 權益數介面結束
+    # 報價系統連線功能
+    def ConnectFun(self):
+        m_nCode = skQ.SKQuoteLib_EnterMonitor()
+        if m_nCode==0:
+            strMsg = '報價已連線!!!'
+        else:
+            strMsg = skC.SKCenterLib_GetReturnCodeMessage(m_nCode)
+        self.SKMessage.ui.textBrowser.append("EnterMonitor: "+strMsg)
+
+    def disconnectFun(self):
+        m_nCode = skQ.SKQuoteLib_LeaveMonitor()
+        if m_nCode == 0:
+            strMsg='報價已斷線!!!'
+        else:
+            strMsg = skC.SKCenterLib_GetReturnCodeMessage(m_nCode)
+        self.SKMessage.ui.textBrowser.append("LeaveMonitor: "+strMsg)
+    # 報價系統結束
 
 
 class SKReplyLibEvent:
@@ -240,6 +259,50 @@ class SKOrderLibEvent:
         #     print('次數: ', SKMain.test, '欄位:',i,'數值:',row)
         #     i+=1
 
+class SKQuoteLibEvents:
+
+    def OnConnection(self, nKind, nCode):
+        if (nKind == 3001):
+            strMsg = "Connected!, "+str(nCode)
+        elif (nKind == 3002):
+            strMsg = "DisConnected!, "+str(nCode)
+        elif (nKind == 3003):
+            strMsg = "Stocks ready!, "+str(nCode)
+            time.sleep(5)
+            SKMain.commodityFnc()
+        elif (nKind == 3021):
+            strMsg = "Connect Error!, "+str(nCode)
+        else:
+            strMsg = skC.SKCenterLib_GetReturnCodeMessage(nCode)
+        SKMain.SKMessage.textBrowser.append(strMsg)
+
+    def OnNotifyServerTime(self, sHour, sMinute, sSecond, nTotal):
+        nTime = QTime(sHour, sMinute, sSecond)
+        rTime = QTime(8,30,00)
+        # if rTime == nTime:
+        #     SKMain.ConnectFun()
+        # jTime = QTime(13, 50, 00)
+        # # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
+        # if nTime == jTime and SKMain.Future.ticklst is not None:
+        #     ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume','deal'])
+        #     ticksdf =ticksdf.append(pd.DataFrame(SKMain.Future.ticklst,columns=['ndatetime','nbid','nask','close','volume','deal']),ignore_index=True,sort=False)
+        #     ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+        #     filename = 'Ticks' + ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
+        #     ticksdf.to_csv('../data/'+filename, header=False, index=False)
+        #     df1=pd.read_csv('filename.txt')
+        #     df1=df1.append(pd.DataFrame([[filename]],columns=['filename']),ignore_index=True)
+        #     df1.to_csv('filename.txt',index=False)
+        #     del df1
+        #     del ticksdf
+        #     result=SKMain.Future.contractkpd.drop(columns=['high_avg','low_avg','dealbid','dealask','dealminus'])            
+        #     result.sort_values(by=['ndatetime'],ascending=True)
+        #     result.to_csv('../result.dat',header=True, index=False,mode='w')
+        nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
+        SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
+
+# comtypes使用此方式註冊callback
+SKQuoteEvent = SKQuoteLibEvents()
+SKQuoteLibEventHandler = comtypes.client.GetEvents(skQ, SKQuoteEvent)
 SKOrderEvent = SKOrderLibEvent()
 SKOrderLibEventHandler = comtypes.client.GetEvents(skO, SKOrderEvent)
 SKReplyEvent = SKReplyLibEvent()

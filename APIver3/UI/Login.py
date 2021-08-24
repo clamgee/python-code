@@ -81,7 +81,6 @@ class Ui_LoginUI(object):
         self.retranslateUi(LoginUI)
         self.LoginConfirmbtn.rejected.connect(self.LoginID.clear)
         self.LoginConfirmbtn.rejected.connect(self.LoginPW.clear)
-        self.LoginConfirmbtn.rejected.connect(self.IDPWCheck.toggle)
 
         QMetaObject.connectSlotsByName(LoginUI)
     # setupUi
