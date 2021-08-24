@@ -117,6 +117,7 @@ class BarItem(pg.GraphicsObject):
         self.picturemain = QtGui.QPicture() #主K線圖
         self.picturelast = QtGui.QPicture() #最後一根K線圖
         self.pictures = []
+        self.PaintChange = False
         self.setFlag(self.ItemUsesExtendedStyleOption)
         self.rect = None
         self.low = 0
@@ -128,14 +129,16 @@ class BarItem(pg.GraphicsObject):
             self.data = ndata.reset_index(drop=True)
             self.lastidx = nidx
             self.columnname = self.data.columns[-1]
-        elif self.lastidx == nidx and self.data is not None:
+            self.PaintChange = True
+        elif self.lastidx == nidx:
             self.data.at[self.lastidx,self.columnname] = ndata.at[self.lastidx,self.columnname]
-        elif nidx is not None and nidx > self.lastidx and self.data is not None:
+        elif nidx is not None and nidx > self.lastidx:
             col = ndata.columns.tolist()
             for row in col :
                 self.data.at[self.lastidx,row]=ndata.at[self.lastidx,row]
             self.data=self.data.append(ndata.tail(nidx-self.lastidx),ignore_index=True)
             self.lastidx = nidx
+            self.PaintChange = True
         else :
             print('繪圖資料有誤!!',self.name,nidx)
             pass
@@ -172,19 +175,17 @@ class BarItem(pg.GraphicsObject):
             p.end()
             self.pictures.append(picture)
         
-    def paint(self, painter, opt, w):
-        rect = opt.exposedRect
-        xmin,xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
-        if not self.rect == (rect.left(),rect.right()) or self.picturemain is None:
-            self.rect = (rect.left(),rect.right())
-            self.picturemain = self.createPic(xmin,xmax-1)
+    def paint(self, painter, *args):
+        if self.PaintChange:
+            self.picturemain = self.createPic(0,self.lastidx)
             self.picturemain.play(painter)
-            self.picturelast = self.createPic(xmax-1,xmax)
+            self.picturelast = self.createPic(self.lastidx,self.lastidx+1)
             self.picturelast.play(painter)
+            self.PaintChange = False
             # print('重繪')            
-        elif not self.picturemain is None:
+        else:
             self.picturemain.play(painter)
-            self.picturelast = self.createPic(xmax-1,xmax)
+            self.picturelast = self.createPic(self.lastidx,self.lastidx+1)
             self.picturelast.play(painter)
             # print('快圖')
 
