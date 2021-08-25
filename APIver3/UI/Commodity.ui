@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CommodityForm</class>
+ <widget class="QWidget" name="CommodityForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>448</width>
+    <height>663</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>商品五檔&amp;大小單&amp;下單</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout" rowstretch="1,5,4,1,1,1,1,1">
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>市場別</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="Market_comboBox">
+             <item>
+              <property name="text">
+               <string>請選擇</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>期貨</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>選擇權</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,2">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>商品名稱</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="Commodity_comboBox">
+             <item>
+              <property name="text">
+               <string>請選擇</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="commoditybtn_pawn">
+         <property name="text">
+          <string>確定</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="TDetailbtn_pawn">
+         <property name="text">
+          <string>交易明細</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0">
+      <widget class="QTableView" name="DomTable_pawn"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QTableView" name="MPTableView_pawn"/>
+     </item>
+     <item row="3" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,2,1,2">
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>未平倉:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="contract_pawn">
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>損益</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="profit_pawn">
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="4" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QPushButton" name="BidAct_btn_pawn">
+         <property name="text">
+          <string>買</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="AskAct_btn_pawn">
+         <property name="text">
+          <string>賣</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="InterestType_box_pawn">
+         <item>
+          <property name="text">
+           <string>自動倉</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>新倉</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>平倉</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="OrderType_box_pawn">
+         <item>
+          <property name="text">
+           <string>ROD</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>IOC</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>FOK</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="5" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>委託價:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="PriceSpin_pawn">
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="maximum">
+          <double>30000.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>10000.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="LastPrice_btn_pawn">
+         <property name="text">
+          <string>現價</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="MarketPrice_btn_pawn">
+         <property name="text">
+          <string>市價</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="LimitMarketPrice_btn_pawn">
+         <property name="text">
+          <string>範圍市價</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="6" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,1,1,3">
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>口數:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="Contract_SpinBox">
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="dealbox_pawn">
+         <property name="layoutDirection">
+          <enum>Qt::RightToLeft</enum>
+         </property>
+         <property name="text">
+          <string>盤中:</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDialogButtonBox" name="Order_btn_pawn">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="7" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QPushButton" name="OrderCancel_btn_pawn">
+         <property name="text">
+          <string>一鍵刪單</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="ClosePositionAll_btn_pawn">
+         <property name="text">
+          <string>一鍵平倉</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>Order_btn_pawn</sender>
+   <signal>rejected()</signal>
+   <receiver>AskAct_btn_pawn</receiver>
+   <slot>toggle()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>334</x>
+     <y>587</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>169</x>
+     <y>498</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Order_btn_pawn</sender>
+   <signal>rejected()</signal>
+   <receiver>BidAct_btn_pawn</receiver>
+   <slot>toggle()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>334</x>
+     <y>587</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>61</x>
+     <y>498</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
