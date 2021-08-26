@@ -2,13 +2,31 @@
 <ui version="4.0">
  <class>CommodityForm</class>
  <widget class="QWidget" name="CommodityForm">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>448</width>
-    <height>663</height>
+    <width>450</width>
+    <height>800</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>450</width>
+    <height>800</height>
+   </size>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::ActionsContextMenu</enum>
   </property>
   <property name="windowTitle">
    <string>商品五檔&amp;大小單&amp;下單</string>
@@ -34,9 +52,23 @@
            </item>
            <item>
             <widget class="QComboBox" name="Market_comboBox">
+             <property name="currentIndex">
+              <number>2</number>
+             </property>
+             <property name="maxVisibleItems">
+              <number>4</number>
+             </property>
+             <property name="maxCount">
+              <number>4</number>
+             </property>
              <item>
               <property name="text">
-               <string>請選擇</string>
+               <string>上市</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>上櫃</string>
               </property>
              </item>
              <item>
@@ -67,6 +99,9 @@
            </item>
            <item>
             <widget class="QComboBox" name="Commodity_comboBox">
+             <property name="maxVisibleItems">
+              <number>16</number>
+             </property>
              <item>
               <property name="text">
                <string>請選擇</string>
@@ -79,14 +114,14 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="commoditybtn_pawn">
+        <widget class="QPushButton" name="commoditybtn">
          <property name="text">
           <string>確定</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="TDetailbtn_pawn">
+        <widget class="QPushButton" name="TDetailbtn">
          <property name="text">
           <string>交易明細</string>
          </property>
@@ -95,10 +130,10 @@
       </layout>
      </item>
      <item row="1" column="0">
-      <widget class="QTableView" name="DomTable_pawn"/>
+      <widget class="QTableView" name="DomTable"/>
      </item>
      <item row="2" column="0">
-      <widget class="QTableView" name="MPTableView_pawn"/>
+      <widget class="QTableView" name="MPTableView"/>
      </item>
      <item row="3" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,2,1,2">
@@ -107,10 +142,13 @@
          <property name="text">
           <string>未平倉:</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="contract_pawn">
+        <widget class="QLabel" name="contract">
          <property name="text">
           <string>0</string>
          </property>
@@ -124,10 +162,13 @@
          <property name="text">
           <string>損益</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="profit_pawn">
+        <widget class="QLabel" name="profit">
          <property name="text">
           <string>0</string>
          </property>
@@ -141,21 +182,21 @@
      <item row="4" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="QPushButton" name="BidAct_btn_pawn">
+        <widget class="QPushButton" name="BidAct_btn">
          <property name="text">
           <string>買</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="AskAct_btn_pawn">
+        <widget class="QPushButton" name="AskAct_btn">
          <property name="text">
           <string>賣</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="InterestType_box_pawn">
+        <widget class="QComboBox" name="InterestType_box">
          <item>
           <property name="text">
            <string>自動倉</string>
@@ -174,7 +215,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="OrderType_box_pawn">
+        <widget class="QComboBox" name="OrderType_box">
          <item>
           <property name="text">
            <string>ROD</string>
@@ -201,10 +242,13 @@
          <property name="text">
           <string>委託價:</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="PriceSpin_pawn">
+        <widget class="QDoubleSpinBox" name="PriceSpin">
          <property name="alignment">
           <set>Qt::AlignCenter</set>
          </property>
@@ -217,21 +261,21 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="LastPrice_btn_pawn">
+        <widget class="QPushButton" name="LastPrice_btn">
          <property name="text">
           <string>現價</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="MarketPrice_btn_pawn">
+        <widget class="QPushButton" name="MarketPrice_btn">
          <property name="text">
           <string>市價</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="LimitMarketPrice_btn_pawn">
+        <widget class="QPushButton" name="LimitMarketPrice_btn">
          <property name="text">
           <string>範圍市價</string>
          </property>
@@ -246,6 +290,9 @@
          <property name="text">
           <string>口數:</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
@@ -259,7 +306,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="dealbox_pawn">
+        <widget class="QCheckBox" name="dealbox">
          <property name="layoutDirection">
           <enum>Qt::RightToLeft</enum>
          </property>
@@ -272,7 +319,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDialogButtonBox" name="Order_btn_pawn">
+        <widget class="QDialogButtonBox" name="Order_btn">
          <property name="standardButtons">
           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
          </property>
@@ -305,9 +352,9 @@
  <resources/>
  <connections>
   <connection>
-   <sender>Order_btn_pawn</sender>
+   <sender>Order_btn</sender>
    <signal>rejected()</signal>
-   <receiver>AskAct_btn_pawn</receiver>
+   <receiver>AskAct_btn</receiver>
    <slot>toggle()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -321,9 +368,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>Order_btn_pawn</sender>
+   <sender>Order_btn</sender>
    <signal>rejected()</signal>
-   <receiver>BidAct_btn_pawn</receiver>
+   <receiver>BidAct_btn</receiver>
    <slot>toggle()</slot>
    <hints>
     <hint type="sourcelabel">

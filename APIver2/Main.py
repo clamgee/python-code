@@ -827,18 +827,18 @@ class SKQuoteLibEvents:
 
     def OnConnection(self, nKind, nCode):
         if (nKind == 3001):
-            strMsg = "Connected!, "+str(nCode)
+            strMsg = "Connected!, "+skC.SKCenterLib_GetReturnCodeMessage(nCode)
         elif (nKind == 3002):
-            strMsg = "DisConnected!, "+str(nCode)
+            strMsg = "DisConnected!, "+skC.SKCenterLib_GetReturnCodeMessage(nCode)
         elif (nKind == 3003):
-            strMsg = "Stocks ready!, "+str(nCode)
+            strMsg = "Stocks ready!, "+skC.SKCenterLib_GetReturnCodeMessage(nCode)
             time.sleep(5)
             SKMain.commodityFnc()
         elif (nKind == 3021):
-            strMsg = "Connect Error!, "+str(nCode)
+            strMsg = "Connect Error!, "+skC.SKCenterLib_GetReturnCodeMessage(nCode)
         else:
-            strMsg = nCode
-        print(strMsg)
+            strMsg = skC.SKCenterLib_GetReturnCodeMessage(nCode)
+        
         SKMain.SKMessage.textBrowser.append(strMsg)
 
     def OnNotifyServerTime(self, sHour, sMinute, sSecond, nTotal):
