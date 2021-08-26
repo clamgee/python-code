@@ -25,12 +25,13 @@ class SKMainWindow(QMainWindow):
         self.MainUi.setupUi(self)
         self.showMaximized() #主視窗最大化
         # 介面導入
-        self.SKMessageFunc()  # 系統訊息介面
+        self.SKMessageUI()  # 系統訊息介面
+        self.SKCommodityUI() #商品+5檔+大小單+下單介面
         self.SKLoginUI()  # 登入介面
         self.RightUI() #權益數介面
         # ManuBar連結
         self.MainUi.actionLogin.triggered.connect(self.Login.ui.show)  # 登入介面連結
-        self.MainUi.SysDetail.triggered.connect(self.SKMessage.ui.show) #系統資訊連結
+        self.MainUi.SysDetail.triggered.connect(self.SKMessage.ui.show) #系統資訊介面連結
         self.MainUi.Connectbtn.triggered.connect(self.ConnectFun) #SKCom 報價連線
         self.MainUi.Disconnectbtn.triggered.connect(self.disconnectFun) #SKCom 報價斷線
         # 帳號處理
@@ -43,9 +44,13 @@ class SKMainWindow(QMainWindow):
         self.Login.ui.show()
         self.Login.ui.LoginConfirmbtn.accepted.connect(self.LoginFuncAccept)
     
-    def SKMessageFunc(self):
+    def SKMessageUI(self):
         self.SKMessage = FuncUI.MessageDialog('系統訊息')  # 設定系統訊息介面
         self.SKMessage.ui.show()
+    
+    def SKCommodityUI(self):
+        self.SKCommodity = FuncUI.CommodityForm()
+        self.SKCommodity.ui.show()
     @Slot()
     def LoginFuncAccept(self):
         try:
@@ -260,7 +265,6 @@ class SKOrderLibEvent:
         #     i+=1
 
 class SKQuoteLibEvents:
-
     def OnConnection(self, nKind, nCode):
         if (nKind == 3001):
             strMsg = "Connected!, "+str(nCode)

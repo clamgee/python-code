@@ -30,8 +30,22 @@ class MessageDialog(QtCore.QObject):
         self.ui = Loader.load(UiFile)
         UiFile.close()
         self.ui.setWindowTitle(gname)
+        self.ui.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
         # 顯示最大最小化按鍵
         self.ui.setWindowFlags(QtCore.Qt.WindowMinMaxButtonsHint|QtCore.Qt.WindowCloseButtonHint)
+
+class CommodityForm(QtCore.QObject):
+    def __init__(self):
+        UiFile = QtCore.QFile('UI/Commodity.ui')
+        Loader = QUiLoader()
+        UiFile.open(QtCore.QFile.ReadOnly)
+        self.ui = Loader.load(UiFile)
+        UiFile.close()
+        self.ui.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
+        # 顯示最大最小化按鍵
+        self.ui.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
+
+
 
 # if __name__ == "__main__":
 #     FuncUIApp = QApplication(sys.argv)
