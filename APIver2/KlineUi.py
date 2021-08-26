@@ -60,43 +60,33 @@ class CandleItem(pg.GraphicsObject):
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
             if x.open>x.close:
-                Rcolor = 'g'
+                p.setBrush(pg.mkBrush('g'))
+                p.setPen(pg.mkPen('g'))
             elif x.open<x.close:
-                Rcolor = 'r'
+                p.setBrush(pg.mkBrush('r'))
+                p.setPen(pg.mkPen('r'))
             else:
-                Rcolor = 'w'
-            p.setBrush(pg.mkBrush(Rcolor))
-            p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
-            p.setPen(pg.mkPen(Rcolor))
+                p.setBrush(pg.mkBrush('w'))
+                p.setPen(pg.mkPen('w'))
             p.drawLine(QtCore.QPointF(t, x.low), QtCore.QPointF(t, x.high))
+            p.drawRect(QtCore.QRectF(t-w, x.open, w*2, x.close-x.open))
             p.end()
             self.pictures.append(picture)
         
-    # def paint(self, painter, opt, w):
-    #     rect = opt.exposedRect
-    #     xmin,xmax = (max(0,int(rect.left())),min(int(len(self.pictures)),int(rect.right())))
-    #     if not self.rect == (rect.left(),rect.right()) or self.picturemain is None:# or self.lastbar != self.data.index.values[-1]:
     def paint(self,painter,*args):
         if self.PaintChange:
-            # self.rect = (rect.left(),rect.right())
-            # self.picturemain = self.createPic(xmin,xmax-1)
             self.picturemain = self.createPic(0,self.lastidx)
             self.picturemain.play(painter)
-            # self.picturelast = self.createPic(xmax-1,xmax)
             self.picturelast = self.createPic(self.lastidx,self.lastidx+1)
             self.picturelast.play(painter)
             self.PaintChange = False
             # print('重繪')            
-        # elif not self.picturemain is None:
         else:
             self.picturemain.play(painter)
-            # self.picturelast = self.createPic(xmax-1,xmax)
             self.picturelast = self.createPic(self.lastidx,self.lastidx+1)
             self.picturelast.play(painter)
             # print('快圖')
-
-    # 缓存图片
-    #----------------------------------------------------------------------
+    # 圖片產生----------------------------------------------------------------------
     def createPic(self,xmin,xmax):
         picture = QtGui.QPicture()
         p = QtGui.QPainter(picture)
@@ -188,7 +178,6 @@ class BarItem(pg.GraphicsObject):
             self.picturelast = self.createPic(self.lastidx,self.lastidx+1)
             self.picturelast.play(painter)
             # print('快圖')
-
     # 缓存图片
     #----------------------------------------------------------------------
     def createPic(self,xmin,xmax):
