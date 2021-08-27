@@ -837,7 +837,7 @@ class SKQuoteLibEvents:
         elif (nKind == 3021):
             strMsg = "Connect Error!, "+str(nCode)
         else:
-            strMsg = nCode
+            strMsg = skC.SKCenterLib_GetReturnCodeMessage(nCode)
         print(strMsg)
         SKMain.SKMessage.textBrowser.append(strMsg)
 
