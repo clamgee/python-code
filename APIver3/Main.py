@@ -28,7 +28,7 @@ class SKMainWindow(QMainWindow):
         self.SKMessageUI()  # 系統訊息介面
         self.SKCommodityUI() #商品+5檔+大小單+下單介面
         self.SKLoginUI()  # 登入介面
-        self.RightUI() #權益數介面
+        self.SKRightUI() #權益數介面
         # ManuBar連結
         self.MainUi.actionLogin.triggered.connect(self.Login.ui.show)  # 登入介面連結
         self.MainUi.SysDetail.triggered.connect(self.SKMessage.ui.show) #系統資訊介面連結
@@ -53,10 +53,38 @@ class SKMainWindow(QMainWindow):
         self.SKCommodity.ui.show()
         self.SKCommodity.ui.commoditybtn.clicked.connect(self.commodityFunc)
         self.SKCommodity.ui.TDetailbtn.clicked.connect(self.SKTraDetailUI)
-    
+
+    def SKRightUI(self):
+        self.MainUi.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.MainUi.Right_TB.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.Bill = pd.DataFrame(np.arange(41).reshape(41), columns=['Right'])  # 期貨權益數 DataFrame        
+        i = 0
+        while i < self.Bill.shape[0]:
+            self.Bill.at[i, 'Right'] = QTableWidgetItem('')
+            self.Bill.at[i, 'Right'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            i += 1
+        i = 1
+        j = 0
+        while i < self.MainUi.Right_TB.rowCount():
+            self.MainUi.Right_TB.setItem(i, 0, self.Bill.at[j, 'Right'])
+            j += 1
+            if j >= self.Bill.shape[0]:
+                break
+            self.MainUi.Right_TB.setItem(i, 1, self.Bill.at[j, 'Right'])
+            j += 1
+            if j >= self.Bill.shape[0]:
+                break
+            self.MainUi.Right_TB.setItem(i, 2, self.Bill.at[j, 'Right'])
+            j += 1
+            if j >= self.Bill.shape[0]:
+                break
+            i += 2
+    # 權益數介面結束
+    # 交易明細介面
     def SKTraDetailUI(self):
         self.SKTraDetail = FuncUI.MessageDialog('交易明細') #交易明細
         self.SKTraDetail.ui.show()
+    # 交易明細介面結束
     @Slot()#登入功能鍵
     def LoginFuncAccept(self):
         try:
@@ -87,33 +115,8 @@ class SKMainWindow(QMainWindow):
             pass
     # 登入功能結束
     # 權益數介面
-    def RightUI(self):
-        self.MainUi.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.MainUi.Right_TB.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.Bill = pd.DataFrame(np.arange(41).reshape(41), columns=['Right'])  # 期貨權益數 DataFrame        
-        i = 0
-        while i < self.Bill.shape[0]:
-            self.Bill.at[i, 'Right'] = QTableWidgetItem('')
-            self.Bill.at[i, 'Right'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            i += 1
-        i = 1
-        j = 0
-        while i < self.MainUi.Right_TB.rowCount():
-            self.MainUi.Right_TB.setItem(i, 0, self.Bill.at[j, 'Right'])
-            j += 1
-            if j >= self.Bill.shape[0]:
-                break
-            self.MainUi.Right_TB.setItem(i, 1, self.Bill.at[j, 'Right'])
-            j += 1
-            if j >= self.Bill.shape[0]:
-                break
-            self.MainUi.Right_TB.setItem(i, 2, self.Bill.at[j, 'Right'])
-            j += 1
-            if j >= self.Bill.shape[0]:
-                break
-            i += 2
-    # 權益數介面結束
     # 委託未平倉回報資料表設定格式
+    # 交易委託和未平倉設定
     def Reply_Open_Fnc(self):
         self.replypd = pd.DataFrame(
         columns=['商品名稱', '買賣', '委託價格', '委託口數', '委託狀態', '成交口數', '取消口數', '倉位', '條件', '價位格式', '委託序號', '委託書號', '委託日期',
@@ -123,6 +126,7 @@ class SKMainWindow(QMainWindow):
             columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位', '平均成本', '一點價值', '單口手續費', '交易稅','登入帳號'])
         self.OpenCRpdMode = FuncClass.PandasModel()
         self.test = 0
+    # 交易委託和未平倉設定結束
     # 報價系統連線功能
     def ConnectFun(self):
         m_nCode = skQ.SKQuoteLib_EnterMonitor()
@@ -296,11 +300,11 @@ class SKQuoteLibEvents:
         for row in Line:
             rowstuff = row.split(',')
             if rowstuff[0].replace(' ','')!='##' and rowstuff[0]!='':
-                ListCommodity.append(rowstuff[0])#+','+rowstuff[1]])
-                # SKMain.SKMessage.ui.textBrowser.append(rowstuff[0]+','+rowstuff[1])
+                ListCommodity.append(rowstuff[0]+','+rowstuff[1])
             else:
                 pass
         SKMain.SKCommodity.ui.Commodity_comboBox.addItems(ListCommodity)
+        SKMain.SKCommodity.ui.Commodity_comboBox.setCurrentText('TX00,台指近')
 
     def OnNotifyServerTime(self, sHour, sMinute, sSecond, nTotal):
         nTime = QTime(sHour, sMinute, sSecond)
