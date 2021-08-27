@@ -51,10 +51,16 @@ class SKMainWindow(QMainWindow):
     def SKCommodityUI(self):
         self.SKCommodity = FuncUI.CommodityForm()
         self.SKCommodity.ui.show()
-    @Slot()
+        self.SKCommodity.ui.commoditybtn.clicked.connect(self.commodityFunc)
+        self.SKCommodity.ui.TDetailbtn.clicked.connect(self.SKTraDetailUI)
+    
+    def SKTraDetailUI(self):
+        self.SKTraDetail = FuncUI.MessageDialog('交易明細') #交易明細
+        self.SKTraDetail.ui.show()
+    @Slot()#登入功能鍵
     def LoginFuncAccept(self):
         try:
-            skC.SKCenterLib_SetLogPath(os.path.split(os.path.realpath(__file__))[0] + "\\CapitalLog_Quote")
+            skC.SKCenterLib_SetLogPath(os.path.split(os.path.realpath(__file__))[0] + '\\CapitalLog_Quote')
             __ID = self.Login.ui.LoginID.text().replace(' ', '')
             __PW = self.Login.ui.LoginPW.text().replace(' ', '')
             m_nCode1 = skC.SKCenterLib_Login(__ID, __PW)
@@ -66,9 +72,9 @@ class SKMainWindow(QMainWindow):
                 strMsg=skC.SKCenterLib_GetReturnCodeMessage(m_nCode1)
                 self.SKMessage.ui.textBrowser.append('登入失敗,錯誤碼:'+strMsg)
             m_nCode2 = skO.SKOrderLib_Initialize()
-            self.SKMessage.ui.textBrowser.append("群益API初始化: "+str(m_nCode2))
+            self.SKMessage.ui.textBrowser.append('群益API初始化: '+str(m_nCode2))
             m_nCode3 = skO.GetUserAccount()
-            self.SKMessage.ui.textBrowser.append("GetUserAccount: "+str(m_nCode3))
+            self.SKMessage.ui.textBrowser.append('GetUserAccount: '+str(m_nCode3))
             if (m_nCode1+m_nCode2+m_nCode3) == 0:
                 self.Reply_Open_Fnc()
                 self.Login.ui.close()
@@ -80,16 +86,6 @@ class SKMainWindow(QMainWindow):
             self.SKMessage.ui.textBrowser.append('發生未知錯誤:' + e)
             pass
     # 登入功能結束
-    # 委託未平倉回報資料表設定格式
-    def Reply_Open_Fnc(self):
-        self.replypd = pd.DataFrame(
-        columns=['商品名稱', '買賣', '委託價格', '委託口數', '委託狀態', '成交口數', '取消口數', '倉位', '條件', '價位格式', '委託序號', '委託書號', '委託日期',
-                    '委託時間', '交易時段'])
-        self.ReplyCRpdMode = FuncClass.PandasModel()
-        self.openpd = pd.DataFrame(
-            columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位', '平均成本', '一點價值', '單口手續費', '交易稅','登入帳號'])
-        self.OpenCRpdMode = FuncClass.PandasModel()
-        self.test = 0
     # 權益數介面
     def RightUI(self):
         self.MainUi.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -117,6 +113,16 @@ class SKMainWindow(QMainWindow):
                 break
             i += 2
     # 權益數介面結束
+    # 委託未平倉回報資料表設定格式
+    def Reply_Open_Fnc(self):
+        self.replypd = pd.DataFrame(
+        columns=['商品名稱', '買賣', '委託價格', '委託口數', '委託狀態', '成交口數', '取消口數', '倉位', '條件', '價位格式', '委託序號', '委託書號', '委託日期',
+                    '委託時間', '交易時段'])
+        self.ReplyCRpdMode = FuncClass.PandasModel()
+        self.openpd = pd.DataFrame(
+            columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位', '平均成本', '一點價值', '單口手續費', '交易稅','登入帳號'])
+        self.OpenCRpdMode = FuncClass.PandasModel()
+        self.test = 0
     # 報價系統連線功能
     def ConnectFun(self):
         m_nCode = skQ.SKQuoteLib_EnterMonitor()
@@ -124,7 +130,7 @@ class SKMainWindow(QMainWindow):
             strMsg = '報價已連線!!!'
         else:
             strMsg = skC.SKCenterLib_GetReturnCodeMessage(m_nCode)
-        self.SKMessage.ui.textBrowser.append("EnterMonitor: "+strMsg)
+        self.SKMessage.ui.textBrowser.append('EnterMonitor: '+strMsg)
 
     def disconnectFun(self):
         m_nCode = skQ.SKQuoteLib_LeaveMonitor()
@@ -132,8 +138,10 @@ class SKMainWindow(QMainWindow):
             strMsg='報價已斷線!!!'
         else:
             strMsg = skC.SKCenterLib_GetReturnCodeMessage(m_nCode)
-        self.SKMessage.ui.textBrowser.append("LeaveMonitor: "+strMsg)
+        self.SKMessage.ui.textBrowser.append('LeaveMonitor: '+strMsg)
     # 報價系統結束
+    def commodityFunc(self):
+        self.SKMessage.ui.textBrowser.append('報價按鈕')
 
 
 class SKReplyLibEvent:
@@ -144,14 +152,14 @@ class SKReplyLibEvent:
 
     def OnDisconnect(self, bstrUserID, nErrorCode):
         nErrorStr = skC.SKCenterLib_GetReturnCodeMessage(nErrorCode)
-        ntime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        ntime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
         # print('連線失敗: ', bstrUserID, nErrorStr, ntime)
         SKMain.SKMessage.ui.textBrowser.append('連線失敗: '+bstrUserID+', '+ nErrorStr+', '+ ntime)
     
     def OnReplyMessage(self,bstrUserID,bstrMessage):
         sComfirmCode=-1
-        SKMain.SKMessage.ui.textBrowser.append(bstrUserID+","+bstrMessage)
-        # print(bstrUserID+","+bstrMessage)
+        SKMain.SKMessage.ui.textBrowser.append(bstrUserID+','+bstrMessage)
+        # print(bstrUserID+','+bstrMessage)
         return sComfirmCode
 
     def OnComplete(self, bstrUserID):
@@ -267,18 +275,32 @@ class SKOrderLibEvent:
 class SKQuoteLibEvents:
     def OnConnection(self, nKind, nCode):
         if (nKind == 3001):
-            strMsg = "Connected!, "+str(nCode)
+            strMsg = 'Connected!, '+str(nCode)+str(nKind)
         elif (nKind == 3002):
-            strMsg = "DisConnected!, "+str(nCode)
+            strMsg = 'DisConnected!, '+str(nCode)+str(nKind)
         elif (nKind == 3003):
-            strMsg = "Stocks ready!, "+str(nCode)
-            time.sleep(5)
-            SKMain.commodityFnc()
+            strMsg = 'Stocks ready!, '+str(nCode)+str(nKind)
+            # time.sleep(5)
+            m_nCode=skQ.SKQuoteLib_RequestStockList(SKMain.SKCommodity.ui.Market_comboBox.currentIndex())
+            if m_nCode != 0:
+                print('商品取得列表錯誤: %s',skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
         elif (nKind == 3021):
-            strMsg = "Connect Error!, "+str(nCode)
+            strMsg = 'Connect Error!, '+str(nCode)+str(nKind)
         else:
             strMsg = skC.SKCenterLib_GetReturnCodeMessage(nCode)
-        SKMain.SKMessage.textBrowser.append(strMsg)
+        SKMain.SKMessage.ui.textBrowser.append(strMsg)
+    
+    def OnNotifyStockList(self,sMarketNo,bstrStockData):
+        Line = bstrStockData.split(';')
+        ListCommodity=[]
+        for row in Line:
+            rowstuff = row.split(',')
+            if rowstuff[0].replace(' ','')!='##' and rowstuff[0]!='':
+                ListCommodity.append(rowstuff[0])#+','+rowstuff[1]])
+                # SKMain.SKMessage.ui.textBrowser.append(rowstuff[0]+','+rowstuff[1])
+            else:
+                pass
+        SKMain.SKCommodity.ui.Commodity_comboBox.addItems(ListCommodity)
 
     def OnNotifyServerTime(self, sHour, sMinute, sSecond, nTotal):
         nTime = QTime(sHour, sMinute, sSecond)

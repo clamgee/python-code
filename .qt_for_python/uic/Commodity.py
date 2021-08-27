@@ -17,7 +17,11 @@ class Ui_CommodityForm(object):
     def setupUi(self, CommodityForm):
         if not CommodityForm.objectName():
             CommodityForm.setObjectName(u"CommodityForm")
-        CommodityForm.resize(448, 663)
+        CommodityForm.setWindowModality(Qt.WindowModal)
+        CommodityForm.resize(450, 800)
+        CommodityForm.setMinimumSize(QSize(0, 0))
+        CommodityForm.setBaseSize(QSize(450, 800))
+        CommodityForm.setContextMenuPolicy(Qt.ActionsContextMenu)
         self.gridLayout_2 = QGridLayout(CommodityForm)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout = QGridLayout()
@@ -38,7 +42,10 @@ class Ui_CommodityForm(object):
         self.Market_comboBox.addItem("")
         self.Market_comboBox.addItem("")
         self.Market_comboBox.addItem("")
+        self.Market_comboBox.addItem("")
         self.Market_comboBox.setObjectName(u"Market_comboBox")
+        self.Market_comboBox.setMaxVisibleItems(4)
+        self.Market_comboBox.setMaxCount(4)
 
         self.horizontalLayout.addWidget(self.Market_comboBox)
 
@@ -58,6 +65,7 @@ class Ui_CommodityForm(object):
         self.Commodity_comboBox = QComboBox(CommodityForm)
         self.Commodity_comboBox.addItem("")
         self.Commodity_comboBox.setObjectName(u"Commodity_comboBox")
+        self.Commodity_comboBox.setMaxVisibleItems(16)
 
         self.horizontalLayout_7.addWidget(self.Commodity_comboBox)
 
@@ -69,52 +77,54 @@ class Ui_CommodityForm(object):
 
         self.horizontalLayout_8.addLayout(self.verticalLayout)
 
-        self.commoditybtn_pawn = QPushButton(CommodityForm)
-        self.commoditybtn_pawn.setObjectName(u"commoditybtn_pawn")
+        self.commoditybtn = QPushButton(CommodityForm)
+        self.commoditybtn.setObjectName(u"commoditybtn")
 
-        self.horizontalLayout_8.addWidget(self.commoditybtn_pawn)
+        self.horizontalLayout_8.addWidget(self.commoditybtn)
 
-        self.TDetailbtn_pawn = QPushButton(CommodityForm)
-        self.TDetailbtn_pawn.setObjectName(u"TDetailbtn_pawn")
+        self.TDetailbtn = QPushButton(CommodityForm)
+        self.TDetailbtn.setObjectName(u"TDetailbtn")
 
-        self.horizontalLayout_8.addWidget(self.TDetailbtn_pawn)
+        self.horizontalLayout_8.addWidget(self.TDetailbtn)
 
 
         self.gridLayout.addLayout(self.horizontalLayout_8, 0, 0, 1, 1)
 
-        self.DomTable_pawn = QTableView(CommodityForm)
-        self.DomTable_pawn.setObjectName(u"DomTable_pawn")
+        self.DomTable = QTableView(CommodityForm)
+        self.DomTable.setObjectName(u"DomTable")
 
-        self.gridLayout.addWidget(self.DomTable_pawn, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.DomTable, 1, 0, 1, 1)
 
-        self.MPTableView_pawn = QTableView(CommodityForm)
-        self.MPTableView_pawn.setObjectName(u"MPTableView_pawn")
+        self.MPTableView = QTableView(CommodityForm)
+        self.MPTableView.setObjectName(u"MPTableView")
 
-        self.gridLayout.addWidget(self.MPTableView_pawn, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.MPTableView, 2, 0, 1, 1)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.label_3 = QLabel(CommodityForm)
         self.label_3.setObjectName(u"label_3")
+        self.label_3.setAlignment(Qt.AlignCenter)
 
         self.horizontalLayout_2.addWidget(self.label_3)
 
-        self.contract_pawn = QLabel(CommodityForm)
-        self.contract_pawn.setObjectName(u"contract_pawn")
-        self.contract_pawn.setAlignment(Qt.AlignCenter)
+        self.contract = QLabel(CommodityForm)
+        self.contract.setObjectName(u"contract")
+        self.contract.setAlignment(Qt.AlignCenter)
 
-        self.horizontalLayout_2.addWidget(self.contract_pawn)
+        self.horizontalLayout_2.addWidget(self.contract)
 
         self.label_5 = QLabel(CommodityForm)
         self.label_5.setObjectName(u"label_5")
+        self.label_5.setAlignment(Qt.AlignCenter)
 
         self.horizontalLayout_2.addWidget(self.label_5)
 
-        self.profit_pawn = QLabel(CommodityForm)
-        self.profit_pawn.setObjectName(u"profit_pawn")
-        self.profit_pawn.setAlignment(Qt.AlignCenter)
+        self.profit = QLabel(CommodityForm)
+        self.profit.setObjectName(u"profit")
+        self.profit.setAlignment(Qt.AlignCenter)
 
-        self.horizontalLayout_2.addWidget(self.profit_pawn)
+        self.horizontalLayout_2.addWidget(self.profit)
 
         self.horizontalLayout_2.setStretch(0, 1)
         self.horizontalLayout_2.setStretch(1, 2)
@@ -125,31 +135,31 @@ class Ui_CommodityForm(object):
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.BidAct_btn_pawn = QPushButton(CommodityForm)
-        self.BidAct_btn_pawn.setObjectName(u"BidAct_btn_pawn")
+        self.BidAct_btn = QPushButton(CommodityForm)
+        self.BidAct_btn.setObjectName(u"BidAct_btn")
 
-        self.horizontalLayout_3.addWidget(self.BidAct_btn_pawn)
+        self.horizontalLayout_3.addWidget(self.BidAct_btn)
 
-        self.AskAct_btn_pawn = QPushButton(CommodityForm)
-        self.AskAct_btn_pawn.setObjectName(u"AskAct_btn_pawn")
+        self.AskAct_btn = QPushButton(CommodityForm)
+        self.AskAct_btn.setObjectName(u"AskAct_btn")
 
-        self.horizontalLayout_3.addWidget(self.AskAct_btn_pawn)
+        self.horizontalLayout_3.addWidget(self.AskAct_btn)
 
-        self.InterestType_box_pawn = QComboBox(CommodityForm)
-        self.InterestType_box_pawn.addItem("")
-        self.InterestType_box_pawn.addItem("")
-        self.InterestType_box_pawn.addItem("")
-        self.InterestType_box_pawn.setObjectName(u"InterestType_box_pawn")
+        self.InterestType_box = QComboBox(CommodityForm)
+        self.InterestType_box.addItem("")
+        self.InterestType_box.addItem("")
+        self.InterestType_box.addItem("")
+        self.InterestType_box.setObjectName(u"InterestType_box")
 
-        self.horizontalLayout_3.addWidget(self.InterestType_box_pawn)
+        self.horizontalLayout_3.addWidget(self.InterestType_box)
 
-        self.OrderType_box_pawn = QComboBox(CommodityForm)
-        self.OrderType_box_pawn.addItem("")
-        self.OrderType_box_pawn.addItem("")
-        self.OrderType_box_pawn.addItem("")
-        self.OrderType_box_pawn.setObjectName(u"OrderType_box_pawn")
+        self.OrderType_box = QComboBox(CommodityForm)
+        self.OrderType_box.addItem("")
+        self.OrderType_box.addItem("")
+        self.OrderType_box.addItem("")
+        self.OrderType_box.setObjectName(u"OrderType_box")
 
-        self.horizontalLayout_3.addWidget(self.OrderType_box_pawn)
+        self.horizontalLayout_3.addWidget(self.OrderType_box)
 
 
         self.gridLayout.addLayout(self.horizontalLayout_3, 4, 0, 1, 1)
@@ -158,31 +168,32 @@ class Ui_CommodityForm(object):
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.label_7 = QLabel(CommodityForm)
         self.label_7.setObjectName(u"label_7")
+        self.label_7.setAlignment(Qt.AlignCenter)
 
         self.horizontalLayout_4.addWidget(self.label_7)
 
-        self.PriceSpin_pawn = QDoubleSpinBox(CommodityForm)
-        self.PriceSpin_pawn.setObjectName(u"PriceSpin_pawn")
-        self.PriceSpin_pawn.setAlignment(Qt.AlignCenter)
-        self.PriceSpin_pawn.setMaximum(30000.000000000000000)
-        self.PriceSpin_pawn.setValue(10000.000000000000000)
+        self.PriceSpin = QDoubleSpinBox(CommodityForm)
+        self.PriceSpin.setObjectName(u"PriceSpin")
+        self.PriceSpin.setAlignment(Qt.AlignCenter)
+        self.PriceSpin.setMaximum(30000.000000000000000)
+        self.PriceSpin.setValue(10000.000000000000000)
 
-        self.horizontalLayout_4.addWidget(self.PriceSpin_pawn)
+        self.horizontalLayout_4.addWidget(self.PriceSpin)
 
-        self.LastPrice_btn_pawn = QPushButton(CommodityForm)
-        self.LastPrice_btn_pawn.setObjectName(u"LastPrice_btn_pawn")
+        self.LastPrice_btn = QPushButton(CommodityForm)
+        self.LastPrice_btn.setObjectName(u"LastPrice_btn")
 
-        self.horizontalLayout_4.addWidget(self.LastPrice_btn_pawn)
+        self.horizontalLayout_4.addWidget(self.LastPrice_btn)
 
-        self.MarketPrice_btn_pawn = QPushButton(CommodityForm)
-        self.MarketPrice_btn_pawn.setObjectName(u"MarketPrice_btn_pawn")
+        self.MarketPrice_btn = QPushButton(CommodityForm)
+        self.MarketPrice_btn.setObjectName(u"MarketPrice_btn")
 
-        self.horizontalLayout_4.addWidget(self.MarketPrice_btn_pawn)
+        self.horizontalLayout_4.addWidget(self.MarketPrice_btn)
 
-        self.LimitMarketPrice_btn_pawn = QPushButton(CommodityForm)
-        self.LimitMarketPrice_btn_pawn.setObjectName(u"LimitMarketPrice_btn_pawn")
+        self.LimitMarketPrice_btn = QPushButton(CommodityForm)
+        self.LimitMarketPrice_btn.setObjectName(u"LimitMarketPrice_btn")
 
-        self.horizontalLayout_4.addWidget(self.LimitMarketPrice_btn_pawn)
+        self.horizontalLayout_4.addWidget(self.LimitMarketPrice_btn)
 
 
         self.gridLayout.addLayout(self.horizontalLayout_4, 5, 0, 1, 1)
@@ -191,6 +202,7 @@ class Ui_CommodityForm(object):
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.label_8 = QLabel(CommodityForm)
         self.label_8.setObjectName(u"label_8")
+        self.label_8.setAlignment(Qt.AlignCenter)
 
         self.horizontalLayout_5.addWidget(self.label_8)
 
@@ -201,18 +213,18 @@ class Ui_CommodityForm(object):
 
         self.horizontalLayout_5.addWidget(self.Contract_SpinBox)
 
-        self.dealbox_pawn = QCheckBox(CommodityForm)
-        self.dealbox_pawn.setObjectName(u"dealbox_pawn")
-        self.dealbox_pawn.setLayoutDirection(Qt.RightToLeft)
-        self.dealbox_pawn.setChecked(True)
+        self.dealbox = QCheckBox(CommodityForm)
+        self.dealbox.setObjectName(u"dealbox")
+        self.dealbox.setLayoutDirection(Qt.RightToLeft)
+        self.dealbox.setChecked(True)
 
-        self.horizontalLayout_5.addWidget(self.dealbox_pawn)
+        self.horizontalLayout_5.addWidget(self.dealbox)
 
-        self.Order_btn_pawn = QDialogButtonBox(CommodityForm)
-        self.Order_btn_pawn.setObjectName(u"Order_btn_pawn")
-        self.Order_btn_pawn.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+        self.Order_btn = QDialogButtonBox(CommodityForm)
+        self.Order_btn.setObjectName(u"Order_btn")
+        self.Order_btn.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
 
-        self.horizontalLayout_5.addWidget(self.Order_btn_pawn)
+        self.horizontalLayout_5.addWidget(self.Order_btn)
 
         self.horizontalLayout_5.setStretch(0, 1)
         self.horizontalLayout_5.setStretch(1, 1)
@@ -249,8 +261,11 @@ class Ui_CommodityForm(object):
 
 
         self.retranslateUi(CommodityForm)
-        self.Order_btn_pawn.rejected.connect(self.AskAct_btn_pawn.toggle)
-        self.Order_btn_pawn.rejected.connect(self.BidAct_btn_pawn.toggle)
+        self.Order_btn.rejected.connect(self.AskAct_btn.toggle)
+        self.Order_btn.rejected.connect(self.BidAct_btn.toggle)
+
+        self.Market_comboBox.setCurrentIndex(2)
+
 
         QMetaObject.connectSlotsByName(CommodityForm)
     # setupUi
@@ -258,35 +273,36 @@ class Ui_CommodityForm(object):
     def retranslateUi(self, CommodityForm):
         CommodityForm.setWindowTitle(QCoreApplication.translate("CommodityForm", u"\u5546\u54c1\u4e94\u6a94&\u5927\u5c0f\u55ae&\u4e0b\u55ae", None))
         self.label.setText(QCoreApplication.translate("CommodityForm", u"\u5e02\u5834\u5225", None))
-        self.Market_comboBox.setItemText(0, QCoreApplication.translate("CommodityForm", u"\u8acb\u9078\u64c7", None))
-        self.Market_comboBox.setItemText(1, QCoreApplication.translate("CommodityForm", u"\u671f\u8ca8", None))
-        self.Market_comboBox.setItemText(2, QCoreApplication.translate("CommodityForm", u"\u9078\u64c7\u6b0a", None))
+        self.Market_comboBox.setItemText(0, QCoreApplication.translate("CommodityForm", u"\u4e0a\u5e02", None))
+        self.Market_comboBox.setItemText(1, QCoreApplication.translate("CommodityForm", u"\u4e0a\u6ac3", None))
+        self.Market_comboBox.setItemText(2, QCoreApplication.translate("CommodityForm", u"\u671f\u8ca8", None))
+        self.Market_comboBox.setItemText(3, QCoreApplication.translate("CommodityForm", u"\u9078\u64c7\u6b0a", None))
 
         self.label_2.setText(QCoreApplication.translate("CommodityForm", u"\u5546\u54c1\u540d\u7a31", None))
         self.Commodity_comboBox.setItemText(0, QCoreApplication.translate("CommodityForm", u"\u8acb\u9078\u64c7", None))
 
-        self.commoditybtn_pawn.setText(QCoreApplication.translate("CommodityForm", u"\u78ba\u5b9a", None))
-        self.TDetailbtn_pawn.setText(QCoreApplication.translate("CommodityForm", u"\u4ea4\u6613\u660e\u7d30", None))
+        self.commoditybtn.setText(QCoreApplication.translate("CommodityForm", u"\u78ba\u5b9a", None))
+        self.TDetailbtn.setText(QCoreApplication.translate("CommodityForm", u"\u4ea4\u6613\u660e\u7d30", None))
         self.label_3.setText(QCoreApplication.translate("CommodityForm", u"\u672a\u5e73\u5009:", None))
-        self.contract_pawn.setText(QCoreApplication.translate("CommodityForm", u"0", None))
+        self.contract.setText(QCoreApplication.translate("CommodityForm", u"0", None))
         self.label_5.setText(QCoreApplication.translate("CommodityForm", u"\u640d\u76ca", None))
-        self.profit_pawn.setText(QCoreApplication.translate("CommodityForm", u"0", None))
-        self.BidAct_btn_pawn.setText(QCoreApplication.translate("CommodityForm", u"\u8cb7", None))
-        self.AskAct_btn_pawn.setText(QCoreApplication.translate("CommodityForm", u"\u8ce3", None))
-        self.InterestType_box_pawn.setItemText(0, QCoreApplication.translate("CommodityForm", u"\u81ea\u52d5\u5009", None))
-        self.InterestType_box_pawn.setItemText(1, QCoreApplication.translate("CommodityForm", u"\u65b0\u5009", None))
-        self.InterestType_box_pawn.setItemText(2, QCoreApplication.translate("CommodityForm", u"\u5e73\u5009", None))
+        self.profit.setText(QCoreApplication.translate("CommodityForm", u"0", None))
+        self.BidAct_btn.setText(QCoreApplication.translate("CommodityForm", u"\u8cb7", None))
+        self.AskAct_btn.setText(QCoreApplication.translate("CommodityForm", u"\u8ce3", None))
+        self.InterestType_box.setItemText(0, QCoreApplication.translate("CommodityForm", u"\u81ea\u52d5\u5009", None))
+        self.InterestType_box.setItemText(1, QCoreApplication.translate("CommodityForm", u"\u65b0\u5009", None))
+        self.InterestType_box.setItemText(2, QCoreApplication.translate("CommodityForm", u"\u5e73\u5009", None))
 
-        self.OrderType_box_pawn.setItemText(0, QCoreApplication.translate("CommodityForm", u"ROD", None))
-        self.OrderType_box_pawn.setItemText(1, QCoreApplication.translate("CommodityForm", u"IOC", None))
-        self.OrderType_box_pawn.setItemText(2, QCoreApplication.translate("CommodityForm", u"FOK", None))
+        self.OrderType_box.setItemText(0, QCoreApplication.translate("CommodityForm", u"ROD", None))
+        self.OrderType_box.setItemText(1, QCoreApplication.translate("CommodityForm", u"IOC", None))
+        self.OrderType_box.setItemText(2, QCoreApplication.translate("CommodityForm", u"FOK", None))
 
         self.label_7.setText(QCoreApplication.translate("CommodityForm", u"\u59d4\u8a17\u50f9:", None))
-        self.LastPrice_btn_pawn.setText(QCoreApplication.translate("CommodityForm", u"\u73fe\u50f9", None))
-        self.MarketPrice_btn_pawn.setText(QCoreApplication.translate("CommodityForm", u"\u5e02\u50f9", None))
-        self.LimitMarketPrice_btn_pawn.setText(QCoreApplication.translate("CommodityForm", u"\u7bc4\u570d\u5e02\u50f9", None))
+        self.LastPrice_btn.setText(QCoreApplication.translate("CommodityForm", u"\u73fe\u50f9", None))
+        self.MarketPrice_btn.setText(QCoreApplication.translate("CommodityForm", u"\u5e02\u50f9", None))
+        self.LimitMarketPrice_btn.setText(QCoreApplication.translate("CommodityForm", u"\u7bc4\u570d\u5e02\u50f9", None))
         self.label_8.setText(QCoreApplication.translate("CommodityForm", u"\u53e3\u6578:", None))
-        self.dealbox_pawn.setText(QCoreApplication.translate("CommodityForm", u"\u76e4\u4e2d:", None))
+        self.dealbox.setText(QCoreApplication.translate("CommodityForm", u"\u76e4\u4e2d:", None))
         self.OrderCancel_btn_pawn.setText(QCoreApplication.translate("CommodityForm", u"\u4e00\u9375\u522a\u55ae", None))
         self.ClosePositionAll_btn_pawn.setText(QCoreApplication.translate("CommodityForm", u"\u4e00\u9375\u5e73\u5009", None))
     # retranslateUi

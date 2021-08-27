@@ -31,7 +31,7 @@ class MessageDialog(QtCore.QObject):
         UiFile.close()
         self.ui.setWindowTitle(gname)
         self.ui.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
-        # 顯示最大最小化按鍵
+        # 顯示最大最小化關閉按鍵
         self.ui.setWindowFlags(QtCore.Qt.WindowMinMaxButtonsHint|QtCore.Qt.WindowCloseButtonHint)
 
 class CommodityForm(QtCore.QObject):
@@ -42,8 +42,8 @@ class CommodityForm(QtCore.QObject):
         self.ui = Loader.load(UiFile)
         UiFile.close()
         self.ui.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
-        # 顯示最大最小化按鍵
-        self.ui.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
+        # 顯示最大最小化關閉按鍵
+        self.ui.setWindowFlags(QtCore.Qt.WindowMinMaxButtonsHint|QtCore.Qt.WindowCloseButtonHint)
 
 
 
