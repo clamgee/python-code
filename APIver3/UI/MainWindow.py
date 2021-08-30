@@ -32,6 +32,9 @@ class Ui_CapitalAPI(object):
         self.Disconnectbtn = QAction(CapitalAPI)
         self.Disconnectbtn.setObjectName(u"Disconnectbtn")
         self.Disconnectbtn.setFont(font)
+        self.CommodityUIbtn = QAction(CapitalAPI)
+        self.CommodityUIbtn.setObjectName(u"CommodityUIbtn")
+        self.CommodityUIbtn.setFont(font)
         self.centralwidget = QWidget(CapitalAPI)
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout = QGridLayout(self.centralwidget)
@@ -313,6 +316,7 @@ class Ui_CapitalAPI(object):
         self.toolBar.addAction(self.SysDetail)
         self.toolBar.addAction(self.Connectbtn)
         self.toolBar.addAction(self.Disconnectbtn)
+        self.toolBar.addAction(self.CommodityUIbtn)
 
         self.retranslateUi(CapitalAPI)
 
@@ -340,6 +344,10 @@ class Ui_CapitalAPI(object):
         self.Disconnectbtn.setIconText(QCoreApplication.translate("CapitalAPI", u"\u505c\u6b62\u5831\u50f9", None))
 #if QT_CONFIG(tooltip)
         self.Disconnectbtn.setToolTip(QCoreApplication.translate("CapitalAPI", u"\u65b7\u958b\u6216\u60c5\u9664\u5831\u50f9\u9023\u7dda\u72c0\u614b", None))
+#endif // QT_CONFIG(tooltip)
+        self.CommodityUIbtn.setText(QCoreApplication.translate("CapitalAPI", u"\u5546\u54c1\u8a02\u95b1", None))
+#if QT_CONFIG(tooltip)
+        self.CommodityUIbtn.setToolTip(QCoreApplication.translate("CapitalAPI", u"\u5546\u54c1\u8a02\u95b1+5\u6a94\u5831\u50f9+\u5927\u5c0f\u55ae\u591a\u7a7a\u529b\u9053", None))
 #endif // QT_CONFIG(tooltip)
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_TicksK), QCoreApplication.translate("CapitalAPI", u"TicksK\u7dda", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_DayTrading), QCoreApplication.translate("CapitalAPI", u"\u7576\u6c96", None))

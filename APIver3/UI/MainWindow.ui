@@ -647,6 +647,7 @@
    <addaction name="SysDetail"/>
    <addaction name="Connectbtn"/>
    <addaction name="Disconnectbtn"/>
+   <addaction name="CommodityUIbtn"/>
   </widget>
   <action name="actionLogin">
    <property name="text">
@@ -696,6 +697,19 @@
    </property>
    <property name="toolTip">
     <string>斷開或情除報價連線狀態</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="CommodityUIbtn">
+   <property name="text">
+    <string>商品訂閱</string>
+   </property>
+   <property name="toolTip">
+    <string>商品訂閱+5檔報價+大小單多空力道</string>
    </property>
    <property name="font">
     <font>

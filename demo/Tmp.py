@@ -1,4 +1,13 @@
-print(type(0)==int)
+# 使用SKCOM元件
+import comtypes.client
+import comtypes.gen.SKCOMLib as sk
+
+skC = comtypes.client.CreateObject(sk.SKCenterLib, interface=sk.ISKCenterLib)
+skO = comtypes.client.CreateObject(sk.SKOrderLib, interface=sk.ISKOrderLib)
+skQ = comtypes.client.CreateObject(sk.SKQuoteLib, interface=sk.ISKQuoteLib)
+skR = comtypes.client.CreateObject(sk.SKReplyLib, interface=sk.ISKReplyLib)
+
+print(dir(sk.SKSTOCKLONG().nStockIdx))
 
 # pyqtgraph.examples.run()
 

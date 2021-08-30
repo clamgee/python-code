@@ -4,10 +4,7 @@ import time
 import numpy as np
 import pandas as pd
 import os
-# from mpl_finance import candlestick2_ohlc
-# import matplotlib.dates as mdates
-# import matplotlib.pyplot as plt
-# setting about combobox
+
 KLINETYPESET = (
     "0 = 1分鐘線","4 = 完整日線","5 = 週線","6 = 月線",
 )
