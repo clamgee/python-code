@@ -6,6 +6,7 @@ from PySide6.QtUiTools import QUiLoader #使用 .LoginUI介面模組
 from PySide6.QtWidgets import QApplication,QDialog #PySide6介面控制模組
 from PySide6 import QtCore, QtGui, QtWidgets
 import json
+import re
 
 class LoginDialog(QtCore.QObject):
     def __init__(self):
@@ -35,7 +36,10 @@ class MessageDialog(QtCore.QObject):
         self.ui.setWindowFlags(QtCore.Qt.WindowMinMaxButtonsHint|QtCore.Qt.WindowCloseButtonHint)
 
 class CommodityForm(QtCore.QObject):
+    Commodity_comboBox_signal = QtCore.Signal(int,str)
     def __init__(self):
+        super(CommodityForm, self).__init__()
+        self.count = 0
         UiFile = QtCore.QFile('UI/Commodity.ui')
         Loader = QUiLoader()
         UiFile.open(QtCore.QFile.ReadOnly)
@@ -44,6 +48,36 @@ class CommodityForm(QtCore.QObject):
         self.ui.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
         # 顯示最大最小化關閉按鍵
         self.ui.setWindowFlags(QtCore.Qt.WindowMinMaxButtonsHint|QtCore.Qt.WindowCloseButtonHint)
+        self.Commodity_comboBox_signal.connect(self.Commodity_comboBox_recive)
+    @QtCore.Slot(int,str)
+    def Commodity_comboBox_recive(self,sMarketNo,bstrStockData):
+        Line = bstrStockData.split(';')
+        self.count+=1
+        ListCommodity=[]
+        p = re.compile('TX\w+|TF\w+|TE\w+')
+        c = re.compile('##\w+')
+        for row in Line:
+            rowstuff = row.split(',')
+            for row in rowstuff:
+                row.replace(' ','')
+            if c.findall(rowstuff[0]):
+                break
+            elif p.match(rowstuff[0]):
+                ListCommodity.append(rowstuff[0]+','+rowstuff[1])
+        
+        print('sMarketNo: %s',sMarketNo)
+        # print(ListCommodity)
+        self.ui.Commodity_comboBox.addItems(ListCommodity)
+        if len(ListCommodity)==0:
+            pass
+        elif 'TX00,台指近' in ListCommodity:
+            self.ui.Commodity_comboBox.setCurrentText('TX00,台指近')
+        else:
+            print('找不到 TX00')
+        print(self.count,'次')
+        # self.SKMessage.ui.textBrowser.append('找不到 TX00')
+
+
 
 
 

@@ -1,42 +1,32 @@
-# 使用SKCOM元件
-import comtypes.client
-import comtypes.gen.SKCOMLib as sk
-
-skC = comtypes.client.CreateObject(sk.SKCenterLib, interface=sk.ISKCenterLib)
-skO = comtypes.client.CreateObject(sk.SKOrderLib, interface=sk.ISKOrderLib)
-skQ = comtypes.client.CreateObject(sk.SKQuoteLib, interface=sk.ISKQuoteLib)
-skR = comtypes.client.CreateObject(sk.SKReplyLib, interface=sk.ISKReplyLib)
-
-print(dir(sk.SKSTOCKLONG().nStockIdx))
-
-# pyqtgraph.examples.run()
-
-# import os
-# import PySide2
-# dirname = os.path.dirname(PySide2.__file__)
-# plugin_path = os.path.join(dirname, 'plugins', 'platforms')
-# os.environ['PYSIDE_DESIGNER_PLUGINS'] = plugin_path
-# print(plugin_path)
-
+import re
+p = re.compile('TX\w+|TF\w+|TE\w+')
+print(type(p.match('TX00')[0]))
+print(type(p.match('TE09')[0]))
+print(type(p.match('TF12')[0]))
+if p.match('AA00')[0]:
+    print('True')
+else:
+    print('False')
 
 # import sys
-# import os
-# import PySide6
-# from PySide6.QtWidgets import QApplication, QMainWindow
-# from PySide6.QtCore import QFile
-# from PySide6.QtUiTools import QUiLoader
-# from ui_MainWindow import Ui_CapitalAPI
-# os.environ['PYSIDE_DESIGNER_PLUGINS'] = "C:\\Users\\Gary\\anaconda3\\Lib\\site-packages\\PySide6\\plugins"
-# dirname = os.path.dirname(PySide6.__file__)
-# plugin_path = os.path.join(dirname, 'plugins')
-# os.environ['PYSIDE_DESIGNER_PLUGINS'] = plugin_path
-# print(plugin_path)
-# path = os.path.join(os.path.dirname(__file__), "../APIver3/UI/MainWindow.ui")
+# from PySide6 import QtCore,QtWidgets
+# import typing
+# # define a new slot that receives a string and has
+# # 'saySomeWords' as its name
+# class Communicate(QtCore.QObject):
+#     speak = QtCore.Signal(str)
+#     def __init__(self):
+#         super(Communicate, self).__init__()
+#         self.ButtonA = None
+#         print('in class %s',self.ButtonA)
+#         self.speak.connect(self.saySomeWords)
+#     @QtCore.Slot(str)
+#     def saySomeWords(self,words):
+#         print(words)
 
-
-# loader = QUiLoader()
-
-# app = QApplication(sys.argv)
-# window = loader.load("../APIver3/UI/MainWindow.ui", None)
-# window.show()
-# app.exec_()
+# if __name__=='__main__':
+#     someone = Communicate()
+#     # connect signal and slot
+#     # someone.speak.connect(saySomeWords)
+#     # emit 'speak' signal
+#     someone.speak.emit("Hello everybody!")

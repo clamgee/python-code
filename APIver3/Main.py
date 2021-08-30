@@ -6,6 +6,7 @@ from PySide6 import QtCore
 import pyqtgraph as pg
 import pandas as pd
 import numpy as np
+import re
 # 外部 自寫模組
 from UI.MainWindow import Ui_CapitalAPI
 import FuncUI,FuncClass,Config_dict,tickstokline
@@ -25,9 +26,10 @@ class SKMainWindow(QMainWindow):
         self.MainUi.setupUi(self)
         self.showMaximized() #主視窗最大化
         # 介面導入
+        self.SKCommodityUI()
         self.SKMessageUI()  # 系統訊息介面
-        self.SKLoginUI()  # 登入介面
         self.SKRightUI() #權益數介面
+        self.SKLoginUI()  # 登入介面
         # ManuBar連結
         self.MainUi.actionLogin.triggered.connect(self.Login.ui.show)  # 登入介面連結
         self.MainUi.SysDetail.triggered.connect(self.SKMessage.ui.show) #系統資訊介面連結
@@ -53,7 +55,7 @@ class SKMainWindow(QMainWindow):
         self.SKCommodity.ui.show()
         self.SKCommodity.ui.commoditybtn.clicked.connect(self.commodityFunc)
         self.SKCommodity.ui.TDetailbtn.clicked.connect(self.SKTraDetailUI)
-        self.SKCommodity.ui.Market_comboBox.currentIndexChanged.connect(self.commoditylistchangeFunc)
+        self.SKCommodity.ui.Market_comboBox.currentIndexChanged.connect(self.MarketlistchangeFunc)
 
     def SKRightUI(self):
         self.MainUi.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -147,7 +149,7 @@ class SKMainWindow(QMainWindow):
     # 報價系統結束
     # 商品選單
     @Slot()
-    def commoditylistchangeFunc(self):
+    def MarketlistchangeFunc(self):
         nCode=skQ.SKQuoteLib_IsConnected()
         print('1')
         if nCode == 0 :
@@ -157,14 +159,7 @@ class SKMainWindow(QMainWindow):
         elif nCode==2:
             self.SKMessage.ui.textBrowser.append('資料下載中...')
         else:
-            self.SKMessage.ui.textBrowser.append('報價未連線!!!')
-    def commoditylistreciveFunc(self): 
-        ListCommodity = SKQuoteEvent.OnNotifyStockList()
-        self.SKCommodity.ui.Commodity_comboBox.addItems(ListCommodity)
-        if 'TX00,台指近' in ListCommodity:
-            self.SKCommodity.ui.Commodity_comboBox.setCurrentText('TX00,台指近')
-        else:
-            self.SKMessage.ui.textBrowser.append('找不到 TX00')
+            self.SKMessage.ui.textBrowser.append('報價未連線!!!')       
 
     # 商品訂閱
     def commodityFunc(self):
@@ -312,6 +307,8 @@ class SKOrderLibEvent:
         #     i+=1
 
 class SKQuoteLibEvents:
+    def __init__(self):
+        self.count = 0
     def OnConnection(self, nKind, nCode):
         if (nKind == 3001):
             strMsg = 'Connected!, '+str(nCode)+str(nKind)
@@ -321,7 +318,6 @@ class SKQuoteLibEvents:
             strMsg = 'Stocks ready!, '+str(nCode)+str(nKind)
             # time.sleep(5)
             m_nCode=skQ.SKQuoteLib_RequestStockList(SKMain.SKCommodity.ui.Market_comboBox.currentIndex())
-            SKMain.commoditylistreciveFunc()
             if m_nCode != 0:
                 print('商品取得列表錯誤: %s',skC.SKCenterLib_GetReturnCodeMessage(m_nCode))
         elif (nKind == 3021):
@@ -331,19 +327,8 @@ class SKQuoteLibEvents:
         SKMain.SKMessage.ui.textBrowser.append(strMsg)
     
     def OnNotifyStockList(self,sMarketNo,bstrStockData):
-        Line = bstrStockData.split(';')
-        ListCommodity=[]
-        for row in Line:
-            rowstuff = row.split(',')
-            for row in rowstuff:
-                row.replace(' ','')
-            if rowstuff[0] == '##':
-                ListCommodity =  list(filter(None, ListCommodity))
-                return ListCommodity
-            elif rowstuff[0] != '': 
-                ListCommodity.append(rowstuff[0]+','+rowstuff[1])
-            else:
-                pass
+        # print(bstrStockData)
+        SKMain.SKCommodity.Commodity_comboBox_signal.emit(sMarketNo,bstrStockData)
 
     def OnNotifyServerTime(self, sHour, sMinute, sSecond, nTotal):
         nTime = QTime(sHour, sMinute, sSecond)
@@ -380,6 +365,7 @@ SKReplyLibEventHandler = comtypes.client.GetEvents(skR, SKReplyEvent)
 if __name__=='__main__':
     SKApp = QApplication(sys.argv)
     SKMain = SKMainWindow()
+    # SKMain.SKCommodity.ui.Commodity_comboBox_signal.connect(SKMain.SKCommodity.Commodity_comboBox_recive)
     SKMain.show()
 
     sys.exit(SKApp.exec_())
