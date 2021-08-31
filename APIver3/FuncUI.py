@@ -1,6 +1,4 @@
-# 系統套件
-import sys
-# import os
+import sys,os,gc
 # # 使用PySide6套件
 from PySide6.QtUiTools import QUiLoader #使用 .LoginUI介面模組
 from PySide6.QtWidgets import QApplication,QDialog #PySide6介面控制模組
@@ -24,7 +22,9 @@ class LoginDialog(QtCore.QObject):
             self.ui.LoginPW.setText(data["PW"])
 
 class MessageDialog(QtCore.QObject):
+    Message_signal = QtCore.Signal(str)
     def __init__(self,gname):
+        super(MessageDialog, self).__init__()
         UiFile = QtCore.QFile('UI/Message.ui')
         Loader = QUiLoader()
         UiFile.open(QtCore.QFile.ReadOnly)
@@ -34,11 +34,17 @@ class MessageDialog(QtCore.QObject):
         self.ui.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
         # 顯示最大最小化關閉按鍵
         self.ui.setWindowFlags(QtCore.Qt.WindowMinMaxButtonsHint|QtCore.Qt.WindowCloseButtonHint)
+        #訊號連結
+        self.Message_signal.connect(self.inserttextfunc)
+    @QtCore.Slot(str)
+    def inserttextfunc(self,strMsg):
+        self.ui.textBrowser.append(strMsg)
 
 class CommodityForm(QtCore.QObject):
     Commodity_comboBox_signal = QtCore.Signal(int,str)
-    def __init__(self):
-        super(CommodityForm, self).__init__()
+    def __init__(self,parent):
+        super(CommodityForm, self).__init__(parent)
+        self.parent = parent
         self.count = 0
         UiFile = QtCore.QFile('UI/Commodity.ui')
         Loader = QUiLoader()
@@ -65,22 +71,18 @@ class CommodityForm(QtCore.QObject):
             elif p.match(rowstuff[0]):
                 ListCommodity.append(rowstuff[0]+','+rowstuff[1])
         
-        print('sMarketNo: %s',sMarketNo)
+        print('sMarketNo: %d',sMarketNo)
         # print(ListCommodity)
-        self.ui.Commodity_comboBox.addItems(ListCommodity)
         if len(ListCommodity)==0:
             pass
-        elif 'TX00,台指近' in ListCommodity:
-            self.ui.Commodity_comboBox.setCurrentText('TX00,台指近')
         else:
-            print('找不到 TX00')
-        print(self.count,'次')
-        # self.SKMessage.ui.textBrowser.append('找不到 TX00')
-
-
-
-
-
+            self.ui.Commodity_comboBox.addItems(ListCommodity)
+            if 'TX00,台指近' in ListCommodity:
+                self.ui.Commodity_comboBox.setCurrentText('TX00,台指近')
+            elif gc.is_tracked(self.parent):
+                print('找不到 TX00')
+                self.parent.Message_signal.emit('找不到 TX00')
+        
 # if __name__ == "__main__":
 #     FuncUIApp = QApplication(sys.argv)
 #     SKLogin = LoginDialog()

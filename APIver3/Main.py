@@ -26,8 +26,8 @@ class SKMainWindow(QMainWindow):
         self.MainUi.setupUi(self)
         self.showMaximized() #主視窗最大化
         # 介面導入
-        self.SKCommodityUI()
         self.SKMessageUI()  # 系統訊息介面
+        # self.SKCommodityUI(self.SKMessage)
         self.SKRightUI() #權益數介面
         self.SKLoginUI()  # 登入介面
         # ManuBar連結
@@ -50,8 +50,8 @@ class SKMainWindow(QMainWindow):
         self.SKMessage = FuncUI.MessageDialog('系統訊息')  # 設定系統訊息介面
         self.SKMessage.ui.show()
     
-    def SKCommodityUI(self):
-        self.SKCommodity = FuncUI.CommodityForm()
+    def SKCommodityUI(self,parent):
+        self.SKCommodity = FuncUI.CommodityForm(parent)
         self.SKCommodity.ui.show()
         self.SKCommodity.ui.commoditybtn.clicked.connect(self.commodityFunc)
         self.SKCommodity.ui.TDetailbtn.clicked.connect(self.SKTraDetailUI)
@@ -134,7 +134,7 @@ class SKMainWindow(QMainWindow):
         m_nCode = skQ.SKQuoteLib_EnterMonitor()
         if m_nCode==0:
             strMsg = '報價已連線!!!'
-            self.SKCommodityUI() #商品+5檔+大小單+下單介面
+            self.SKCommodityUI(self.SKMessage) #商品+5檔+大小單+下單介面
         else:
             strMsg = skC.SKCenterLib_GetReturnCodeMessage(m_nCode)
         self.SKMessage.ui.textBrowser.append('EnterMonitor: '+strMsg)

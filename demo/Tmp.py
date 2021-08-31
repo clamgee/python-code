@@ -1,12 +1,25 @@
-import re
-p = re.compile('TX\w+|TF\w+|TE\w+')
-print(type(p.match('TX00')[0]))
-print(type(p.match('TE09')[0]))
-print(type(p.match('TF12')[0]))
-if p.match('AA00')[0]:
-    print('True')
-else:
-    print('False')
+class Parent(object):
+   def __init__(self, name, number):
+       self.name = name
+       self.number = number
+
+
+class Child(object):
+    def __init__(self, parent, other):
+        self.parent = parent
+        self.other = other
+
+    def __getattr__(self, name):
+        try:
+            return getattr(self.parent, name)
+        except AttributeError as e:
+            raise AttributeError("Child' object has no attribute '%s'" % name)
+
+p = Parent("Foo", 42)
+c = Child(p, "parrot")
+print(c.name, c.number, c.other)
+p.name = "Bar"
+print(c.name, c.number, c.other)
 
 # import sys
 # from PySide6 import QtCore,QtWidgets
