@@ -126,7 +126,9 @@ class SKMainWindow(QMainWindow):
         self.openpd = pd.DataFrame(
             columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位', '平均成本', '一點價值', '單口手續費', '交易稅','登入帳號'])
         self.OpenCRpdMode = FuncClass.PandasModel()
-        self.test = 0
+        # 回報完成確認參數
+        self.ReplyComplete = False
+        self.onOpenInterestReplytimes = 0
     # 交易委託和未平倉設定結束
     # 報價系統連線功能
     @Slot()
@@ -299,7 +301,7 @@ class SKOrderLibEvent:
             pass
         else:
             SKMain.openpd = SKMain.openpd.append(pd.DataFrame([Line],columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅','登入帳號']))
-        SKMain.test+=1
+        SKMain.onOpenInterestReplytimes+=1
         # i=0
         # print(Line)
         # for row in Line:
@@ -327,7 +329,6 @@ class SKQuoteLibEvents:
         SKMain.SKMessage.ui.textBrowser.append(strMsg)
     
     def OnNotifyStockList(self,sMarketNo,bstrStockData):
-        # print(bstrStockData)
         SKMain.SKCommodity.Commodity_comboBox_signal.emit(sMarketNo,bstrStockData)
 
     def OnNotifyServerTime(self, sHour, sMinute, sSecond, nTotal):

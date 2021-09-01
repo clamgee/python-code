@@ -71,17 +71,20 @@ class CommodityForm(QtCore.QObject):
             elif p.match(rowstuff[0]):
                 ListCommodity.append(rowstuff[0]+','+rowstuff[1])
         
-        print('sMarketNo: %d',sMarketNo)
-        # print(ListCommodity)
         if len(ListCommodity)==0:
             pass
         else:
             self.ui.Commodity_comboBox.addItems(ListCommodity)
             if 'TX00,台指近' in ListCommodity:
                 self.ui.Commodity_comboBox.setCurrentText('TX00,台指近')
-            elif gc.is_tracked(self.parent):
+            elif gc.is_tracked(self.parent) and self.ui.Commodity_comboBox.currentText()!='TX00,台指近':
                 print('找不到 TX00')
                 self.parent.Message_signal.emit('找不到 TX00')
+            else:
+                try:
+                    pass
+                except AttributeError as e:
+                    raise AttributeError("商品清單功能Bug 市場編號為: %d" %(sMarketNo),e)
         
 # if __name__ == "__main__":
 #     FuncUIApp = QApplication(sys.argv)
