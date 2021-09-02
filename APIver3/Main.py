@@ -40,7 +40,7 @@ class SKMainWindow(QMainWindow):
         self.SKID = '未登入'  # 登入帳號
         self.IBAccount = ''  # 期貨帳號
         self.MainUi.statusBar.showMessage('帳號:' + self.SKID)
-    
+
     def SKLoginUI(self):
         self.Login = FuncUI.LoginDialog() #登入介面
         self.Login.ui.show()
@@ -153,7 +153,6 @@ class SKMainWindow(QMainWindow):
     @Slot()
     def MarketlistchangeFunc(self):
         nCode=skQ.SKQuoteLib_IsConnected()
-        print('1')
         if nCode == 0 :
             m_nCode=skQ.SKQuoteLib_RequestStockList(self.SKCommodity.ui.Market_comboBox.currentIndex())
             if m_nCode != 0:
@@ -164,17 +163,19 @@ class SKMainWindow(QMainWindow):
             self.SKMessage.ui.textBrowser.append('報價未連線!!!')       
 
     # 商品訂閱
+    @Slot()
     def commodityFunc(self):
         bstrStockNo = self.SKCommodity.ui.Commodity_comboBox.currentText().split(',')[0].replace(' ','')
         pSKStock=sk.SKSTOCKLONG()
         skQ.SKQuoteLib_GetStockByNoLONG (bstrStockNo,pSKStock)
-        bstrStockIdx=pSKStock.nStockIdx
-        
+        self.Future12KThread = tickstokline.ticksTo12Kprocess(bstrStockNo,pSKStock.nStockIdx)
+        # self.Future12KThread.start()
+        FuncClass.SKProcess(FuncClass.SKThreadmovetoprocess(self.Future12KThread))
         self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))
-        # nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
-        # if nCode !=0 :
-        #     strMsg=skC.SKCenterLib_GetReturnCodeMessage(nCode)
-        #     self.SKMessage.ui.textBrowser.append('商品訂閱錯誤: '+strMsg)
+        nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
+        if sum(nCode) !=0 :
+            strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))
+            self.SKMessage.ui.textBrowser.append('商品訂閱錯誤: '+strMsg)
         
 
     # 商品訂閱結束
@@ -227,7 +228,7 @@ class SKReplyLibEvent:
 
         if i is not None:
             SKMain.replypd.loc[i, '買賣'] = Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][0]]
-            SKMain.replypd.loc[i, '委託價格'] = Line[11]
+            SKMain.replypd.loc[i, '委託價格'] = round(float(Line[11]),2)
             SKMain.replypd.loc[i, '委託口數'] = Line[20]
             SKMain.replypd.loc[i, '委託狀態'] = Config_dict.OnNewData_dict['Type'][Line[2]]
             SKMain.replypd.loc[i, '成交口數'] = dealcontract
@@ -239,7 +240,7 @@ class SKReplyLibEvent:
             SKMain.replypd.loc[i, '交易時段'] = Line[24]
         else:
             tmplist = [[Line[8], Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][0]],
-                        Line[11], Line[20],
+                        round(float(Line[11]),2), Line[20],
                         Config_dict.OnNewData_dict['Type'][Line[2]],
                         dealcontract, cancelcontract,
                         Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][1]],
@@ -354,6 +355,17 @@ class SKQuoteLibEvents:
         #     result.to_csv('../result.dat',header=True, index=False,mode='w')
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
+    
+    def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
+        if nSimulate == 0 and SKMain.Future12KThread.commodityIndex == sStockIdx:
+            SKMain.Future12KThread.queue_signal.emit([nPtr,lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty])
+    
+    def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
+        if nSimulate == 0 and SKMain.Future12KThread.commodityIndex == sStockIdx:
+            SKMain.Future12KThread.queue_signal.emit([nPtr,lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty])
+
+    
+    
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()

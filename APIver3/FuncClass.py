@@ -1,5 +1,5 @@
 from PySide6.QtCore import QAbstractTableModel,Qt
-
+import multiprocessing as mp
 
 class PandasModel(QAbstractTableModel):
     def __init__(self):
@@ -29,3 +29,11 @@ class PandasModel(QAbstractTableModel):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return self._data.columns[col]
         return None
+
+def SKThreadmovetoprocess(func):
+    func.start()
+
+def SKProcess(func):
+    p1 = mp.Process(target=func)
+    p1.start()
+    p1.join()
