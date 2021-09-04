@@ -1,6 +1,6 @@
 from PySide6.QtCore import QAbstractTableModel,Qt
 import multiprocessing as mp
-
+# QTableView 資料處理Model
 class PandasModel(QAbstractTableModel):
     def __init__(self):
         QAbstractTableModel.__init__(self)
@@ -30,9 +30,10 @@ class PandasModel(QAbstractTableModel):
             return self._data.columns[col]
         return None
 
+# 將QThread建立後放置Func內然後傳到SKprocess
 def SKThreadmovetoprocess(func):
     func.start()
-
+# 收到QThread後建立MultiProcessing 執行
 def SKProcess(func):
     p1 = mp.Process(target=func)
     p1.start()
