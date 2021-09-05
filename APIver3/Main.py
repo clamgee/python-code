@@ -168,8 +168,11 @@ class SKMainWindow(QMainWindow):
         bstrStockNo = self.SKCommodity.ui.Commodity_comboBox.currentText().split(',')[0].replace(' ','')
         pSKStock=sk.SKSTOCKLONG()
         skQ.SKQuoteLib_GetStockByNoLONG (bstrStockNo,pSKStock)
-        self.FutureDatatoTicksThread = tickstokline.DataToTicks(bstrStockNo,pSKStock.nStockIdx)
+        self.FutrueTickto12kThread = tickstokline.TicksTo12K(bstrStockNo,pSKStock.nStockIdx)
+        self.FutureDatatoTicksThread = tickstokline.DataToTicks(bstrStockNo,pSKStock.nStockIdx,self.FutrueTickto12kThread.list_signal,self.FutrueTickto12kThread.queue_signal)
         FuncClass.SKProcess(FuncClass.SKThreadmovetoprocess(self.FutureDatatoTicksThread))
+        # FuncClass.SKProcess(FuncClass.SKThreadmovetoprocess(self.FutrueTickto12kThread))
+        self.FutrueTickto12kThread.start()
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         if sum(nCode) !=0 :
             strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))

@@ -1,6 +1,7 @@
 import datetime
-12K='AAA'
-print()
+nlist = ['a','b','c']
+k1 = nlist[0];k2 = nlist[1];k3 = nlist[2]
+print(k1,k2,k3)
 
 # import sys
 # from PySide6 import QtCore,QtWidgets
