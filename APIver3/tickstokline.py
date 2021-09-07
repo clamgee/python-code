@@ -9,30 +9,30 @@ from PySide6.QtCore import QObject, QThread,Signal,Slot
 
 class DataToTicks(QThread):
     queue_signal = Signal(list)
-    def __init__(self,inputname,inputindex,connect12K_List,connect12K_queue):
-        super(DataToTicks, self).__init__()
+    def __init__(self,inputname,inputindex,parent=None):
+        super(DataToTicks, self).__init__(parent)
         self.name=inputname
         self.commodityIndex = inputindex
-        self.connect12K_List = connect12K_List
-        self.connect12K_queue = connect12K_queue
+        # self.connect12K_List = connect12K_List
+        # self.connect12K_queue = connect12K_queue
         self.queue_signal.connect(self.receive_ticks)
         self.__Queue = mp.Queue()
         self.TickList = []
         self.ListTransform = False
         self.LastTick = 0
         self.LastTickClose = 0
-        self.hisbol = True #是否接受歷史Data
+        self.hisbol = True #是否為歷史Data
     @Slot(list)
     def receive_ticks(self,nlist):
-        self.__Queue.put(nlist)
-    
+        self.__Queue.put_nowait(nlist)
+
     def Ticks(self,nlist):
+        # [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
         nPtr=nlist[0]; nDate=str(nlist[1]); nTime=str(nlist[2]).zfill(6); nTimemicro = nlist[3].zfill(6)
-        nBid=nlist[4]; nAsk=nlist[5]; nClose=nlist[6]; nQty=nlist[7]
-        self.hisbol=nlist[8]
-        if self.LastTick <= nPtr:
+        nBid=nlist[4]; nAsk=nlist[5]; nClose=nlist[6]; nQty=nlist[7]; self.hisbol=nlist[8]; deal=0
+        ndatetime=datetime.datetime.strptime(nDate+" "+nTime+"."+nTimemicro,'%Y%m%d %H%M%S.%f')
+        if self.LastTick < nPtr:
             self.LastTick = nPtr
-            ndatetime=datetime.datetime.strptime(nDate+" "+nTime+"."+nTimemicro,'%Y%m%d %H%M%S.%f')
             if self.LastTickClose != 0:
                 if(nClose > self.LastTickClose) or (nClose >= nAsk):
                     deal = nQty
@@ -49,26 +49,30 @@ class DataToTicks(QThread):
                 else:
                     deal = 0 - nQty
             self.LastTickClose = nClose
-            # 1:下載歷史資料至list, 2: 處理歷史list 3: 即時
-            if self.hisbol==True:
+            # True:下載歷史資料至list, 2: 處理歷史list 3: 即時
+            if self.hisbol:
                 self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
             else:
                 if self.ListTransform == False:
+                    # print([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
+                    #self.connect12K_List.emit(self.TickList)
                     print('transform List')
-                    self.connect12K_List.emit(self.TickList)
+                    print(self.TickList[-1])
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
-                    self.connect12K_queue.emit([nPtr,ndatetime,int(nClose/100),int(nQty)])
+                    # self.connect12K_queue.emit([nPtr,ndatetime,int(nClose/100),int(nQty)])
+            #         print('emit queue')
                     self.ListTransform = True
                 else:
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
-                    self.connect12K_queue.emit(nPtr,ndatetime,int(nClose/100),int(nQty))
+                    # self.connect12K_queue.emit([nPtr,ndatetime,int(nClose/100),int(nQty)])
+                    print('已完成His :',[nPtr,ndatetime,int(nClose/100),int(nQty)])
         else:
             print('捨棄Tick序號: ',nPtr)
             pass
-    
+
     def run(self):
         while True:
-            nlist = self.__Queue.get()
+            nlist = self.__Queue.get(block=True)
             self.Ticks(nlist)
 
 class TicksTo12K(QThread):
@@ -182,6 +186,7 @@ class TicksTo12K(QThread):
 
     @Slot(list)
     def TickQueue(self,nlist):
+        print('12K Queue',nlist)
         self.__Queue.put(nlist)
     
     def run(self):
@@ -191,4 +196,5 @@ class TicksTo12K(QThread):
                 print('run: ',nlist)
                 # self.tickto12k(nlist)
             else:
-                pass
+                time.sleep(1)
+

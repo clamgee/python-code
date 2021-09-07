@@ -600,3 +600,5 @@ Ticks2021-08-31.txt
 Ticks2021-09-01.txt
 Ticks2021-09-02.txt
 Ticks2021-09-03.txt
+Ticks2021-09-06.txt
+Ticks2021-09-07.txt
