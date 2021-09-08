@@ -1,4 +1,4 @@
-from PySide6.QtCore import QAbstractTableModel,Qt,QThread
+from PySide6.QtCore import QAbstractTableModel, QObject,Qt,QThread
 import multiprocessing as mp
 import time
 
@@ -33,22 +33,30 @@ class PandasModel(QAbstractTableModel):
         return None
 
 # 將QThread建立後放置Func內然後傳到SKprocess
-def SKThreadmovetoprocess(func):
-    func.start()
-    i=1
-    while func.isRunning() != True :
-        print('等待執行續建立!!',i)
-        time.sleep(0.2)
-        i+=1
-    print('執行續:',func.idealThreadCount())
+class SubFunc(QObject):
+    def __init__(self, parent=None):
+        super(SubFunc,self).__init__(parent=parent)
+        self.Main = parent
+        
+    def SKThreadmovetoprocess(self,func,*args):
+        print('Thread: ',*args)
+        self.Main.FutrueTickto12kThread = func(args[0],args[1],self)
+        self.Main.FutrueTickto12kThread.start()
+        i=1
+        while self.Main.FutrueTickto12kThread.isRunning() != True :
+            print('等待執行續建立!!',i)
+            time.sleep(0.2)
+            i+=1
+        print('執行續:',self.Main.FutrueTickto12kThread.idealThreadCount())
 
-# 收到QThread後建立MultiProcessing 執行
-def SKProcess(func):
-    p1 = mp.Process(target=func)
-    p1.start()
-    while p1.is_alive() != True:
-        time.sleep(0.2)
-        print('等待建立進程!!')
-    print('mp: ',p1.pid)
-    p1.join()
+    # 收到QThread後建立MultiProcessing 執行
+    def SKProcess(self,*args):
+        print('Process:',*args)
+        self.p1 = mp.Process(target=self.SKThreadmovetoprocess,args=(args[0],args[1],args[2],))
+        self.p1.start()
+        # while p1.is_alive() != True:
+        #     time.sleep(0.2)
+        #     print('等待建立進程!!')
+        # print('mp: ',p1.pid)
+        self.p1.join()
     

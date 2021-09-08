@@ -6,6 +6,7 @@ from PySide6 import QtCore
 import pyqtgraph as pg
 import pandas as pd
 import numpy as np
+import multiprocessing as mp
 import re
 # 外部 自寫模組
 from UI.MainWindow import Ui_CapitalAPI
@@ -169,8 +170,10 @@ class SKMainWindow(QMainWindow):
         pSKStock=sk.SKSTOCKLONG()
         skQ.SKQuoteLib_GetStockByNoLONG (bstrStockNo,pSKStock)
         # self.FutrueTickto12kThread = tickstokline.TicksTo12K(bstrStockNo,pSKStock.nStockIdx)
-        self.FutureDatatoTicksThread = tickstokline.DataToTicks(bstrStockNo,pSKStock.nStockIdx,self)#,self.FutrueTickto12kThread.list_signal,self.FutrueTickto12kThread.queue_signal)
-        FuncClass.SKProcess(FuncClass.SKThreadmovetoprocess(self.FutureDatatoTicksThread))
+        # self.FutureDatatoTicksThread = tickstokline.DataToTicks(bstrStockNo,pSKStock.nStockIdx,self)#,self.FutrueTickto12kThread.list_signal,self.FutrueTickto12kThread.queue_signal)
+        # FuncClass.SKProcess(FuncClass.SKThreadmovetoprocess(self.FutureDatatoTicksThread))
+        self.ThreadFunc(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx)
+        # self.ThreadtoProcess(self.ThreadFunc,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx)
         # FuncClass.SKProcess(FuncClass.SKThreadmovetoprocess(self.FutrueTickto12kThread))
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         if sum(nCode) !=0 :
@@ -178,6 +181,14 @@ class SKMainWindow(QMainWindow):
             self.SKMessage.ui.textBrowser.append('商品訂閱錯誤: '+strMsg)
         else:
             self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))
+    def ThreadFunc(self,*args):
+        self.FutureDatatoTicksThread=args[0](args[1],args[2],self)
+        self.FutureDatatoTicksThread.start()
+    
+    # def ThreadtoProcess(self,func,*args):
+    #     self.p1 = mp.Process(target=func,args=(args[0],args[1],args[2],))
+    #     self.p1.start()
+    #     self.p1.join()
 
         
 

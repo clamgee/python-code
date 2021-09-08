@@ -1,7 +1,35 @@
-import datetime
-nlist = ['a','b','c']
-k1 = nlist[0];k2 = nlist[1];k3 = nlist[2]
-print(k1,k2,k3)
+from PySide6.QtCore import QThread, Signal,Slot
+from PySide6.QtWidgets import QApplication
+import multiprocessing as mp
+
+def threadfunc(func,*args):
+    f
+
+class Main:
+    def __init__(self) -> None:
+        self.name = 'main'
+        self.subclass = sub(5,self)
+        print(self.mainfunc(5))
+    def mainfunc(self,i):
+        sum = 12+i
+        return sum
+
+class sub:
+    def __init__(self,j,parent=None):
+        super(sub,self).__init__()
+        self.name = 'sub'
+        self.j = j
+        self.parent = parent
+        print(self.parent.__file__())
+        # self.subfunc(self.parent.mainfunc(self.j))
+        self.subfunc(self.j)
+
+    def subfunc(self,j):
+        total = j*j
+        print('sub: ',total)
+
+if __name__ == '__main__':
+    main = Main()
 
 # import sys
 # from PySide6 import QtCore,QtWidgets
