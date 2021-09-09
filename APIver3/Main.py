@@ -21,8 +21,8 @@ skQ = comtypes.client.CreateObject(sk.SKQuoteLib, interface=sk.ISKQuoteLib)
 skR = comtypes.client.CreateObject(sk.SKReplyLib, interface=sk.ISKReplyLib)
 # 主視窗物件
 class SKMainWindow(QMainWindow):
-    def __init__(self,parent=None):
-        super(SKMainWindow, self).__init__(parent)
+    def __init__(self):
+        super(SKMainWindow, self).__init__()
         self.MainUi = Ui_CapitalAPI()
         self.MainUi.setupUi(self)
         self.showMaximized() #主視窗最大化
@@ -172,27 +172,41 @@ class SKMainWindow(QMainWindow):
         # self.FutrueTickto12kThread = tickstokline.TicksTo12K(bstrStockNo,pSKStock.nStockIdx)
         # self.FutureDatatoTicksThread = tickstokline.DataToTicks(bstrStockNo,pSKStock.nStockIdx,self)#,self.FutrueTickto12kThread.list_signal,self.FutrueTickto12kThread.queue_signal)
         # FuncClass.SKProcess(FuncClass.SKThreadmovetoprocess(self.FutureDatatoTicksThread))
-        self.ThreadFunc(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx)
-        # self.ThreadtoProcess(self.ThreadFunc,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx)
+        # self.ThreadFunc(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx) 
+        global FutureDataToTicks
+        FutureDataToTicks = None
+        self.ThreadtoProcess(bstrStockNo,pSKStock.nStockIdx)
+        # DataToTicksThread(bstrStockNo,pSKStock.nStockIdx)
         # FuncClass.SKProcess(FuncClass.SKThreadmovetoprocess(self.FutrueTickto12kThread))
-        nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
-        if sum(nCode) !=0 :
-            strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))
-            self.SKMessage.ui.textBrowser.append('商品訂閱錯誤: '+strMsg)
-        else:
-            self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))
-    def ThreadFunc(self,*args):
-        self.FutureDatatoTicksThread=args[0](args[1],args[2],self)
-        self.FutureDatatoTicksThread.start()
+        # nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
+        # if sum(nCode) !=0 :
+        #     strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))
+        #     self.SKMessage.ui.textBrowser.append('商品訂閱錯誤: '+strMsg)
+        # else:
+        #     self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))
+    # def ThreadFunc(self,*args):
+    #     self.FutureDatatoTicksThread=args[0](args[1],args[2],self)
+    #     self.FutureDatatoTicksThread.start()
     
-    # def ThreadtoProcess(self,func,*args):
-    #     self.p1 = mp.Process(target=func,args=(args[0],args[1],args[2],))
-    #     self.p1.start()
-    #     self.p1.join()
-
-        
-
+    def ThreadtoProcess(self,*args):
+        start = time.time()
+        self.p1 = mp.Process(target=DataToTicksThread,args=(args[0],args[1],))
+        self.p1.start()
+        self.p1.join()
+        print('建立運算時間: ',time.time()-start,' 秒')
+        print('Process內執行續的名字:',FutureDataToTicks.name,FutureDataToTicks.commodityIndex)
     # 商品訂閱結束
+def DataToTicksThread(*args):    
+    FutureDataToTicks = tickstokline.DataToTicks(args[0],args[1])
+    print('執行續的名字:',FutureDataToTicks.name,FutureDataToTicks.commodityIndex)
+    FutureDataToTicks.start()
+    i=1
+    while FutureDataToTicks.isRunning() != True :
+        print('等待執行續建立!!',i)
+        time.sleep(0.2)
+        i+=1
+    print('執行續:',FutureDataToTicks.currentThread())
+
 
 
 class SKReplyLibEvent:
@@ -371,16 +385,16 @@ class SKQuoteLibEvents:
         SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
     
     def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        if nSimulate == 0 and SKMain.FutureDatatoTicksThread.commodityIndex == sStockIdx:
+        if nSimulate == 0 and FutureDataToTicks.commodityIndex == sStockIdx:
             nhis = True
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
-            SKMain.FutureDatatoTicksThread.queue_signal.emit(nlist)
+            FutureDataToTicks.queue_signal.emit(nlist)
     
     def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        if nSimulate == 0 and SKMain.FutureDatatoTicksThread.commodityIndex == sStockIdx:
+        if nSimulate == 0 and FutureDataToTicks.commodityIndex == sStockIdx:
             nhis = False
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
-            SKMain.FutureDatatoTicksThread.queue_signal.emit(nlist)
+            FutureDataToTicks.queue_signal.emit(nlist)
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()

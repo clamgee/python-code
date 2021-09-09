@@ -9,8 +9,8 @@ from PySide6.QtCore import QObject, QThread,Signal,Slot
 
 class DataToTicks(QThread):
     queue_signal = Signal(list)
-    def __init__(self,inputname,inputindex,parent=None):
-        super(DataToTicks, self).__init__(parent)
+    def __init__(self,inputname,inputindex):
+        super(DataToTicks, self).__init__()
         self.name=inputname
         self.commodityIndex = inputindex
         # self.connect12K_List = connect12K_List
@@ -56,8 +56,7 @@ class DataToTicks(QThread):
                 if self.ListTransform == False:
                     # print([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
                     #self.connect12K_List.emit(self.TickList)
-                    print('transform List')
-                    print(self.TickList[-1])
+                    print('transform List',len(self.TickList))
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
                     # self.connect12K_queue.emit([nPtr,ndatetime,int(nClose/100),int(nQty)])
             #         print('emit queue')
