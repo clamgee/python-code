@@ -8,23 +8,18 @@ import multiprocessing as mp
 from PySide6.QtCore import QObject, QThread,Signal,Slot
 
 class DataToTicks(QThread):
-    queue_signal = Signal(list)
-    def __init__(self,inputname,inputindex):
+    def __init__(self,inputname,inputindex,inputQueue):
         super(DataToTicks, self).__init__()
         self.name=inputname
         self.commodityIndex = inputindex
+        self.queue = inputQueue.queue
         # self.connect12K_List = connect12K_List
         # self.connect12K_queue = connect12K_queue
-        self.queue_signal.connect(self.receive_ticks)
-        self.__Queue = mp.Queue()
         self.TickList = []
         self.ListTransform = False
         self.LastTick = 0
         self.LastTickClose = 0
         self.hisbol = True #是否為歷史Data
-    @Slot(list)
-    def receive_ticks(self,nlist):
-        self.__Queue.put_nowait(nlist)
 
     def Ticks(self,nlist):
         # [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
@@ -71,20 +66,17 @@ class DataToTicks(QThread):
 
     def run(self):
         while True:
-            nlist = self.__Queue.get(block=True)
+            nlist = self.queue.get(block=True)
             self.Ticks(nlist)
 
 class TicksTo12K(QThread):
-    list_signal = Signal(list)
-    queue_signal = Signal(list)
-    def __init__(self,inputname,inputindex):
+    def __init__(self,inputname,inputindex,inputQueue):
         super(TicksTo12K, self).__init__()
         self.name = inputname
         self.commodityIndex = inputindex
         self.LastTick = 0
-        self.__Queue = mp.Queue()
-        self.list_signal.connect(self.HisListProcess)
-        self.queue_signal.connect(self.TickQueue)
+        self.__Queue = inputQueue.queue
+        self.__list = inputQueue.nlist
         self.Tick12Kpd=pd.read_csv('../result.dat',low_memory=False)
         # self.Tick12Kpd['dealbid','dealask','dealminus'].drop()
         self.Tick12Kpd['ndatetime']=pd.to_datetime(self.Tick12Kpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
@@ -183,13 +175,16 @@ class TicksTo12K(QThread):
         self.CheckHour=tmphour
         print(self.Tick12Kpd.tail(-1))
 
-    @Slot(list)
-    def TickQueue(self,nlist):
-        print('12K Queue',nlist)
-        self.__Queue.put(nlist)
     
     def run(self):
         while True:
+            if len[self.__list]!=0:
+                self.HisListProcess(self.__list)
+                self.HisDone = True
+                self.__list = []
+            else:
+                pass
+            
             if self.HisDone:
                 nlist = self.__Queue.get()
                 print('run: ',nlist)

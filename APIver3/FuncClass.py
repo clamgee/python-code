@@ -1,4 +1,4 @@
-from PySide6.QtCore import QAbstractTableModel, QObject,Qt,QThread
+from PySide6.QtCore import QAbstractTableModel, QObject,Qt,QThread,Signal,Slot
 import multiprocessing as mp
 import time
 
@@ -31,6 +31,30 @@ class PandasModel(QAbstractTableModel):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return self._data.columns[col]
         return None
+
+# 建立存SKQuout 回傳Data的Queue
+class DataQueue(QObject):
+    def __init__(self,inputname,inputidx):
+        self.queue = mp.Queue()
+        self.name = inputname
+        self.commodityIndex = inputidx
+
+class TickQueue(QObject):
+    list_signal = Signal(list)
+    queue_signal = Signal(list)
+    def __init__(self,inputname,inputidx):
+        self.queue = mp.Queue()
+        self.nlist = []
+        self.name = inputname
+        self.commodityIndex = inputidx
+        self.list_signal.connect(self.receivelist)
+        self.queue_signal.connect(self.receivetick)
+    @Slot(list)
+    def receivelist(self,nlist):
+        self.nlist = nlist
+    @Slot(list)
+    def receivetick(self,nlist):
+        self.queue.put(nlist)
 
 # 將QThread建立後放置Func內然後傳到SKprocess
 class SubFunc(QObject):

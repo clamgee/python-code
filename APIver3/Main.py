@@ -8,6 +8,8 @@ import pandas as pd
 import numpy as np
 import multiprocessing as mp
 import re
+
+from pyqtgraph.graphicsItems.GradientEditorItem import Tick
 # 外部 自寫模組
 from UI.MainWindow import Ui_CapitalAPI
 import FuncUI,FuncClass,Config_dict,tickstokline
@@ -173,10 +175,13 @@ class SKMainWindow(QMainWindow):
         # self.FutureDatatoTicksThread = tickstokline.DataToTicks(bstrStockNo,pSKStock.nStockIdx,self)#,self.FutrueTickto12kThread.list_signal,self.FutrueTickto12kThread.queue_signal)
         # FuncClass.SKProcess(FuncClass.SKThreadmovetoprocess(self.FutureDatatoTicksThread))
         # self.ThreadFunc(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx) 
-        global FutureDataToTicks
-        FutureDataToTicks = None
-        self.ThreadtoProcess(bstrStockNo,pSKStock.nStockIdx)
-        # DataToTicksThread(bstrStockNo,pSKStock.nStockIdx)
+        global DataQueue
+        DataQueue = FuncClass.DataQueue(bstrStockNo,pSKStock.nStockIdx) 
+        # global TickQueue
+        # TickQueue = FuncClass.TickQueue(bstrStockNo,pSKStock.nStockIdx)  
+        if __name__=='__main__':
+            ThreadtoProcess(DataToTicksThread,bstrStockNo,pSKStock.nStockIdx,DataQueue)
+        # DataToTicksThread(bstrStockNo,pSKStock.nStockIdx,DataQueue)
         # FuncClass.SKProcess(FuncClass.SKThreadmovetoprocess(self.FutrueTickto12kThread))
         # nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         # if sum(nCode) !=0 :
@@ -184,30 +189,25 @@ class SKMainWindow(QMainWindow):
         #     self.SKMessage.ui.textBrowser.append('商品訂閱錯誤: '+strMsg)
         # else:
         #     self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))
-    # def ThreadFunc(self,*args):
-    #     self.FutureDatatoTicksThread=args[0](args[1],args[2],self)
-    #     self.FutureDatatoTicksThread.start()
-    
-    def ThreadtoProcess(self,*args):
-        start = time.time()
-        self.p1 = mp.Process(target=DataToTicksThread,args=(args[0],args[1],))
-        self.p1.start()
-        self.p1.join()
-        print('建立運算時間: ',time.time()-start,' 秒')
-        print('Process內執行續的名字:',FutureDataToTicks.name,FutureDataToTicks.commodityIndex)
     # 商品訂閱結束
-def DataToTicksThread(*args):    
-    FutureDataToTicks = tickstokline.DataToTicks(args[0],args[1])
-    print('執行續的名字:',FutureDataToTicks.name,FutureDataToTicks.commodityIndex)
+def ThreadtoProcess(func,*args):
+    start = time.time()
+    p1 = mp.Process(target=func,args=(args[0],args[1],args[2],))
+    p1.start()
+    p1.join()
+    print('建立運算時間: ',time.time()-start,' 秒')
+
+def DataToTicksThread(*args):
+    import tickstokline
+    FutureDataToTicks = tickstokline.DataToTicks(args[0],args[1],args[2])
     FutureDataToTicks.start()
+    print('執行續的名字:',FutureDataToTicks.name,FutureDataToTicks.commodityIndex,args[2].commodityIndex)
     i=1
     while FutureDataToTicks.isRunning() != True :
         print('等待執行續建立!!',i)
         time.sleep(0.2)
         i+=1
     print('執行續:',FutureDataToTicks.currentThread())
-
-
 
 class SKReplyLibEvent:
     def OnConnect(self, bstrUserID, nErrorCode):
@@ -385,16 +385,16 @@ class SKQuoteLibEvents:
         SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
     
     def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        if nSimulate == 0 and FutureDataToTicks.commodityIndex == sStockIdx:
+        if nSimulate == 0 and DataQueue.commodityIndex == sStockIdx:
             nhis = True
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
-            FutureDataToTicks.queue_signal.emit(nlist)
+            DataQueue.queue.put(nlist)
     
     def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        if nSimulate == 0 and FutureDataToTicks.commodityIndex == sStockIdx:
+        if nSimulate == 0 and DataQueue.commodityIndex == sStockIdx:
             nhis = False
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
-            FutureDataToTicks.queue_signal.emit(nlist)
+            DataQueue.queue.put(nlist)
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
