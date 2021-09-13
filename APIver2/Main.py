@@ -862,6 +862,8 @@ class SKQuoteLibEvents:
             result=SKMain.Future.contractkpd.drop(columns=['high_avg','low_avg','dealbid','dealask','dealminus'])            
             result.sort_values(by=['ndatetime'],ascending=True)
             result.to_csv('../result.dat',header=True, index=False,mode='w')
+            nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
+            print('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime,'當案已儲存!!')
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         # print('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
         SKMain.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
