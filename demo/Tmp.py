@@ -14,19 +14,19 @@ class DatatoQueue(object):
 def funcq(q,mq,asyncq):
     for i in range(30):
         res = i+i**2
-        q.queue.put(res)
+        q.put(res)
         mq.put(res)
         asyncq.put(res)
 
 def funcgetp(*args):
     res=[]
-    while args[0].queue.qsize()>0:
+    print('傳入get Q:',args[0])
+    while True:
         with args[1]:
-            a=args[0].queue.get()
+            a=args[0].get()
             c=current_process().name
             res.append([a,c])
-            # print('Process:',a,c)
-    print('Process: ',res[8],', len: ',len(res))
+            print('執行結果Process:',a,c)
     
 
 
@@ -50,17 +50,17 @@ def funcgetasync(*args):
 def functd(*args):
     # print('thread',args[0],args[1])
     global q
-    print('Thread stock:',args[1].idx)
+    print('執行續Q:', args[1])
     t1=td.Thread(target=args[0],args=(args[1],args[2],))
     t1.start()
 
 def Pwork(func,*args):
     # print('work',len(args),args[0],args[1])
-    print('Proc stock:',args[1].idx)
+    print('Proc stock Q:',args[1])
     start = time.time()
-    w1 = mp.Process(target=func,args=(args[0],args[1],args[2],))
-    w1.start()
-    w1.join()
+    w1 = mp.Process(target=func,args=(args[0],args[1],args[2],),daemon=True)
+    w1.run()
+    # w1.join()
     print('Process',time.time()-start)
 
 def Multiwork(func,*args):
@@ -86,13 +86,14 @@ def Asyncwork(func,*args):
 
 
 if __name__=='__main__':
-    q = DatatoQueue()
+    q = mp.Queue()
+    print('建立Q: ',q)
     l=mp.Lock()
     mq=mp.Manager().Queue()
     ml=mp.Manager().RLock()
     asyncq=mp.Manager().Queue()
-    funcq(q,mq,asyncq)
     Pwork(functd,funcgetp,q,l)
+    funcq(q,mq,asyncq)
     # Multiwork(functd,funcgetm,mq,ml)
     # Asyncwork(funcgetasync,asyncq)
 

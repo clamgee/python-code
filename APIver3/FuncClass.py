@@ -33,9 +33,9 @@ class PandasModel(QAbstractTableModel):
         return None
 
 # 建立存SKQuout 回傳Data的Queue
-class DataQueue(QObject):
+class DataQueue(object):
     def __init__(self,inputname,inputidx):
-        self.queue = mp.Queue()
+        self.queue = mp.Manager().Queue()
         self.name = inputname
         self.commodityIndex = inputidx
 

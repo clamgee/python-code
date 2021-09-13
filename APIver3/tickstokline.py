@@ -12,7 +12,8 @@ class DataToTicks(QThread):
         super(DataToTicks, self).__init__()
         self.name=inputname
         self.commodityIndex = inputindex
-        self.queue = inputQueue.queue
+        self.queue = inputQueue
+        print('Tick內的Queue: ',self.queue)
         # self.connect12K_List = connect12K_List
         # self.connect12K_queue = connect12K_queue
         self.TickList = []
@@ -56,6 +57,8 @@ class DataToTicks(QThread):
                     # self.connect12K_queue.emit([nPtr,ndatetime,int(nClose/100),int(nQty)])
             #         print('emit queue')
                     self.ListTransform = True
+                    self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
+                    print('已完成His :',[nPtr,ndatetime,int(nClose/100),int(nQty)])
                 else:
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
                     # self.connect12K_queue.emit([nPtr,ndatetime,int(nClose/100),int(nQty)])
@@ -66,7 +69,7 @@ class DataToTicks(QThread):
 
     def run(self):
         while True:
-            nlist = self.queue.get(block=True)
+            nlist = self.queue.get()
             self.Ticks(nlist)
 
 class TicksTo12K(QThread):
