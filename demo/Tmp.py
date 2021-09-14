@@ -1,7 +1,7 @@
 import multiprocessing as mp
 from multiprocessing import current_process
 import threading as td
-import time
+import time,os
 
 # from PySide6.QtCore import Object
 
@@ -61,7 +61,8 @@ def Pwork(func,*args):
     w1 = mp.Process(target=func,args=(args[0],args[1],args[2],),daemon=True)
     w1.run()
     # w1.join()
-    print('Process',time.time()-start)
+    
+    print('Process',time.time()-start,os.getpid())
 
 def Multiwork(func,*args):
     # print('work',len(args),args[0],args[1])

@@ -12,6 +12,8 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
+from pyqtgraph import PlotWidget
+
 
 class Ui_CapitalAPI(object):
     def setupUi(self, CapitalAPI):
@@ -43,10 +45,10 @@ class Ui_CapitalAPI(object):
         self.tabWidget.setObjectName(u"tabWidget")
         self.tabWidget.setFont(font)
         self.tabWidget.setTabPosition(QTabWidget.South)
-        self.tab_TicksK = QWidget()
+        self.tab_TicksK = PlotWidget()
         self.tab_TicksK.setObjectName(u"tab_TicksK")
         self.tabWidget.addTab(self.tab_TicksK, "")
-        self.tab_DayTrading = QWidget()
+        self.tab_DayTrading = PlotWidget()
         self.tab_DayTrading.setObjectName(u"tab_DayTrading")
         self.tabWidget.addTab(self.tab_DayTrading, "")
         self.tab_Reply = QWidget()

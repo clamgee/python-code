@@ -28,12 +28,12 @@
       <property name="currentIndex">
        <number>2</number>
       </property>
-      <widget class="QWidget" name="tab_TicksK">
+      <widget class="PlotWidget" name="tab_TicksK">
        <attribute name="title">
         <string>TicksK線</string>
        </attribute>
       </widget>
-      <widget class="QWidget" name="tab_DayTrading">
+      <widget class="PlotWidget" name="tab_DayTrading">
        <attribute name="title">
         <string>當沖</string>
        </attribute>
@@ -718,6 +718,14 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QWidget</extends>
+   <header>pyqtgraph</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

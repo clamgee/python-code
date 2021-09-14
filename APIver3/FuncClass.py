@@ -35,7 +35,7 @@ class PandasModel(QAbstractTableModel):
 # 建立存SKQuout 回傳Data的Queue
 class DataQueue(object):
     def __init__(self,inputname,inputidx):
-        self.queue = mp.Manager().Queue()
+        self.queue = mp.Queue()
         self.name = inputname
         self.commodityIndex = inputidx
 
@@ -43,44 +43,18 @@ class TickQueue(QObject):
     list_signal = Signal(list)
     queue_signal = Signal(list)
     def __init__(self,inputname,inputidx):
+        super(TickQueue,self).__init__()
         self.queue = mp.Queue()
-        self.nlist = []
+        self.listqueue = mp.Queue()
         self.name = inputname
         self.commodityIndex = inputidx
         self.list_signal.connect(self.receivelist)
         self.queue_signal.connect(self.receivetick)
     @Slot(list)
     def receivelist(self,nlist):
-        self.nlist = nlist
+        self.listqueue.put(nlist)
     @Slot(list)
     def receivetick(self,nlist):
         self.queue.put(nlist)
 
-# 將QThread建立後放置Func內然後傳到SKprocess
-class SubFunc(QObject):
-    def __init__(self, parent=None):
-        super(SubFunc,self).__init__(parent=parent)
-        self.Main = parent
-        
-    def SKThreadmovetoprocess(self,func,*args):
-        print('Thread: ',*args)
-        self.Main.FutrueTickto12kThread = func(args[0],args[1],self)
-        self.Main.FutrueTickto12kThread.start()
-        i=1
-        while self.Main.FutrueTickto12kThread.isRunning() != True :
-            print('等待執行續建立!!',i)
-            time.sleep(0.2)
-            i+=1
-        print('執行續:',self.Main.FutrueTickto12kThread.idealThreadCount())
 
-    # 收到QThread後建立MultiProcessing 執行
-    def SKProcess(self,*args):
-        print('Process:',*args)
-        self.p1 = mp.Process(target=self.SKThreadmovetoprocess,args=(args[0],args[1],args[2],))
-        self.p1.start()
-        # while p1.is_alive() != True:
-        #     time.sleep(0.2)
-        #     print('等待建立進程!!')
-        # print('mp: ',p1.pid)
-        self.p1.join()
-    

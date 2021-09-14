@@ -8,14 +8,14 @@ import multiprocessing as mp
 from PySide6.QtCore import QObject, QThread,Signal,Slot
 
 class DataToTicks(QThread):
-    def __init__(self,inputname,inputindex,inputQueue):
+    def __init__(self,inputname,inputindex,Passlist):
         super(DataToTicks, self).__init__()
         self.name=inputname
         self.commodityIndex = inputindex
-        self.queue = inputQueue
+        self.queue = Passlist[0].queue
         print('Tick內的Queue: ',self.queue)
-        # self.connect12K_List = connect12K_List
-        # self.connect12K_queue = connect12K_queue
+        self.connect12K_List = Passlist[1]
+        self.connect12K_queue = Passlist[2]
         self.TickList = []
         self.ListTransform = False
         self.LastTick = 0
@@ -50,19 +50,15 @@ class DataToTicks(QThread):
                 self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
             else:
                 if self.ListTransform == False:
-                    # print([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
-                    #self.connect12K_List.emit(self.TickList)
+                    self.connect12K_List.emit(self.TickList)
                     print('transform List',len(self.TickList))
-                    self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
-                    # self.connect12K_queue.emit([nPtr,ndatetime,int(nClose/100),int(nQty)])
-            #         print('emit queue')
                     self.ListTransform = True
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
-                    print('已完成His :',[nPtr,ndatetime,int(nClose/100),int(nQty)])
+                    self.connect12K_queue.emit([nPtr,ndatetime,int(nClose/100),int(nQty)])
+                    self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
                 else:
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
-                    # self.connect12K_queue.emit([nPtr,ndatetime,int(nClose/100),int(nQty)])
-                    print('已完成His :',[nPtr,ndatetime,int(nClose/100),int(nQty)])
+                    self.connect12K_queue.emit([nPtr,ndatetime,int(nClose/100),int(nQty)])
         else:
             print('捨棄Tick序號: ',nPtr)
             pass
@@ -79,7 +75,7 @@ class TicksTo12K(QThread):
         self.commodityIndex = inputindex
         self.LastTick = 0
         self.__Queue = inputQueue.queue
-        self.__list = inputQueue.nlist
+        self.__list = inputQueue.listqueue
         self.Tick12Kpd=pd.read_csv('../result.dat',low_memory=False)
         # self.Tick12Kpd['dealbid','dealask','dealminus'].drop()
         self.Tick12Kpd['ndatetime']=pd.to_datetime(self.Tick12Kpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
@@ -91,48 +87,45 @@ class TicksTo12K(QThread):
         self.Tick12Kpd['low_avg'] = self.Tick12Kpd.low.rolling(self.MA).mean().round(0)
         self.CheckHour = None
         self.HisDone = False
-        print(self.Tick12Kpd.tail(5))
     @Slot(list)
     def HisListProcess(self,nlist):
-        print('recive list: ',nlist[-1])
-        # for row in nlist:
-        #     tmphour=row[0].hour
-        #     if (tmphour==8 and self.CheckHour==4) or (tmphour==15 and (self.CheckHour is None or self.CheckHour==13)):
-        #         self.Tick12Kpd=self.Tick12Kpd.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],row[4],0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
-        #         self.High=self.Low=row[3]
-        #         self.tmpcontract=row[4]
-        #         self.ticksum=row[4]
-        #         self.lastidx = self.Tick12Kpd.last_valid_index()
-        #     elif self.tmpcontract==0 or self.tmpcontract==12000 :
-        #         self.Tick12Kpd=self.Tick12Kpd.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],row[4],0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
-        #         self.High=self.Low=row[3]
-        #         self.tmpcontract=row[4]
-        #         self.ticksum+=row[4]
-        #         self.lastidx = self.Tick12Kpd.last_valid_index()
-        #     elif (self.tmpcontract+row[4])>12000:
-        #         if row[3] > self.High or row[3] < self.Low :
-        #             self.Tick12Kpd.at[self.lastidx,'high']=self.High=max(self.Tick12Kpd.at[self.lastidx,'high'],row[3])
-        #             self.Tick12Kpd.at[self.lastidx,'low']=self.Low=min(self.Tick12Kpd.at[self.lastidx,'low'],row[3])
-        #         self.Tick12Kpd.at[self.lastidx,'close']=row[3]
-        #         self.Tick12Kpd.at[self.lastidx,'volume']=12000
-        #         self.ticksum+=row[4]
-        #         self.tmpcontract=self.tmpcontract+row[4]-12000
-        #         self.Tick12Kpd=self.Tick12Kpd.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],self.tmpcontract,0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
-        #         self.High=self.Low=row[3]
-        #         self.lastidx = self.Tick12Kpd.last_valid_index()
-        #     else:
-        #         if row[3] > self.High or row[3] < self.Low:
-        #             self.Tick12Kpd.at[self.lastidx,'high']=self.High=max(self.Tick12Kpd.at[self.lastidx,'high'],row[3])
-        #             self.Tick12Kpd.at[self.lastidx,'low']=self.Low=min(self.Tick12Kpd.at[self.lastidx,'low'],row[3])
-        #         self.Tick12Kpd.at[self.lastidx,'close']=row[3]
-        #         self.ticksum+=row[4]
-        #         self.Tick12Kpd.at[self.lastidx,'volume']=self.tmpcontract=self.tmpcontract+row[4]
-
-        #     self.CheckHour=tmphour
-
-        # self.Tick12Kpd['high_avg'] = self.Tick12Kpd.high.rolling(self.MA).mean()
-        # self.Tick12Kpd['low_avg'] = self.Tick12Kpd.low.rolling(self.MA).mean()
+        for row in nlist:
+            tmphour=row[0].hour
+            if (tmphour==8 and self.CheckHour==4) or (tmphour==15 and (self.CheckHour is None or self.CheckHour==13)):
+                self.Tick12Kpd=self.Tick12Kpd.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],row[4],0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+                self.High=self.Low=row[3]
+                self.tmpcontract=row[4]
+                self.ticksum=row[4]
+                self.lastidx = self.Tick12Kpd.last_valid_index()
+            elif self.tmpcontract==0 or self.tmpcontract==12000 :
+                self.Tick12Kpd=self.Tick12Kpd.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],row[4],0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+                self.High=self.Low=row[3]
+                self.tmpcontract=row[4]
+                self.ticksum+=row[4]
+                self.lastidx = self.Tick12Kpd.last_valid_index()
+            elif (self.tmpcontract+row[4])>12000:
+                if row[3] > self.High or row[3] < self.Low :
+                    self.Tick12Kpd.at[self.lastidx,'high']=self.High=max(self.Tick12Kpd.at[self.lastidx,'high'],row[3])
+                    self.Tick12Kpd.at[self.lastidx,'low']=self.Low=min(self.Tick12Kpd.at[self.lastidx,'low'],row[3])
+                self.Tick12Kpd.at[self.lastidx,'close']=row[3]
+                self.Tick12Kpd.at[self.lastidx,'volume']=12000
+                self.ticksum+=row[4]
+                self.tmpcontract=self.tmpcontract+row[4]-12000
+                self.Tick12Kpd=self.Tick12Kpd.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],self.tmpcontract,0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+                self.High=self.Low=row[3]
+                self.lastidx = self.Tick12Kpd.last_valid_index()
+            else:
+                if row[3] > self.High or row[3] < self.Low:
+                    self.Tick12Kpd.at[self.lastidx,'high']=self.High=max(self.Tick12Kpd.at[self.lastidx,'high'],row[3])
+                    self.Tick12Kpd.at[self.lastidx,'low']=self.Low=min(self.Tick12Kpd.at[self.lastidx,'low'],row[3])
+                self.Tick12Kpd.at[self.lastidx,'close']=row[3]
+                self.ticksum+=row[4]
+                self.Tick12Kpd.at[self.lastidx,'volume']=self.tmpcontract=self.tmpcontract+row[4]
+            self.CheckHour=tmphour
+        self.Tick12Kpd['high_avg'] = self.Tick12Kpd.high.rolling(self.MA).mean()
+        self.Tick12Kpd['low_avg'] = self.Tick12Kpd.low.rolling(self.MA).mean()
         self.HisDone = True
+        print(self.Tick12Kpd.tail(5))
 
     def tickto12k(self,nlist):
         self.LastTick = nlist[0]; ndatetime = nlist[1]; nClose = nlist[2]; nQty = nlist[3]
@@ -176,22 +169,19 @@ class TicksTo12K(QThread):
             self.Tick12Kpd['high_avg'] = self.Tick12Kpd.high.rolling(self.MA).mean().round(0)
             self.Tick12Kpd['low_avg'] = self.Tick12Kpd.low.rolling(self.MA).mean().round(0)
         self.CheckHour=tmphour
-        print(self.Tick12Kpd.tail(-1))
+        print(self.Tick12Kpd.tail(1))
 
     
     def run(self):
         while True:
-            if len[self.__list]!=0:
-                self.HisListProcess(self.__list)
-                self.HisDone = True
-                self.__list = []
-            else:
-                pass
-            
             if self.HisDone:
                 nlist = self.__Queue.get()
-                print('run: ',nlist)
-                # self.tickto12k(nlist)
+                self.tickto12k(nlist)
             else:
-                time.sleep(1)
+                if self.__list.empty() is not True:
+                    nlist = self.__list.get()
+                    self.HisListProcess(nlist)
+                else:
+                    pass
+
 

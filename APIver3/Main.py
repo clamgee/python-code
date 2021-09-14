@@ -1,5 +1,5 @@
 import sys,os,time
-from PySide6.QtCore import QObject, Signal,Slot,QTime,Qt,QThread,QAbstractTableModel,QFile
+from PySide6.QtCore import QObject, QThreadPool, Signal,Slot,QTime,Qt,QThread,QAbstractTableModel,QFile
 from PySide6.QtWidgets import QMainWindow,QApplication,QTableWidgetItem,QMessageBox,QHeaderView
 from PySide6.QtGui import QAction
 from PySide6 import QtCore
@@ -170,20 +170,15 @@ class SKMainWindow(QMainWindow):
         bstrStockNo = self.SKCommodity.ui.Commodity_comboBox.currentText().split(',')[0].replace(' ','')
         pSKStock=sk.SKSTOCKLONG()
         skQ.SKQuoteLib_GetStockByNoLONG (bstrStockNo,pSKStock)
-        # self.FutrueTickto12kThread = tickstokline.TicksTo12K(bstrStockNo,pSKStock.nStockIdx)
-        # self.FutureDatatoTicksThread = tickstokline.DataToTicks(bstrStockNo,pSKStock.nStockIdx,self)#,self.FutrueTickto12kThread.list_signal,self.FutrueTickto12kThread.queue_signal)
-        # FuncClass.SKProcess(FuncClass.SKThreadmovetoprocess(self.FutureDatatoTicksThread))
-        # self.ThreadFunc(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx) 
         global DataQueue
-        DataQueue = mp.Queue()
-        # DataQueue = FuncClass.DataQueue(bstrStockNo,pSKStock.nStockIdx) 
-        print('建立的Queue: ',DataQueue)
-        # global TickQueue
-        # TickQueue = FuncClass.TickQueue(bstrStockNo,pSKStock.nStockIdx)
-        # self.SKThread = tickstokline.DataToTicks(bstrStockNo,pSKStock.nStockIdx,DataQueue)
-        # self.SKThread.start()
-        ThreadtoProcess(self.DataToTicksThread,bstrStockNo,pSKStock.nStockIdx,DataQueue)
-        # self.DataToTicksThread(bstrStockNo,pSKStock.nStockIdx,DataQueue)
+        DataQueue = FuncClass.DataQueue(bstrStockNo,pSKStock.nStockIdx) 
+        print('建立的Queue: ',DataQueue.queue)
+        global TickQueue
+        TickQueue = FuncClass.TickQueue(bstrStockNo,pSKStock.nStockIdx)
+        Passlist = [DataQueue,TickQueue.list_signal,TickQueue.queue_signal]
+        if __name__ == '__main__':
+            ThreadtoProcess(self.DataToTicksThread,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,Passlist)
+            ThreadtoProcess(self.Ticksto12KThread,tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,TickQueue)
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         if sum(nCode) !=0 :
             strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))
@@ -192,15 +187,20 @@ class SKMainWindow(QMainWindow):
             self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))
     # 商品訂閱結束
     def DataToTicksThread(self,*args):
-        self.FutureDataToTicks = tickstokline.DataToTicks(args[0],args[1],args[2])
-        self.FutureDataToTicks.start()
-        print('執行續的名字:Queue',self.FutureDataToTicks.currentThread(),args[2])
+        self.FutureDataToTicksThread = args[0](args[1],args[2],args[3])
+        self.FutureDataToTicksThread.start()
+        print('Data執行續的名字: ',self.FutureDataToTicksThread.currentThread())
+    def Ticksto12KThread(self,*args):
+        self.FutureTicksTo12KThread = args[0](args[1],args[2],args[3])
+        self.FutureTicksTo12KThread.start()
+        print('12K執行續的名字: ',self.FutureTicksTo12KThread.currentThread())
+
 def ThreadtoProcess(func,*args):
     start = time.time()
-    p1 = mp.Process(target=func,args=(args[0],args[1],args[2],),daemon=True)
+    p1 = mp.Process(target=func,args=(args[0],args[1],args[2],args[3],),daemon=True)
     p1.run()
-    print('建立運算時間: ',time.time()-start,' 秒',mp.current_process())
-
+    # SKMain.SKMessage.ui.textBrowser.append('建立運算時間: %d 秒, 執行續: %d',time.time()-start,p1.pid())
+    print('建立運算時間: ',time.time()-start,' 秒, Process:',p1.name)
 
 class SKReplyLibEvent:
     def OnConnect(self, bstrUserID, nErrorCode):
@@ -378,17 +378,16 @@ class SKQuoteLibEvents:
         SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
     
     def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        if nSimulate == 0: #and DataQueue.commodityIndex == sStockIdx:
+        if nSimulate == 0 and DataQueue.commodityIndex == sStockIdx:
             nhis = True
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
-            DataQueue.put(nlist)
+            DataQueue.queue.put(nlist)
     
     def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        if nSimulate == 0: #and DataQueue.commodityIndex == sStockIdx:
+        if nSimulate == 0 and DataQueue.commodityIndex == sStockIdx:
             nhis = False
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
-            DataQueue.put(nlist)
-            print('Quote: ',nlist,'寫入Queue: ',DataQueue)
+            DataQueue.queue.put(nlist)
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
@@ -399,9 +398,8 @@ SKReplyEvent = SKReplyLibEvent()
 SKReplyLibEventHandler = comtypes.client.GetEvents(skR, SKReplyEvent)
 
 if __name__=='__main__':
+    mp.set_start_method('spawn')
     SKApp = QApplication(sys.argv)
     SKMain = SKMainWindow()
-    # SKMain.SKCommodity.ui.Commodity_comboBox_signal.connect(SKMain.SKCommodity.Commodity_comboBox_recive)
     SKMain.show()
-
     sys.exit(SKApp.exec_())
