@@ -1,8 +1,8 @@
 import pyqtgraph as pg
+from pyqtgraph import GraphicsLayoutWidget
 import pandas as pd
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QApplication, QGraphicsView, QGraphicsScene, QGraphicsItem, QFrame
 from PyQt5.QtCore import QRectF
-from PyQt5.QtGui import QGraphicsLayout
 from PyQt5.uic import loadUi
 import sys
 import os
@@ -30,23 +30,26 @@ class MainWindows(QMainWindow):
     def __init__(self):
         super(MainWindows, self).__init__()
         loadUi(r'MG.ui', self)
-        self.l = pg.GraphicsLayout()
-        self.GV.setCentralItem(self.l)
         self.MyAxis = pg.AxisItem(orientation='bottom')
         self.MyAxis.setTicks([dict_tmp.items()])
+        self.P1 = self.GW.addPlot(row=0,col=0,axisItems={'bottom': self.MyAxis},y=data)
+        self.P1.setXRange(9500,9558)
+        self.P2 = self.GW.addPlot(row=1,col=0)
+        self.GW.ci.layout.setRowStretchFactor(0,3)
         # self.draw1(axisItems={'bottom': self.MyAxis})
-        self.draw1 = self.l.addPlot(axisItems={'bottom': self.MyAxis},y=data)
-        self.draw1.setTitle('test')
-        self.draw1.showAxis('left',show=False)
-        self.draw1.showAxis('top',show=False)
-        self.draw1.showAxis('right',show=True)
-        self.draw1.setXRange(7100,7500)
-        self.draw1.setYRange(12000,17000)
-        self.l.nextRow()
-        self.draw3=self.l.addPlot()
+        # self.draw1 = self.l.addPlot(axisItems={'bottom': self.MyAxis},y=data)
+        # self.draw1.setTitle('test')
+        # self.draw1.showAxis('left',show=False)
+        # self.draw1.showAxis('top',show=False)
+        # self.draw1.showAxis('right',show=True)
+        # self.draw1.setXRange(7100,7500)
+        # self.draw1.setYRange(12000,17000)
+        # self.l.nextRow()
+        # self.draw3=self.l.addPlot()
         self.bar = pg.BarGraphItem(x=data2index,height=data2,width=0.3,bush='r')
-        self.draw3.addItem(self.bar)
-        self.l.layout.setRowStretchFactor(0, 3)
+        self.P2.addItem(self.bar)
+        # self.draw3.addItem(self.bar)
+        # self.l.layout.setRowStretchFactor(0, 3)
 
 
 

@@ -2,6 +2,7 @@ import multiprocessing as mp
 from multiprocessing import current_process
 import threading as td
 import time,os
+from pyqtgraph import GraphicsLayoutWidget
 
 # from PySide6.QtCore import Object
 

@@ -26,14 +26,14 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
-      <widget class="PlotWidget" name="tab_TicksK">
+      <widget class="GraphicsLayoutWidget" name="tab_TicksK">
        <attribute name="title">
         <string>TicksK線</string>
        </attribute>
       </widget>
-      <widget class="PlotWidget" name="tab_DayTrading">
+      <widget class="GraphicsLayoutWidget" name="tab_DayTrading">
        <attribute name="title">
         <string>當沖</string>
        </attribute>
@@ -720,7 +720,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PlotWidget</class>
+   <class>GraphicsLayoutWidget</class>
    <extends>QWidget</extends>
    <header>pyqtgraph</header>
    <container>1</container>

@@ -12,7 +12,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
-from pyqtgraph import PlotWidget
+from pyqtgraph import GraphicsLayoutWidget
 
 
 class Ui_CapitalAPI(object):
@@ -45,10 +45,10 @@ class Ui_CapitalAPI(object):
         self.tabWidget.setObjectName(u"tabWidget")
         self.tabWidget.setFont(font)
         self.tabWidget.setTabPosition(QTabWidget.South)
-        self.tab_TicksK = PlotWidget()
+        self.tab_TicksK = GraphicsLayoutWidget()
         self.tab_TicksK.setObjectName(u"tab_TicksK")
         self.tabWidget.addTab(self.tab_TicksK, "")
-        self.tab_DayTrading = PlotWidget()
+        self.tab_DayTrading = GraphicsLayoutWidget()
         self.tab_DayTrading.setObjectName(u"tab_DayTrading")
         self.tabWidget.addTab(self.tab_DayTrading, "")
         self.tab_Reply = QWidget()
@@ -322,7 +322,7 @@ class Ui_CapitalAPI(object):
 
         self.retranslateUi(CapitalAPI)
 
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(CapitalAPI)

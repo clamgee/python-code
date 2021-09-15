@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>744</width>
+    <height>557</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,14 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="GraphicsView" name="GV">
-      <property name="autoFillBackground">
-       <bool>true</bool>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(0, 0, 0);</string>
-      </property>
-     </widget>
+     <widget class="GraphicsLayoutWidget" name="GW"/>
     </item>
    </layout>
   </widget>
@@ -32,7 +25,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>744</width>
      <height>21</height>
     </rect>
    </property>
@@ -41,7 +34,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GraphicsView</class>
+   <class>GraphicsLayoutWidget</class>
    <extends>QGraphicsView</extends>
    <header>pyqtgraph</header>
   </customwidget>

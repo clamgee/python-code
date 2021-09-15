@@ -6,6 +6,7 @@ import pandas as pd
 import os
 import multiprocessing as mp
 from PySide6.QtCore import QObject, QThread,Signal,Slot
+import KlineItem
 
 class DataToTicks(QThread):
     def __init__(self,inputname,inputindex,Passlist):
@@ -54,11 +55,11 @@ class DataToTicks(QThread):
                     print('transform List',len(self.TickList))
                     self.ListTransform = True
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
-                    self.connect12K_queue.emit([nPtr,ndatetime,int(nClose/100),int(nQty)])
+                    self.connect12K_queue.emit([ndatetime,int(nClose/100),int(nQty)])
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
                 else:
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
-                    self.connect12K_queue.emit([nPtr,ndatetime,int(nClose/100),int(nQty)])
+                    self.connect12K_queue.emit([ndatetime,int(nClose/100),int(nQty)])
         else:
             print('捨棄Tick序號: ',nPtr)
             pass
@@ -69,15 +70,14 @@ class DataToTicks(QThread):
             self.Ticks(nlist)
 
 class TicksTo12K(QThread):
-    def __init__(self,inputname,inputindex,inputQueue):
+    def __init__(self,inputname,inputindex,inputTuple):
         super(TicksTo12K, self).__init__()
         self.name = inputname
         self.commodityIndex = inputindex
-        self.LastTick = 0
-        self.__Queue = inputQueue.queue
-        self.__list = inputQueue.listqueue
+        self.__Queue = inputTuple[0].queue
+        self.__list = inputTuple[0].listqueue
+        self.__Candle12K_Signal = inputTuple[1]
         self.Tick12Kpd=pd.read_csv('../result.dat',low_memory=False)
-        # self.Tick12Kpd['dealbid','dealask','dealminus'].drop()
         self.Tick12Kpd['ndatetime']=pd.to_datetime(self.Tick12Kpd['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.Tick12Kpd.sort_values(by=['ndatetime'],ascending=True)
         self.Tick12Kpd=self.Tick12Kpd.reset_index(drop=True)
@@ -85,8 +85,12 @@ class TicksTo12K(QThread):
         self.MA = 87
         self.Tick12Kpd['high_avg'] = self.Tick12Kpd.high.rolling(self.MA).mean().round(0)
         self.Tick12Kpd['low_avg'] = self.Tick12Kpd.low.rolling(self.MA).mean().round(0)
+        self.lastidx = self.Tick12Kpd.last_valid_index()
         self.CheckHour = None
         self.HisDone = False
+        self.CandleBarItem = KlineItem.CandleItem(self)
+        self.CandleBarItem.set_data()
+        self.__Candle12K_Signal.emit(self.CandleBarItem)
     @Slot(list)
     def HisListProcess(self,nlist):
         for row in nlist:
@@ -125,10 +129,12 @@ class TicksTo12K(QThread):
         self.Tick12Kpd['high_avg'] = self.Tick12Kpd.high.rolling(self.MA).mean()
         self.Tick12Kpd['low_avg'] = self.Tick12Kpd.low.rolling(self.MA).mean()
         self.HisDone = True
-        print(self.Tick12Kpd.tail(5))
+        # print(self.Tick12Kpd.tail(5))
+        self.CandleBarItem.set_data()
+        self.__Candle12K_Signal.emit(self.CandleBarItem)
 
     def tickto12k(self,nlist):
-        self.LastTick = nlist[0]; ndatetime = nlist[1]; nClose = nlist[2]; nQty = nlist[3]
+        ndatetime = nlist[0]; nClose = nlist[1]; nQty = nlist[2]
         tmphour=ndatetime.hour
         if (tmphour==8 and self.CheckHour==4) or (tmphour==15 and (self.CheckHour is None or self.CheckHour==13)):
             self.Tick12Kpd=self.Tick12Kpd.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,nQty,0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
@@ -169,7 +175,9 @@ class TicksTo12K(QThread):
             self.Tick12Kpd['high_avg'] = self.Tick12Kpd.high.rolling(self.MA).mean().round(0)
             self.Tick12Kpd['low_avg'] = self.Tick12Kpd.low.rolling(self.MA).mean().round(0)
         self.CheckHour=tmphour
-        print(self.Tick12Kpd.tail(1))
+        self.CandleBarItem.set_data()
+        self.__Candle12K_Signal.emit(self.CandleBarItem)
+        # print(self.Tick12Kpd.tail(1))
 
     
     def run(self):

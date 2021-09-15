@@ -22,6 +22,7 @@ skQ = comtypes.client.CreateObject(sk.SKQuoteLib, interface=sk.ISKQuoteLib)
 skR = comtypes.client.CreateObject(sk.SKReplyLib, interface=sk.ISKReplyLib)
 # 主視窗物件
 class SKMainWindow(QMainWindow):
+    Candle12KItem_signal = Signal(object)
     def __init__(self):
         super(SKMainWindow, self).__init__()
         self.MainUi = Ui_CapitalAPI()
@@ -38,6 +39,9 @@ class SKMainWindow(QMainWindow):
         self.MainUi.Connectbtn.triggered.connect(self.ConnectFunc) #SKCom 報價連線
         self.MainUi.Disconnectbtn.triggered.connect(self.disconnectFunc) #SKCom 報價斷線
         self.MainUi.CommodityUIbtn.triggered.connect(self.SKCommodityUI) #商品+5檔+大小單+下單介面
+        #圖形訊號連結
+        self.Candle12KItem_signal.connect(self.Candle12KDrawFunc)
+        self.Candle12KDraw_Build_None = True
         # 帳號處理
         self.SKID = '未登入'  # 登入帳號
         self.IBAccount = ''  # 期貨帳號
@@ -176,15 +180,19 @@ class SKMainWindow(QMainWindow):
         global TickQueue
         TickQueue = FuncClass.TickQueue(bstrStockNo,pSKStock.nStockIdx)
         Passlist = [DataQueue,TickQueue.list_signal,TickQueue.queue_signal]
+        Pass12KTupple =(TickQueue,self.Candle12KItem_signal)
+        self.Candle12KDraw = self.MainUi.tab_TicksK.addPlot(row=0,col=0)
+        # global CandleItem12K
         if __name__ == '__main__':
             ThreadtoProcess(self.DataToTicksThread,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,Passlist)
-            ThreadtoProcess(self.Ticksto12KThread,tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,TickQueue)
+            ThreadtoProcess(self.Ticksto12KThread,tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTupple)
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         if sum(nCode) !=0 :
             strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))
             self.SKMessage.ui.textBrowser.append('商品訂閱錯誤: '+strMsg)
         else:
             self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))
+        
     # 商品訂閱結束
     def DataToTicksThread(self,*args):
         self.FutureDataToTicksThread = args[0](args[1],args[2],args[3])
@@ -194,7 +202,17 @@ class SKMainWindow(QMainWindow):
         self.FutureTicksTo12KThread = args[0](args[1],args[2],args[3])
         self.FutureTicksTo12KThread.start()
         print('12K執行續的名字: ',self.FutureTicksTo12KThread.currentThread())
-
+    @Slot(object)
+    def Candle12KDrawFunc(self,Kitem):
+        if self.Candle12KDraw_Build_None:
+            global CandleItem12K
+            CandleItem12K= Kitem
+            self.Candle12KDraw.addItem(CandleItem12K)
+            self.Candle12KDraw_Build_None = False
+        else:
+            CandleItem12K = Kitem
+        print('圖已建立: ',CandleItem12K)
+        
 def ThreadtoProcess(func,*args):
     start = time.time()
     p1 = mp.Process(target=func,args=(args[0],args[1],args[2],args[3],),daemon=True)
