@@ -1,13 +1,12 @@
 import pandas as pd
 import pyqtgraph as pg
 import numpy as np
-from pyqtgraph import QtCore,QtGui
+from pyqtgraph import QtCore,QtGui,GraphicsItem
 
 class CandleItem(pg.GraphicsObject):
     def __init__(self,parent=None):
         pg.GraphicsObject.__init__(self)
         # super(CandleItem, self).__init__(parent)
-        self.parentObj = parent
         self.data = parent.Tick12Kpd
         print(self.data.tail(5))
         self.lastbar = None
@@ -17,22 +16,26 @@ class CandleItem(pg.GraphicsObject):
         self.PaintChange = False
         self.setFlag(self.ItemUsesExtendedStyleOption)
         self.rect = None
-        self.low = 0
-        self.high = 0
-        self.lastidx = 0
-        self.countK = 60 #設定要顯示多少K線
+        self.high = self.data.high.max()
+        self.low = self.data.low.min()
+        self.lastidx = parent.lastidx
+        self.countK = 87 #設定要顯示多少K線
 
-    def set_data(self):
-        if self.lastidx != self.parentObj.lastidx:
+    def set_data(self,parent):
+        self.data = parent.Tick12Kpd
+        if self.high < parent.High:
+            self.high = parent.High
+        if self.low > parent.Low:
+            self.low = parent.Low
+        if self.lastidx != parent.lastidx:
             self.PaintChange = True
-            self.lastidx = self.parentObj.lastidx
-        else :
-            print('繪圖資料有誤!!',self.lastidx,',',self.parentObj.lastidx)
+            self.lastidx = parent.lastidx
+        # else :
+        #     print('繪圖資料有誤!!',self.lastidx,',',parent.lastidx)
         self.generatePicture()
         self.informViewBoundsChanged()
-        if not self.scene() is None:
-            self.scene().update() #強制圖形更新
-        print(self.data.tail(1))
+        # self._updateView() #強制圖形更新
+        # print('set_data: ',self.data.tail(1))
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
@@ -40,6 +43,7 @@ class CandleItem(pg.GraphicsObject):
             self.pictures.pop()
         w = 1.0 / 3.0
         start = len(self.pictures)
+        # print('圖片長度: ',start)
         stop = self.lastidx + 1
         for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
             picture = QtGui.QPicture()

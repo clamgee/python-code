@@ -3,7 +3,8 @@ from multiprocessing import current_process
 import threading as td
 import time,os
 from pyqtgraph import GraphicsLayoutWidget
-
+import pyqtgraph as pg
+pg.GraphicsObject.re
 # from PySide6.QtCore import Object
 
 class DatatoQueue(object):

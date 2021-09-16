@@ -6,6 +6,7 @@ import pandas as pd
 import os
 import multiprocessing as mp
 from PySide6.QtCore import QObject, QThread,Signal,Slot
+import pyqtgraph as pg
 import KlineItem
 
 class DataToTicks(QThread):
@@ -86,11 +87,14 @@ class TicksTo12K(QThread):
         self.Tick12Kpd['high_avg'] = self.Tick12Kpd.high.rolling(self.MA).mean().round(0)
         self.Tick12Kpd['low_avg'] = self.Tick12Kpd.low.rolling(self.MA).mean().round(0)
         self.lastidx = self.Tick12Kpd.last_valid_index()
+        self.High = self.Tick12Kpd['high'].max()
+        self.Low = self.Tick12Kpd['low'].min()
         self.CheckHour = None
         self.HisDone = False
-        self.CandleBarItem = KlineItem.CandleItem(self)
-        self.CandleBarItem.set_data()
-        self.__Candle12K_Signal.emit(self.CandleBarItem)
+        self.Candle12KPlotItem = KlineItem.CandleItem(self)
+        self.Candle12KPlotItem.set_data(self)
+        self.__Candle12K_Signal.emit(self.Candle12KPlotItem)
+
     @Slot(list)
     def HisListProcess(self,nlist):
         for row in nlist:
@@ -130,8 +134,8 @@ class TicksTo12K(QThread):
         self.Tick12Kpd['low_avg'] = self.Tick12Kpd.low.rolling(self.MA).mean()
         self.HisDone = True
         # print(self.Tick12Kpd.tail(5))
-        self.CandleBarItem.set_data()
-        self.__Candle12K_Signal.emit(self.CandleBarItem)
+        self.Candle12KPlotItem.set_data(self)
+        self.__Candle12K_Signal.emit(self.Candle12KPlotItem)
 
     def tickto12k(self,nlist):
         ndatetime = nlist[0]; nClose = nlist[1]; nQty = nlist[2]
@@ -175,8 +179,8 @@ class TicksTo12K(QThread):
             self.Tick12Kpd['high_avg'] = self.Tick12Kpd.high.rolling(self.MA).mean().round(0)
             self.Tick12Kpd['low_avg'] = self.Tick12Kpd.low.rolling(self.MA).mean().round(0)
         self.CheckHour=tmphour
-        self.CandleBarItem.set_data()
-        self.__Candle12K_Signal.emit(self.CandleBarItem)
+        self.Candle12KPlotItem.set_data(self)
+        self.__Candle12K_Signal.emit(self.Candle12KPlotItem)
         # print(self.Tick12Kpd.tail(1))
 
     

@@ -20,6 +20,7 @@ skC = comtypes.client.CreateObject(sk.SKCenterLib, interface=sk.ISKCenterLib)
 skO = comtypes.client.CreateObject(sk.SKOrderLib, interface=sk.ISKOrderLib)
 skQ = comtypes.client.CreateObject(sk.SKQuoteLib, interface=sk.ISKQuoteLib)
 skR = comtypes.client.CreateObject(sk.SKReplyLib, interface=sk.ISKReplyLib)
+global CandleItem12K
 # 主視窗物件
 class SKMainWindow(QMainWindow):
     Candle12KItem_signal = Signal(object)
@@ -181,8 +182,6 @@ class SKMainWindow(QMainWindow):
         TickQueue = FuncClass.TickQueue(bstrStockNo,pSKStock.nStockIdx)
         Passlist = [DataQueue,TickQueue.list_signal,TickQueue.queue_signal]
         Pass12KTupple =(TickQueue,self.Candle12KItem_signal)
-        self.Candle12KDraw = self.MainUi.tab_TicksK.addPlot(row=0,col=0)
-        # global CandleItem12K
         if __name__ == '__main__':
             ThreadtoProcess(self.DataToTicksThread,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,Passlist)
             ThreadtoProcess(self.Ticksto12KThread,tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTupple)
@@ -202,16 +201,48 @@ class SKMainWindow(QMainWindow):
         self.FutureTicksTo12KThread = args[0](args[1],args[2],args[3])
         self.FutureTicksTo12KThread.start()
         print('12K執行續的名字: ',self.FutureTicksTo12KThread.currentThread())
-    @Slot(object)
+    @Slot(pg.GraphicsItem)
     def Candle12KDrawFunc(self,Kitem):
+        CandleItem12K= Kitem
         if self.Candle12KDraw_Build_None:
-            global CandleItem12K
-            CandleItem12K= Kitem
+            self.Axis12k = pg.AxisItem(orientation='bottom')
+            self.Candle12KDraw = self.MainUi.tab_TicksK.addPlot(row=0,col=0,axisItems={'bottom': self.Axis12k})
+            self.Candle12KDraw.showAxis('right',show=True)
+            self.Candle12KDraw.showAxis('left',show=False)
+            self.Candle12KDraw.showGrid(x=False,y=True)
             self.Candle12KDraw.addItem(CandleItem12K)
+            self.axis12k_xmax = len(Kitem.pictures)
+            self.axis12k_xmin = self.axis12k_xmax-Kitem.countK
+            self.axis12k_ymin = Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
+            self.axis12k_ymax = Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
+            self.Candle12KDraw.setXRange(self.axis12k_xmin,self.axis12k_xmax)
+            self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
+            self.MAHighLine=self.Candle12KDraw.plot(pen='y')
+            self.MALowLine=self.Candle12KDraw.plot(pen='b')
+            dict_tmp = Kitem.data['ndatetime'][(Kitem.data.volume!=12000) & (Kitem.data.ndatetime.dt.hour>8) & (Kitem.data.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
+            self.Axis12k.setTicks([dict_tmp.items()])
+            self.MAHighLine.setData(Kitem.data.high_avg)
+            self.MALowLine.setData(Kitem.data.low_avg)
             self.Candle12KDraw_Build_None = False
         else:
-            CandleItem12K = Kitem
-        print('圖已建立: ',CandleItem12K)
+            if self.axis12k_xmax != len(Kitem.pictures):
+                self.axis12k_xmax = len(Kitem.pictures)
+                self.axis12k_xmin = self.axis12k_xmax-Kitem.countK
+                self.axis12k_ymin = Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
+                self.axis12k_ymax = Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
+                self.Candle12KDraw.setXRange(self.axis12k_xmin,self.axis12k_xmax)
+                self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
+                dict_tmp = Kitem.data['ndatetime'][(Kitem.data.volume!=12000) & (Kitem.data.ndatetime.dt.hour>8) & (Kitem.data.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
+                self.Axis12k.setTicks([dict_tmp.items()])
+                self.MAHighLine.setData(Kitem.data.high_avg)
+                self.MALowLine.setData(Kitem.data.low_avg)
+            elif self.axis12k_ymin > Kitem.data.at[Kitem.lastidx,'close'] or self.axis12k_ymax < Kitem.data.at[Kitem.lastidx,'close']:
+                self.axis12k_ymin = Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
+                self.axis12k_ymax = Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
+                self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
+            else:
+                pass
+        self.Candle12KDraw.update()
         
 def ThreadtoProcess(func,*args):
     start = time.time()
