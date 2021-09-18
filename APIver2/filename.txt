@@ -606,3 +606,4 @@ Ticks2021-09-13.txt
 Ticks2021-09-14.txt
 Ticks2021-09-15.txt
 Ticks2021-09-16.txt
+Ticks2021-09-17.txt

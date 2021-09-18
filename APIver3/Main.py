@@ -242,7 +242,7 @@ class SKMainWindow(QMainWindow):
                 self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
             else:
                 pass
-        self.Candle12KDraw.update()
+        # self.Candle12KDraw.update()
         
 def ThreadtoProcess(func,*args):
     start = time.time()

@@ -46,8 +46,9 @@ class CandleItem(pg.GraphicsObject):
         # self.len = self.data.shape[0]
         self.generatePicture()
         self.informViewBoundsChanged()
+        self.scene().update()
         # if not self.scene() is None:
-        self.scene().update() #強制圖形更新
+        # self.update() #強制圖形更新
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
@@ -139,8 +140,8 @@ class BarItem(pg.GraphicsObject):
 
         self.generatePicture()
         self.informViewBoundsChanged()
-        if not self.scene() is None:
-            self.scene().update() #強制圖形更新
+        # if not self.scene() is None:
+        self.scene().update() #強制圖形更新
     
     def generatePicture(self):    
         # 重畫或者最後一根K線

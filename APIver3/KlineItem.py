@@ -34,7 +34,7 @@ class CandleItem(pg.GraphicsObject):
         #     print('繪圖資料有誤!!',self.lastidx,',',parent.lastidx)
         self.generatePicture()
         self.informViewBoundsChanged()
-        # self._updateView() #強制圖形更新
+        self.update() #強制圖形更新
         # print('set_data: ',self.data.tail(1))
     
     def generatePicture(self):    

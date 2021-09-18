@@ -4,7 +4,7 @@ import threading as td
 import time,os
 from pyqtgraph import GraphicsLayoutWidget
 import pyqtgraph as pg
-pg.GraphicsObject.re
+pg.GraphicsObject._updateView
 # from PySide6.QtCore import Object
 
 class DatatoQueue(object):
