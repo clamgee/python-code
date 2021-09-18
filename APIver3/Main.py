@@ -201,7 +201,7 @@ class SKMainWindow(QMainWindow):
         self.FutureTicksTo12KThread = args[0](args[1],args[2],args[3])
         self.FutureTicksTo12KThread.start()
         print('12K執行續的名字: ',self.FutureTicksTo12KThread.currentThread())
-    @Slot(pg.GraphicsItem)
+    @Slot(pg.GraphicsObject)
     def Candle12KDrawFunc(self,Kitem):
         CandleItem12K= Kitem
         if self.Candle12KDraw_Build_None:
@@ -213,36 +213,35 @@ class SKMainWindow(QMainWindow):
             self.Candle12KDraw.addItem(CandleItem12K)
             self.axis12k_xmax = len(Kitem.pictures)
             self.axis12k_xmin = self.axis12k_xmax-Kitem.countK
-            self.axis12k_ymin = Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
-            self.axis12k_ymax = Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
+            self.axis12k_ymin = Kitem.data.Tick12Kpd.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
+            self.axis12k_ymax = Kitem.data.Tick12Kpd.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
             self.Candle12KDraw.setXRange(self.axis12k_xmin,self.axis12k_xmax)
             self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
             self.MAHighLine=self.Candle12KDraw.plot(pen='y')
             self.MALowLine=self.Candle12KDraw.plot(pen='b')
-            dict_tmp = Kitem.data['ndatetime'][(Kitem.data.volume!=12000) & (Kitem.data.ndatetime.dt.hour>8) & (Kitem.data.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
+            dict_tmp = Kitem.data.Tick12Kpd['ndatetime'][(Kitem.data.Tick12Kpd.volume!=12000) & (Kitem.data.Tick12Kpd.ndatetime.dt.hour>8) & (Kitem.data.Tick12Kpd.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
             self.Axis12k.setTicks([dict_tmp.items()])
-            self.MAHighLine.setData(Kitem.data.high_avg)
-            self.MALowLine.setData(Kitem.data.low_avg)
+            self.MAHighLine.setData(Kitem.data.Tick12Kpd.high_avg)
+            self.MALowLine.setData(Kitem.data.Tick12Kpd.low_avg)
             self.Candle12KDraw_Build_None = False
         else:
             if self.axis12k_xmax != len(Kitem.pictures):
                 self.axis12k_xmax = len(Kitem.pictures)
                 self.axis12k_xmin = self.axis12k_xmax-Kitem.countK
-                self.axis12k_ymin = Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
-                self.axis12k_ymax = Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
+                self.axis12k_ymin = Kitem.data.Tick12Kpd.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
+                self.axis12k_ymax = Kitem.data.Tick12Kpd.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
                 self.Candle12KDraw.setXRange(self.axis12k_xmin,self.axis12k_xmax)
                 self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
-                dict_tmp = Kitem.data['ndatetime'][(Kitem.data.volume!=12000) & (Kitem.data.ndatetime.dt.hour>8) & (Kitem.data.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
+                dict_tmp = Kitem.data.Tick12Kpd['ndatetime'][(Kitem.data.Tick12Kpd.volume!=12000) & (Kitem.data.Tick12Kpd.ndatetime.dt.hour>8) & (Kitem.data.Tick12Kpd.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
                 self.Axis12k.setTicks([dict_tmp.items()])
-                self.MAHighLine.setData(Kitem.data.high_avg)
-                self.MALowLine.setData(Kitem.data.low_avg)
-            elif self.axis12k_ymin > Kitem.data.at[Kitem.lastidx,'close'] or self.axis12k_ymax < Kitem.data.at[Kitem.lastidx,'close']:
-                self.axis12k_ymin = Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
-                self.axis12k_ymax = Kitem.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
+                self.MAHighLine.setData(Kitem.data.Tick12Kpd.high_avg)
+                self.MALowLine.setData(Kitem.data.Tick12Kpd.low_avg)
+            elif self.axis12k_ymin > Kitem.data.Tick12Kpd.at[Kitem.lastidx,'close'] or self.axis12k_ymax < Kitem.data.Tick12Kpd.at[Kitem.lastidx,'close']:
+                self.axis12k_ymin = Kitem.data.Tick12Kpd.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
+                self.axis12k_ymax = Kitem.data.Tick12Kpd.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
                 self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
             else:
                 pass
-        # self.Candle12KDraw.update()
         
 def ThreadtoProcess(func,*args):
     start = time.time()

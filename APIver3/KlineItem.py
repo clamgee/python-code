@@ -7,8 +7,8 @@ class CandleItem(pg.GraphicsObject):
     def __init__(self,parent=None):
         pg.GraphicsObject.__init__(self)
         # super(CandleItem, self).__init__(parent)
-        self.data = parent.Tick12Kpd
-        print(self.data.tail(5))
+        self.data = parent
+        print(self.data.Tick12Kpd.tail(5))
         self.lastbar = None
         self.picturemain = QtGui.QPicture() #主K線圖
         self.picturelast = QtGui.QPicture() #最後一根K線圖
@@ -16,25 +16,31 @@ class CandleItem(pg.GraphicsObject):
         self.PaintChange = False
         self.setFlag(self.ItemUsesExtendedStyleOption)
         self.rect = None
-        self.high = self.data.high.max()
-        self.low = self.data.low.min()
+        self.high = self.data.Tick12Kpd.high.max()
+        print('原生',self.high)
+        self.low = self.data.Tick12Kpd.low.min()
         self.lastidx = parent.lastidx
         self.countK = 87 #設定要顯示多少K線
+        self.generatePicture()
+        self.informViewBoundsChanged()
+        self._updateView() #強制圖形更新
 
-    def set_data(self,parent):
-        self.data = parent.Tick12Kpd
-        if self.high < parent.High:
-            self.high = parent.High
-        if self.low > parent.Low:
-            self.low = parent.Low
-        if self.lastidx != parent.lastidx:
+
+    def set_data(self):
+        # self.data = parent.Tick12Kpd
+        if self.high < self.data.High:
+            self.high = self.data.High
+            print('比對:',self.high)
+        if self.low > self.data.Low:
+            self.low = self.data.Low
+        if self.lastidx != self.data.lastidx:
             self.PaintChange = True
-            self.lastidx = parent.lastidx
+            self.lastidx = self.data.lastidx
         # else :
         #     print('繪圖資料有誤!!',self.lastidx,',',parent.lastidx)
         self.generatePicture()
         self.informViewBoundsChanged()
-        self.update() #強制圖形更新
+        self._updateView() #強制圖形更新
         # print('set_data: ',self.data.tail(1))
     
     def generatePicture(self):    
@@ -45,7 +51,7 @@ class CandleItem(pg.GraphicsObject):
         start = len(self.pictures)
         # print('圖片長度: ',start)
         stop = self.lastidx + 1
-        for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
+        for (t, x) in self.data.Tick12Kpd.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
             if x.open>x.close:
@@ -128,8 +134,7 @@ class BarItem(pg.GraphicsObject):
 
         self.generatePicture()
         self.informViewBoundsChanged()
-        if not self.scene() is None:
-            self.scene().update() #強制圖形更新
+        self._updateView() #強制圖形更新
     
     def generatePicture(self):    
         # 重畫或者最後一根K線

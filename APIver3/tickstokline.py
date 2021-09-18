@@ -92,8 +92,7 @@ class TicksTo12K(QThread):
         self.CheckHour = None
         self.HisDone = False
         self.Candle12KPlotItem = KlineItem.CandleItem(self)
-        self.Candle12KPlotItem.set_data(self)
-        self.__Candle12K_Signal.emit(self.Candle12KPlotItem)
+        
 
     @Slot(list)
     def HisListProcess(self,nlist):
@@ -134,8 +133,7 @@ class TicksTo12K(QThread):
         self.Tick12Kpd['low_avg'] = self.Tick12Kpd.low.rolling(self.MA).mean()
         self.HisDone = True
         # print(self.Tick12Kpd.tail(5))
-        self.Candle12KPlotItem.set_data(self)
-        self.__Candle12K_Signal.emit(self.Candle12KPlotItem)
+        self.Candle12KPlotItem.set_data()
 
     def tickto12k(self,nlist):
         ndatetime = nlist[0]; nClose = nlist[1]; nQty = nlist[2]
@@ -179,8 +177,7 @@ class TicksTo12K(QThread):
             self.Tick12Kpd['high_avg'] = self.Tick12Kpd.high.rolling(self.MA).mean().round(0)
             self.Tick12Kpd['low_avg'] = self.Tick12Kpd.low.rolling(self.MA).mean().round(0)
         self.CheckHour=tmphour
-        self.Candle12KPlotItem.set_data(self)
-        self.__Candle12K_Signal.emit(self.Candle12KPlotItem)
+        self.Candle12KPlotItem.set_data()
         # print(self.Tick12Kpd.tail(1))
 
     
@@ -189,10 +186,12 @@ class TicksTo12K(QThread):
             if self.HisDone:
                 nlist = self.__Queue.get()
                 self.tickto12k(nlist)
+                self.__Candle12K_Signal.emit(self.Candle12KPlotItem)
             else:
                 if self.__list.empty() is not True:
                     nlist = self.__list.get()
                     self.HisListProcess(nlist)
+                    self.__Candle12K_Signal.emit(self.Candle12KPlotItem)
                 else:
                     pass
 
