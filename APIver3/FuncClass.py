@@ -39,11 +39,11 @@ class DataQueue(object):
         self.name = inputname
         self.commodityIndex = inputidx
 
-class TickQueue(QObject):
+class TransformTiskQueue(QObject):
     list_signal = Signal(list)
     queue_signal = Signal(list)
     def __init__(self,inputname,inputidx):
-        super(TickQueue,self).__init__()
+        super(TransformTiskQueue,self).__init__()
         self.queue = mp.Queue()
         self.listqueue = mp.Queue()
         self.name = inputname

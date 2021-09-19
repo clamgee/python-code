@@ -5,27 +5,21 @@ import time,os
 from pyqtgraph import GraphicsLayoutWidget
 import pyqtgraph as pg
 
-num = 10
-
 class AClass:
     def __init__(self,input):
-        print('__init__')
         self.num = input
-        super(AClass,self).__init__()
-    
-    # def __new__(cls):
-    #     print('__new__')
-    #     return super(AClass,cls).__new__(cls)
-    
-    def __call__(self):
-        print('__call__')
 
-A=AClass(num)
-B=AClass(num)
+class BClass:
+    def __init__(self) -> None:
+        self.new = [1,2]
 
-print(id(A),id(B))
-print(id(num),id(A.num),id(B.num))
+B = BClass()
+A = AClass(B.new)
 
+for i in range(5):
+    B.new.append(i)
+    print(id(A.num),id(B.new))
+    print(A.num,' , ',B.new)
 
 
 # import sys
