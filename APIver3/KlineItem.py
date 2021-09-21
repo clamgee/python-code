@@ -6,7 +6,6 @@ from pyqtgraph import QtCore,QtGui,GraphicsItem
 class CandleItem(pg.GraphicsObject):
     def __init__(self,parent=None):
         pg.GraphicsObject.__init__(self)
-        # super(CandleItem, self).__init__(parent)
         self.data = parent
         self.lastbar = None
         self.picturemain = QtGui.QPicture() #主K線圖
@@ -15,18 +14,11 @@ class CandleItem(pg.GraphicsObject):
         self.PaintChange = False
         self.setFlag(self.ItemUsesExtendedStyleOption)
         self.rect = None
-        if self.data.Candledf is not None:
-            self.high = self.data.Candledf.high.max()
-            self.low = self.data.Candledf.low.min()
-            self.lastidx = parent.lastidx
-        else:
-            self.high = 0
-            self.low = 0
-            self.lastidx = 0
+        self.high = self.data.Candledf.high.max()
+        self.low = self.data.Candledf.low.min()
+        self.lastidx = parent.lastidx
         self.countK = 87 #設定要顯示多少K線
-        # self.generatePicture()
-        # self.informViewBoundsChanged()
-        # self._updateView() #強制圖形更新
+
     def set_data(self):
         # self.data = parent.Candledf
         if self.high < self.data.High:
@@ -41,7 +33,6 @@ class CandleItem(pg.GraphicsObject):
         self.generatePicture()
         self.informViewBoundsChanged()
         self._updateView() #強制圖形更新
-        # print('set_data: ',self.data.Candledf.tail(1))
     
     def generatePicture(self):    
         # 重畫或者最後一根K線

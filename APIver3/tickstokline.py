@@ -206,13 +206,6 @@ class TicksToMinuteK(QThread):
         self.__Queue = inputTuple[0].queue
         self.__list = inputTuple[0].listqueue
         self.__CandleMinuteK_Signal = inputTuple[1]
-        direct=os.path.abspath('../data')
-        filelist = os.listdir('../data')
-        file = filelist[-1]
-        tmpdf = pd.read_csv(direct+'\\'+file,header=None,names=['ndatetime','nbid','nask','close','volume','deal'])
-        self.yesterdayclose = tmpdf.at[tmpdf.last_valid_index(),'close']
-        print(self.yesterdayclose)
-        del tmpdf
         self.Candledf = None
         self.HisDone = False
         self.mm=0
@@ -221,8 +214,7 @@ class TicksToMinuteK(QThread):
         self.High=0
         self.Low=0
         self.interval=1
-        self.CandleMinuteKPlotItem = KlineItem.CandleItem(self)
-    
+
     def HisListProcess(self,nlist):
         dayticks = pd.DataFrame(nlist,columns=['ndatetime','nbid','nask','close','volume','deal'])
         dayticks.drop(['deal'], axis=1, inplace=True)
@@ -248,6 +240,7 @@ class TicksToMinuteK(QThread):
             self.High=self.Candledf.at[self.Minutelastidx,'high']
             self.Low=self.Candledf.at[self.Minutelastidx,'low']
         self.HisDone = True
+        self.CandleMinuteKPlotItem = KlineItem.CandleItem(self)
         print(self.Candledf.tail(5))
 
     def TicksToMinuteK(self,nlist):
@@ -267,6 +260,7 @@ class TicksToMinuteK(QThread):
                 self.Candledf.at[self.lastidx,'low']=self.Low=min(self.Low,nClose)
         else:
             print('有錯誤:',self.mm,',',self.mm1,',',self.lastidx,ndatetime)
+        # print(self.lastidx,ndatetime,nClose,self.Low)
     
     def run(self):
         while True:
@@ -279,7 +273,7 @@ class TicksToMinuteK(QThread):
                 if self.__list.empty() is not True:
                     nlist = self.__list.get()
                     self.HisListProcess(nlist)
-                    self.CandleMinuteKPlotItem.set_data()
+                    # self.CandleMinuteKPlotItem.set_data()
                     self.__CandleMinuteK_Signal.emit(self.CandleMinuteKPlotItem)
                 else:
                     pass

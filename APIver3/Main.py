@@ -256,11 +256,53 @@ class SKMainWindow(QMainWindow):
             self.AxisMinute = pg.AxisItem(orientation='bottom')
             self.CandleMinuteKDraw = self.MainUi.tab_DayTrading.addPlot(row=0,col=0,axisItems={'bottom': self.AxisMinute})
             self.CandleMinuteKDraw.addItem(self.CandleMinuteItem)
-            self.CandleMinuteKDraw.setXRange(0,827)
-            self.CandleMinuteKDraw.setYRange(self.CandleMinuteItem.low,self.CandleMinuteItem.high)
-            print(self.CandleMinuteItem.low,self.CandleMinuteItem.high)
+            now = time.localtime(time.time()).tm_hour
+            if now>14 or now<8 :
+                self.CandleMinuteKDraw.setXRange(0,827)
+            elif now>=8 and now<15:
+                self.CandleMinuteKDraw.setXRange(0,300)
+            direct=os.path.abspath('../data')
+            filelist = os.listdir('../data')
+            file = filelist[-1]
+            tmpdf = pd.read_csv(direct+'\\'+file,header=None,names=['ndatetime','nbid','nask','close','volume','deal'])
+            self.yesterdayclose = tmpdf.at[tmpdf.last_valid_index(),'close']
+            print(self.yesterdayclose)
+            del tmpdf
+            self.YCline = pg.InfiniteLine(angle=0, movable=False)
+            self.CandleMinuteKDraw.addItem(self.YCline)
+            dict_tmp=self.CandleMinuteItem.data.Candledf['ndatetime'][self.CandleMinuteItem.data.Candledf.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
+            self.AxisMinute.setTicks([dict_tmp.items()])
+            del dict_tmp
+            self.YCline.setPos(self.yesterdayclose)
+            self.curve=self.CandleMinuteKDraw.plot(pen='y')
+            tmpline=self.CandleMinuteItem.data.Candledf.close.cumsum()
+            self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
+            self.curve.setData(self.avgline)
+            del tmpline
+            self.CandleMinuteKDrawYrectHigh = max(self.CandleMinuteItem.data.Candledf.high.max(),self.yesterdayclose)
+            self.CandleMinuteKDrawYrectLow = min(self.CandleMinuteItem.data.Candledf.low.min(),self.yesterdayclose)
+            self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
+            self.ChangeRectidx = self.CandleMinuteItem.lastidx
             self.CandleMinuteKDraw_Build_None = False
-        self.CandleMinuteKDraw.setYRange(17100,17400)
+        else:
+            if self.ChangeRectidx != self.CandleMinuteItem.lastidx:
+                self.ChangeRectidx = self.CandleMinuteItem.lastidx
+                dict_tmp=self.CandleMinuteItem.data.Candledf['ndatetime'][self.CandleMinuteItem.data.Candledf.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
+                self.AxisMinute.setTicks([dict_tmp.items()])
+                del dict_tmp
+                tmpline=self.CandleMinuteItem.data.Candledf.close.cumsum()
+                self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
+                self.curve.setData(self.avgline)
+                del tmpline
+            if self.CandleMinuteKDrawYrectHigh < self.CandleMinuteItem.high:
+                self.CandleMinuteKDrawYrectHigh = self.CandleMinuteItem.high
+                self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
+            if self.CandleMinuteKDrawYrectLow > self.CandleMinuteItem.low:
+                self.CandleMinuteKDrawYrectLow = self.CandleMinuteItem.low
+                self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
+            print(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
+
+
 
 def ThreadtoProcess(func,*args):
     start = time.time()
