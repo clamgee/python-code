@@ -191,24 +191,18 @@ class SKMainWindow(QMainWindow):
         ThreadtoProcess(self.DataToTicksThread,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
         ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
         ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksToMinuteK,bstrStockNo,pSKStock.nStockIdx,PassMinuteKTuple)
-        print('__name__:', __name__)
         # self.Proc=FuncClass.MyProcess(DataToTicksThread,bstrStockNo,pSKStock.nStockIdx,(1,2))
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         if sum(nCode) !=0 :
             strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))
             self.SKMessage.ui.textBrowser.append('商品訂閱錯誤: '+strMsg)
         else:
-            self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))
-        
+            self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))        
     # 商品訂閱結束
     def DataToTicksThread(self,*args):
         self.FutureDataToTicksThread = args[0](args[1],args[2],args[3])
         self.FutureDataToTicksThread.start()
         print('Data執行續的名字: ',self.FutureDataToTicksThread.currentThread())
-    # def Ticksto12KThread(self,*args):
-    #     self.FutureTicksTo12KThread = args[0](args[1],args[2],args[3])
-    #     self.FutureTicksTo12KThread.start()
-    #     print('12K執行續的名字: ',self.FutureTicksTo12KThread.currentThread())
     @Slot(pg.GraphicsObject)
     def Candle12KDrawFunc(self,Kitem):
         self.CandleItem12K= Kitem
@@ -257,6 +251,9 @@ class SKMainWindow(QMainWindow):
             self.AxisMinute = pg.AxisItem(orientation='bottom')
             self.CandleMinuteKDraw = self.MainUi.tab_DayTrading.addPlot(row=0,col=0,axisItems={'bottom': self.AxisMinute})
             self.CandleMinuteKDraw.addItem(self.CandleMinuteItem)
+            self.CandleMinuteKDraw.showAxis('right',show=True)
+            self.CandleMinuteKDraw.showAxis('left',show=False)
+            self.CandleMinuteKDraw.showGrid(x=False,y=True)
             now = time.localtime(time.time()).tm_hour
             if now>14 or now<8 :
                 self.CandleMinuteKDraw.setXRange(0,827)
