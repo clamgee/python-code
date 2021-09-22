@@ -300,9 +300,6 @@ class SKMainWindow(QMainWindow):
             if self.CandleMinuteKDrawYrectLow > self.CandleMinuteItem.low:
                 self.CandleMinuteKDrawYrectLow = self.CandleMinuteItem.low
                 self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
-            print(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
-
-
 
 def ThreadtoProcess(func,*args):
     start = time.time()

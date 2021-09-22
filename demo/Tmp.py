@@ -9,17 +9,23 @@ class AClass:
     def __init__(self,input):
         self.num = input
 
-class BClass:
-    def __init__(self) -> None:
-        self.new = [1,2]
+    def run(self):
+        print(os.getpid())
+        while self.num < 100:
+            self.num+=5
+            time.sleep(0.5)
+            nowproc=mp.current_process()
+            print(self.num,nowproc)
 
-B = BClass()
-A = AClass(B.new)
+def proc(Func):
+    p1 = mp.Process(target=Func,daemon=True)
+    print(os.getpid())
+    p1.start()
+    p1.join()
 
-for i in range(5):
-    B.new.append(i)
-    print(id(A.num),id(B.new))
-    print(A.num,' , ',B.new)
+if __name__ =='__main__':
+    A = AClass(1)
+    proc(A.run())
 
 
 # import sys
