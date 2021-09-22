@@ -1,6 +1,6 @@
 from PySide6.QtCore import QAbstractTableModel, QObject,Qt,QThread,Signal,Slot
 import multiprocessing as mp
-import time
+import time,os
 
 # QTableView 資料處理Model
 class PandasModel(QAbstractTableModel):
@@ -57,4 +57,28 @@ class TransformTiskQueue(QObject):
     def receivetick(self,nlist):
         self.queue.put(nlist)
 
+class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
+    def __init__(self, func,*args):
+        super(MyProcess, self).__init__()  # 實踐父類初始化方法
+        self.target = func
+        self.args = (args[0],args[1],args[2])
 
+    def run(self):  # 必須的，啟動進程方法
+        self.target(self.args[0],self.args[1],self.args[2])
+        print('子進程:', os.getpid(), os.getppid())
+
+class Testthread(QThread):
+    def __init__(self,inputname,inputindex,inputTuple):
+        QThread.__init__(self)
+        self.name = inputname
+        self.idx = inputindex
+        self.msgtuple = inputTuple
+
+    def func(self):
+        self.Func = self.idx + self.msgtuple[0] + self.msgtuple[1]
+
+    def run(self):
+        while True:
+            self.func()
+            print(self.Func,os.getppid(),os.getpid())
+            time.sleep(2) 

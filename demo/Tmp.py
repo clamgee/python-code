@@ -1,31 +1,62 @@
 import multiprocessing as mp
 from multiprocessing import current_process
-import threading as td
+import PySide6
+from PySide6.QtCore import QThread
+from PySide6.QtWidgets import QApplication
 import time,os
 from pyqtgraph import GraphicsLayoutWidget
 import pyqtgraph as pg
+app = QApplication()
+class Testthread(QThread):
+    def __init__(self,*args):
+        QThread.__init__(self)
+        self.name1 = args[0]
+        self.idx = args[1]
+        self.msgtuple = args[2]
 
-class AClass:
-    def __init__(self,input):
-        self.num = input
+    def func(self):
+        self.Func = self.idx + self.msgtuple[0] + self.msgtuple[1]
+        # print(self.name,self.idx,self.msgtuple[0],self.msgtuple[1])
+        print(self.Func)
 
     def run(self):
-        print(os.getpid())
-        while self.num < 100:
-            self.num+=5
-            time.sleep(0.5)
-            nowproc=mp.current_process()
-            print(self.num,nowproc)
+        while True:
+            self.func()
+            print(os.getpid())
+            time.sleep(2)
 
-def proc(Func):
-    p1 = mp.Process(target=Func,daemon=True)
-    print(os.getpid())
-    p1.start()
-    p1.join()
+class MyProcess(mp.Process):  # 定义一个类，继承Process类
+    def __init__(self,*args):
+        super(MyProcess, self).__init__()  # 实现父类的初始化方法
+        self.name1 = args[0]
+        self.idx = args[1]
+        self.msgtuple = args[2]
+
+    def run(self):  # 必须实现的方法，是启动进程的方法
+        # self.target(self.name1,self.idx,self.msgtuple)
+        self.target = Testthread(self.name1,self.idx,self.msgtuple)
+        self.target.start()
+        nowproc=mp.current_process()
+        print('子进程:', os.getpid(), os.getppid(),nowproc)
+
+class AClass:
+    def __init__(self):
+        self.name ='A'
+        self.index = 1
+        self.msgtuple = (1,2)
+        self.A = MyProcess(self.name,self.index,self.msgtuple)
+        self.A.start()
+
+        # self.B = MyProcess(self.creattd,'B',0,self.msgtuple)
+        # self.B.start()
+   
+    def creattd(self,*args):
+        self.TD = Testthread(args[0],args[1],args[2])
+        self.TD.start()
 
 if __name__ =='__main__':
-    A = AClass(1)
-    proc(A.run())
+    B=AClass()
+    app.exec_()
 
 
 # import sys

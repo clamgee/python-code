@@ -234,11 +234,10 @@ class TicksToMinuteK(QThread):
         self.Candledf=self.Candledf.rename_axis('ndatetime').reset_index()
         self.Candledf['ndatetime'] = pd.to_datetime(self.Candledf['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
         self.Minutelastidx=self.Candledf.last_valid_index()
-        if self.Minutelastidx!=0:
-            self.mm=self.Candledf.at[self.Minutelastidx,'ndatetime'].replace(second=0,microsecond=0)
-            self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
-            self.High=self.Candledf.at[self.Minutelastidx,'high']
-            self.Low=self.Candledf.at[self.Minutelastidx,'low']
+        self.mm=self.Candledf.at[self.Minutelastidx,'ndatetime'].replace(second=0,microsecond=0)
+        self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
+        self.High=self.Candledf.at[self.Minutelastidx,'high']
+        self.Low=self.Candledf.at[self.Minutelastidx,'low']
         self.HisDone = True
         self.CandleMinuteKPlotItem = KlineItem.CandleItem(self)
         print(self.Candledf.tail(5))

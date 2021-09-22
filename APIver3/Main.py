@@ -188,10 +188,11 @@ class SKMainWindow(QMainWindow):
         PassListTuple = (DataQueue,TickQueue.list_signal,TickQueue.queue_signal,MinuteQueue.list_signal,MinuteQueue.queue_signal)
         Pass12KTuple =(TickQueue,self.Candle12KItem_signal)
         PassMinuteKTuple =(MinuteQueue,self.CandleMinuteKItem_signal)
-        if __name__ == '__main__':
-            ThreadtoProcess(self.DataToTicksThread,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
-            ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
-            ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksToMinuteK,bstrStockNo,pSKStock.nStockIdx,PassMinuteKTuple)
+        ThreadtoProcess(self.DataToTicksThread,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
+        ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
+        ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksToMinuteK,bstrStockNo,pSKStock.nStockIdx,PassMinuteKTuple)
+        print('__name__:', __name__)
+        # self.Proc=FuncClass.MyProcess(DataToTicksThread,bstrStockNo,pSKStock.nStockIdx,(1,2))
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         if sum(nCode) !=0 :
             strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))
@@ -300,13 +301,16 @@ class SKMainWindow(QMainWindow):
             if self.CandleMinuteKDrawYrectLow > self.CandleMinuteItem.low:
                 self.CandleMinuteKDrawYrectLow = self.CandleMinuteItem.low
                 self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
+def DataToTicksThread(*args):
+    Td = FuncClass.Testthread(args[0],args[1],args[2])
+    Td.start()
 
 def ThreadtoProcess(func,*args):
     start = time.time()
     p1 = mp.Process(target=func,args=(args[0],args[1],args[2],args[3],),daemon=True)
     p1.run()
     # SKMain.SKMessage.ui.textBrowser.append('建立運算時間: %d 秒, 執行續: %d',time.time()-start,p1.pid())
-    print('建立運算時間: ',time.time()-start,' 秒, Process:',p1.name)
+    print('建立運算時間: ',time.time()-start,' 秒, Process:',p1.name,p1.pid)
 
 class SKReplyLibEvent:
     def OnConnect(self, bstrUserID, nErrorCode):
