@@ -12,15 +12,15 @@ class CandleItem(pg.GraphicsObject):
         self.picturelast = QtGui.QPicture() #最後一根K線圖
         self.pictures = []
         self.PaintChange = False
-        self.setFlag(self.ItemUsesExtendedStyleOption)
+        # self.setFlag(self.ItemUsesExtendedStyleOption)
         self.rect = None
         self.high = self.data.Candledf.high.max()
         self.low = self.data.Candledf.low.min()
         self.lastidx = parent.lastidx
+        self.close = self.data.Candledf.at[self.lastidx,'close']
         self.countK = 87 #設定要顯示多少K線
 
     def set_data(self):
-        # self.data = parent.Candledf
         if self.high < self.data.High:
             self.high = self.data.High
         if self.low > self.data.Low:
@@ -28,11 +28,11 @@ class CandleItem(pg.GraphicsObject):
         if self.lastidx != self.data.lastidx:
             self.PaintChange = True
             self.lastidx = self.data.lastidx
-        # else :
-        #     print('繪圖資料有誤!!',self.lastidx,',',parent.lastidx)
         self.generatePicture()
         self.informViewBoundsChanged()
-        self._updateView() #強制圖形更新
+        if self.close != self.data.Candledf.at[self.lastidx,'close']:
+            self.close = self.data.Candledf.at[self.lastidx,'close']
+            self.update()
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
@@ -81,7 +81,7 @@ class CandleItem(pg.GraphicsObject):
         return picture
     
     def boundingRect(self):
-        return QtCore.QRectF(0,self.low,len(self.pictures),(self.high-self.low)) 
+        return QtCore.QRectF(0,self.low,len(self.pictures),(self.high-self.low))
 
 
 class BarItem(pg.GraphicsObject):

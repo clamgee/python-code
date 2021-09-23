@@ -191,7 +191,6 @@ class SKMainWindow(QMainWindow):
         ThreadtoProcess(self.DataToTicksThread,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
         ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
         ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksToMinuteK,bstrStockNo,pSKStock.nStockIdx,PassMinuteKTuple)
-        # self.Proc=FuncClass.MyProcess(DataToTicksThread,bstrStockNo,pSKStock.nStockIdx,(1,2))
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         if sum(nCode) !=0 :
             strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))
@@ -298,10 +297,7 @@ class SKMainWindow(QMainWindow):
             if self.CandleMinuteKDrawYrectLow > self.CandleMinuteItem.low:
                 self.CandleMinuteKDrawYrectLow = self.CandleMinuteItem.low
                 self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
-def DataToTicksThread(*args):
-    Td = FuncClass.Testthread(args[0],args[1],args[2])
-    Td.start()
-
+ 
 def ThreadtoProcess(func,*args):
     start = time.time()
     p1 = mp.Process(target=func,args=(args[0],args[1],args[2],args[3],),daemon=True)
@@ -505,8 +501,10 @@ SKReplyEvent = SKReplyLibEvent()
 SKReplyLibEventHandler = comtypes.client.GetEvents(skR, SKReplyEvent)
 
 if __name__=='__main__':
-    mp.set_start_method('spawn')
+    # mp.set_start_method('spawn')
     SKApp = QApplication(sys.argv)
     SKMain = SKMainWindow()
     SKMain.show()
-    sys.exit(SKApp.exec_())
+    # sys.exit(SKApp.exec_())
+    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+        SKApp.instance().exec_()

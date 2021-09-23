@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
-import sys
+import sys,json
 import time
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QApplication, QGraphicsView, QGraphicsScene, QGraphicsItem, QFrame
 from PyQt5.QtCore import QRectF
@@ -252,7 +252,7 @@ class MainWindows(QMainWindow):
         super(MainWindows, self).__init__()
         loadUi(r'MG.ui', self)
         self.l = pg.GraphicsLayout()
-        self.GV.setCentralItem(self.l)
+        self.GW.setCentralItem(self.l)
         self.kitem = CandlestickItem()
         YCline = pg.InfiniteLine(angle=0, movable=False)
         YCline.setPos(lastclose)
@@ -269,6 +269,9 @@ class MainWindows(QMainWindow):
         
         self.kitem.set_data(data.last_valid_index(),data.high.max(),data.low.min(),data)
         dict_tmp=data['ndatetime'][data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
+        tf = open("myDictionary.json", "w")
+        json.dump(dict_tmp,tf)
+        tf.close()
         self.MyAxis.setTicks([dict_tmp.items()])
         self.draw1.setTitle('test')
         self.draw1.showAxis('left',show=False)

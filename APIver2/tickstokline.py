@@ -68,14 +68,12 @@ class dataprocess:
                 self.tmpcontract=row[4]
                 self.ticksum=row[4]
                 self.lastidx = self.contractkpd.last_valid_index()
-
             elif self.tmpcontract==0 or self.tmpcontract==12000 :
                 self.contractkpd=self.contractkpd.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],row[4],0,0,self.contractkpd.at[self.lastidx,'dealbid'],self.contractkpd.at[self.lastidx,'dealask'],self.contractkpd.at[self.lastidx,'dealminus']]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg','dealbid','dealask','dealminus']),ignore_index=True,sort=False)
                 self.High=self.Low=row[3]
                 self.tmpcontract=row[4]
                 self.ticksum+=row[4]
                 self.lastidx = self.contractkpd.last_valid_index()
-
             elif (self.tmpcontract+row[4])>12000:
                 if row[3] > self.High or row[3] < self.Low :
                     self.contractkpd.at[self.lastidx,'high']=self.High=max(self.contractkpd.at[self.lastidx,'high'],row[3])
@@ -87,7 +85,6 @@ class dataprocess:
                 self.contractkpd=self.contractkpd.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],self.tmpcontract,0,0,self.contractkpd.at[self.lastidx,'dealbid'],self.contractkpd.at[self.lastidx,'dealask'],self.contractkpd.at[self.lastidx,'dealminus']]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg','dealbid','dealask','dealminus']),ignore_index=True,sort=False)
                 self.High=self.Low=row[3]
                 self.lastidx = self.contractkpd.last_valid_index()
-
             else:
                 if row[3] > self.High or row[3] < self.Low:
                     self.contractkpd.at[self.lastidx,'high']=self.High=max(self.contractkpd.at[self.lastidx,'high'],row[3])
