@@ -39,23 +39,13 @@ class DataQueue(object):
         self.name = inputname
         self.commodityIndex = inputidx
 
-class TransformTiskQueue(QObject):
-    list_signal = Signal(list)
-    queue_signal = Signal(list)
+class TransformTiskQueue(object):
     def __init__(self,inputname,inputidx):
         super(TransformTiskQueue,self).__init__()
         self.queue = mp.Queue()
         self.listqueue = mp.Queue()
         self.name = inputname
         self.commodityIndex = inputidx
-        self.list_signal.connect(self.receivelist)
-        self.queue_signal.connect(self.receivetick)
-    @Slot(list)
-    def receivelist(self,nlist):
-        self.listqueue.put(nlist)
-    @Slot(list)
-    def receivetick(self,nlist):
-        self.queue.put(nlist)
 
 class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
     def __init__(self, func,*args):
@@ -64,21 +54,7 @@ class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
         self.args = (args[0],args[1],args[2])
 
     def run(self):  # 必須的，啟動進程方法
-        self.target(self.args[0],self.args[1],self.args[2])
+        Proc = self.target(self.args[0],self.args[1],self.args[2])
+        Proc.run()
         print('子進程:', os.getpid(), os.getppid())
 
-class Testthread(QThread):
-    def __init__(self,inputname,inputindex,inputTuple):
-        QThread.__init__(self)
-        self.name = inputname
-        self.idx = inputindex
-        self.msgtuple = inputTuple
-
-    def func(self):
-        self.Func = self.idx + self.msgtuple[0] + self.msgtuple[1]
-
-    def run(self):
-        while True:
-            self.func()
-            print(self.Func,os.getppid(),os.getpid())
-            time.sleep(2) 

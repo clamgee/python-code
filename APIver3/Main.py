@@ -20,7 +20,6 @@ skC = comtypes.client.CreateObject(sk.SKCenterLib, interface=sk.ISKCenterLib)
 skO = comtypes.client.CreateObject(sk.SKOrderLib, interface=sk.ISKOrderLib)
 skQ = comtypes.client.CreateObject(sk.SKQuoteLib, interface=sk.ISKQuoteLib)
 skR = comtypes.client.CreateObject(sk.SKReplyLib, interface=sk.ISKReplyLib)
-global CandleItem12K
 # 主視窗物件
 class SKMainWindow(QMainWindow):
     Candle12KItem_signal = Signal(object)
@@ -185,12 +184,16 @@ class SKMainWindow(QMainWindow):
         TickQueue = FuncClass.TransformTiskQueue(bstrStockNo,pSKStock.nStockIdx)
         global MinuteQueue
         MinuteQueue = FuncClass.TransformTiskQueue(bstrStockNo,pSKStock.nStockIdx)
-        PassListTuple = (DataQueue,TickQueue.list_signal,TickQueue.queue_signal,MinuteQueue.list_signal,MinuteQueue.queue_signal)
-        Pass12KTuple =(TickQueue,self.Candle12KItem_signal)
+        PassListTuple = (DataQueue,TickQueue,MinuteQueue)
+        Pass12KTuple =(TickQueue,CandleItem12K_Queue)
         PassMinuteKTuple =(MinuteQueue,self.CandleMinuteKItem_signal)
-        ThreadtoProcess(self.DataToTicksThread,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
-        ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
-        ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksToMinuteK,bstrStockNo,pSKStock.nStockIdx,PassMinuteKTuple)
+        self.DataProc = FuncClass.MyProcess(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
+        self.DataProc.start()
+        self.Tick12KProc = FuncClass.MyProcess(tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
+        self.Tick12KProc.start()
+        # ThreadtoProcess(self.DataToTicksThread,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
+        # ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
+        # ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksToMinuteK,bstrStockNo,pSKStock.nStockIdx,PassMinuteKTuple)
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         if sum(nCode) !=0 :
             strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))
@@ -199,12 +202,12 @@ class SKMainWindow(QMainWindow):
             self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))        
     # 商品訂閱結束
     def DataToTicksThread(self,*args):
-        self.FutureDataToTicksThread = args[0](args[1],args[2],args[3])
-        self.FutureDataToTicksThread.start()
-        print('Data執行續的名字: ',self.FutureDataToTicksThread.currentThread())
+        FutureDataToTicksThread = args[0](args[1],args[2],args[3])
+        FutureDataToTicksThread.run()
+        print('Data執行續的名字: ',FutureDataToTicksThread.currentThread())
     @Slot(pg.GraphicsObject)
-    def Candle12KDrawFunc(self,Kitem):
-        self.CandleItem12K= Kitem
+    def Candle12KDrawFunc(self,Kitem_recive):
+        self.CandleItem12K= Kitem_recive
         if self.Candle12KDraw_Build_None:
             self.Axis12k = pg.AxisItem(orientation='bottom')
             self.Candle12KDraw = self.MainUi.tab_TicksK.addPlot(row=0,col=0,axisItems={'bottom': self.Axis12k})
@@ -212,40 +215,40 @@ class SKMainWindow(QMainWindow):
             self.Candle12KDraw.showAxis('left',show=False)
             self.Candle12KDraw.showGrid(x=False,y=True)
             self.Candle12KDraw.addItem(self.CandleItem12K)
-            self.axis12k_xmax = len(Kitem.pictures)
-            self.axis12k_xmin = self.axis12k_xmax-Kitem.countK
-            self.axis12k_ymin = Kitem.data.Candledf.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
-            self.axis12k_ymax = Kitem.data.Candledf.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
+            self.axis12k_xmax = len(self.CandleItem12K.pictures)
+            self.axis12k_xmin = self.axis12k_xmax-self.CandleItem12K.countK
+            self.axis12k_ymin = self.CandleItem12K.data.Candledf.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
+            self.axis12k_ymax = self.CandleItem12K.data.Candledf.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
             self.Candle12KDraw.setXRange(self.axis12k_xmin,self.axis12k_xmax)
             self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
             self.MAHighLine=self.Candle12KDraw.plot(pen='y')
             self.MALowLine=self.Candle12KDraw.plot(pen='b')
-            dict_tmp = Kitem.data.Candledf['ndatetime'][(Kitem.data.Candledf.volume!=12000) & (Kitem.data.Candledf.ndatetime.dt.hour>8) & (Kitem.data.Candledf.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
+            dict_tmp = self.CandleItem12K.data.Candledf['ndatetime'][(self.CandleItem12K.data.Candledf.volume!=12000) & (self.CandleItem12K.data.Candledf.ndatetime.dt.hour>8) & (self.CandleItem12K.data.Candledf.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
             self.Axis12k.setTicks([dict_tmp.items()])
-            self.MAHighLine.setData(Kitem.data.Candledf.high_avg)
-            self.MALowLine.setData(Kitem.data.Candledf.low_avg)
+            self.MAHighLine.setData(self.CandleItem12K.data.Candledf.high_avg)
+            self.MALowLine.setData(self.CandleItem12K.data.Candledf.low_avg)
             self.Candle12KDraw_Build_None = False
         else:
-            if self.axis12k_xmax != len(Kitem.pictures):
-                self.axis12k_xmax = len(Kitem.pictures)
-                self.axis12k_xmin = self.axis12k_xmax-Kitem.countK
-                self.axis12k_ymin = Kitem.data.Candledf.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
-                self.axis12k_ymax = Kitem.data.Candledf.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
+            if self.axis12k_xmax != len(self.CandleItem12K.pictures):
+                self.axis12k_xmax = len(self.CandleItem12K.pictures)
+                self.axis12k_xmin = self.axis12k_xmax-self.CandleItem12K.countK
+                self.axis12k_ymin = self.CandleItem12K.data.Candledf.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
+                self.axis12k_ymax = self.CandleItem12K.data.Candledf.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
                 self.Candle12KDraw.setXRange(self.axis12k_xmin,self.axis12k_xmax)
                 self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
-                dict_tmp = Kitem.data.Candledf['ndatetime'][(Kitem.data.Candledf.volume!=12000) & (Kitem.data.Candledf.ndatetime.dt.hour>8) & (Kitem.data.Candledf.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
+                dict_tmp = self.CandleItem12K.data.Candledf['ndatetime'][(self.CandleItem12K.data.Candledf.volume!=12000) & (self.CandleItem12K.data.Candledf.ndatetime.dt.hour>8) & (self.CandleItem12K.data.Candledf.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
                 self.Axis12k.setTicks([dict_tmp.items()])
-                self.MAHighLine.setData(Kitem.data.Candledf.high_avg)
-                self.MALowLine.setData(Kitem.data.Candledf.low_avg)
-            elif self.axis12k_ymin > Kitem.data.Candledf.at[Kitem.lastidx,'close'] or self.axis12k_ymax < Kitem.data.Candledf.at[Kitem.lastidx,'close']:
-                self.axis12k_ymin = Kitem.data.Candledf.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
-                self.axis12k_ymax = Kitem.data.Candledf.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
+                self.MAHighLine.setData(self.CandleItem12K.data.Candledf.high_avg)
+                self.MALowLine.setData(self.CandleItem12K.data.Candledf.low_avg)
+            elif self.axis12k_ymin > self.CandleItem12K.data.Candledf.at[self.CandleItem12K.lastidx,'close'] or self.axis12k_ymax < self.CandleItem12K.data.Candledf.at[self.CandleItem12K.lastidx,'close']:
+                self.axis12k_ymin = self.CandleItem12K.data.Candledf.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
+                self.axis12k_ymax = self.CandleItem12K.data.Candledf.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
                 self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
             else:
                 pass    
     @Slot(pg.GraphicsObject)
-    def CandleMinuteKDrawFunc(self,Kitem):
-        self.CandleMinuteItem = Kitem
+    def CandleMinuteKDrawFunc(self,Kitem_recive):
+        self.CandleMinuteItem = Kitem_recive
         if self.CandleMinuteKDraw_Build_None:
             self.AxisMinute = pg.AxisItem(orientation='bottom')
             self.CandleMinuteKDraw = self.MainUi.tab_DayTrading.addPlot(row=0,col=0,axisItems={'bottom': self.AxisMinute})
@@ -300,9 +303,9 @@ class SKMainWindow(QMainWindow):
  
 def ThreadtoProcess(func,*args):
     start = time.time()
-    p1 = mp.Process(target=func,args=(args[0],args[1],args[2],args[3],),daemon=True)
+    p1 = mp.Process(target=func,args=(args[0],args[1],args[2],args[3],))
     print('建立運算時間: ',time.time()-start,' 秒, Process:',p1.name,p1.pid)
-    p1.run()
+    p1.start()
     # SKMain.SKMessage.ui.textBrowser.append('建立運算時間: %d 秒, 執行續: %d',time.time()-start,p1.pid())
 
 class SKReplyLibEvent:
@@ -502,6 +505,10 @@ SKReplyLibEventHandler = comtypes.client.GetEvents(skR, SKReplyEvent)
 
 if __name__=='__main__':
     # mp.set_start_method('spawn')
+    global CandleItem12K_Queue,CandleItemMinute_Queue
+    CandleItem12K_Queue = mp.Manager().Queue()
+    CandleItemMinute_Queue = mp.Manager().Queue()
+
     SKApp = QApplication(sys.argv)
     SKMain = SKMainWindow()
     SKMain.show()

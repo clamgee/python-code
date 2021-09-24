@@ -1,65 +1,93 @@
 import multiprocessing as mp
 from multiprocessing import current_process, set_executable
 import PySide6
-from PySide6.QtCore import QThread
+from PySide6.QtCore import QObject, QThread, Signal,Slot
+from threading import Thread
 from PySide6.QtWidgets import QApplication
 import time,os
 from pyqtgraph import GraphicsLayoutWidget
 import pyqtgraph as pg
 app = QApplication()
+import pickle
+
+class Q(QObject): 
+    pass_signal = Signal(list)
+    pass1_signal = Signal(str)
+    def __init__(self):
+        super(Q,self).__init__()
+        self.Qdata = mp.Queue()
+        self.pass_signal.connect(self.receive)
+    def __getattribute__(self, name: str):
+        return super().__getattribute__(name)
+    @Slot(list)
+    def receive(self,nlist):
+        print(nlist)
+
+global C
+C = Q()
 
 class Testthread(QThread):
     def __init__(self,*args):
-        QThread.__init__(self)
-        self.name1 = args[0]
+        super(Testthread,self).__init__()
+        self.name = args[0]
         self.idx = args[1]
         self.msgtuple = args[2]
         self.Func = 0
+        # print(C.__getattribute__(C.pass_signal))
 
     def func(self):
-        self.Func = self.idx + self.msgtuple[0] + self.msgtuple[1]
-        # print(self.name,self.idx,self.msgtuple[0],self.msgtuple[1])
+        self.Func = self.Func + self.idx + self.msgtuple[0] + self.msgtuple[1]
         print(self.Func)
 
     def run(self):
-        while True:
+        while self.Func < 20:
             self.func()
-            print(os.getpid())
             time.sleep(2)
 
 class MyProcess(mp.Process):  # 定义一个类，继承Process类
-    def __init__(self,*args):
+    def __init__(self,func,*args):
         super(MyProcess, self).__init__()  # 实现父类的初始化方法
         self.name1 = args[0]
         self.idx = args[1]
         self.msgtuple = args[2]
+        self.target = func
 
     def run(self):  # 必须实现的方法，是启动进程的方法
-        # self.target(self.name1,self.idx,self.msgtuple)
-        self.target = Testthread(self.name1,self.idx,self.msgtuple)
-        print('id',self.target.currentThread())
-        self.target.start()
+        TD = self.target(self.name1,self.idx,self.msgtuple)
+        TD.run()
         nowproc=mp.current_process()
         print('子进程:', os.getpid(), os.getppid(),nowproc)
+
 
 class AClass:
     def __init__(self):
         self.name ='A'
         self.index = 1
         self.msgtuple = (1,2)
-        self.A = MyProcess(self.name,self.index,self.msgtuple)
-        self.A.daemon = True
+        self.A = MyProcess(Testthread,self.name,self.index,self.msgtuple)
         self.A.start()
 
         # self.B = MyProcess(self.creattd,'B',0,self.msgtuple)
         # self.B.start()
    
-    def creattd(self,*args):
-        self.TD = Testthread(args[0],args[1],args[2])
-        self.TD.start()
+    def creattd(self,func,*args):
+        print(args[0],args[1],args[2])
+        TD = func(args[0],args[1],args[2])
+        TD.run()
+        print(TD.currentThread())
+
+def creattd(*args):
+    print(args[0],args[1],args[2])
+    TD = Testthread(args[0],args[1],args[2])
+    TD.start()
+    print(TD.currentThread())
+
 
 if __name__ =='__main__':
-    B=AClass()
+    # mp.set_start_method('spawn')
+    # B = MyProcess(creattd,'A',1,(1,2))
+    # B.start()
+    B = AClass()
     app.exec_()
 
 
