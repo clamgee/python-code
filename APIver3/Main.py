@@ -301,9 +301,9 @@ class SKMainWindow(QMainWindow):
 def ThreadtoProcess(func,*args):
     start = time.time()
     p1 = mp.Process(target=func,args=(args[0],args[1],args[2],args[3],),daemon=True)
+    print('建立運算時間: ',time.time()-start,' 秒, Process:',p1.name,p1.pid)
     p1.run()
     # SKMain.SKMessage.ui.textBrowser.append('建立運算時間: %d 秒, 執行續: %d',time.time()-start,p1.pid())
-    print('建立運算時間: ',time.time()-start,' 秒, Process:',p1.name,p1.pid)
 
 class SKReplyLibEvent:
     def OnConnect(self, bstrUserID, nErrorCode):
