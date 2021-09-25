@@ -185,13 +185,14 @@ class SKMainWindow(QMainWindow):
         global MinuteQueue
         MinuteQueue = FuncClass.TransformTiskQueue(bstrStockNo,pSKStock.nStockIdx)
         PassListTuple = (DataQueue,TickQueue,MinuteQueue)
-        Pass12KTuple =(TickQueue,CandleItem12K_Queue)
+        Pass12KTuple =(TickQueue)
         PassMinuteKTuple =(MinuteQueue,self.CandleMinuteKItem_signal)
         self.DataProc = FuncClass.MyProcess(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
         self.DataProc.start()
-        self.Tick12KProc = FuncClass.MyProcess(tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
-        self.Tick12KProc.start()
+        # self.Tick12KProc = FuncClass.MyProcess(tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
+        # self.Tick12KProc.start()
         # ThreadtoProcess(self.DataToTicksThread,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
+        self.DataToTicksThread(tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
         # ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
         # ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksToMinuteK,bstrStockNo,pSKStock.nStockIdx,PassMinuteKTuple)
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
@@ -202,7 +203,7 @@ class SKMainWindow(QMainWindow):
             self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))        
     # 商品訂閱結束
     def DataToTicksThread(self,*args):
-        FutureDataToTicksThread = args[0](args[1],args[2],args[3])
+        FutureDataToTicksThread = args[0](args[1],args[2],args[3],self.Candle12KItem_signal)
         FutureDataToTicksThread.run()
         print('Data執行續的名字: ',FutureDataToTicksThread.currentThread())
     @Slot(pg.GraphicsObject)

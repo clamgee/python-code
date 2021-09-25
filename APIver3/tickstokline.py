@@ -76,13 +76,13 @@ class DataToTicks(QThread):
             self.Ticks(nlist)
 
 class TicksTo12K(QThread):
-    def __init__(self,inputname,inputindex,inputTuple):
+    def __init__(self,inputname,inputindex,inputTuple,inputSignal):
         super(TicksTo12K, self).__init__()
         self.name = inputname
         self.commodityIndex = inputindex
         self.__Queue = inputTuple[0].queue
         self.__list = inputTuple[0].listqueue
-        self.__Candle12K_Queue = inputTuple[1]
+        self.Candle12KItem_signal = inputSignal
         self.Candledf=pd.read_csv('../result.dat',low_memory=False)
         self.Candledf['ndatetime']=pd.to_datetime(self.Candledf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.Candledf.sort_values(by=['ndatetime'],ascending=True)
@@ -189,12 +189,12 @@ class TicksTo12K(QThread):
             if self.HisDone:
                 nlist = self.__Queue.get()
                 self.tickto12k(nlist)
-                SKMain.Candle12KItem_signal.emit(self.Candle12KPlotItem)
+                self.Candle12KItem_signal.emit(self.Candle12KPlotItem)
             else:
                 if self.__list.empty() is not True:
                     nlist = self.__list.get()
                     self.HisListProcess(nlist)
-                    SKMain.Candle12KItem_signal.emit(self.Candle12KPlotItem)
+                    self.Candle12KItem_signal.emit(self.Candle12KPlotItem)
                 else:
                     pass
 
