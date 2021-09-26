@@ -18,14 +18,15 @@ import ctypes
 # pass_signal = Signal(list)
 # pass1_signal = Signal(str)
 
-class Q(QWidget): 
+class QSignal(QObject):
     pass_signal = Signal(list)
-    def __init__(self,parent=None):
-        QWidget.__init__(self,parent)
+
+class Q(QWidget): 
+    def __init__(self,parent):
         self.Qdata = mp.Queue()
+        self.pass_signal = parent.pass_signal
         self.pass_signal.connect(self.receive)
 
-    @Slot(list)
     def receive(self,nlist):
         print(nlist)
 
@@ -34,7 +35,7 @@ class Testthread(QThread):
         super(Testthread,self).__init__()
         self.name = args[0]
         self.idx = args[1]
-        # self.msgtuple = args[2]
+        self.msgtuple = args[2]
         # self.msgtuple = dill.loads(args[2])
         self.Func = 0
         # print(C.__getattribute__(C.pass_signal))
@@ -44,10 +45,8 @@ class Testthread(QThread):
         print(self.Func)
 
     def run(self):
-        global C
-        while self.Func < 20:
             self.func()
-            C.pass_signal.emit([1,1,1])
+            self.msgtuple.emit([1,2])
             time.sleep(2)
 
 class MyProcess(mp.Process):  # 定义一个类，继承Process类
@@ -55,22 +54,22 @@ class MyProcess(mp.Process):  # 定义一个类，继承Process类
         super(MyProcess, self).__init__()  # 实现父类的初始化方法
         self.name1 = args[0]
         self.idx = args[1]
-        # self.msgtuple = args[2]
+        self.msgtuple = args[2]
         self.target = func
 
     def run(self):  # 必须实现的方法，是启动进程的方法
-        TD = self.target(self.name1,self.idx)
+        TD = self.target(self.name1,self.idx,self.msgtuple)
         TD.run()
         nowproc=mp.current_process()
         print('子进程:', os.getpid(), os.getppid(),nowproc)
 
 
 class AClass:
-    def __init__(self):
+    def __init__(self,inputsignal):
         self.name ='A'
         self.index = 1
         # self.msgtuple = signal
-        self.A = MyProcess(Testthread,self.name,self.index)
+        self.A = MyProcess(Testthread,self.name,self.index,inputsignal)
         self.A.start()
 
         # self.B = MyProcess(self.creattd,'B',0,self.msgtuple)
@@ -94,12 +93,13 @@ if __name__ =='__main__':
     app = QApplication()
     # B = MyProcess(creattd,'A',1,(1,2))
     # B.start()
+    Sig = QSignal()
     global C
-    C = Q()
+    C = Q(parent=Sig)
     # psgl = dill.dumps(C)
     # QT = Testthread('A',1)
     # QT.start()
-    B = AClass()
+    B = AClass(Sig.pass_signal)
     app.exec_()
 
 
