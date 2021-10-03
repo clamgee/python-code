@@ -1,13 +1,9 @@
-import PySide6
-import pandas as pd
-from PySide6 import QtCore
-from PySide6.QtCore import QObject
-from valkka.multiprocess import MessageProcess
-import typing
-
-class PassSignal(MessageProcess):
-    class Signals(QObject):
-        def __init__(self, parent: typing.Optional[PySide6.QtCore.QObject] = ...) -> None:
-            super().__init__(parent=parent)
-            
-PassSignalA = PassSignal()
+Msgstr = 'A'
+globals()['Test'+Msgstr]=['a',1,22]
+import multiprocessing as mp
+if __name__ == '__main__':
+    global mgr,mQueue,mval
+    mgr = mp.Manager()
+    mQueue=mgr.Queue()
+    mval = mgr.Value(str,'TX00')
+    print(mval.value)
