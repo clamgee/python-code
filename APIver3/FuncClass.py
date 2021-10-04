@@ -1,6 +1,7 @@
 from PySide6.QtCore import QAbstractTableModel, QObject,Qt,QThread,Signal,Slot
 import multiprocessing as mp
 import time,os
+import typing
 
 # QTableView 資料處理Model
 class PandasModel(QAbstractTableModel):
@@ -32,20 +33,14 @@ class PandasModel(QAbstractTableModel):
             return self._data.columns[col]
         return None
 
-# 建立存SKQuout 回傳Data的Queue
-class DataQueue(object):
-    def __init__(self,inputname,inputidx):
-        self.queue = mp.Queue()
-        self.name = inputname
-        self.commodityIndex = inputidx
-
-class TransformTiskQueue(object):
-    def __init__(self,inputname,inputidx):
-        super(TransformTiskQueue,self).__init__()
-        self.queue = mp.Queue()
-        self.listqueue = mp.Queue()
-        self.name = inputname
-        self.commodityIndex = inputidx
+class Candle12KDrawThread(QThread):
+    def __init__(self, parent: typing.Optional[QObject] = ...) -> None:
+        super().__init__(parent=parent)
+        self.df = None
+    def run(self):
+        while True:
+            self.df = NS.df12K
+            print(self.df.tail(1))
 
 class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
     def __init__(self, func,*args):
