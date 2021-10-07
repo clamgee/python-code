@@ -181,13 +181,16 @@ class SKMainWindow(QMainWindow):
         GlobalVar.Candle12KTarget.value = bstrStockNo
         globals()['DataQueue'+str(pSKStock.nStockIdx)] = mp.Queue()
         setattr(globals()['DataQueue'+str(pSKStock.nStockIdx)],'commodityIndex',pSKStock.nStockIdx)
+        globals()['DataEvent'+str(pSKStock.nStockIdx)] = mp.Event()
         # DataQueue = FuncClass.DataQueue(bstrStockNo,pSKStock.nStockIdx) 
         globals()['Tick12KQueue'+bstrStockNo] = mp.Queue()
+        globals()['Tick12KEvent'+bstrStockNo] = mp.Event()
         # TickQueue = FuncClass.TransformTiskQueue(bstrStockNo,pSKStock.nStockIdx)
         globals()['MinuteQueue'+bstrStockNo] = mp.Queue()
+        globals()['MinuteQueue'+bstrStockNo] = mp.Event()
         # MinuteQueue = FuncClass.TransformTiskQueue(bstrStockNo,pSKStock.nStockIdx)
-        PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo])
-        Pass12KTuple =(globals()['Tick12KQueue'+bstrStockNo],GlobalVar.CandleItem12K_Queue,GlobalVar.Candle12KTarget,GlobalVar.NS)
+        PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo],globals()['DataEvent'+str(pSKStock.nStockIdx)],globals()['Tick12KEvent'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo])
+        Pass12KTuple =(globals()['Tick12KQueue'+bstrStockNo],GlobalVar.CandleItem12K_Queue,GlobalVar.Candle12KTarget,GlobalVar.NS,globals()['Tick12KEvent'+bstrStockNo])
         PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],GlobalVar.CandleItemMinute_Queue)
         self.DataProc = FuncClass.MyProcess(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
         self.DataProc.start()
@@ -493,12 +496,14 @@ class SKQuoteLibEvents:
             nhis = True
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
             globals()['DataQueue'+str(sStockIdx)].put(nlist)
+            globals()['DataEvent'+str(sStockIdx)].set()
     
     def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
         if nSimulate == 0 and globals()['DataQueue'+str(sStockIdx)].commodityIndex == sStockIdx:
             nhis = False
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
             globals()['DataQueue'+str(sStockIdx)].put(nlist)
+            globals()['DataEvent'+str(sStockIdx)].set()
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()

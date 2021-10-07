@@ -18,6 +18,9 @@ class DataToTicks(QThread):
         print('Tick內的Queue: ',self.__queue)
         self.__connect12K_queue = Passlist[1]
         self.__connectMinuteK_queue = Passlist[2]
+        self.__Event = Passlist[3]
+        self.__connect12K_Event = Passlist[4]
+        self.__connectMinuteK_Event = Passlist[5]
         self.TickList = []
         self.ListTransform = False
         self.LastTick = 0
@@ -53,16 +56,19 @@ class DataToTicks(QThread):
             else:
                 if self.ListTransform == False:
                     self.__connect12K_queue.put([self.ListTransform,self.TickList,nPtr])
+                    self.__connect12K_Event.set()
                     # self.__connectMinuteK_queue.put([self.ListTransform,self.TickList])
                     print('transform List',len(self.TickList))
                     self.ListTransform = True
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
-                    self.__connect12K_queue.put([self.ListTransform,[ndatetime,int(nClose/100),int(nQty)],nPtr])
+                    self.__connect12K_queue.put([self.ListTransform,[ndatetime,int(nClose/100),int(nQty)],nPtr],block=False,timeout=None)
+                    self.__connect12K_Event.set()
                     # self.__connectMinuteK_queue.put([self.ListTransform,[ndatetime,int(nClose/100),int(nQty)]])
-                    self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
+                    # self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
                 else:
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nClose/100),int(nQty),int(deal)])
-                    self.__connect12K_queue.put([self.ListTransform,[ndatetime,int(nClose/100),int(nQty)],nPtr])
+                    self.__connect12K_queue.put([self.ListTransform,[ndatetime,int(nClose/100),int(nQty)],nPtr],block=False,timeout=None)
+                    self.__connect12K_Event.set()
                     # self.__connectMinuteK_queue.put([self.ListTransform,[ndatetime,int(nClose/100),int(nQty)]])
         else:
             print('捨棄Tick序號: ',nPtr)
@@ -70,8 +76,10 @@ class DataToTicks(QThread):
 
     def run(self):
         while True:
+            self.__Event.wait()
             nlist = self.__queue.get()
             self.Ticks(nlist)
+            self.__Event.clear()
 
 class TicksTo12K(QThread):
     def __init__(self,inputname,inputindex,inputTuple):
@@ -82,6 +90,7 @@ class TicksTo12K(QThread):
         self.__CandleItem12K_Queue = inputTuple[1]
         self.__Candle12KTarget = inputTuple[2]
         self.__Candledf12K = inputTuple[3]
+        self.__Event = inputTuple[4]
         self.Candledf=pd.read_csv('../result.dat',low_memory=False)
         self.Candledf['ndatetime']=pd.to_datetime(self.Candledf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.Candledf.sort_values(by=['ndatetime'],ascending=True)
@@ -185,23 +194,22 @@ class TicksTo12K(QThread):
     
     def run(self):
         while True:
-            if self.__Queue.qsize() != 0:
-                nlist = self.__Queue.get()
-                self.HisDone = nlist[0]
-                print(self.HisDone)
-                if self.HisDone:
-                    self.tickto12k(nlist[1])
-                    print(self.__Candle12KTarget.value)
-                    if self.__Candle12KTarget.value == self.name:
-                        self.__CandleItem12K_Queue.put(nlist[2])
-                        self.__Candledf12K.df12K = self.Candledf
-                else:
-                    self.HisListProcess(nlist[1])
-                    if self.__Candle12KTarget.value == self.name:
-                        self.__CandleItem12K_Queue.put(nlist[2])
-                        self.__Candledf12K.df12K = self.Candledf
+            self.__Event.wait()
+            nlist = self.__Queue.get()
+            self.HisDone = nlist[0]
+            print(nlist[2])
+            if self.HisDone:
+                self.tickto12k(nlist[1])
+                print(self.__Candle12KTarget.value)
+                if self.__Candle12KTarget.value == self.name:
+                    self.__CandleItem12K_Queue.put(nlist[2])
+                    self.__Candledf12K.df12K = self.Candledf
             else:
-                pass
+                self.HisListProcess(nlist[1])
+                if self.__Candle12KTarget.value == self.name:
+                    self.__CandleItem12K_Queue.put(nlist[2])
+                    self.__Candledf12K.df12K = self.Candledf
+            self.__Event.clear()
 
 class TicksToMinuteK(QThread):
     def __init__(self,inputname,inputindex,inputTuple):

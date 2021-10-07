@@ -42,14 +42,11 @@ class Candle12KDrawThread(QThread):
 
     def run(self):
         while True:
-            if self.__CandleItem12K_Queue.qsize() != 0:
-                a = self.__CandleItem12K_Queue.get()
-                print('nPtr: ',a)
-                self.df = self.__Candledf12K.df12K
-                if self.df.shape[0]>0: 
-                    print(self.df.tail(1))
-            else:
-                pass
+            a = self.__CandleItem12K_Queue.get()
+            print('nPtr: ',a)
+            self.df = self.__Candledf12K.df12K
+            if self.df.shape[0]>0: 
+                print(self.df.tail(1))
 
 class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
     def __init__(self, func,*args):
