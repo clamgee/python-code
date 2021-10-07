@@ -2,7 +2,6 @@ from PySide6.QtCore import QAbstractTableModel, QObject,Qt,QThread,Signal,Slot
 import multiprocessing as mp
 import time,os
 import typing
-
 # QTableView 資料處理Model
 class PandasModel(QAbstractTableModel):
     def __init__(self):
@@ -34,13 +33,23 @@ class PandasModel(QAbstractTableModel):
         return None
 
 class Candle12KDrawThread(QThread):
-    def __init__(self, parent: typing.Optional[QObject] = ...) -> None:
+    def __init__(self,inputQueue,inputdf,parent: typing.Optional[QObject] = ...) -> None:
         super().__init__(parent=parent)
         self.df = None
+        self.__CandleItem12K_Queue = inputQueue
+        self.__Candledf12K = inputdf
+        print('in Thread id: ',id(self.__CandleItem12K_Queue),id(self.__Candledf12K))
+
     def run(self):
         while True:
-            self.df = NS.df12K
-            print(self.df.tail(1))
+            if self.__CandleItem12K_Queue.qsize() != 0:
+                a = self.__CandleItem12K_Queue.get()
+                print('nPtr: ',a)
+                self.df = self.__Candledf12K.df12K
+                if self.df.shape[0]>0: 
+                    print(self.df.tail(1))
+            else:
+                pass
 
 class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
     def __init__(self, func,*args):
@@ -49,7 +58,7 @@ class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
         self.args = (args[0],args[1],args[2])
 
     def run(self):  # 必須的，啟動進程方法
-        Proc = self.target(self.args[0],self.args[1],self.args[2])
-        Proc.run()
+        self.Thd = self.target(self.args[0],self.args[1],self.args[2])
+        self.Thd.run()
         print('子進程:', os.getpid(), os.getppid())
 

@@ -9,10 +9,6 @@ import pandas as pd
 import numpy as np
 import multiprocessing as mp
 import re
-
-# 外部 自寫模組
-from UI.MainWindow import Ui_CapitalAPI
-import FuncUI,FuncClass,Config_dict,tickstokline
 # 使用SKCOM元件
 import comtypes.client
 import comtypes.gen.SKCOMLib as sk
@@ -21,6 +17,10 @@ skC = comtypes.client.CreateObject(sk.SKCenterLib, interface=sk.ISKCenterLib)
 skO = comtypes.client.CreateObject(sk.SKOrderLib, interface=sk.ISKOrderLib)
 skQ = comtypes.client.CreateObject(sk.SKQuoteLib, interface=sk.ISKQuoteLib)
 skR = comtypes.client.CreateObject(sk.SKReplyLib, interface=sk.ISKReplyLib)
+# 外部 自寫模組
+from UI.MainWindow import Ui_CapitalAPI
+import FuncUI,FuncClass,Config_dict,tickstokline,GlobalVar
+
 # 主視窗物件
 class SKMainWindow(QMainWindow):
     Candle12KItem_signal = Signal(object)
@@ -178,7 +178,7 @@ class SKMainWindow(QMainWindow):
         bstrStockNo = self.SKCommodity.ui.Commodity_comboBox.currentText().split(',')[0].replace(' ','')
         pSKStock=sk.SKSTOCKLONG()
         skQ.SKQuoteLib_GetStockByNoLONG (bstrStockNo,pSKStock)
-        Candle12KTarget.value = bstrStockNo
+        GlobalVar.Candle12KTarget.value = bstrStockNo
         globals()['DataQueue'+str(pSKStock.nStockIdx)] = mp.Queue()
         setattr(globals()['DataQueue'+str(pSKStock.nStockIdx)],'commodityIndex',pSKStock.nStockIdx)
         # DataQueue = FuncClass.DataQueue(bstrStockNo,pSKStock.nStockIdx) 
@@ -187,13 +187,13 @@ class SKMainWindow(QMainWindow):
         globals()['MinuteQueue'+bstrStockNo] = mp.Queue()
         # MinuteQueue = FuncClass.TransformTiskQueue(bstrStockNo,pSKStock.nStockIdx)
         PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo])
-        # Pass12KTuple =(globals()['Tick12KQueue'+bstrStockNo])
-        PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],CandleItemMinute_Queue)
+        Pass12KTuple =(globals()['Tick12KQueue'+bstrStockNo],GlobalVar.CandleItem12K_Queue,GlobalVar.Candle12KTarget,GlobalVar.NS)
+        PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],GlobalVar.CandleItemMinute_Queue)
         self.DataProc = FuncClass.MyProcess(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
         self.DataProc.start()
-        self.Tick12KProc = FuncClass.MyProcess(tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,globals()['Tick12KQueue'+bstrStockNo])
+        self.Tick12KProc = FuncClass.MyProcess(tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
         self.Tick12KProc.start()
-        self.Candle12KDrawThread = FuncClass.Candle12KDrawThread(self)
+        self.Candle12KDrawThread = FuncClass.Candle12KDrawThread(GlobalVar.CandleItem12K_Queue,GlobalVar.NS,self)
         self.Candle12KDrawThread.start()
         # ThreadtoProcess(self.DataToTicksThread,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
         # self.DataToTicksThread(tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
@@ -510,12 +510,7 @@ SKReplyLibEventHandler = comtypes.client.GetEvents(skR, SKReplyEvent)
 
 if __name__=='__main__':
     # mp.set_start_method('spawn')
-
-    global CandleItem12K_Queue,CandleItemMinute_Queue,Candle12KTarget,NS
-    CandleItem12K_Queue = mp.Manager().Queue()
-    CandleItemMinute_Queue = mp.Manager().Queue()
-    Candle12KTarget = mp.Manager().Value(str,'')
-    NS = mp.Manager().Namespace()
+    GlobalVar.Initialize()
     SKApp = QApplication(sys.argv)
     SKMain = SKMainWindow()
     SKMain.show()
