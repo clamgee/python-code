@@ -2,6 +2,7 @@ from PySide6.QtCore import QAbstractTableModel, QObject,Qt,QThread,Signal,Slot
 import multiprocessing as mp
 import time,os
 import typing
+import KlineItem
 # QTableView 資料處理Model
 class PandasModel(QAbstractTableModel):
     def __init__(self):
@@ -33,20 +34,24 @@ class PandasModel(QAbstractTableModel):
         return None
 
 class Candle12KDrawThread(QThread):
-    def __init__(self,inputQueue,inputdf,parent: typing.Optional[QObject] = ...) -> None:
-        super().__init__(parent=parent)
-        self.df = None
-        self.__CandleItem12K_Queue = inputQueue
+    def __init__(self,inputEvent,inputdf,inputSignal):
+        super().__init__()
+        self.__CandleItem12K_Event = inputEvent
         self.__Candledf12K = inputdf
-        print('in Thread id: ',id(self.__CandleItem12K_Queue),id(self.__Candledf12K))
-
+        self.Candle12KItem_signal = inputSignal
+        self.creatItembool_None = True
     def run(self):
         while True:
-            a = self.__CandleItem12K_Queue.get()
-            print('nPtr: ',a)
-            self.df = self.__Candledf12K.df12K
-            if self.df.shape[0]>0: 
-                print(self.df.tail(1))
+            self.__CandleItem12K_Event.wait()
+            if self.creatItembool_None:
+                while self.__Candledf12K.df12K.shape[0]==0:
+                    time.sleep(0.02)
+                self.CandleItem12K = KlineItem.CandleItem(self.__Candledf12K.df12K)
+                self.creatItembool_None = False
+            else:
+                self.CandleItem12K.set_data(self.__Candledf12K.df12K)
+            self.Candle12KItem_signal.emit(self.CandleItem12K)
+            self.__CandleItem12K_Event.clear()
 
 class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
     def __init__(self, func,*args):
@@ -57,5 +62,4 @@ class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
     def run(self):  # 必須的，啟動進程方法
         self.Thd = self.target(self.args[0],self.args[1],self.args[2])
         self.Thd.run()
-        print('子進程:', os.getpid(), os.getppid())
 

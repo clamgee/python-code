@@ -4,34 +4,34 @@ import numpy as np
 from pyqtgraph import QtCore,QtGui,GraphicsItem
 
 class CandleItem(pg.GraphicsObject):
-    def __init__(self,parent=None):
+    def __init__(self,Candledf):
         pg.GraphicsObject.__init__(self)
-        self.data = parent
-        self.lastbar = None
+        self.data = Candledf
         self.picturemain = QtGui.QPicture() #主K線圖
         self.picturelast = QtGui.QPicture() #最後一根K線圖
         self.pictures = []
-        self.PaintChange = False
-        # self.setFlag(self.ItemUsesExtendedStyleOption)
+        self.PaintChange = True
+        self.setFlag(self.ItemUsesExtendedStyleOption)
         self.rect = None
-        self.high = self.data.Candledf.high.max()
-        self.low = self.data.Candledf.low.min()
-        self.lastidx = parent.lastidx
-        self.close = self.data.Candledf.at[self.lastidx,'close']
+        self.high = self.data.high.max()
+        self.low = self.data.low.min()
+        self.lastidx = self.data.last_valid_index()
+        self.close = self.data.at[self.lastidx,'close']
         self.countK = 87 #設定要顯示多少K線
 
-    def set_data(self):
-        if self.high < self.data.High:
-            self.high = self.data.High
-        if self.low > self.data.Low:
-            self.low = self.data.Low
-        if self.lastidx != self.data.lastidx:
+    def set_data(self,Candledf):
+        self.data = Candledf
+        if self.high < self.data.high.max():
+            self.high = self.data.high.max()
+        if self.low > self.data.low.min():
+            self.low = self.data.low.min()
+        if self.lastidx != self.data.last_valid_index():
             self.PaintChange = True
-            self.lastidx = self.data.lastidx
+            self.lastidx = self.data.last_valid_index()
         self.generatePicture()
         self.informViewBoundsChanged()
-        if self.close != self.data.Candledf.at[self.lastidx,'close']:
-            self.close = self.data.Candledf.at[self.lastidx,'close']
+        if self.close != self.data.at[self.lastidx,'close']:
+            self.close = self.data.at[self.lastidx,'close']
             self.update()
     
     def generatePicture(self):    
@@ -40,9 +40,9 @@ class CandleItem(pg.GraphicsObject):
             self.pictures.pop()
         w = 1.0 / 3.0
         start = len(self.pictures)
-        # print('圖片長度: ',start)
+        print('圖片長度: ',start)
         stop = self.lastidx + 1
-        for (t, x) in self.data.Candledf.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
+        for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
             if x.open>x.close:
@@ -71,7 +71,7 @@ class CandleItem(pg.GraphicsObject):
             self.picturemain.play(painter)
             self.picturelast = self.createPic(self.lastidx,self.lastidx+1)
             self.picturelast.play(painter)
-            # print('快圖')
+            print('快圖')
     # 圖片產生----------------------------------------------------------------------
     def createPic(self,xmin,xmax):
         picture = QtGui.QPicture()

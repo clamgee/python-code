@@ -5,8 +5,8 @@ def Initialize():
     NS = mp.Manager().Namespace()
     NS.df12K = pd.DataFrame() # 12K圖使用的pandas
     NS.dfMinK = pd.DataFrame() # 分鐘圖使用的pandas
-    global CandleItem12K_Queue,CandleItemMinute_Queue
-    CandleItem12K_Queue = mp.Manager().Queue()
-    CandleItemMinute_Queue = mp.Manager().Queue()
+    global CandleItem12K_Event,CandleItemMinute_Event
+    CandleItem12K_Event = mp.Event()
+    CandleItemMinute_Event = mp.Event()
     global Candle12KTarget
     Candle12KTarget = mp.Manager().Value(str,'')
