@@ -612,9 +612,9 @@ Ticks2021-09-23.txt
 Ticks2021-09-24.txt
 Ticks2021-09-27.txt
 Ticks2021-09-28.txt
+Ticks2021-09-29.txt
 Ticks2021-09-30.txt
 Ticks2021-10-01.txt
-Ticks2021-09-29.txt
 Ticks2021-10-04.txt
 Ticks2021-10-05.txt
 Ticks2021-10-06.txt

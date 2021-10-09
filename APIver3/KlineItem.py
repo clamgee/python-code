@@ -18,19 +18,23 @@ class CandleItem(pg.GraphicsObject):
         self.lastidx = self.data.last_valid_index()
         self.close = self.data.at[self.lastidx,'close']
         self.countK = 87 #設定要顯示多少K線
+        self.generatePicture()
+        self.informViewBoundsChanged()
 
-    def set_data(self,Candledf):
+
+    def set_data(self,Candledf,nlist):
         self.data = Candledf
-        if self.high < self.data.high.max():
-            self.high = self.data.high.max()
-        if self.low > self.data.low.min():
-            self.low = self.data.low.min()
-        if self.lastidx != self.data.last_valid_index():
+        lastidx = nlist[0]; close = nlist[1]
+        if self.high < close:
+            self.high = close
+        if self.low > close:
+            self.low = close
+        if self.lastidx != lastidx:
             self.PaintChange = True
             self.lastidx = self.data.last_valid_index()
         self.generatePicture()
         self.informViewBoundsChanged()
-        if self.close != self.data.at[self.lastidx,'close']:
+        if self.close != close:
             self.close = self.data.at[self.lastidx,'close']
             self.update()
     
@@ -40,7 +44,7 @@ class CandleItem(pg.GraphicsObject):
             self.pictures.pop()
         w = 1.0 / 3.0
         start = len(self.pictures)
-        print('圖片長度: ',start)
+        # print('圖片長度: ',start)
         stop = self.lastidx + 1
         for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
             picture = QtGui.QPicture()
@@ -71,7 +75,7 @@ class CandleItem(pg.GraphicsObject):
             self.picturemain.play(painter)
             self.picturelast = self.createPic(self.lastidx,self.lastidx+1)
             self.picturelast.play(painter)
-            print('快圖')
+            # print('快圖')
     # 圖片產生----------------------------------------------------------------------
     def createPic(self,xmin,xmax):
         picture = QtGui.QPicture()

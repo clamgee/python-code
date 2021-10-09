@@ -178,29 +178,28 @@ class SKMainWindow(QMainWindow):
         bstrStockNo = self.SKCommodity.ui.Commodity_comboBox.currentText().split(',')[0].replace(' ','')
         pSKStock=sk.SKSTOCKLONG()
         skQ.SKQuoteLib_GetStockByNoLONG (bstrStockNo,pSKStock)
-        GlobalVar.Candle12KTarget.value = bstrStockNo
+        GlobalVar.CandleTarget.value = bstrStockNo
         globals()['DataQueue'+str(pSKStock.nStockIdx)] = mp.Queue()
         setattr(globals()['DataQueue'+str(pSKStock.nStockIdx)],'commodityIndex',pSKStock.nStockIdx)
-        globals()['DataEvent'+str(pSKStock.nStockIdx)] = mp.Event()
         globals()['Tick12KQueue'+bstrStockNo] = mp.Queue()
-        globals()['Tick12KEvent'+bstrStockNo] = mp.Event()
         globals()['MinuteQueue'+bstrStockNo] = mp.Queue()
-        globals()['MinuteEvent'+bstrStockNo] = mp.Event()
-        PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['DataEvent'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['Tick12KEvent'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo],globals()['MinuteEvent'+bstrStockNo])
-        Pass12KTuple =(globals()['Tick12KQueue'+bstrStockNo],globals()['Tick12KEvent'+bstrStockNo],GlobalVar.Candle12KTarget,GlobalVar.CandleItem12K_Event,GlobalVar.NS)
-        PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],GlobalVar.CandleItemMinute_Event)
+        PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo])
+        Pass12KTuple =(globals()['Tick12KQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItem12K_Event,GlobalVar.NS)
+        PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItemMinute_Event,GlobalVar.NS)
         self.DataProc = FuncClass.MyProcess(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
         self.DataProc.start()
         print('Data Pid: ',self.DataProc.pid)
         self.Tick12KProc = FuncClass.MyProcess(tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
         self.Tick12KProc.start()
+        self.MinKProc = FuncClass.MyProcess(tickstokline.TicksToMinuteK,bstrStockNo,pSKStock.nStockIdx,PassMinuteKTuple)
+        self.MinKProc.start()
+
         print('Tick12K Pid: ',self.Tick12KProc.pid)
+        print('MinK Pid: ',self.MinKProc.pid)
         self.Candle12KDrawThread = FuncClass.Candle12KDrawThread(GlobalVar.CandleItem12K_Event,GlobalVar.NS,self.Candle12KItem_signal)
         self.Candle12KDrawThread.start()
-        # ThreadtoProcess(self.DataToTicksThread,tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
-        # self.DataToTicksThread(tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
-        # ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
-        # ThreadtoProcess(self.DataToTicksThread,tickstokline.TicksToMinuteK,bstrStockNo,pSKStock.nStockIdx,PassMinuteKTuple)
+        self.CandleMinKDrawThread = FuncClass.CandleMinKDrawThread(GlobalVar.CandleItemMinute_Event,GlobalVar.NS,self.CandleMinuteKItem_signal)
+        self.CandleMinKDrawThread.start()
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         if sum(nCode) !=0 :
             strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))
@@ -208,10 +207,10 @@ class SKMainWindow(QMainWindow):
         else:
             self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))        
     # 商品訂閱結束
-    def DataToTicksThread(self,*args):
-        FutureDataToTicksThread = args[0](args[1],args[2],args[3],self.Candle12KItem_signal)
-        FutureDataToTicksThread.run()
-        print('Data執行續的名字: ',FutureDataToTicksThread.currentThread())
+    # def DataToTicksThread(self,*args):
+    #     FutureDataToTicksThread = args[0](args[1],args[2],args[3],self.Candle12KItem_signal)
+    #     FutureDataToTicksThread.run()
+    #     print('Data執行續的名字: ',FutureDataToTicksThread.currentThread())
     @Slot(pg.GraphicsObject)
     def Candle12KDrawFunc(self,Kitem_recive):
         self.CandleItem12K= Kitem_recive
@@ -275,27 +274,27 @@ class SKMainWindow(QMainWindow):
             del tmpdf
             self.YCline = pg.InfiniteLine(angle=0, movable=False)
             self.CandleMinuteKDraw.addItem(self.YCline)
-            dict_tmp=self.CandleMinuteItem.data.Candledf['ndatetime'][self.CandleMinuteItem.data.Candledf.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
+            dict_tmp=self.CandleMinuteItem.data['ndatetime'][self.CandleMinuteItem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
             self.AxisMinute.setTicks([dict_tmp.items()])
             del dict_tmp
             self.YCline.setPos(self.yesterdayclose)
             self.curve=self.CandleMinuteKDraw.plot(pen='y')
-            tmpline=self.CandleMinuteItem.data.Candledf.close.cumsum()
+            tmpline=self.CandleMinuteItem.data.close.cumsum()
             self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
             self.curve.setData(self.avgline)
             del tmpline
-            self.CandleMinuteKDrawYrectHigh = max(self.CandleMinuteItem.data.Candledf.high.max(),self.yesterdayclose)
-            self.CandleMinuteKDrawYrectLow = min(self.CandleMinuteItem.data.Candledf.low.min(),self.yesterdayclose)
+            self.CandleMinuteKDrawYrectHigh = max(self.CandleMinuteItem.data.high.max(),self.yesterdayclose)
+            self.CandleMinuteKDrawYrectLow = min(self.CandleMinuteItem.data.low.min(),self.yesterdayclose)
             self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
             self.ChangeRectidx = self.CandleMinuteItem.lastidx
             self.CandleMinuteKDraw_Build_None = False
         else:
             if self.ChangeRectidx != self.CandleMinuteItem.lastidx:
                 self.ChangeRectidx = self.CandleMinuteItem.lastidx
-                dict_tmp=self.CandleMinuteItem.data.Candledf['ndatetime'][self.CandleMinuteItem.data.Candledf.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
+                dict_tmp=self.CandleMinuteItem.data['ndatetime'][self.CandleMinuteItem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
                 self.AxisMinute.setTicks([dict_tmp.items()])
                 del dict_tmp
-                tmpline=self.CandleMinuteItem.data.Candledf.close.cumsum()
+                tmpline=self.CandleMinuteItem.data.close.cumsum()
                 self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
                 self.curve.setData(self.avgline)
                 del tmpline
@@ -493,14 +492,12 @@ class SKQuoteLibEvents:
             nhis = True
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
             globals()['DataQueue'+str(sStockIdx)].put(nlist)
-            globals()['DataEvent'+str(sStockIdx)].set()
     
     def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
         if nSimulate == 0 and globals()['DataQueue'+str(sStockIdx)].commodityIndex == sStockIdx:
             nhis = False
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
             globals()['DataQueue'+str(sStockIdx)].put(nlist)
-            globals()['DataEvent'+str(sStockIdx)].set()
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
