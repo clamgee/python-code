@@ -188,12 +188,11 @@ class SKMainWindow(QMainWindow):
         PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItemMinute_Event,GlobalVar.NS)
         self.DataProc = FuncClass.MyProcess(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
         self.DataProc.start()
-        print('Data Pid: ',self.DataProc.pid)
         self.Tick12KProc = FuncClass.MyProcess(tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
         self.Tick12KProc.start()
         self.MinKProc = FuncClass.MyProcess(tickstokline.TicksToMinuteK,bstrStockNo,pSKStock.nStockIdx,PassMinuteKTuple)
         self.MinKProc.start()
-
+        print('Data Pid: ',self.DataProc.pid)
         print('Tick12K Pid: ',self.Tick12KProc.pid)
         print('MinK Pid: ',self.MinKProc.pid)
         self.Candle12KDrawThread = FuncClass.Candle12KDrawThread(GlobalVar.CandleItem12K_Event,GlobalVar.NS,self.Candle12KItem_signal)
@@ -207,10 +206,6 @@ class SKMainWindow(QMainWindow):
         else:
             self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))        
     # 商品訂閱結束
-    # def DataToTicksThread(self,*args):
-    #     FutureDataToTicksThread = args[0](args[1],args[2],args[3],self.Candle12KItem_signal)
-    #     FutureDataToTicksThread.run()
-    #     print('Data執行續的名字: ',FutureDataToTicksThread.currentThread())
     @Slot(pg.GraphicsObject)
     def Candle12KDrawFunc(self,Kitem_recive):
         self.CandleItem12K= Kitem_recive
@@ -246,7 +241,7 @@ class SKMainWindow(QMainWindow):
                 self.Axis12k.setTicks([dict_tmp.items()])
                 self.MAHighLine.setData(self.CandleItem12K.data.high_avg)
                 self.MALowLine.setData(self.CandleItem12K.data.low_avg)
-            elif self.axis12k_ymin > self.CandleItem12K.data.at[self.CandleItem12K.lastidx,'close'] or self.axis12k_ymax < self.CandleItem12K.data.at[self.CandleItem12K.lastidx,'close']:
+            elif self.axis12k_ymin > self.CandleItem12K.close or self.axis12k_ymax < self.CandleItem12K.close:
                 self.axis12k_ymin = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
                 self.axis12k_ymax = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
                 self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)

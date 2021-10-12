@@ -137,7 +137,7 @@ class TicksTo12K(QThread):
             self.lastidx = self.Candledf.last_valid_index()        
         elif self.tmpcontract==0 or self.tmpcontract==12000 :
             self.Candledf=self.Candledf.append(pd.DataFrame([[ndatetime,nClose,nClose,nClose,nClose,nQty,0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
-            self.High=self.Low,self.Close=nClose
+            self.High=self.Low=self.Close=nClose
             self.tmpcontract=nQty
             self.drawMA=True
             self.lastidx = self.Candledf.last_valid_index()
@@ -261,16 +261,16 @@ class TicksToMinuteK(QThread):
                     self.TicksToMinuteK(nlist[1])
                     if self.__CandleTarget.value == self.name:
                         if self.__CandleItemMinK_Event.is_set():
-                            self.__CandledfMinK.list12K = [self.lastidx,self.Close]
-                            self.__CandledfMinK.df12K = self.Candledf
+                            self.__CandledfMinK.listMinK = [self.lastidx,self.Close]
+                            self.__CandledfMinK.dfMinK = self.Candledf
                         else: 
-                            self.__CandledfMinK.list12K = [self.lastidx,self.Close]
-                            self.__CandledfMinK.df12K = self.Candledf
+                            self.__CandledfMinK.listMinK = [self.lastidx,self.Close]
+                            self.__CandledfMinK.dfMinK = self.Candledf
                             self.__CandleItemMinK_Event.set()
                 else:
                     self.HisListProcess(nlist[1])
                     if self.__CandleTarget.value == self.name:
-                        self.__CandledfMinK.df12K = self.Candledf
+                        self.__CandledfMinK.dfMinK = self.Candledf
                         self.__CandleItemMinK_Event.set()
 
 
