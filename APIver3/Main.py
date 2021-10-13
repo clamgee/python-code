@@ -35,7 +35,7 @@ class SKMainWindow(QMainWindow):
         # self.SKCommodityUI(self.SKMessage)
         self.SKRightUI() #權益數介面
         self.SKLoginUI()  # 登入介面
-        self.CandleMinuteKDrawUI() #分鐘線設定
+        self.Setup_CandleMinuteKDrawUI() #分鐘線設定
         # ManuBar連結
         self.MainUi.actionLogin.triggered.connect(self.Login.ui.show)  # 登入介面連結
         self.MainUi.SysDetail.triggered.connect(self.SKMessage.ui.show) #系統資訊介面連結
@@ -179,14 +179,14 @@ class SKMainWindow(QMainWindow):
         bstrStockNo = self.SKCommodity.ui.Commodity_comboBox.currentText().split(',')[0].replace(' ','')
         pSKStock=sk.SKSTOCKLONG()
         skQ.SKQuoteLib_GetStockByNoLONG (bstrStockNo,pSKStock)
-        GlobalVar.CandleTarget.value = bstrStockNo
+        GlobalVar.CandleTarget.set(bstrStockNo)
         globals()['DataQueue'+str(pSKStock.nStockIdx)] = mp.Queue()
         setattr(globals()['DataQueue'+str(pSKStock.nStockIdx)],'commodityIndex',pSKStock.nStockIdx)
         globals()['Tick12KQueue'+bstrStockNo] = mp.Queue()
         globals()['MinuteQueue'+bstrStockNo] = mp.Queue()
         PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo])
         Pass12KTuple =(globals()['Tick12KQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItem12K_Event,GlobalVar.NS)
-        PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItemMinute_Event,GlobalVar.NS)
+        PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItemMinute_Event,GlobalVar.CandleMinuteDealMinus_Event,GlobalVar.NS)
         self.DataProc = FuncClass.MyProcess(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
         self.DataProc.start()
         self.Tick12KProc = FuncClass.MyProcess(tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
@@ -246,7 +246,7 @@ class SKMainWindow(QMainWindow):
                 self.axis12k_ymin = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
                 self.axis12k_ymax = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
                 self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
-    def CandleMinuteKDrawUI(self):
+    def Setup_CandleMinuteKDrawUI(self):
         self.AxisMinute = pg.AxisItem(orientation='bottom')
         self.CandleMinuteKDraw = self.MainUi.tab_DayTrading.addPlot(row=0,col=0,axisItems={'bottom': self.AxisMinute})
         now = time.localtime(time.time()).tm_hour
@@ -254,8 +254,15 @@ class SKMainWindow(QMainWindow):
             self.CandleMinuteKDraw.setXRange(0,827)
         elif now>=8 and now<15:
             self.CandleMinuteKDraw.setXRange(0,300)
-        self.AxisMinuteDeal = pg.AxisItem(orientation='bottom')
-        self.CandleMinuteDealDraw=self.MainUi.tab_DayTrading.addPlot(row=1,col=0,axisItems={'bottom': self.AxisMinuteDeal})
+        self.CandleMinuteKDraw.showAxis('right',show=True)
+        self.CandleMinuteKDraw.showAxis('left',show=False)
+        self.CandleMinuteKDraw.showGrid(x=False,y=True)
+        self.AxisMinuteDealMinus = pg.AxisItem(orientation='bottom')
+        self.CandleMinuteDealMinusDraw=self.MainUi.tab_DayTrading.addPlot(row=1,col=0,axisItems={'bottom': self.AxisMinuteDealMinus})
+        self.CandleMinuteDealMinusDraw.setXLink(self.CandleMinuteKDraw)
+        self.CandleMinuteDealMinusDraw.showAxis('right',show=True)
+        self.CandleMinuteDealMinusDraw.showAxis('left',show=False)
+        self.CandleMinuteDealMinusDraw.showGrid(x=False,y=True)
         self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(0,7)
         self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(1,1)
 
@@ -265,9 +272,6 @@ class SKMainWindow(QMainWindow):
         self.CandleMinuteItem = Kitem_recive
         if self.CandleMinuteKDraw_Build_None:
             self.CandleMinuteKDraw.addItem(self.CandleMinuteItem)
-            self.CandleMinuteKDraw.showAxis('right',show=True)
-            self.CandleMinuteKDraw.showAxis('left',show=False)
-            self.CandleMinuteKDraw.showGrid(x=False,y=True)
             direct=os.path.abspath('../data')
             filelist = os.listdir('../data')
             file = filelist[-1]
@@ -275,13 +279,14 @@ class SKMainWindow(QMainWindow):
             self.yesterdayclose = tmpdf.at[tmpdf.last_valid_index(),'close']
             print(self.yesterdayclose)
             del tmpdf
-            self.YCline = pg.InfiniteLine(angle=0, movable=False)
+            self.YCline = pg.InfiniteLine(angle=0, movable=False,pen='w')
             self.CandleMinuteKDraw.addItem(self.YCline)
-            dict_tmp=self.CandleMinuteItem.data['ndatetime'][self.CandleMinuteItem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
-            self.AxisMinute.setTicks([dict_tmp.items()])
-            del dict_tmp
             self.YCline.setPos(self.yesterdayclose)
             self.curve=self.CandleMinuteKDraw.plot(pen='y')
+            dict_tmp=self.CandleMinuteItem.data['ndatetime'][self.CandleMinuteItem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
+            self.AxisMinute.setTicks([dict_tmp.items()])
+            self.AxisMinuteDealMinus.setTicks([dict_tmp.items()])
+            del dict_tmp
             tmpline=self.CandleMinuteItem.data.close.cumsum()
             self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
             self.curve.setData(self.avgline)

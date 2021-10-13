@@ -2,7 +2,7 @@ from PySide6.QtCore import QAbstractTableModel, QObject,Qt,QThread,Signal,Slot
 import multiprocessing as mp
 import time,os
 import typing
-import KlineItem
+import KlineItem,GlobalVar
 # QTableView 資料處理Model
 class PandasModel(QAbstractTableModel):
     def __init__(self):
@@ -51,8 +51,8 @@ class Candle12KDrawThread(QThread):
                     self.Candle12KItem_signal.emit(self.CandleItem12K)
                     self.creatItembool_None = False
                 else:
-                    if self.__Candledf12K.list12K[0] != self.CandleItem12K.lastidx or self.__Candledf12K.list12K[1] != self.CandleItem12K.close:
-                        self.CandleItem12K.set_data(self.__Candledf12K.df12K,self.__Candledf12K.list12K)
+                    if GlobalVar.NS.list12K[0] != self.CandleItem12K.lastidx or GlobalVar.NS.list12K[1] != self.CandleItem12K.close:
+                        self.CandleItem12K.set_data(self.__Candledf12K.df12K,GlobalVar.NS.list12K)
                         self.Candle12KItem_signal.emit(self.CandleItem12K)
                     else:
                         pass
@@ -81,6 +81,27 @@ class CandleMinKDrawThread(QThread):
                     else:
                         pass
 
+class CandleMinKDealMinusDrawThread(QThread):
+    def __init__(self,inputSignal):
+        super().__init__()
+        self.CandleMinuteDealMinusItem_signal = inputSignal
+        self.setItembool_None = True
+    def run(self):
+        while True:
+            nlist = GlobalVar.CandleMinuteDealMinus_Event.get()
+            if nlist is not None:
+                if self.setItembool_None:
+                    while self.__CandledfMinK.dfMinK.shape[0]==0:
+                        time.sleep(0.02)
+                    self.CandleItemMinuteDealMinus = KlineItem.BarItem(GlobalVar.NS.dfMinK.dealminus)
+                    self.CandleMinKItem_signal.emit(self.CandleItemMinuteDealMinus)
+                    self.setItembool_None = False
+                else:
+                    if self.__CandledfMinK.listMinK[0] != self.CandleItemMinuteDealMinus.lastidx or self.__CandledfMinK.listMinK[1] != self.CandleItemMinuteDealMinus.close:
+                        self.CandleItemMinK.set_data(self.__CandledfMinK.dfMinK,self.__CandledfMinK.listMinK)
+                        self.CandleMinKItem_signal.emit(self.CandleItemMinK)
+                    else:
+                        pass
 
 class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
     def __init__(self, func,*args):
