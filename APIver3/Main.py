@@ -35,6 +35,7 @@ class SKMainWindow(QMainWindow):
         # self.SKCommodityUI(self.SKMessage)
         self.SKRightUI() #權益數介面
         self.SKLoginUI()  # 登入介面
+        self.CandleMinuteKDrawUI() #分鐘線設定
         # ManuBar連結
         self.MainUi.actionLogin.triggered.connect(self.Login.ui.show)  # 登入介面連結
         self.MainUi.SysDetail.triggered.connect(self.SKMessage.ui.show) #系統資訊介面連結
@@ -245,21 +246,28 @@ class SKMainWindow(QMainWindow):
                 self.axis12k_ymin = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
                 self.axis12k_ymax = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
                 self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
+    def CandleMinuteKDrawUI(self):
+        self.AxisMinute = pg.AxisItem(orientation='bottom')
+        self.CandleMinuteKDraw = self.MainUi.tab_DayTrading.addPlot(row=0,col=0,axisItems={'bottom': self.AxisMinute})
+        now = time.localtime(time.time()).tm_hour
+        if now>14 or now<8 :
+            self.CandleMinuteKDraw.setXRange(0,827)
+        elif now>=8 and now<15:
+            self.CandleMinuteKDraw.setXRange(0,300)
+        self.AxisMinuteDeal = pg.AxisItem(orientation='bottom')
+        self.CandleMinuteDealDraw=self.MainUi.tab_DayTrading.addPlot(row=1,col=0,axisItems={'bottom': self.AxisMinuteDeal})
+        self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(0,7)
+        self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(1,1)
+
+
     @Slot(pg.GraphicsObject)
     def CandleMinuteKDrawFunc(self,Kitem_recive):
         self.CandleMinuteItem = Kitem_recive
         if self.CandleMinuteKDraw_Build_None:
-            self.AxisMinute = pg.AxisItem(orientation='bottom')
-            self.CandleMinuteKDraw = self.MainUi.tab_DayTrading.addPlot(row=0,col=0,axisItems={'bottom': self.AxisMinute})
             self.CandleMinuteKDraw.addItem(self.CandleMinuteItem)
             self.CandleMinuteKDraw.showAxis('right',show=True)
             self.CandleMinuteKDraw.showAxis('left',show=False)
             self.CandleMinuteKDraw.showGrid(x=False,y=True)
-            now = time.localtime(time.time()).tm_hour
-            if now>14 or now<8 :
-                self.CandleMinuteKDraw.setXRange(0,827)
-            elif now>=8 and now<15:
-                self.CandleMinuteKDraw.setXRange(0,300)
             direct=os.path.abspath('../data')
             filelist = os.listdir('../data')
             file = filelist[-1]

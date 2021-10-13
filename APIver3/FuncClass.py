@@ -42,17 +42,20 @@ class Candle12KDrawThread(QThread):
         self.creatItembool_None = True
     def run(self):
         while True:
-            self.__CandleItem12K_Event.wait()
-            if self.creatItembool_None:
-                while self.__Candledf12K.df12K.shape[0]==0:
-                    time.sleep(0.02)
-                self.CandleItem12K = KlineItem.CandleItem(self.__Candledf12K.df12K)
-                self.creatItembool_None = False
-                self.__CandleItem12K_Event.clear()
-            else:
-                self.CandleItem12K.set_data(self.__Candledf12K.df12K,self.__Candledf12K.list12K)
-                self.__CandleItem12K_Event.clear()
-            self.Candle12KItem_signal.emit(self.CandleItem12K)
+            nlist = self.__CandleItem12K_Event.get()
+            if nlist is not None: 
+                if self.creatItembool_None:
+                    while self.__Candledf12K.df12K.shape[0]==0:
+                        time.sleep(0.02)
+                    self.CandleItem12K = KlineItem.CandleItem(self.__Candledf12K.df12K)
+                    self.Candle12KItem_signal.emit(self.CandleItem12K)
+                    self.creatItembool_None = False
+                else:
+                    if self.__Candledf12K.list12K[0] != self.CandleItem12K.lastidx or self.__Candledf12K.list12K[1] != self.CandleItem12K.close:
+                        self.CandleItem12K.set_data(self.__Candledf12K.df12K,self.__Candledf12K.list12K)
+                        self.Candle12KItem_signal.emit(self.CandleItem12K)
+                    else:
+                        pass
 
 class CandleMinKDrawThread(QThread):
     def __init__(self,inputEvent,inputdf,inputSignal):
@@ -63,17 +66,20 @@ class CandleMinKDrawThread(QThread):
         self.creatItembool_None = True
     def run(self):
         while True:
-            self.__CandleItemMinK_Event.wait()
-            if self.creatItembool_None:
-                while self.__CandledfMinK.dfMinK.shape[0]==0:
-                    time.sleep(0.02)
-                self.CandleItemMinK = KlineItem.CandleItem(self.__CandledfMinK.dfMinK)
-                self.creatItembool_None = False
-                self.__CandleItemMinK_Event.clear()
-            else:
-                self.CandleItemMinK.set_data(self.__CandledfMinK.dfMinK,self.__CandledfMinK.listMinK)
-                self.__CandleItemMinK_Event.clear()
-            self.CandleMinKItem_signal.emit(self.CandleItemMinK)
+            nlist = self.__CandleItemMinK_Event.get()
+            if nlist is not None:
+                if self.creatItembool_None:
+                    while self.__CandledfMinK.dfMinK.shape[0]==0:
+                        time.sleep(0.02)
+                    self.CandleItemMinK = KlineItem.CandleItem(self.__CandledfMinK.dfMinK)
+                    self.CandleMinKItem_signal.emit(self.CandleItemMinK)
+                    self.creatItembool_None = False
+                else:
+                    if self.__CandledfMinK.listMinK[0] != self.CandleItemMinK.lastidx or self.__CandledfMinK.listMinK[1] != self.CandleItemMinK.close:
+                        self.CandleItemMinK.set_data(self.__CandledfMinK.dfMinK,self.__CandledfMinK.listMinK)
+                        self.CandleMinKItem_signal.emit(self.CandleItemMinK)
+                    else:
+                        pass
 
 
 class MyProcess(mp.Process):  # 定義一個Class，繼承Process類

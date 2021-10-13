@@ -173,18 +173,14 @@ class TicksTo12K(QThread):
                 if self.HisDone:
                     self.tickto12k(nlist[1])
                     if self.__CandleTarget.value == self.name:
-                        if self.__CandleItem12K_Event.is_set():
-                            self.__Candledf12K.list12K = [self.lastidx,self.Close]
-                            self.__Candledf12K.df12K = self.Candledf
-                        else: 
-                            self.__Candledf12K.list12K = [self.lastidx,self.Close]
-                            self.__Candledf12K.df12K = self.Candledf
-                            self.__CandleItem12K_Event.set()
+                        self.__Candledf12K.list12K = [self.lastidx,self.Close]
+                        self.__Candledf12K.df12K = self.Candledf
+                        self.__CandleItem12K_Event.put(nlist[2])
                 else:
                     self.HisListProcess(nlist[1])
                     if self.__CandleTarget.value == self.name:
                         self.__Candledf12K.df12K = self.Candledf
-                        self.__CandleItem12K_Event.set()
+                        self.__CandleItem12K_Event.put(nlist[2])
 
 class TicksToMinuteK(QThread):
     def __init__(self,inputname,inputindex,inputTuple):
@@ -260,17 +256,13 @@ class TicksToMinuteK(QThread):
                 if self.HisDone:
                     self.TicksToMinuteK(nlist[1])
                     if self.__CandleTarget.value == self.name:
-                        if self.__CandleItemMinK_Event.is_set():
-                            self.__CandledfMinK.listMinK = [self.lastidx,self.Close]
-                            self.__CandledfMinK.dfMinK = self.Candledf
-                        else: 
-                            self.__CandledfMinK.listMinK = [self.lastidx,self.Close]
-                            self.__CandledfMinK.dfMinK = self.Candledf
-                            self.__CandleItemMinK_Event.set()
+                        self.__CandledfMinK.listMinK = [self.lastidx,self.Close]
+                        self.__CandledfMinK.dfMinK = self.Candledf
+                        self.__CandleItemMinK_Event.put(nlist[2])
                 else:
                     self.HisListProcess(nlist[1])
                     if self.__CandleTarget.value == self.name:
                         self.__CandledfMinK.dfMinK = self.Candledf
-                        self.__CandleItemMinK_Event.set()
+                        self.__CandleItemMinK_Event.put(nlist[2])
 
 

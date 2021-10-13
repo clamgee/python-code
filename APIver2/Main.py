@@ -28,7 +28,6 @@ skO = comtypes.client.CreateObject(sk.SKOrderLib, interface=sk.ISKOrderLib)
 skQ = comtypes.client.CreateObject(sk.SKQuoteLib, interface=sk.ISKQuoteLib)
 skR = comtypes.client.CreateObject(sk.SKReplyLib, interface=sk.ISKReplyLib)
 
-
 class SKMainWindow(QMainWindow):  # 主視窗
     def __init__(self):
         super(SKMainWindow, self).__init__()

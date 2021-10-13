@@ -8,7 +8,7 @@ def Initialize():
     NS.dfMinK = pd.DataFrame() # 分鐘圖使用的pandas
     NS.listMinK = [] # 分鐘圖使用的比對參數
     global CandleItem12K_Event,CandleItemMinute_Event
-    CandleItem12K_Event = mp.Event()
-    CandleItemMinute_Event = mp.Event()
+    CandleItem12K_Event = mp.Queue()
+    CandleItemMinute_Event = mp.Queue()
     global CandleTarget
     CandleTarget = mp.Manager().Value(str,'')
