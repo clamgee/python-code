@@ -12,5 +12,6 @@ def Initialize():
     CandleItem12K_Event = mp.Queue()
     CandleItemMinute_Event = mp.Queue()
     CandleMinuteDealMinus_Event = mp.Queue()
-    global CandleTarget
+    global CandleTarget, SaveNotify
     CandleTarget = mp.Manager().Value(str,'')
+    SaveNotify = mp.Manager().Value(bool,False)

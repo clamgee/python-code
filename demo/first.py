@@ -2,7 +2,7 @@ import pyqtgraph as pg
 from pyqtgraph import GraphicsLayoutWidget
 import pandas as pd
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QApplication, QGraphicsView, QGraphicsScene, QGraphicsItem, QFrame
-from PyQt5.QtCore import QRectF
+from PyQt5.QtCore import QRectF,QEvent
 from PyQt5.uic import loadUi
 import sys
 import os
@@ -29,6 +29,7 @@ dict_tmp = tmp['ndatetime'].dt.strftime('%Y/%m/%d %H:%M:%S.%f').to_dict()
 class MainWindows(QMainWindow):
     def __init__(self):
         super(MainWindows, self).__init__()
+        pg.setConfigOption('leftButtonPan', False)
         loadUi(r'MG.ui', self)
         self.MyAxis = pg.AxisItem(orientation='bottom')
         self.MyAxis.setTicks([dict_tmp.items()])
@@ -50,6 +51,9 @@ class MainWindows(QMainWindow):
         self.P2.addItem(self.bar)
         # self.draw3.addItem(self.bar)
         # self.l.layout.setRowStretchFactor(0, 3)
+        self.P1.setMouseEnabled(x=False, y=False)
+        self.P1.setMenuEnabled(False)
+
 
 
 
@@ -57,6 +61,7 @@ class MainWindows(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    
     MG = MainWindows()
 
     MG.show()

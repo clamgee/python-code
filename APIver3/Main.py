@@ -25,6 +25,7 @@ import FuncUI,FuncClass,Config_dict,tickstokline,GlobalVar
 class SKMainWindow(QMainWindow):
     Candle12KItem_signal = Signal(object)
     CandleMinuteKItem_signal = Signal(object)
+    CandleMinuteDealMinusItem_signal = Signal(object)
     def __init__(self):
         super(SKMainWindow, self).__init__()
         self.MainUi = Ui_CapitalAPI()
@@ -47,6 +48,8 @@ class SKMainWindow(QMainWindow):
         self.Candle12KDraw_Build_None = True
         self.CandleMinuteKDraw_Build_None = True
         self.CandleMinuteKItem_signal.connect(self.CandleMinuteKDrawFunc)
+        self.CandleMinuteDealMinusDraw_Build_None = True
+        self.CandleMinuteDealMinusItem_signal.connect(self.CandleMinuteDealMinusDrawFunc)
         # 帳號處理
         self.SKID = '未登入'  # 登入帳號
         self.IBAccount = ''  # 期貨帳號
@@ -184,8 +187,8 @@ class SKMainWindow(QMainWindow):
         setattr(globals()['DataQueue'+str(pSKStock.nStockIdx)],'commodityIndex',pSKStock.nStockIdx)
         globals()['Tick12KQueue'+bstrStockNo] = mp.Queue()
         globals()['MinuteQueue'+bstrStockNo] = mp.Queue()
-        PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo])
-        Pass12KTuple =(globals()['Tick12KQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItem12K_Event,GlobalVar.NS)
+        PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo],GlobalVar.SaveNotify)
+        Pass12KTuple =(globals()['Tick12KQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItem12K_Event,GlobalVar.NS,GlobalVar.SaveNotify)
         PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItemMinute_Event,GlobalVar.CandleMinuteDealMinus_Event,GlobalVar.NS)
         self.DataProc = FuncClass.MyProcess(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
         self.DataProc.start()
@@ -200,6 +203,8 @@ class SKMainWindow(QMainWindow):
         self.Candle12KDrawThread.start()
         self.CandleMinKDrawThread = FuncClass.CandleMinKDrawThread(GlobalVar.CandleItemMinute_Event,GlobalVar.NS,self.CandleMinuteKItem_signal)
         self.CandleMinKDrawThread.start()
+        self.CandleMinuteDealMinusThread = FuncClass.CandleMinKDealMinusDrawThread(self.CandleMinuteDealMinusItem_signal)
+        self.CandleMinuteDealMinusThread.start()
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         if sum(nCode) !=0 :
             strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))
@@ -216,6 +221,8 @@ class SKMainWindow(QMainWindow):
             self.Candle12KDraw.showAxis('right',show=True)
             self.Candle12KDraw.showAxis('left',show=False)
             self.Candle12KDraw.showGrid(x=False,y=True)
+            self.Candle12KDraw.setMouseEnabled(x=False, y=False)
+            self.Candle12KDraw.setMenuEnabled(False)
             self.Candle12KDraw.addItem(self.CandleItem12K)
             self.axis12k_xmax = len(self.CandleItem12K.pictures)
             self.axis12k_xmin = self.axis12k_xmax-self.CandleItem12K.countK
@@ -263,15 +270,17 @@ class SKMainWindow(QMainWindow):
         self.CandleMinuteDealMinusDraw.showAxis('right',show=True)
         self.CandleMinuteDealMinusDraw.showAxis('left',show=False)
         self.CandleMinuteDealMinusDraw.showGrid(x=False,y=True)
+        self.CandleMinuteKDraw.setMouseEnabled(x=False, y=False)
+        self.CandleMinuteKDraw.setMenuEnabled(False)
+        self.CandleMinuteDealMinusDraw.setMouseEnabled(x=False, y=False)
+        self.CandleMinuteDealMinusDraw.setMenuEnabled(False)
         self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(0,7)
         self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(1,1)
 
-
     @Slot(pg.GraphicsObject)
     def CandleMinuteKDrawFunc(self,Kitem_recive):
-        self.CandleMinuteItem = Kitem_recive
         if self.CandleMinuteKDraw_Build_None:
-            self.CandleMinuteKDraw.addItem(self.CandleMinuteItem)
+            self.CandleMinuteKDraw.addItem(Kitem_recive)
             direct=os.path.abspath('../data')
             filelist = os.listdir('../data')
             file = filelist[-1]
@@ -282,43 +291,53 @@ class SKMainWindow(QMainWindow):
             self.YCline = pg.InfiniteLine(angle=0, movable=False,pen='w')
             self.CandleMinuteKDraw.addItem(self.YCline)
             self.YCline.setPos(self.yesterdayclose)
-            self.curve=self.CandleMinuteKDraw.plot(pen='y')
-            dict_tmp=self.CandleMinuteItem.data['ndatetime'][self.CandleMinuteItem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
+            dict_tmp=Kitem_recive.data['ndatetime'][Kitem_recive.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
             self.AxisMinute.setTicks([dict_tmp.items()])
             self.AxisMinuteDealMinus.setTicks([dict_tmp.items()])
             del dict_tmp
-            tmpline=self.CandleMinuteItem.data.close.cumsum()
+            tmpline=Kitem_recive.data.close.cumsum()
             self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
+            self.curve=self.CandleMinuteKDraw.plot(pen='y')
             self.curve.setData(self.avgline)
             del tmpline
-            self.CandleMinuteKDrawYrectHigh = max(self.CandleMinuteItem.data.high.max(),self.yesterdayclose)
-            self.CandleMinuteKDrawYrectLow = min(self.CandleMinuteItem.data.low.min(),self.yesterdayclose)
+            self.CandleMinuteKDrawYrectHigh = max(Kitem_recive.data.high.max(),self.yesterdayclose)
+            self.CandleMinuteKDrawYrectLow = min(Kitem_recive.data.low.min(),self.yesterdayclose)
             self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
-            self.ChangeRectidx = self.CandleMinuteItem.lastidx
+            self.ChangeRectidx = Kitem_recive.lastidx
             self.CandleMinuteKDraw_Build_None = False
         else:
-            if self.ChangeRectidx != self.CandleMinuteItem.lastidx:
-                self.ChangeRectidx = self.CandleMinuteItem.lastidx
-                dict_tmp=self.CandleMinuteItem.data['ndatetime'][self.CandleMinuteItem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
+            if self.ChangeRectidx != Kitem_recive.lastidx:
+                self.ChangeRectidx = Kitem_recive.lastidx
+                dict_tmp=Kitem_recive.data['ndatetime'][Kitem_recive.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
                 self.AxisMinute.setTicks([dict_tmp.items()])
+                self.AxisMinuteDealMinus.setTicks([dict_tmp.items()])
                 del dict_tmp
-                tmpline=self.CandleMinuteItem.data.close.cumsum()
+                tmpline=Kitem_recive.data.close.cumsum()
                 self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
                 self.curve.setData(self.avgline)
                 del tmpline
-            if self.CandleMinuteKDrawYrectHigh < self.CandleMinuteItem.high:
-                self.CandleMinuteKDrawYrectHigh = self.CandleMinuteItem.high
+            if self.CandleMinuteKDrawYrectHigh < Kitem_recive.high:
+                self.CandleMinuteKDrawYrectHigh = Kitem_recive.high
                 self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
-            if self.CandleMinuteKDrawYrectLow > self.CandleMinuteItem.low:
-                self.CandleMinuteKDrawYrectLow = self.CandleMinuteItem.low
+            if self.CandleMinuteKDrawYrectLow > Kitem_recive.low:
+                self.CandleMinuteKDrawYrectLow = Kitem_recive.low
                 self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
- 
-def ThreadtoProcess(func,*args):
-    start = time.time()
-    p1 = mp.Process(target=func,args=(args[0],args[1],args[2],args[3],))
-    print('建立運算時間: ',time.time()-start,' 秒, Process:',p1.name,p1.pid)
-    p1.start()
-    # SKMain.SKMessage.ui.textBrowser.append('建立運算時間: %d 秒, 執行續: %d',time.time()-start,p1.pid())
+    @Slot(pg.GraphicsObject)
+    def CandleMinuteDealMinusDrawFunc(self,Kitem_recive):
+        if self.CandleMinuteDealMinusDraw_Build_None:
+            self.CandleMinuteDealMinusDraw.addItem(Kitem_recive)
+            self.CandleMinuteDealMinusDrawYrectHigh = Kitem_recive.data.dealminus.max()
+            self.CandleMinuteDealMinusDrawYrectLow = Kitem_recive.data.dealminus.min()
+            self.CandleMinuteDealMinusDraw.setYRange(self.CandleMinuteDealMinusDrawYrectLow,self.CandleMinuteDealMinusDrawYrectHigh)
+            self.DealMinusChangeRectidx = Kitem_recive.lastidx
+            self.CandleMinuteDealMinusDraw_Build_None = False
+        else:
+            if self.CandleMinuteDealMinusDrawYrectHigh < Kitem_recive.high:
+                self.CandleMinuteDealMinusDrawYrectHigh = Kitem_recive.high
+                self.CandleMinuteDealMinusDraw.setYRange(self.CandleMinuteDealMinusDrawYrectLow,self.CandleMinuteDealMinusDrawYrectHigh)
+            if self.CandleMinuteDealMinusDrawYrectLow > Kitem_recive.low:
+                self.CandleMinuteDealMinusDrawYrectLow = Kitem_recive.low
+                self.CandleMinuteDealMinusDraw.setYRange(self.CandleMinuteDealMinusDrawYrectLow,self.CandleMinuteDealMinusDrawYrectHigh)
 
 class SKReplyLibEvent:
     def OnConnect(self, bstrUserID, nErrorCode):
@@ -476,22 +495,11 @@ class SKQuoteLibEvents:
         rTime = QTime(8,30,00)
         # if rTime == nTime:
         #     SKMain.ConnectFun()
-        # jTime = QTime(13, 50, 00)
+        jTime = QTime(13, 50, 00)
         # # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
-        # if nTime == jTime and SKMain.Future.ticklst is not None:
-        #     ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume','deal'])
-        #     ticksdf =ticksdf.append(pd.DataFrame(SKMain.Future.ticklst,columns=['ndatetime','nbid','nask','close','volume','deal']),ignore_index=True,sort=False)
-        #     ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
-        #     filename = 'Ticks' + ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
-        #     ticksdf.to_csv('../data/'+filename, header=False, index=False)
-        #     df1=pd.read_csv('filename.txt')
-        #     df1=df1.append(pd.DataFrame([[filename]],columns=['filename']),ignore_index=True)
-        #     df1.to_csv('filename.txt',index=False)
-        #     del df1
-        #     del ticksdf
-        #     result=SKMain.Future.contractkpd.drop(columns=['high_avg','low_avg','dealbid','dealask','dealminus'])            
-        #     result.sort_values(by=['ndatetime'],ascending=True)
-        #     result.to_csv('../result.dat',header=True, index=False,mode='w')
+        if nTime == jTime:
+            GlobalVar.SaveNotify.set(True)
+
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
     

@@ -4,7 +4,7 @@ import time,os
 import numpy as np
 import pandas as pd
 import multiprocessing as mp
-from PySide6.QtCore import QThread
+from PySide6.QtCore import QThread,QTime,Qt
 
 
 class DataToTicks(QThread):
@@ -15,11 +15,13 @@ class DataToTicks(QThread):
         self.__queue = inputTuple[0]
         self.__connect12K_queue = inputTuple[1]
         self.__connectMinuteK_queue = inputTuple[2]
+        self.__SaveNotify = inputTuple[3]
         self.TickList = []
         self.ListTransform = False
         self.LastTick = 0
         self.LastTickClose = 0
         self.hisbol = True #是否為歷史Data
+        self.__FileSave = True
 
     def Ticks(self,nlist):
         # [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nclose),int(nQty),nhis]
@@ -68,6 +70,21 @@ class DataToTicks(QThread):
             nlist = self.__queue.get()
             if nlist is not None :
                 self.Ticks(nlist)
+            
+            if self.__SaveNotify.value and self.__FileSave:
+                ticksdf =ticksdf.append(pd.DataFrame(self.TickList,columns=['ndatetime','nbid','nask','close','volume','deal']),ignore_index=True,sort=False)
+                ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
+                filename = 'Ticks' + ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
+                ticksdf.to_csv('../data/'+filename, header=False, index=False)
+                df1=pd.read_csv('filename.txt')
+                df1=df1.append(pd.DataFrame([[filename]],columns=['filename']),ignore_index=True)
+                df1.to_csv('filename.txt',index=False)
+                del df1
+                del ticksdf
+                now = time.localtime()
+                localtime = QTime(now.tm_hour, now.tm_min, now.tm_sec).toString(Qt.ISODate)
+                print(localtime+' Ticks已存檔!!')
+                self.__FileSave = False
 
 class TicksTo12K(QThread):
     def __init__(self,inputname,inputindex,inputTuple):
@@ -78,6 +95,7 @@ class TicksTo12K(QThread):
         self.__CandleTarget = inputTuple[1]
         self.__CandleItem12K_Event = inputTuple[2]
         self.__Candledf12K = inputTuple[3]
+        self.__SaveNotify = inputTuple[4]
         self.Candledf=pd.read_csv('../result.dat',low_memory=False)
         self.Candledf['ndatetime']=pd.to_datetime(self.Candledf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.Candledf.sort_values(by=['ndatetime'],ascending=True)
@@ -92,6 +110,7 @@ class TicksTo12K(QThread):
         self.Close = self.Candledf.at[self.lastidx,'close']
         self.CheckHour = None
         self.HisDone = False
+        self.__FileSave = True
 
     def HisListProcess(self,nlist):
         for row in nlist:
@@ -181,6 +200,15 @@ class TicksTo12K(QThread):
                     if self.__CandleTarget.value == self.name:
                         self.__Candledf12K.df12K = self.Candledf
                         self.__CandleItem12K_Event.put(nlist[2])
+
+            if self.__SaveNotify.value and self.__FileSave:
+                result=self.Candledf.drop(columns=['high_avg','low_avg'])            
+                result.sort_values(by=['ndatetime'],ascending=True)
+                result.to_csv('../result.dat',header=True, index=False,mode='w')
+                now = time.localtime()
+                localtime = QTime(now.tm_hour, now.tm_min, now.tm_sec).toString(Qt.ISODate)
+                print(localtime+' 12K已存檔!!')
+                self.__FileSave = False
 
 class TicksToMinuteK(QThread):
     def __init__(self,inputname,inputindex,inputTuple):

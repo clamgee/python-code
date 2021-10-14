@@ -89,9 +89,8 @@ class CandleItem(pg.GraphicsObject):
 
 
 class BarItem(pg.GraphicsObject):
-    def __init__(self,inputname):
+    def __init__(self):
         pg.GraphicsObject.__init__(self)
-        self.name = inputname
         self.data = None
         self.columnname = None
         self.picturemain = QtGui.QPicture() #主K線圖
@@ -103,34 +102,25 @@ class BarItem(pg.GraphicsObject):
         self.low = 0
         self.high = 0
         self.lastidx = 0
+        self.close = 0
 
-    def set_data(self,nidx,ndata):
-        if self.data is None:
-            self.data = ndata.reset_index(drop=True)
-            self.lastidx = nidx
-            self.columnname = self.data.columns[-1]
+    def set_data(self,Candledf,nlist):
+        self.data = Candledf
+        lastidx = nlist[0]; close = nlist[1]
+        self.columnname = self.data.columns[-1]
+        if self.high < close:
+            self.high = close
+        if self.low > close:
+            self.low = close
+        if self.lastidx != lastidx:
             self.PaintChange = True
-        elif self.lastidx == nidx:
-            self.data.at[self.lastidx,self.columnname] = ndata.at[self.lastidx,self.columnname]
-        elif nidx is not None and nidx > self.lastidx:
-            col = ndata.columns.tolist()
-            for row in col :
-                self.data.at[self.lastidx,row]=ndata.at[self.lastidx,row]
-            self.data=self.data.append(ndata.tail(nidx-self.lastidx),ignore_index=True)
-            self.lastidx = nidx
-            self.PaintChange = True
-        else :
-            print('繪圖資料有誤!!',self.name,nidx)
-            pass
-        if self.data[self.columnname].max()>self.high:
-            self.high=self.data[self.columnname].max()
-        if self.data[self.columnname].min()<self.low:
-            self.low=self.data[self.columnname].min()
-
+            self.lastidx = self.data.last_valid_index()
         self.generatePicture()
         self.informViewBoundsChanged()
-        self._updateView() #強制圖形更新
-    
+        if self.close != close:
+            self.close = self.data.at[self.lastidx,self.columnname]
+            self.update()
+
     def generatePicture(self):    
         # 重畫或者最後一根K線
         if int(len(self.pictures))>1:
@@ -180,27 +170,3 @@ class BarItem(pg.GraphicsObject):
     
     def boundingRect(self):
         return QtCore.QRectF(0,self.low,len(self.pictures),(self.high-self.low)) 
-
-class KlineWidget(pg.PlotWidget):
-    def __init__(self,name):
-        pg.PlotWidget.__init__(self)
-        self.name=name
-        self.showGrid(y=True)
-        self.plotItem.hideAxis('left')
-        self.plotItem.showAxis('right')
-        self.right=None
-        self.high=None
-        self.low=None
-        
-    def update(self,xmin,xmax,ymin,ymax,fps):
-        self.plotItem.setLabel('top',text='FPS: '+str(fps))        
-        if self.right!=xmax or self.high!=ymax or self.low!=ymin:
-            self.right=xmax
-            # self.plt.setRange(xRange=(xmin,xmax),yRange=(ymin,ymax))
-            self.setXRange(xmin,xmax)
-            self.setYRange(ymin,ymax)
-
-        # if self.high!=ymax or self.low!=ymin:
-        #     self.low=ymin
-        #     self.high=ymax
-        #     self.plt.setYRange(ymin,ymax)
