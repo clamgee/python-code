@@ -72,13 +72,14 @@ class DataToTicks(QThread):
                 self.Ticks(nlist)
             
             if self.__SaveNotify.value and self.__FileSave:
+                ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume','deal'])
                 ticksdf =ticksdf.append(pd.DataFrame(self.TickList,columns=['ndatetime','nbid','nask','close','volume','deal']),ignore_index=True,sort=False)
                 ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
                 filename = 'Ticks' + ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
                 ticksdf.to_csv('../data/'+filename, header=False, index=False)
-                df1=pd.read_csv('filename.txt')
+                df1=pd.read_csv('../filename.txt')
                 df1=df1.append(pd.DataFrame([[filename]],columns=['filename']),ignore_index=True)
-                df1.to_csv('filename.txt',index=False)
+                df1.to_csv('../filename.txt',index=False)
                 del df1
                 del ticksdf
                 now = time.localtime()

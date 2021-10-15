@@ -853,9 +853,9 @@ class SKQuoteLibEvents:
             ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
             filename = 'Ticks' + ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
             ticksdf.to_csv('../data/'+filename, header=False, index=False)
-            df1=pd.read_csv('filename.txt')
+            df1=pd.read_csv('../filename.txt')
             df1=df1.append(pd.DataFrame([[filename]],columns=['filename']),ignore_index=True)
-            df1.to_csv('filename.txt',index=False)
+            df1.to_csv('../filename.txt',index=False)
             del df1
             del ticksdf
             result=SKMain.Future.contractkpd.drop(columns=['high_avg','low_avg','dealbid','dealask','dealminus'])            

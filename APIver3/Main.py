@@ -70,6 +70,14 @@ class SKMainWindow(QMainWindow):
         self.SKCommodity.ui.commoditybtn.clicked.connect(self.commodityFunc)
         self.SKCommodity.ui.TDetailbtn.clicked.connect(self.SKTraDetailUI)
         self.SKCommodity.ui.Market_comboBox.currentIndexChanged.connect(self.MarketlistchangeFunc)
+        self.SKCommodity.ui.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.SKCommodity.ui.DomTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.SKCommodity.ui.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.DomModel = FuncClass.PandasModel()
+        self.SKCommodity.ui.DomTable.setModel(self.DomModel)
+    
+    def SKDomTableUpdate(self):
+        
 
     def SKRightUI(self):
         self.MainUi.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -495,10 +503,11 @@ class SKQuoteLibEvents:
         rTime = QTime(8,30,00)
         # if rTime == nTime:
         #     SKMain.ConnectFun()
-        jTime = QTime(13, 50, 00)
+        jTime = QTime(13, 46, 00)
         # # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
         if nTime == jTime:
             GlobalVar.SaveNotify.set(True)
+            print(GlobalVar.SaveNotify.value)
 
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
@@ -514,6 +523,14 @@ class SKQuoteLibEvents:
             nhis = False
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
             globals()['DataQueue'+str(sStockIdx)].put(nlist)
+    def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
+        total_dict={'買量':{0:nBestBidQty1,1:nBestBidQty2,2:nBestBidQty3,3:nBestBidQty4,4:nBestBidQty5},
+                    '買價':{0:int(nBestBid1/100),1:int(nBestBid2/100),2:int(nBestBid3/100),3:int(nBestBid4/100),4:int(nBestBid5/100)},
+                    '賣價':{0:int(nBestAsk1/100),1:int(nBestAsk2/100),2:int(nBestAsk3/100),3:int(nBestAsk4/100),4:int(nBestAsk5/100)},
+                    '賣量':{0:nBestAskQty1,1:nBestAskQty2,2:nBestAskQty3,3:nBestAskQty4,4:nBestAskQty5}}
+        if getattr(globals()['DomQueue'+str(sStockidx)]) == sStockidx:
+            globals()['DomQueue'+str(sStockidx)].put(total_dict)
+
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
