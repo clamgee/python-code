@@ -51,11 +51,11 @@ class Candle12KDrawThread(QThread):
                     self.Candle12KItem_signal.emit(self.CandleItem12K)
                     self.creatItembool_None = False
                 else:
-                    if GlobalVar.NS.list12K[0] != self.CandleItem12K.lastidx or GlobalVar.NS.list12K[1] != self.CandleItem12K.close:
-                        self.CandleItem12K.set_data(self.__Candledf12K.df12K,GlobalVar.NS.list12K)
-                        self.Candle12KItem_signal.emit(self.CandleItem12K)
-                    else:
-                        pass
+                    # if GlobalVar.NS.list12K[0] != self.CandleItem12K.lastidx or GlobalVar.NS.list12K[1] != self.CandleItem12K.close:
+                    self.CandleItem12K.set_data(self.__Candledf12K.df12K,GlobalVar.NS.list12K)
+                    self.Candle12KItem_signal.emit(self.CandleItem12K)
+                    # else:
+                    #     pass
 
 class CandleMinKDrawThread(QThread):
     def __init__(self,inputEvent,inputdf,inputSignal):
@@ -75,11 +75,9 @@ class CandleMinKDrawThread(QThread):
                     self.CandleMinKItem_signal.emit(self.CandleItemMinK)
                     self.creatItembool_None = False
                 else:
-                    if self.__CandledfMinK.listMinK[0] != self.CandleItemMinK.lastidx or self.__CandledfMinK.listMinK[1] != self.CandleItemMinK.close:
-                        self.CandleItemMinK.set_data(self.__CandledfMinK.dfMinK,self.__CandledfMinK.listMinK)
-                        self.CandleMinKItem_signal.emit(self.CandleItemMinK)
-                    else:
-                        pass
+                    # if self.__CandledfMinK.listMinK[0] != self.CandleItemMinK.lastidx or self.__CandledfMinK.listMinK[1] != self.CandleItemMinK.close:
+                    self.CandleItemMinK.set_data(self.__CandledfMinK.dfMinK,self.__CandledfMinK.listMinK)
+                    self.CandleMinKItem_signal.emit(self.CandleItemMinK)
 
 class CandleMinKDealMinusDrawThread(QThread):
     def __init__(self,inputSignal):
@@ -98,11 +96,11 @@ class CandleMinKDealMinusDrawThread(QThread):
                     self.CandleMinuteDealMinusItem_signal.emit(self.CandleItemMinuteDealMinus)
                     self.setItembool_None = False
                 else:
-                    if GlobalVar.NS.listMinDealMinus[0] != self.CandleItemMinuteDealMinus.lastidx or GlobalVar.NS.listMinDealMinus[1] != self.CandleItemMinuteDealMinus.close:
-                        self.CandleItemMinuteDealMinus.set_data(GlobalVar.NS.dfMinK[['ndatetime','dealminus']],GlobalVar.NS.listMinDealMinus)
-                        self.CandleMinuteDealMinusItem_signal.emit(self.CandleItemMinuteDealMinus)
-                    else:
-                        pass
+                    # if GlobalVar.NS.listMinDealMinus[0] != self.CandleItemMinuteDealMinus.lastidx or GlobalVar.NS.listMinDealMinus[1] != self.CandleItemMinuteDealMinus.close:
+                    self.CandleItemMinuteDealMinus.set_data(GlobalVar.NS.dfMinK[['ndatetime','dealminus']],GlobalVar.NS.listMinDealMinus)
+                    self.CandleMinuteDealMinusItem_signal.emit(self.CandleItemMinuteDealMinus)
+                    # else:
+                    #     pass
 
 class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
     def __init__(self, func,*args):
