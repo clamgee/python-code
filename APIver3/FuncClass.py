@@ -1,6 +1,8 @@
 from PySide6.QtCore import QAbstractTableModel, QObject,Qt,QThread,Signal,Slot
 import multiprocessing as mp
 import time,os
+import pandas as pd
+import numpy as np
 import typing
 import KlineItem,GlobalVar
 # QTableView 資料處理Model
@@ -111,4 +113,44 @@ class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
     def run(self):  # 必須的，啟動進程方法
         self.Thd = self.target(self.args[0],self.args[1],self.args[2])
         self.Thd.run()
+
+class DomDataProcess(mp.Process):
+    def __init__(self,*args):
+        super(DomDataProcess,self).__init__()
+        self.__Event = args[0]
+        self.__Queue = args[1]
+        self.__Domdf = args[2]
+        self.df = pd.DataFrame(np.arange(24).reshape(6,4), columns=['買量','買價','賣價','賣量']) #多空力道 DataFrame
+        self.df[['買量','買價','賣價','賣量']]=self.df[['買量','買價','賣價','賣量']].astype(str)
+        self.df.at[5,'買價']=str('')
+        self.df.at[5,'賣價']=str('')
+        self.__Domdf.Domdf = self.df
+    def run(self):
+        while True:
+            ndict = self.__Queue.get()
+            if ndict!=None:
+                for (t, x) in self.df.loc[0:4,['買量','買價','賣價','賣量']].iterrows():
+                    self.df.at[t,'買量']=str(ndict['買量'][t])
+                    self.df.at[t,'買價']=str(ndict['買價'][t])
+                    self.df.at[t,'賣價']=str(ndict['賣價'][t])
+                    self.df.at[t,'賣量']=str(ndict['賣量'][t])
+                bidQty = ndict['買量'].values()
+                askQty = ndict['賣量'].values()
+                self.df.at[5,'買量']=str(int(sum(bidQty)))
+                self.df.at[5,'賣量']=str(int(sum(askQty)))
+                self.__Domdf.Domdf = self.df
+                self.__Event.set()
+
+class DomTableUpdateThread(QThread):
+    def __init__(self, parent):
+        super().__init__(parent=parent)
+        self._parent = parent
+            
+    def run(self):
+        while True:
+            GlobalVar.Dom_Event.wait()
+            self._parent.DomModel.UpdateData(GlobalVar.NS.Domdf)
+            GlobalVar.Dom_Event.clear()
+
+
 

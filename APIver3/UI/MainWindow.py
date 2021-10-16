@@ -36,6 +36,7 @@ class Ui_CapitalAPI(object):
         self.Disconnectbtn.setFont(font)
         self.CommodityUIbtn = QAction(CapitalAPI)
         self.CommodityUIbtn.setObjectName(u"CommodityUIbtn")
+        self.CommodityUIbtn.setEnabled(False)
         self.CommodityUIbtn.setFont(font)
         self.centralwidget = QWidget(CapitalAPI)
         self.centralwidget.setObjectName(u"centralwidget")
@@ -322,7 +323,7 @@ class Ui_CapitalAPI(object):
 
         self.retranslateUi(CapitalAPI)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(CapitalAPI)

@@ -1,7 +1,7 @@
 import sys,os,gc
 # # 使用PySide6套件
 from PySide6.QtUiTools import QUiLoader #使用 .LoginUI介面模組
-from PySide6.QtWidgets import QApplication,QDialog #PySide6介面控制模組
+from PySide6.QtWidgets import QApplication,QHeaderView #PySide6介面控制模組
 from PySide6 import QtCore, QtGui, QtWidgets
 import json
 import re
@@ -54,6 +54,8 @@ class CommodityForm(QtCore.QObject):
         self.ui.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
         # 顯示最大最小化關閉按鍵
         self.ui.setWindowFlags(QtCore.Qt.WindowMinMaxButtonsHint|QtCore.Qt.WindowCloseButtonHint)
+        self.ui.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.Commodity_comboBox_signal.connect(self.Commodity_comboBox_recive)
     @QtCore.Slot(int,str)
     def Commodity_comboBox_recive(self,sMarketNo,bstrStockData):

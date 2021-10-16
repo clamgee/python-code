@@ -33,16 +33,15 @@ class SKMainWindow(QMainWindow):
         self.showMaximized() #主視窗最大化
         # 介面導入
         self.SKMessageUI()  # 系統訊息介面
-        # self.SKCommodityUI(self.SKMessage)
         self.SKRightUI() #權益數介面
         self.SKLoginUI()  # 登入介面
         self.Setup_CandleMinuteKDrawUI() #分鐘線設定
+        # self.SKCommodityUI(self) #五檔介面
         # ManuBar連結
         self.MainUi.actionLogin.triggered.connect(self.Login.ui.show)  # 登入介面連結
         self.MainUi.SysDetail.triggered.connect(self.SKMessage.ui.show) #系統資訊介面連結
         self.MainUi.Connectbtn.triggered.connect(self.ConnectFunc) #SKCom 報價連線
-        self.MainUi.Disconnectbtn.triggered.connect(self.disconnectFunc) #SKCom 報價斷線
-        self.MainUi.CommodityUIbtn.triggered.connect(self.SKCommodityUI) #商品+5檔+大小單+下單介面
+        self.MainUi.Disconnectbtn.triggered.connect(self.disconnectFunc) #SKCom 報價斷線        
         #圖形訊號連結
         self.Candle12KItem_signal.connect(self.Candle12KDrawFunc)
         self.Candle12KDraw_Build_None = True
@@ -70,15 +69,15 @@ class SKMainWindow(QMainWindow):
         self.SKCommodity.ui.commoditybtn.clicked.connect(self.commodityFunc)
         self.SKCommodity.ui.TDetailbtn.clicked.connect(self.SKTraDetailUI)
         self.SKCommodity.ui.Market_comboBox.currentIndexChanged.connect(self.MarketlistchangeFunc)
-        self.SKCommodity.ui.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        # self.SKCommodity.ui.DomTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-        self.SKCommodity.ui.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.DomDataProc = FuncClass.DomDataProcess(GlobalVar.Dom_Event,GlobalVar.DomDataQueue,GlobalVar.NS)
+        self.DomDataProc.start()
+        print('報價五檔 Pid: ',self.DomDataProc.pid)
         self.DomModel = FuncClass.PandasModel()
+        self.DomModel.UpdateData(GlobalVar.NS.Domdf)
         self.SKCommodity.ui.DomTable.setModel(self.DomModel)
+        self.DomModelThread = FuncClass.DomTableUpdateThread(self)
+        self.DomModelThread.start()
     
-    def SKDomTableUpdate(self):
-        
-
     def SKRightUI(self):
         self.MainUi.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.MainUi.Right_TB.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -158,7 +157,9 @@ class SKMainWindow(QMainWindow):
         m_nCode = skQ.SKQuoteLib_EnterMonitor()
         if m_nCode==0:
             strMsg = '報價已連線!!!'
-            self.SKCommodityUI(self.SKMessage) #商品+5檔+大小單+下單介面
+            self.SKCommodityUI(self) #商品+5檔+大小單+下單介面
+            self.MainUi.CommodityUIbtn.setEnabled(True)
+            self.MainUi.CommodityUIbtn.triggered.connect(self.SKCommodity.ui.show) #商品+5檔+大小單+下單介面
         else:
             strMsg = skC.SKCenterLib_GetReturnCodeMessage(m_nCode)
         self.SKMessage.ui.textBrowser.append('EnterMonitor: '+strMsg)
@@ -191,6 +192,7 @@ class SKMainWindow(QMainWindow):
         pSKStock=sk.SKSTOCKLONG()
         skQ.SKQuoteLib_GetStockByNoLONG (bstrStockNo,pSKStock)
         GlobalVar.CandleTarget.set(bstrStockNo)
+        setattr(GlobalVar.CandleTarget,'commodityIndex',pSKStock.nStockIdx)
         globals()['DataQueue'+str(pSKStock.nStockIdx)] = mp.Queue()
         setattr(globals()['DataQueue'+str(pSKStock.nStockIdx)],'commodityIndex',pSKStock.nStockIdx)
         globals()['Tick12KQueue'+bstrStockNo] = mp.Queue()
@@ -524,13 +526,12 @@ class SKQuoteLibEvents:
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
             globals()['DataQueue'+str(sStockIdx)].put(nlist)
     def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
-        total_dict={'買量':{0:nBestBidQty1,1:nBestBidQty2,2:nBestBidQty3,3:nBestBidQty4,4:nBestBidQty5},
-                    '買價':{0:int(nBestBid1/100),1:int(nBestBid2/100),2:int(nBestBid3/100),3:int(nBestBid4/100),4:int(nBestBid5/100)},
-                    '賣價':{0:int(nBestAsk1/100),1:int(nBestAsk2/100),2:int(nBestAsk3/100),3:int(nBestAsk4/100),4:int(nBestAsk5/100)},
-                    '賣量':{0:nBestAskQty1,1:nBestAskQty2,2:nBestAskQty3,3:nBestAskQty4,4:nBestAskQty5}}
-        if getattr(globals()['DomQueue'+str(sStockidx)]) == sStockidx:
-            globals()['DomQueue'+str(sStockidx)].put(total_dict)
-
+        if GlobalVar.CandleTarget.commodityIndex == sStockidx:
+            total_dict={'買量':{0:nBestBidQty1,1:nBestBidQty2,2:nBestBidQty3,3:nBestBidQty4,4:nBestBidQty5},
+                        '買價':{0:int(nBestBid1/100),1:int(nBestBid2/100),2:int(nBestBid3/100),3:int(nBestBid4/100),4:int(nBestBid5/100)},
+                        '賣價':{0:int(nBestAsk1/100),1:int(nBestAsk2/100),2:int(nBestAsk3/100),3:int(nBestAsk4/100),4:int(nBestAsk5/100)},
+                        '賣量':{0:nBestAskQty1,1:nBestAskQty2,2:nBestAskQty3,3:nBestAskQty4,4:nBestAskQty5}}
+            GlobalVar.DomDataQueue.put(total_dict)
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
