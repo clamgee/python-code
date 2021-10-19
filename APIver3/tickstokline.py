@@ -15,8 +15,10 @@ class DataToTicks(QThread):
         self.__queue = inputTuple[0]
         self.__connect12K_queue = inputTuple[1]
         self.__connectMinuteK_queue = inputTuple[2]
-        self.__SaveNotify = inputTuple[3]
+        self.__NS = inputTuple[3]
+        self.__SaveNotify = inputTuple[4]
         self.TickList = []
+        self.FTlist = []
         self.ListTransform = False
         self.LastTick = 0
         self.LastTickClose = 0
@@ -62,6 +64,8 @@ class DataToTicks(QThread):
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nclose/100),int(nQty),int(deal)])
                     self.__connect12K_queue.put([self.ListTransform,[ndatetime,int(nclose/100),int(nQty)],nPtr])
                     self.__connectMinuteK_queue.put([self.ListTransform,[ndatetime,int(nclose/100),int(nQty),int(deal)],nPtr])
+                    if self.__NS.listFT[0] == self.name:
+                        self.FTlist.append([ndatetime]+self.__NS.listFT[1:])
         else:
             print('捨棄Tick序號: ',nPtr)
 
@@ -69,9 +73,11 @@ class DataToTicks(QThread):
         while True:
             nlist = self.__queue.get()
             if nlist is not None :
-                self.Ticks(nlist)
-            
-            if self.__SaveNotify.value and self.__FileSave:
+                self.Ticks(nlist)            
+            elif self.__SaveNotify.value and self.__FileSave:
+                now = time.localtime()
+                localtime = QTime(now.tm_hour, now.tm_min, now.tm_sec).toString(Qt.ISODate)
+                print(localtime+' Ticks開始存檔!!')
                 ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume','deal'])
                 ticksdf =ticksdf.append(pd.DataFrame(self.TickList,columns=['ndatetime','nbid','nask','close','volume','deal']),ignore_index=True,sort=False)
                 ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
@@ -86,6 +92,8 @@ class DataToTicks(QThread):
                 localtime = QTime(now.tm_hour, now.tm_min, now.tm_sec).toString(Qt.ISODate)
                 print(localtime+' Ticks已存檔!!')
                 self.__FileSave = False
+            else:
+                pass
 
 class TicksTo12K(QThread):
     def __init__(self,inputname,inputindex,inputTuple):
@@ -220,7 +228,7 @@ class TicksToMinuteK(QThread):
         self.__CandleTarget = inputTuple[1]
         self.__CandleItemMinK_Event = inputTuple[2]
         self.__CandleMinuteDealMinus_Event = inputTuple[3]
-        self.__CandledfMinK = inputTuple[4]
+        self.__NS = inputTuple[4]
         self.Candledf = None
         self.HisDone = False
         self.mm=0
@@ -261,6 +269,9 @@ class TicksToMinuteK(QThread):
         self.High=self.Candledf.at[self.lastidx,'high']
         self.Low=self.Candledf.at[self.lastidx,'low']
         self.Close=self.Candledf.at[self.lastidx,'close']
+        self.Candledf['big']=0
+        self.Candledf['small']=0
+        self.Candledf[['open','high','low','close','volume','dealminus','big','small']]= self.Candledf[['open','high','low','close','volume','dealminus','big','small']].astype(int)
 
     def TicksToMinuteK(self,nlist):
         ndatetime = nlist[0]; nclose = nlist[1]; nQty = nlist[2] ; ndeal = nlist[3]
@@ -268,7 +279,7 @@ class TicksToMinuteK(QThread):
             self.mm=ndatetime.replace(second=0,microsecond=0)
             self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
             tmpdeal=self.Candledf.at[self.lastidx,'dealminus']+ndeal
-            self.Candledf=self.Candledf.append(pd.DataFrame([[self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal]],columns=['ndatetime','open','high','low','close','volume','dealminus']),ignore_index=True,sort=False)
+            self.Candledf=self.Candledf.append(pd.DataFrame([[self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,self.Candledf.at[self.lastidx,'big'],self.Candledf.at[self.lastidx,'small']]],columns=['ndatetime','open','high','low','close','volume','dealminus','big','small']),ignore_index=True,sort=False)
             self.High = self.Low = self.Close = nclose
             self.lastidx=self.Candledf.last_valid_index()
         elif ndatetime < self.mm1 :
@@ -290,13 +301,27 @@ class TicksToMinuteK(QThread):
                 if self.HisDone:
                     self.TicksToMinuteK(nlist[1])
                     if self.__CandleTarget.value == self.name:
-                        self.__CandledfMinK.listMinK = [self.lastidx,self.Close]
-                        self.__CandledfMinK.listMinDealMinus = [self.lastidx,self.Candledf.at[self.lastidx,'dealminus']]
-                        self.__CandledfMinK.dfMinK = self.Candledf
+                        self.__NS.listMinK = [self.lastidx,self.Close]
+                        self.__NS.listMinDealMinus = [self.lastidx,self.Candledf.at[self.lastidx,'dealminus']]
+                        self.__NS.dfMinK = self.Candledf
                         self.__CandleItemMinK_Event.put(nlist[2])
                         self.__CandleMinuteDealMinus_Event.put(nlist[2])
                 else:
                     self.HisListProcess(nlist[1])
                     if self.__CandleTarget.value == self.name:
-                        self.__CandledfMinK.dfMinK = self.Candledf
+                        self.__NS.dfMinK = self.Candledf
                         self.__CandleItemMinK_Event.put(nlist[2])
+
+# class FutureTradeInfoThd(QThread):
+#     def __init__(self,inputname,inputindex,inputTuple):
+#         super(TicksToMinuteK, self).__init__()
+#         self.name = inputname
+#         self.commodityIndex = inputindex
+#         self.__NS = inputTuple[0]
+#         self.__Event = inputTuple[1]
+    
+#     def run(self):
+#         # [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
+#         MP_dict = {'ComCont':{0:nBuyTotalCount,1:nSellTotalCount,2:int(nSellTotalCount-nBuyTotalCount)},
+#         'ComQty':{0:nBuyTotalQty,1:nSellTotalQty,2:int(nBuyTotalQty-nSellTotalQty)},
+#         'DealCont':{0:nBuyDealTotalCount,1:nSellDealTotalCount,2:int(nSellDealTotalCount-nBuyDealTotalCount)}}

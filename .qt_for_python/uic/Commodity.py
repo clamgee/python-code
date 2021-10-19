@@ -95,11 +95,6 @@ class Ui_CommodityForm(object):
 
         self.gridLayout.addWidget(self.DomTable, 1, 0, 1, 1)
 
-        self.MPTableView = QTableView(CommodityForm)
-        self.MPTableView.setObjectName(u"MPTableView")
-
-        self.gridLayout.addWidget(self.MPTableView, 2, 0, 1, 1)
-
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.label_3 = QLabel(CommodityForm)
@@ -248,6 +243,41 @@ class Ui_CommodityForm(object):
 
         self.gridLayout.addLayout(self.horizontalLayout_6, 7, 0, 1, 1)
 
+        self.MPTable = QTableWidget(CommodityForm)
+        if (self.MPTable.columnCount() < 4):
+            self.MPTable.setColumnCount(4)
+        __qtablewidgetitem = QTableWidgetItem()
+        __qtablewidgetitem.setTextAlignment(Qt.AlignCenter);
+        self.MPTable.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        __qtablewidgetitem1.setTextAlignment(Qt.AlignCenter);
+        self.MPTable.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        __qtablewidgetitem2.setTextAlignment(Qt.AlignCenter);
+        self.MPTable.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        __qtablewidgetitem3.setTextAlignment(Qt.AlignCenter);
+        self.MPTable.setHorizontalHeaderItem(3, __qtablewidgetitem3)
+        if (self.MPTable.rowCount() < 4):
+            self.MPTable.setRowCount(4)
+        __qtablewidgetitem4 = QTableWidgetItem()
+        __qtablewidgetitem4.setTextAlignment(Qt.AlignCenter);
+        self.MPTable.setVerticalHeaderItem(0, __qtablewidgetitem4)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        __qtablewidgetitem5.setTextAlignment(Qt.AlignCenter);
+        self.MPTable.setVerticalHeaderItem(1, __qtablewidgetitem5)
+        __qtablewidgetitem6 = QTableWidgetItem()
+        __qtablewidgetitem6.setTextAlignment(Qt.AlignCenter);
+        self.MPTable.setVerticalHeaderItem(2, __qtablewidgetitem6)
+        __qtablewidgetitem7 = QTableWidgetItem()
+        __qtablewidgetitem7.setTextAlignment(Qt.AlignCenter);
+        self.MPTable.setVerticalHeaderItem(3, __qtablewidgetitem7)
+        self.MPTable.setObjectName(u"MPTable")
+        self.MPTable.setRowCount(4)
+        self.MPTable.setColumnCount(4)
+
+        self.gridLayout.addWidget(self.MPTable, 2, 0, 1, 1)
+
         self.gridLayout.setRowStretch(0, 1)
         self.gridLayout.setRowStretch(1, 5)
         self.gridLayout.setRowStretch(2, 4)
@@ -305,5 +335,21 @@ class Ui_CommodityForm(object):
         self.dealbox.setText(QCoreApplication.translate("CommodityForm", u"\u76e4\u4e2d:", None))
         self.OrderCancel_btn_pawn.setText(QCoreApplication.translate("CommodityForm", u"\u4e00\u9375\u522a\u55ae", None))
         self.ClosePositionAll_btn_pawn.setText(QCoreApplication.translate("CommodityForm", u"\u4e00\u9375\u5e73\u5009", None))
+        ___qtablewidgetitem = self.MPTable.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("CommodityForm", u"\u59d4\u8a17\u53e3\u6578", None));
+        ___qtablewidgetitem1 = self.MPTable.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("CommodityForm", u"\u59d4\u8a17\u7b46\u6578", None));
+        ___qtablewidgetitem2 = self.MPTable.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("CommodityForm", u"\u6210\u4ea4\u7b46\u6578", None));
+        ___qtablewidgetitem3 = self.MPTable.horizontalHeaderItem(3)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("CommodityForm", u"\u6210\u4ea4\u53e3\u6578", None));
+        ___qtablewidgetitem4 = self.MPTable.verticalHeaderItem(0)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("CommodityForm", u"\u8cb7\u9032", None));
+        ___qtablewidgetitem5 = self.MPTable.verticalHeaderItem(1)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("CommodityForm", u"\u8ce3\u51fa", None));
+        ___qtablewidgetitem6 = self.MPTable.verticalHeaderItem(2)
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("CommodityForm", u"\u5dee\u984d", None));
+        ___qtablewidgetitem7 = self.MPTable.verticalHeaderItem(3)
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("CommodityForm", u"\u7e3d\u53e3\u6578", None));
     # retranslateUi
 

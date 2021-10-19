@@ -14,6 +14,7 @@ def Initialize():
     NS.dfMinK = pd.DataFrame() # 分鐘圖使用的pandas
     NS.listMinK = [] # 分鐘圖使用的比對參數
     NS.listMinDealMinus =[] # 多空力道圖使用的比對參數
+    NS.listFT = [] #期貨交易委買賣資訊
     CandleItemMinute_Event = mp.Queue()
     CandleMinuteDealMinus_Event = mp.Queue()
     # 五檔介面

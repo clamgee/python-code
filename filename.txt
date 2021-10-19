@@ -624,3 +624,5 @@ Ticks2021-10-12.txt
 Ticks2021-10-13.txt
 Ticks2021-10-14.txt
 Ticks2021-10-15.txt
+Ticks2021-10-18.txt
+Ticks2021-10-19.txt

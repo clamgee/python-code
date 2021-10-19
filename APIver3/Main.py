@@ -197,7 +197,7 @@ class SKMainWindow(QMainWindow):
         setattr(globals()['DataQueue'+str(pSKStock.nStockIdx)],'commodityIndex',pSKStock.nStockIdx)
         globals()['Tick12KQueue'+bstrStockNo] = mp.Queue()
         globals()['MinuteQueue'+bstrStockNo] = mp.Queue()
-        PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo],GlobalVar.SaveNotify)
+        PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo],GlobalVar.NS,GlobalVar.SaveNotify)
         Pass12KTuple =(globals()['Tick12KQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItem12K_Event,GlobalVar.NS,GlobalVar.SaveNotify)
         PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItemMinute_Event,GlobalVar.CandleMinuteDealMinus_Event,GlobalVar.NS)
         self.DataProc = FuncClass.MyProcess(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
@@ -216,6 +216,7 @@ class SKMainWindow(QMainWindow):
         self.CandleMinuteDealMinusThread = FuncClass.CandleMinKDealMinusDrawThread(self.CandleMinuteDealMinusItem_signal)
         self.CandleMinuteDealMinusThread.start()
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
+        skQ.SKQuoteLib_RequestFutureTradeInfo(comtypes.automation.c_short(0),bstrStockNo)
         if sum(nCode) !=0 :
             strMsg=skC.SKCenterLib_GetReturnCodeMessage(sum(nCode))
             self.SKMessage.ui.textBrowser.append('商品訂閱錯誤: '+strMsg)
@@ -505,7 +506,7 @@ class SKQuoteLibEvents:
         rTime = QTime(8,30,00)
         # if rTime == nTime:
         #     SKMain.ConnectFun()
-        jTime = QTime(13, 46, 00)
+        jTime = QTime(5, 41, 00)
         # # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
         if nTime == jTime:
             GlobalVar.SaveNotify.set(True)
@@ -532,6 +533,9 @@ class SKQuoteLibEvents:
                         '賣價':{0:int(nBestAsk1/100),1:int(nBestAsk2/100),2:int(nBestAsk3/100),3:int(nBestAsk4/100),4:int(nBestAsk5/100)},
                         '賣量':{0:nBestAskQty1,1:nBestAskQty2,2:nBestAskQty3,3:nBestAskQty4,4:nBestAskQty5}}
             GlobalVar.DomDataQueue.put(total_dict)
+    def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount):
+        if GlobalVar.CandleTarget.commodityIndex == sStockidx:
+            GlobalVar.NS.listFT = [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()

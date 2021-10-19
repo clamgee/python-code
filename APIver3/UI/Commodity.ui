@@ -132,9 +132,6 @@
      <item row="1" column="0">
       <widget class="QTableView" name="DomTable"/>
      </item>
-     <item row="2" column="0">
-      <widget class="QTableView" name="MPTableView"/>
-     </item>
      <item row="3" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,2,1,2">
        <item>
@@ -344,6 +341,80 @@
         </widget>
        </item>
       </layout>
+     </item>
+     <item row="2" column="0">
+      <widget class="QTableWidget" name="MPTable">
+       <property name="rowCount">
+        <number>4</number>
+       </property>
+       <property name="columnCount">
+        <number>4</number>
+       </property>
+       <row>
+        <property name="text">
+         <string>買進</string>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>賣出</string>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>差額</string>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>總口數</string>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </row>
+       <column>
+        <property name="text">
+         <string>委託口數</string>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>委託筆數</string>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>成交筆數</string>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>成交口數</string>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </column>
+      </widget>
      </item>
     </layout>
    </item>
