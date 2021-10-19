@@ -74,7 +74,6 @@ class DataToTicks(QThread):
             nlist = self.__queue.get()
             if nlist is not None :
                 self.Ticks(nlist)
-                print('dataThd:',self.__SaveNotify,self.__FileSave)      
             elif self.__SaveNotify.value and self.__FileSave:
                 now = time.localtime()
                 localtime = QTime(now.tm_hour, now.tm_min, now.tm_sec).toString(Qt.ISODate)
