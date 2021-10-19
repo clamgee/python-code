@@ -194,6 +194,7 @@ class SKMainWindow(QMainWindow):
         GlobalVar.CandleTarget.set(bstrStockNo)
         setattr(GlobalVar.CandleTarget,'commodityIndex',pSKStock.nStockIdx)
         globals()['DataQueue'+str(pSKStock.nStockIdx)] = mp.Queue()
+        setattr(GlobalVar.SaveNotify,'commodityIndex',pSKStock.nStockIdx) 
         setattr(globals()['DataQueue'+str(pSKStock.nStockIdx)],'commodityIndex',pSKStock.nStockIdx)
         globals()['Tick12KQueue'+bstrStockNo] = mp.Queue()
         globals()['MinuteQueue'+bstrStockNo] = mp.Queue()
@@ -506,11 +507,12 @@ class SKQuoteLibEvents:
         rTime = QTime(8,30,00)
         # if rTime == nTime:
         #     SKMain.ConnectFun()
-        jTime = QTime(5, 41, 00)
+        jTime = QTime(13, 46, 00)
         # # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
         if nTime == jTime:
             GlobalVar.SaveNotify.set(True)
-            print(GlobalVar.SaveNotify.value)
+            print('已變更存檔資訊',GlobalVar.SaveNotify.value)
+            globals()['DataQueue'+str(GlobalVar.SaveNotify.commodityIndex)].put(None)
 
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
