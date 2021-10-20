@@ -15,15 +15,17 @@ class DataToTicks(QThread):
         self.__queue = inputTuple[0]
         self.__connect12K_queue = inputTuple[1]
         self.__connectMinuteK_queue = inputTuple[2]
-        self.__NS = inputTuple[3]
-        self.__SaveNotify = inputTuple[4]
+        self.__PowerQueue = inputTuple[3]
+        self.__NS = inputTuple[4]
+        self.__SaveNotify = inputTuple[5]
         self.TickList = []
         self.FTlist = []
         self.ListTransform = False
         self.LastTick = 0
-        self.LastTickClose = 0
         self.hisbol = True #是否為歷史Data
         self.__FileSave = True
+        self.__bid = 0
+        self.__ask = 0
 
     def Ticks(self,nlist):
         # [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nclose),int(nQty),nhis]
@@ -32,22 +34,12 @@ class DataToTicks(QThread):
         ndatetime=datetime.datetime.strptime(nDate+" "+nTime+"."+nTimemicro,'%Y%m%d %H%M%S.%f')
         if self.LastTick < nPtr:
             self.LastTick = nPtr
-            if self.LastTickClose != 0:
-                if(nclose > self.LastTickClose) or (nclose >= nAsk):
-                    deal = nQty
-                elif (nclose < self.LastTickClose) or (nclose <= nBid):
-                    deal = 0-nQty
-                else:
-                    try:
-                        deal = 0
-                    except Exception as e:
-                        print(nPtr,self.LastTickClose,'Ticks 處理力道錯誤: ',nlist,'系統資訊: ',e)
+            if abs(nclose-nBid) >= abs(nclose-nAsk) :
+                deal = nQty
+                self.__bid += nQty
             else:
-                if nclose >=nAsk:
-                    deal = nQty
-                else:
-                    deal = 0 - nQty
-            self.LastTickClose = nclose
+                deal = 0 - nQty
+                self.__ask -= nQty
             # True:下載歷史資料至list, 2: 處理歷史list 3: 即時
             if self.hisbol:
                 self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nclose/100),int(nQty),int(deal)])
@@ -60,12 +52,14 @@ class DataToTicks(QThread):
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nclose/100),int(nQty),int(deal)])
                     self.__connect12K_queue.put([self.ListTransform,[ndatetime,int(nclose/100),int(nQty)],nPtr])
                     self.__connectMinuteK_queue.put([self.ListTransform,[ndatetime,int(nclose/100),int(nQty),int(deal)],nPtr])
+                    self.__PowerQueue.put([self.__bid,self.__ask])
                 else:
                     self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nclose/100),int(nQty),int(deal)])
                     self.__connect12K_queue.put([self.ListTransform,[ndatetime,int(nclose/100),int(nQty)],nPtr])
                     self.__connectMinuteK_queue.put([self.ListTransform,[ndatetime,int(nclose/100),int(nQty),int(deal)],nPtr])
-                    if self.__NS.listFT[0] == self.name:
-                        self.FTlist.append([ndatetime]+self.__NS.listFT[1:])
+                    self.__PowerQueue.put([self.__bid,self.__ask])
+                if self.__NS.listFT[0] == self.name:
+                    self.FTlist.append([ndatetime]+self.__NS.listFT[1:])
         else:
             print('捨棄Tick序號: ',nPtr)
 
@@ -74,10 +68,7 @@ class DataToTicks(QThread):
             nlist = self.__queue.get()
             if nlist is not None :
                 self.Ticks(nlist)
-            elif self.__SaveNotify.value and self.__FileSave:
-                now = time.localtime()
-                localtime = QTime(now.tm_hour, now.tm_min, now.tm_sec).toString(Qt.ISODate)
-                print(localtime+' Ticks開始存檔!!')
+            elif nlist==None and self.__SaveNotify.value and self.__FileSave:
                 ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume','deal'])
                 ticksdf =ticksdf.append(pd.DataFrame(self.TickList,columns=['ndatetime','nbid','nask','close','volume','deal']),ignore_index=True,sort=False)
                 ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
@@ -90,7 +81,7 @@ class DataToTicks(QThread):
                 del ticksdf
                 now = time.localtime()
                 localtime = QTime(now.tm_hour, now.tm_min, now.tm_sec).toString(Qt.ISODate)
-                print(localtime+' Ticks已存檔!!')
+                print(localtime,' Ticks已存檔!!')
                 self.__FileSave = False
             else:
                 pass
@@ -209,15 +200,16 @@ class TicksTo12K(QThread):
                     if self.__CandleTarget.value == self.name:
                         self.__Candledf12K.df12K = self.Candledf
                         self.__CandleItem12K_Event.put(nlist[2])
-
-            if self.__SaveNotify.value and self.__FileSave:
+            elif nlist==None and self.__SaveNotify.value and self.__FileSave:
                 result=self.Candledf.drop(columns=['high_avg','low_avg'])            
                 result.sort_values(by=['ndatetime'],ascending=True)
                 result.to_csv('../result.dat',header=True, index=False,mode='w')
                 now = time.localtime()
                 localtime = QTime(now.tm_hour, now.tm_min, now.tm_sec).toString(Qt.ISODate)
-                print(localtime+' 12K已存檔!!')
+                print(localtime,' 12K已存檔!!')
                 self.__FileSave = False
+            else:
+                pass
 
 class TicksToMinuteK(QThread):
     def __init__(self,inputname,inputindex,inputTuple):

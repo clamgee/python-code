@@ -1,10 +1,14 @@
 import sys,os,gc
+sys.path.append("..")
 # # 使用PySide6套件
 from PySide6.QtUiTools import QUiLoader #使用 .LoginUI介面模組
-from PySide6.QtWidgets import QApplication,QHeaderView #PySide6介面控制模組
+from PySide6.QtWidgets import QApplication,QHeaderView,QTableWidgetItem #PySide6介面控制模組
 from PySide6 import QtCore, QtGui, QtWidgets
 import json
 import re
+import GlobalVar
+import pandas as pd
+import numpy as np
 
 class LoginDialog(QtCore.QObject):
     def __init__(self):
@@ -57,6 +61,7 @@ class CommodityForm(QtCore.QObject):
         self.ui.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.Commodity_comboBox_signal.connect(self.Commodity_comboBox_recive)
+        self.MPowerTalbeUI()
     @QtCore.Slot(int,str)
     def Commodity_comboBox_recive(self,sMarketNo,bstrStockData):
         Line = bstrStockData.split(';')
@@ -87,7 +92,25 @@ class CommodityForm(QtCore.QObject):
                     pass
                 except AttributeError as e:
                     raise AttributeError("商品清單功能Bug 市場編號為: %d" %(sMarketNo),e)
-        
+
+    def MPowerTalbeUI(self):
+        self.ui.MPTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.MPTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.MPower = pd.DataFrame(np.arange(16).reshape(4,4), columns=['ComQty','ComCont','DealCont','DealQty'])
+        font = QtGui.QFont()
+        font.setBold(True)
+        i=0
+        while i < 4 :
+            j=0
+            while j < 4:
+                self.MPower.at[i,self.MPower.columns[j]] = QTableWidgetItem('')
+                self.MPower.at[i,self.MPower.columns[j]].setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+                if i == 2:
+                    self.MPower.at[i,self.MPower.columns[j]].setFont(font)
+                self.ui.MPTable.setItem(i, j, self.MPower.at[i,self.MPower.columns[j]])
+                j+=1
+            i+=1
+
 # if __name__ == "__main__":
 #     FuncUIApp = QApplication(sys.argv)
 #     SKLogin = LoginDialog()

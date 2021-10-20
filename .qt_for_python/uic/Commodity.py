@@ -18,7 +18,7 @@ class Ui_CommodityForm(object):
         if not CommodityForm.objectName():
             CommodityForm.setObjectName(u"CommodityForm")
         CommodityForm.setWindowModality(Qt.WindowModal)
-        CommodityForm.resize(450, 800)
+        CommodityForm.resize(450, 727)
         CommodityForm.setMinimumSize(QSize(0, 0))
         CommodityForm.setBaseSize(QSize(450, 800))
         CommodityForm.setContextMenuPolicy(Qt.ActionsContextMenu)
@@ -272,15 +272,30 @@ class Ui_CommodityForm(object):
         __qtablewidgetitem7 = QTableWidgetItem()
         __qtablewidgetitem7.setTextAlignment(Qt.AlignCenter);
         self.MPTable.setVerticalHeaderItem(3, __qtablewidgetitem7)
+        font = QFont()
+        font.setBold(True)
+        __qtablewidgetitem8 = QTableWidgetItem()
+        __qtablewidgetitem8.setFont(font);
+        self.MPTable.setItem(2, 0, __qtablewidgetitem8)
+        __qtablewidgetitem9 = QTableWidgetItem()
+        __qtablewidgetitem9.setFont(font);
+        self.MPTable.setItem(2, 1, __qtablewidgetitem9)
+        __qtablewidgetitem10 = QTableWidgetItem()
+        __qtablewidgetitem10.setFont(font);
+        self.MPTable.setItem(2, 2, __qtablewidgetitem10)
+        __qtablewidgetitem11 = QTableWidgetItem()
+        __qtablewidgetitem11.setFont(font);
+        self.MPTable.setItem(2, 3, __qtablewidgetitem11)
         self.MPTable.setObjectName(u"MPTable")
+        self.MPTable.setStyleSheet(u"QHeaderView::section{background:yellow}")
         self.MPTable.setRowCount(4)
         self.MPTable.setColumnCount(4)
 
         self.gridLayout.addWidget(self.MPTable, 2, 0, 1, 1)
 
         self.gridLayout.setRowStretch(0, 1)
-        self.gridLayout.setRowStretch(1, 5)
-        self.gridLayout.setRowStretch(2, 4)
+        self.gridLayout.setRowStretch(1, 4)
+        self.gridLayout.setRowStretch(2, 3)
         self.gridLayout.setRowStretch(3, 1)
         self.gridLayout.setRowStretch(4, 1)
         self.gridLayout.setRowStretch(5, 1)
@@ -351,5 +366,10 @@ class Ui_CommodityForm(object):
         ___qtablewidgetitem6.setText(QCoreApplication.translate("CommodityForm", u"\u5dee\u984d", None));
         ___qtablewidgetitem7 = self.MPTable.verticalHeaderItem(3)
         ___qtablewidgetitem7.setText(QCoreApplication.translate("CommodityForm", u"\u7e3d\u53e3\u6578", None));
+
+        __sortingEnabled = self.MPTable.isSortingEnabled()
+        self.MPTable.setSortingEnabled(False)
+        self.MPTable.setSortingEnabled(__sortingEnabled)
+
     # retranslateUi
 

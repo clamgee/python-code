@@ -152,5 +152,45 @@ class DomTableUpdateThread(QThread):
             self._parent.DomModel.UpdateData(GlobalVar.NS.Domdf)
             GlobalVar.Dom_Event.clear()
 
+class MPTableBigSmallThread(QThread):
+    def __init__(self, parent: typing.Optional[QObject] = ...) -> None:
+        super().__init__(parent=parent)
+        self._parent = parent
+    def run(self):
+        while True:
+            GlobalVar.MP_Event.wait()
+            MP_dict = {'ComCont':{0:GlobalVar.NS.listFT[1],1:GlobalVar.NS.listFT[2],2:int(GlobalVar.NS.listFT[2]-GlobalVar.NS.listFT[1])},
+                        'ComQty':{0:GlobalVar.NS.listFT[3],1:GlobalVar.NS.listFT[4],2:int(GlobalVar.NS.listFT[3]-GlobalVar.NS.listFT[4])},
+                        'DealCont':{0:GlobalVar.NS.listFT[5],1:GlobalVar.NS.listFT[6],2:int(GlobalVar.NS.listFT[6]-GlobalVar.NS.listFT[5])}}
+            for key in MP_dict:
+                i = 0
+                while i < 3:
+                    self._parent.SKCommodity.MPower.at[i,key].setText(str(MP_dict[key][i]))
+                    if i == 2:
+                        if MP_dict[key][i] > 0:
+                            self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.red)
+                            self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.white)
+                        else:
+                            self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.green)
+                            self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.black)
+                    i+=1
+            GlobalVar.MP_Event.clear()
 
-
+class MPTablePowerThread(QThread):
+    def __init__(self, parent: typing.Optional[QObject] = ...) -> None:
+        super().__init__(parent=parent)
+        self._parent = parent
+    def run(self):
+        while True:
+            nlist = GlobalVar.PowerQueue.get()
+            if nlist != None:
+                self._parent.SKCommodity.MPower.at[0,'DealQty'].setText(str(nlist[0]))
+                self._parent.SKCommodity.MPower.at[1,'DealQty'].setText(str(nlist[1]))
+                self._parent.SKCommodity.MPower.at[2,'DealQty'].setText(str(nlist[0]+nlist[1]))
+                self._parent.SKCommodity.MPower.at[3,'DealQty'].setText(str(nlist[0]-nlist[1]))
+                if nlist[0]+nlist[1] >= 0:
+                    self._parent.SKCommodity.MPower.at[2,'DealQty'].setBackground(Qt.red)
+                    self._parent.SKCommodity.MPower.at[2,'DealQty'].setForeground(Qt.white)                    
+                else:
+                    self._parent.SKCommodity.MPower.at[2,'DealQty'].setBackground(Qt.green)
+                    self._parent.SKCommodity.MPower.at[2,'DealQty'].setForeground(Qt.black)

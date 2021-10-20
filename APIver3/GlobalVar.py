@@ -20,10 +20,12 @@ def Initialize():
     # 五檔介面
     global DomDataQueue, Dom_Event
     NS.Domdf = pd.DataFrame()
-    # NS.Domdf = pd.DataFrame(np.arange(24).reshape(6,4), columns=['買量','買價','賣價','賣量']) #多空力道 DataFrame
-    # NS.Domdf[['買量','買價','賣價','賣量']]=NS.Domdf[['買量','買價','賣價','賣量']].astype(str)
     DomDataQueue = mp.Queue()
     Dom_Event = mp.Event()
+    # 商品力道表
+    global MP_Event,PowerQueue 
+    MP_Event = mp.Event()
+    PowerQueue = mp.Queue()
     #全介面標的
     global CandleTarget, DomTarget, SaveNotify
     CandleTarget = mp.Manager().Value(str,'') # 所有圖形介面標的

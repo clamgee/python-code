@@ -77,6 +77,10 @@ class SKMainWindow(QMainWindow):
         self.SKCommodity.ui.DomTable.setModel(self.DomModel)
         self.DomModelThread = FuncClass.DomTableUpdateThread(self)
         self.DomModelThread.start()
+        self.MPTableBigSmallThread = FuncClass.MPTableBigSmallThread(self)
+        self.MPTableBigSmallThread.start()
+        self.MPTablePowerThread = FuncClass.MPTablePowerThread(self)
+        self.MPTablePowerThread.start()
     
     def SKRightUI(self):
         self.MainUi.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -198,7 +202,7 @@ class SKMainWindow(QMainWindow):
         setattr(globals()['DataQueue'+str(pSKStock.nStockIdx)],'commodityIndex',pSKStock.nStockIdx)
         globals()['Tick12KQueue'+bstrStockNo] = mp.Queue()
         globals()['MinuteQueue'+bstrStockNo] = mp.Queue()
-        PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo],GlobalVar.NS,GlobalVar.SaveNotify)
+        PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo],GlobalVar.PowerQueue,GlobalVar.NS,GlobalVar.SaveNotify)
         Pass12KTuple =(globals()['Tick12KQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItem12K_Event,GlobalVar.NS,GlobalVar.SaveNotify)
         PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItemMinute_Event,GlobalVar.CandleMinuteDealMinus_Event,GlobalVar.NS)
         self.DataProc = FuncClass.MyProcess(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
@@ -513,6 +517,7 @@ class SKQuoteLibEvents:
             GlobalVar.SaveNotify.set(True)
             print('已變更存檔資訊',GlobalVar.SaveNotify.value)
             globals()['DataQueue'+str(GlobalVar.SaveNotify.commodityIndex)].put(None)
+            globals()['Tick12KQueueTX00'].put(None)
 
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
@@ -538,6 +543,8 @@ class SKQuoteLibEvents:
     def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount):
         if GlobalVar.CandleTarget.commodityIndex == sStockidx:
             GlobalVar.NS.listFT = [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
+            if GlobalVar.MP_Event.is_set()==False:
+                GlobalVar.MP_Event.set()
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
