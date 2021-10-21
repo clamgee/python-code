@@ -73,9 +73,12 @@ class CandleMinKDrawThread(QThread):
                 if self.creatItembool_None:
                     while self.__CandledfMinK.dfMinK.shape[0]==0:
                         time.sleep(0.02)
+                    self.CandleItemMinK = KlineItem.CandleItem(self.__CandledfMinK.dfMinK)
+                    self.CandleMinKItem_signal.emit(self.CandleItemMinK)
                     self.creatItembool_None = False
-                self.CandleItemMinK.set_data(self.__CandledfMinK.dfMinK,self.__CandledfMinK.listMinK)
-                self.CandleMinKItem_signal.emit(self.CandleItemMinK)
+                else:
+                    self.CandleItemMinK.set_data(self.__CandledfMinK.dfMinK,self.__CandledfMinK.listMinK)
+                    self.CandleMinKItem_signal.emit(self.CandleItemMinK)
 
 class CandleMinKDealMinusDrawThread(QThread):
     def __init__(self,inputSignal):
