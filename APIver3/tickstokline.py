@@ -26,12 +26,14 @@ class DataToTicks(QThread):
         self.__FileSave = True
         self.__bid = 0
         self.__ask = 0
+        self.__checkhour = None
 
     def Ticks(self,nlist):
         # [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nclose),int(nQty),nhis]
         nPtr=nlist[0]; nDate=str(nlist[1]); nTime=str(nlist[2]).zfill(6); nTimemicro = nlist[3].zfill(6)
         nBid=nlist[4]; nAsk=nlist[5]; nclose=nlist[6]; nQty=nlist[7]; self.hisbol=nlist[8]; deal=0
         ndatetime=datetime.datetime.strptime(nDate+" "+nTime+"."+nTimemicro,'%Y%m%d %H%M%S.%f')
+        tmptime = ndatetime.hour
         if self.LastTick < nPtr:
             self.LastTick = nPtr
             if abs(nclose-nBid) >= abs(nclose-nAsk) :
@@ -40,6 +42,9 @@ class DataToTicks(QThread):
             else:
                 deal = 0 - nQty
                 self.__ask -= nQty
+            if tmptime == 8 and self.__checkhour == 4 :
+                self.__ask = self.__bid = 0
+            self.__checkhour = tmptime 
             # True:下載歷史資料至list, 2: 處理歷史list 3: 即時
             if self.hisbol:
                 self.TickList.append([ndatetime,int(nBid/100),int(nAsk/100),int(nclose/100),int(nQty),int(deal)])
@@ -220,7 +225,9 @@ class TicksToMinuteK(QThread):
         self.__CandleTarget = inputTuple[1]
         self.__CandleItemMinK_Event = inputTuple[2]
         self.__CandleMinuteDealMinus_Event = inputTuple[3]
-        self.__NS = inputTuple[4]
+        self.__CandleMinuteBig_Event = inputTuple[4]
+        self.__CandleMinuteSmall_Event = inputTuple[5]
+        self.__NS = inputTuple[6]
         self.Candledf = None
         self.HisDone = False
         self.mm=0
@@ -256,28 +263,33 @@ class TicksToMinuteK(QThread):
         self.Candledf=self.Candledf.rename_axis('ndatetime').reset_index()
         self.Candledf['ndatetime'] = pd.to_datetime(self.Candledf['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
         self.lastidx=self.Candledf.last_valid_index()
-        self.mm=self.Candledf.at[self.lastidx,'ndatetime'].replace(second=0,microsecond=0)
-        self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
+        if self.Candledf.at[self.lastidx,'ndatetime'] != None :
+            self.mm=self.Candledf.at[self.lastidx,'ndatetime'].replace(second=0,microsecond=0)
+            self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
         self.High=self.Candledf.at[self.lastidx,'high']
         self.Low=self.Candledf.at[self.lastidx,'low']
         self.Close=self.Candledf.at[self.lastidx,'close']
-        self.Candledf['big']=0
-        self.Candledf['small']=0
+        self.Candledf['big']=int(self.__NS.listFT[2]-self.__NS.listFT[1])
+        self.Candledf['small']=int(self.__NS.listFT[3]-self.__NS.listFT[4])
         self.Candledf[['open','high','low','close','volume','dealminus','big','small']]= self.Candledf[['open','high','low','close','volume','dealminus','big','small']].astype(int)
 
     def TicksToMinuteK(self,nlist):
         ndatetime = nlist[0]; nclose = nlist[1]; nQty = nlist[2] ; ndeal = nlist[3]
+        small=int(self.__NS.listFT[3]-self.__NS.listFT[4]); big=int(self.__NS.listFT[2]-self.__NS.listFT[1])
         if self.mm1==0 or ndatetime>=self.mm1:
             self.mm=ndatetime.replace(second=0,microsecond=0)
             self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
             tmpdeal=self.Candledf.at[self.lastidx,'dealminus']+ndeal
-            self.Candledf=self.Candledf.append(pd.DataFrame([[self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,self.Candledf.at[self.lastidx,'big'],self.Candledf.at[self.lastidx,'small']]],columns=['ndatetime','open','high','low','close','volume','dealminus','big','small']),ignore_index=True,sort=False)
+            self.Candledf=self.Candledf.append(pd.DataFrame([[self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,big,small]],columns=['ndatetime','open','high','low','close','volume','dealminus','big','small']),ignore_index=True,sort=False)
             self.High = self.Low = self.Close = nclose
             self.lastidx=self.Candledf.last_valid_index()
+            print(self.Candledf.tail(1))
         elif ndatetime < self.mm1 :
             self.Candledf.at[self.lastidx,'close']=self.Close=nclose
             self.Candledf.at[self.lastidx,'volume']+=nQty
             self.Candledf.at[self.lastidx,'dealminus']+=ndeal
+            self.Candledf.at[self.lastidx,'big']=big
+            self.Candledf.at[self.lastidx,'small']=small
             if self.High < nclose or self.Low > nclose:
                 self.Candledf.at[self.lastidx,'high']=self.High=max(self.High,nclose)
                 self.Candledf.at[self.lastidx,'low']=self.Low=min(self.Low,nclose)
@@ -295,9 +307,13 @@ class TicksToMinuteK(QThread):
                     if self.__CandleTarget.value == self.name:
                         self.__NS.listMinK = [self.lastidx,self.Close]
                         self.__NS.listMinDealMinus = [self.lastidx,self.Candledf.at[self.lastidx,'dealminus']]
+                        self.__NS.listMinBig = [self.lastidx,self.Candledf.at[self.lastidx,'big']]
+                        self.__NS.listMinSmall = [self.lastidx,self.Candledf.at[self.lastidx,'small']]
                         self.__NS.dfMinK = self.Candledf
                         self.__CandleItemMinK_Event.put(nlist[2])
-                        self.__CandleMinuteDealMinus_Event.put(nlist[2])
+                        self.__CandleMinuteDealMinus_Event.set()
+                        self.__CandleMinuteBig_Event.set()
+                        self.__CandleMinuteSmall_Event.set()
                 else:
                     self.HisListProcess(nlist[1])
                     if self.__CandleTarget.value == self.name:

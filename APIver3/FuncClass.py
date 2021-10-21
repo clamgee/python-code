@@ -73,36 +73,64 @@ class CandleMinKDrawThread(QThread):
                 if self.creatItembool_None:
                     while self.__CandledfMinK.dfMinK.shape[0]==0:
                         time.sleep(0.02)
-                    self.CandleItemMinK = KlineItem.CandleItem(self.__CandledfMinK.dfMinK)
-                    self.CandleMinKItem_signal.emit(self.CandleItemMinK)
                     self.creatItembool_None = False
-                else:
-                    # if self.__CandledfMinK.listMinK[0] != self.CandleItemMinK.lastidx or self.__CandledfMinK.listMinK[1] != self.CandleItemMinK.close:
-                    self.CandleItemMinK.set_data(self.__CandledfMinK.dfMinK,self.__CandledfMinK.listMinK)
-                    self.CandleMinKItem_signal.emit(self.CandleItemMinK)
+                self.CandleItemMinK.set_data(self.__CandledfMinK.dfMinK,self.__CandledfMinK.listMinK)
+                self.CandleMinKItem_signal.emit(self.CandleItemMinK)
 
 class CandleMinKDealMinusDrawThread(QThread):
     def __init__(self,inputSignal):
         super().__init__()
         self.CandleMinuteDealMinusItem_signal = inputSignal
         self.setItembool_None = True
+        self.CandleItemMinuteDealMinus = KlineItem.BarItem()
+
     def run(self):
         while True:
-            nlist = GlobalVar.CandleMinuteDealMinus_Event.get()
-            if nlist is not None:
-                if self.setItembool_None:
-                    while GlobalVar.NS.dfMinK.shape[0]==0:
-                        time.sleep(0.02)
-                    self.CandleItemMinuteDealMinus = KlineItem.BarItem()
-                    self.CandleItemMinuteDealMinus.set_data(GlobalVar.NS.dfMinK[['ndatetime','dealminus']],GlobalVar.NS.listMinDealMinus)
-                    self.CandleMinuteDealMinusItem_signal.emit(self.CandleItemMinuteDealMinus)
-                    self.setItembool_None = False
-                else:
-                    # if GlobalVar.NS.listMinDealMinus[0] != self.CandleItemMinuteDealMinus.lastidx or GlobalVar.NS.listMinDealMinus[1] != self.CandleItemMinuteDealMinus.close:
-                    self.CandleItemMinuteDealMinus.set_data(GlobalVar.NS.dfMinK[['ndatetime','dealminus']],GlobalVar.NS.listMinDealMinus)
-                    self.CandleMinuteDealMinusItem_signal.emit(self.CandleItemMinuteDealMinus)
-                    # else:
-                    #     pass
+            GlobalVar.CandleMinuteDealMinus_Event.wait()
+            if self.setItembool_None:
+                while GlobalVar.NS.dfMinK.shape[0]==0:
+                    time.sleep(0.02)
+                self.setItembool_None = False
+            self.CandleItemMinuteDealMinus.set_data(GlobalVar.NS.dfMinK[['ndatetime','dealminus']],GlobalVar.NS.listMinDealMinus)
+            self.CandleMinuteDealMinusItem_signal.emit(self.CandleItemMinuteDealMinus)
+            GlobalVar.CandleMinuteDealMinus_Event.clear()
+
+class CandleMinKBigDrawThread(QThread):
+    def __init__(self,inputSignal):
+        super().__init__()
+        self.CandleMinuteBigItem_signal = inputSignal
+        self.setItembool_None = True
+        self.CandleItemMinuteBig = KlineItem.BarItem()
+    
+    def run(self):
+        while True:
+            GlobalVar.CandleMinuteBig_Event.wait()
+            if self.setItembool_None:
+                while GlobalVar.NS.dfMinK.shape[0]==0:
+                    time.sleep(0.02)
+                self.setItembool_None = False
+            self.CandleItemMinuteBig.set_data(GlobalVar.NS.dfMinK[['ndatetime','big']],GlobalVar.NS.listMinBig)
+            self.CandleMinuteBigItem_signal.emit(self.CandleItemMinuteBig)
+            GlobalVar.CandleMinuteBig_Event.clear()
+
+class CandleMinKSmallDrawThread(QThread):
+    def __init__(self,inputSignal):
+        super().__init__()
+        self.CandleMinuteSmallItem_signal = inputSignal
+        self.setItembool_None = True
+        self.CandleItemMinuteSmall = KlineItem.BarItem()
+    
+    def run(self):
+        while True:
+            GlobalVar.CandleMinuteSmall_Event.wait()
+            if self.setItembool_None:
+                while GlobalVar.NS.dfMinK.shape[0]==0:
+                    time.sleep(0.02)
+                self.setItembool_None = False
+            self.CandleItemMinuteSmall.set_data(GlobalVar.NS.dfMinK[['ndatetime','small']],GlobalVar.NS.listMinSmall)
+            self.CandleMinuteSmallItem_signal.emit(self.CandleItemMinuteSmall)
+            GlobalVar.CandleMinuteSmall_Event.clear()
+
 
 class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
     def __init__(self, func,*args):

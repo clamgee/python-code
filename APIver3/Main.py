@@ -26,6 +26,8 @@ class SKMainWindow(QMainWindow):
     Candle12KItem_signal = Signal(object)
     CandleMinuteKItem_signal = Signal(object)
     CandleMinuteDealMinusItem_signal = Signal(object)
+    CandleMinuteBigItem_signal = Signal(object)
+    CandleMinuteSmallItem_signal = Signal(object)
     def __init__(self):
         super(SKMainWindow, self).__init__()
         self.MainUi = Ui_CapitalAPI()
@@ -49,6 +51,10 @@ class SKMainWindow(QMainWindow):
         self.CandleMinuteKItem_signal.connect(self.CandleMinuteKDrawFunc)
         self.CandleMinuteDealMinusDraw_Build_None = True
         self.CandleMinuteDealMinusItem_signal.connect(self.CandleMinuteDealMinusDrawFunc)
+        self.CandleMinuteBigDraw_Build_None = True
+        self.CandleMinuteBigItem_signal.connect(self.CandleMinuteBigDrawFunc)
+        self.CandleMinuteSmallDraw_Build_None = True
+        self.CandleMinuteSmallItem_signal.connect(self.CandleMinuteSmallDrawFunc)
         # 帳號處理
         self.SKID = '未登入'  # 登入帳號
         self.IBAccount = ''  # 期貨帳號
@@ -204,7 +210,7 @@ class SKMainWindow(QMainWindow):
         globals()['MinuteQueue'+bstrStockNo] = mp.Queue()
         PassListTuple = (globals()['DataQueue'+str(pSKStock.nStockIdx)],globals()['Tick12KQueue'+bstrStockNo],globals()['MinuteQueue'+bstrStockNo],GlobalVar.PowerQueue,GlobalVar.NS,GlobalVar.SaveNotify)
         Pass12KTuple =(globals()['Tick12KQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItem12K_Event,GlobalVar.NS,GlobalVar.SaveNotify)
-        PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItemMinute_Event,GlobalVar.CandleMinuteDealMinus_Event,GlobalVar.NS)
+        PassMinuteKTuple =(globals()['MinuteQueue'+bstrStockNo],GlobalVar.CandleTarget,GlobalVar.CandleItemMinute_Event,GlobalVar.CandleMinuteDealMinus_Event,GlobalVar.CandleMinuteBig_Event,GlobalVar.CandleMinuteSmall_Event,GlobalVar.NS)
         self.DataProc = FuncClass.MyProcess(tickstokline.DataToTicks,bstrStockNo,pSKStock.nStockIdx,PassListTuple)
         self.DataProc.start()
         self.Tick12KProc = FuncClass.MyProcess(tickstokline.TicksTo12K,bstrStockNo,pSKStock.nStockIdx,Pass12KTuple)
@@ -220,6 +226,10 @@ class SKMainWindow(QMainWindow):
         self.CandleMinKDrawThread.start()
         self.CandleMinuteDealMinusThread = FuncClass.CandleMinKDealMinusDrawThread(self.CandleMinuteDealMinusItem_signal)
         self.CandleMinuteDealMinusThread.start()
+        self.CandleMinuteBigThread = FuncClass.CandleMinKBigDrawThread(self.CandleMinuteBigItem_signal)
+        self.CandleMinuteBigThread.start()
+        self.CandleMinuteSmallThread = FuncClass.CandleMinKSmallDrawThread(self.CandleMinuteSmallItem_signal)
+        self.CandleMinuteSmallThread.start()
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         skQ.SKQuoteLib_RequestFutureTradeInfo(comtypes.automation.c_short(0),bstrStockNo)
         if sum(nCode) !=0 :
@@ -286,12 +296,30 @@ class SKMainWindow(QMainWindow):
         self.CandleMinuteDealMinusDraw.showAxis('right',show=True)
         self.CandleMinuteDealMinusDraw.showAxis('left',show=False)
         self.CandleMinuteDealMinusDraw.showGrid(x=False,y=True)
+        self.AxisMinuteBig = pg.AxisItem(orientation='bottom')
+        self.CandleMinuteBigDraw=self.MainUi.tab_DayTrading.addPlot(row=3,col=0,axisItems={'bottom': self.AxisMinuteBig})
+        self.CandleMinuteBigDraw.setXLink(self.CandleMinuteKDraw)
+        self.CandleMinuteBigDraw.showAxis('right',show=True)
+        self.CandleMinuteBigDraw.showAxis('left',show=False)
+        self.CandleMinuteBigDraw.showGrid(x=False,y=True)
+        self.AxisMinuteSmall = pg.AxisItem(orientation='bottom')
+        self.CandleMinuteSmallDraw=self.MainUi.tab_DayTrading.addPlot(row=2,col=0,axisItems={'bottom': self.AxisMinuteSmall})
+        self.CandleMinuteSmallDraw.setXLink(self.CandleMinuteKDraw)
+        self.CandleMinuteSmallDraw.showAxis('right',show=True)
+        self.CandleMinuteSmallDraw.showAxis('left',show=False)
+        self.CandleMinuteSmallDraw.showGrid(x=False,y=True)
         self.CandleMinuteKDraw.setMouseEnabled(x=False, y=False)
         self.CandleMinuteKDraw.setMenuEnabled(False)
         self.CandleMinuteDealMinusDraw.setMouseEnabled(x=False, y=False)
         self.CandleMinuteDealMinusDraw.setMenuEnabled(False)
+        self.CandleMinuteBigDraw.setMouseEnabled(x=False, y=False)
+        self.CandleMinuteBigDraw.setMenuEnabled(False)
+        self.CandleMinuteSmallDraw.setMouseEnabled(x=False, y=False)
+        self.CandleMinuteSmallDraw.setMenuEnabled(False)
         self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(0,7)
         self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(1,1)
+        self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(2,1)
+        self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(3,1)
 
     @Slot(pg.GraphicsObject)
     def CandleMinuteKDrawFunc(self,Kitem_recive):
@@ -354,6 +382,38 @@ class SKMainWindow(QMainWindow):
             if self.CandleMinuteDealMinusDrawYrectLow > Kitem_recive.low:
                 self.CandleMinuteDealMinusDrawYrectLow = Kitem_recive.low
                 self.CandleMinuteDealMinusDraw.setYRange(self.CandleMinuteDealMinusDrawYrectLow,self.CandleMinuteDealMinusDrawYrectHigh)
+    @Slot(pg.GraphicsObject)
+    def CandleMinuteBigDrawFunc(self,Kitem_recive):
+        if self.CandleMinuteBigDraw_Build_None:
+            self.CandleMinuteBigDraw.addItem(Kitem_recive)
+            self.CandleMinuteBigDrawYrectHigh = Kitem_recive.data.big.max()
+            self.CandleMinuteBigDrawYrectLow = Kitem_recive.data.big.min()
+            self.CandleMinuteBigDraw.setYRange(self.CandleMinuteBigDrawYrectLow,self.CandleMinuteBigDrawYrectHigh)
+            self.BigChangeRectidx = Kitem_recive.lastidx
+            self.CandleMinuteBigDraw_Build_None = False
+        else:
+            if self.CandleMinuteBigDrawYrectHigh < Kitem_recive.high:
+                self.CandleMinuteBigDrawYrectHigh = Kitem_recive.high
+                self.CandleMinuteBigDraw.setYRange(self.CandleMinuteBigDrawYrectLow,self.CandleMinuteBigDrawYrectHigh)
+            if self.CandleMinuteBigDrawYrectLow > Kitem_recive.low:
+                self.CandleMinuteBigDrawYrectLow = Kitem_recive.low
+                self.CandleMinuteBigDraw.setYRange(self.CandleMinuteBigDrawYrectLow,self.CandleMinuteBigDrawYrectHigh)
+    @Slot(pg.GraphicsObject)
+    def CandleMinuteSmallDrawFunc(self,Kitem_recive):
+        if self.CandleMinuteSmallDraw_Build_None:
+            self.CandleMinuteSmallDraw.addItem(Kitem_recive)
+            self.CandleMinuteSmallDrawYrectHigh = Kitem_recive.data.small.max()
+            self.CandleMinuteSmallDrawYrectLow = Kitem_recive.data.small.min()
+            self.CandleMinuteSmallDraw.setYRange(self.CandleMinuteSmallDrawYrectLow,self.CandleMinuteSmallDrawYrectHigh)
+            self.SmallChangeRectidx = Kitem_recive.lastidx
+            self.CandleMinuteSmallDraw_Build_None = False
+        else:
+            if self.CandleMinuteSmallDrawYrectHigh < Kitem_recive.high:
+                self.CandleMinuteSmallDrawYrectHigh = Kitem_recive.high
+                self.CandleMinuteSmallDraw.setYRange(self.CandleMinuteSmallDrawYrectLow,self.CandleMinuteSmallDrawYrectHigh)
+            if self.CandleMinuteSmallDrawYrectLow > Kitem_recive.low:
+                self.CandleMinuteSmallDrawYrectLow = Kitem_recive.low
+                self.CandleMinuteSmallDraw.setYRange(self.CandleMinuteSmallDrawYrectLow,self.CandleMinuteSmallDrawYrectHigh)
 
 class SKReplyLibEvent:
     def OnConnect(self, bstrUserID, nErrorCode):
