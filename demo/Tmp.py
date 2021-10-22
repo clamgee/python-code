@@ -11,3 +11,8 @@ print(time.localtime().tm_hour)
 # Candledf=pd.read_csv('../result.dat',low_memory=False)
 # Candledf['ndatetime']=pd.to_datetime(Candledf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
 
+a = pg.GraphicsObject()
+a._updateView()
+b=pg.plot()
+b.addItem(a)
+b.updateMatrix(propagate=True)

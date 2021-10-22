@@ -282,6 +282,7 @@ class SKMainWindow(QMainWindow):
     def Setup_CandleMinuteKDrawUI(self):
         self.AxisMinute = pg.AxisItem(orientation='bottom')
         self.CandleMinuteKDraw = self.MainUi.tab_DayTrading.addPlot(row=0,col=0,axisItems={'bottom': self.AxisMinute})
+        self.CandleMinuteKDraw.autoRange()
         now = time.localtime(time.time()).tm_hour
         if now>14 or now<8 :
             self.CandleMinuteKDraw.setXRange(0,827)
@@ -366,6 +367,7 @@ class SKMainWindow(QMainWindow):
             if self.CandleMinuteKDrawYrectLow > Kitem_recive.low:
                 self.CandleMinuteKDrawYrectLow = Kitem_recive.low
                 self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
+        self.CandleMinuteKDraw.updateDecimation()
     @Slot(pg.GraphicsObject)
     def CandleMinuteDealMinusDrawFunc(self,Kitem_recive):
         if self.CandleMinuteDealMinusDraw_Build_None:

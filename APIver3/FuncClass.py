@@ -53,11 +53,8 @@ class Candle12KDrawThread(QThread):
                     self.Candle12KItem_signal.emit(self.CandleItem12K)
                     self.creatItembool_None = False
                 else:
-                    # if GlobalVar.NS.list12K[0] != self.CandleItem12K.lastidx or GlobalVar.NS.list12K[1] != self.CandleItem12K.close:
                     self.CandleItem12K.set_data(self.__Candledf12K.df12K,GlobalVar.NS.list12K)
                     self.Candle12KItem_signal.emit(self.CandleItem12K)
-                    # else:
-                    #     pass
 
 class CandleMinKDrawThread(QThread):
     def __init__(self,inputEvent,inputdf,inputSignal):
@@ -170,7 +167,8 @@ class DomDataProcess(mp.Process):
                 self.df.at[5,'買量']=str(int(sum(bidQty)))
                 self.df.at[5,'賣量']=str(int(sum(askQty)))
                 self.__Domdf.Domdf = self.df
-                self.__Event.set()
+                if self.__Event.is_set() is False :
+                    self.__Event.set()
 
 class DomTableUpdateThread(QThread):
     def __init__(self, parent):
