@@ -283,7 +283,6 @@ class TicksToMinuteK(QThread):
             self.Candledf=self.Candledf.append(pd.DataFrame([[self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,big,small]],columns=['ndatetime','open','high','low','close','volume','dealminus','big','small']),ignore_index=True,sort=False)
             self.High = self.Low = self.Close = nclose
             self.lastidx=self.Candledf.last_valid_index()
-            print(self.Candledf.tail(1))
         elif ndatetime < self.mm1 :
             self.Candledf.at[self.lastidx,'close']=self.Close=nclose
             self.Candledf.at[self.lastidx,'volume']+=nQty
