@@ -11,7 +11,7 @@ class CandleItem(pg.GraphicsObject):
         self.picturelast = QtGui.QPicture() #最後一根K線圖
         self.pictures = []
         self.PaintChange = True
-        self.setFlag(self.ItemUsesExtendedStyleOption)
+        # self.setFlag(self.ItemUsesExtendedStyleOption)
         self.rect = None
         self.high = self.data.high.max()
         self.low = self.data.low.min()
@@ -20,7 +20,6 @@ class CandleItem(pg.GraphicsObject):
         self.countK = 87 #設定要顯示多少K線
         self.generatePicture()
         self.informViewBoundsChanged()
-
 
     def set_data(self,Candledf,nlist):
         self.data = Candledf
@@ -36,7 +35,7 @@ class CandleItem(pg.GraphicsObject):
         self.informViewBoundsChanged()
         if self.close != close:
             self.close = self.data.at[self.lastidx,'close']
-            self.update()
+        self.update()
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
@@ -97,7 +96,7 @@ class BarItem(pg.GraphicsObject):
         self.picturelast = QtGui.QPicture() #最後一根K線圖
         self.pictures = []
         self.PaintChange = False
-        self.setFlag(self.ItemUsesExtendedStyleOption)
+        # self.setFlag(self.ItemUsesExtendedStyleOption)
         self.rect = None
         self.low = 0
         self.high = 0
@@ -119,7 +118,7 @@ class BarItem(pg.GraphicsObject):
         self.informViewBoundsChanged()
         if self.close != close:
             self.close = self.data.at[self.lastidx,self.columnname]
-            self.update()
+        self.update()
 
     def generatePicture(self):    
         # 重畫或者最後一根K線

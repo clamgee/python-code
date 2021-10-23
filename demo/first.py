@@ -49,6 +49,7 @@ class MainWindows(QMainWindow):
         # self.draw3=self.l.addPlot()
         self.bar = pg.BarGraphItem(x=data2index,height=data2,width=0.3,bush='r')
         self.P2.addItem(self.bar)
+
         # self.draw3.addItem(self.bar)
         # self.l.layout.setRowStretchFactor(0, 3)
         self.P1.setMouseEnabled(x=False, y=False)
