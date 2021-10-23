@@ -73,7 +73,8 @@ class DataToTicks(QThread):
             nlist = self.__queue.get()
             if nlist is not None :
                 self.Ticks(nlist)
-            elif nlist==None and self.__SaveNotify.value and self.__FileSave:
+            
+            if self.__SaveNotify.value and self.__FileSave:
                 ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume','deal'])
                 ticksdf =ticksdf.append(pd.DataFrame(self.TickList,columns=['ndatetime','nbid','nask','close','volume','deal']),ignore_index=True,sort=False)
                 ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
@@ -88,8 +89,6 @@ class DataToTicks(QThread):
                 localtime = QTime(now.tm_hour, now.tm_min, now.tm_sec).toString(Qt.ISODate)
                 print(localtime,' Ticks已存檔!!')
                 self.__FileSave = False
-            else:
-                pass
 
 class TicksTo12K(QThread):
     def __init__(self,inputname,inputindex,inputTuple):
@@ -205,7 +204,8 @@ class TicksTo12K(QThread):
                     if self.__CandleTarget.value == self.name:
                         self.__Candledf12K.df12K = self.Candledf
                         self.__CandleItem12K_Event.put(nlist[2])
-            elif nlist==None and self.__SaveNotify.value and self.__FileSave:
+
+            if self.__SaveNotify.value and self.__FileSave:
                 result=self.Candledf.drop(columns=['high_avg','low_avg'])            
                 result.sort_values(by=['ndatetime'],ascending=True)
                 result.to_csv('../result.dat',header=True, index=False,mode='w')
@@ -213,8 +213,6 @@ class TicksTo12K(QThread):
                 localtime = QTime(now.tm_hour, now.tm_min, now.tm_sec).toString(Qt.ISODate)
                 print(localtime,' 12K已存檔!!')
                 self.__FileSave = False
-            else:
-                pass
 
 class TicksToMinuteK(QThread):
     def __init__(self,inputname,inputindex,inputTuple):
@@ -310,25 +308,14 @@ class TicksToMinuteK(QThread):
                         self.__NS.listMinSmall = [self.lastidx,self.Candledf.at[self.lastidx,'small']]
                         self.__NS.dfMinK = self.Candledf
                         self.__CandleItemMinK_Event.put(nlist[2])
-                        self.__CandleMinuteDealMinus_Event.set()
-                        self.__CandleMinuteBig_Event.set()
-                        self.__CandleMinuteSmall_Event.set()
+                        if self.__CandleMinuteDealMinus_Event.is_set() is False:
+                            self.__CandleMinuteDealMinus_Event.set()
+                        if self.__CandleMinuteBig_Event.is_set() is False:
+                            self.__CandleMinuteBig_Event.set()
+                        if self.__CandleMinuteSmall_Event.is_set() is False:
+                            self.__CandleMinuteSmall_Event.set()
                 else:
                     self.HisListProcess(nlist[1])
                     if self.__CandleTarget.value == self.name:
                         self.__NS.dfMinK = self.Candledf
                         self.__CandleItemMinK_Event.put(nlist[2])
-
-# class FutureTradeInfoThd(QThread):
-#     def __init__(self,inputname,inputindex,inputTuple):
-#         super(TicksToMinuteK, self).__init__()
-#         self.name = inputname
-#         self.commodityIndex = inputindex
-#         self.__NS = inputTuple[0]
-#         self.__Event = inputTuple[1]
-    
-#     def run(self):
-#         # [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
-#         MP_dict = {'ComCont':{0:nBuyTotalCount,1:nSellTotalCount,2:int(nSellTotalCount-nBuyTotalCount)},
-#         'ComQty':{0:nBuyTotalQty,1:nSellTotalQty,2:int(nBuyTotalQty-nSellTotalQty)},
-#         'DealCont':{0:nBuyDealTotalCount,1:nSellDealTotalCount,2:int(nSellDealTotalCount-nBuyDealTotalCount)}}
