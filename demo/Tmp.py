@@ -1,4 +1,4 @@
-# %%
+
 import pandas as pd
 import numpy as np
 import multiprocessing as mp
@@ -13,4 +13,3 @@ Candledf=pd.read_csv('../result.dat',low_memory=False)
 Candledf['ndatetime']=pd.to_datetime(Candledf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
 
 
-# %%
