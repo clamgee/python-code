@@ -324,8 +324,9 @@ class SKMainWindow(QMainWindow):
 
     @Slot(pg.GraphicsObject)
     def CandleMinuteKDrawFunc(self,Kitem_recive):
+        self.CandleMinuteKItem = Kitem_recive
         if self.CandleMinuteKDraw_Build_None:
-            self.CandleMinuteKDraw.addItem(Kitem_recive)
+            self.CandleMinuteKDraw.addItem(self.CandleMinuteKItem)
             direct=os.path.abspath('../data')
             filelist = os.listdir('../data')
             file = filelist[-1]
@@ -336,85 +337,87 @@ class SKMainWindow(QMainWindow):
             self.YCline = pg.InfiniteLine(angle=0, movable=False,pen='w')
             self.CandleMinuteKDraw.addItem(self.YCline)
             self.YCline.setPos(self.yesterdayclose)
-            dict_tmp=Kitem_recive.data['ndatetime'][Kitem_recive.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
+            dict_tmp=self.CandleMinuteKItem.data['ndatetime'][self.CandleMinuteKItem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
             self.AxisMinute.setTicks([dict_tmp.items()])
             self.AxisMinuteDealMinus.setTicks([dict_tmp.items()])
             del dict_tmp
-            tmpline=Kitem_recive.data.close.cumsum()
+            tmpline=self.CandleMinuteKItem.data.close.cumsum()
             self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
             self.curve=self.CandleMinuteKDraw.plot(pen='y')
             self.curve.setData(self.avgline)
             del tmpline
-            self.CandleMinuteKDrawYrectHigh = max(Kitem_recive.data.high.max(),self.yesterdayclose)
-            self.CandleMinuteKDrawYrectLow = min(Kitem_recive.data.low.min(),self.yesterdayclose)
+            self.CandleMinuteKDrawYrectHigh = max(self.CandleMinuteKItem.data.high.max(),self.yesterdayclose)
+            self.CandleMinuteKDrawYrectLow = min(self.CandleMinuteKItem.data.low.min(),self.yesterdayclose)
             self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
-            self.ChangeRectidx = Kitem_recive.lastidx
+            self.ChangeRectidx = self.CandleMinuteKItem.lastidx
             self.CandleMinuteKDraw_Build_None = False
         else:
-            if self.ChangeRectidx != Kitem_recive.lastidx:
-                self.ChangeRectidx = Kitem_recive.lastidx
-                dict_tmp=Kitem_recive.data['ndatetime'][Kitem_recive.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
+            if self.ChangeRectidx != self.CandleMinuteKItem.lastidx:
+                self.ChangeRectidx = self.CandleMinuteKItem.lastidx
+                dict_tmp=self.CandleMinuteKItem.data['ndatetime'][self.CandleMinuteKItem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
                 self.AxisMinute.setTicks([dict_tmp.items()])
                 self.AxisMinuteDealMinus.setTicks([dict_tmp.items()])
                 del dict_tmp
-                tmpline=Kitem_recive.data.close.cumsum()
+                tmpline=self.CandleMinuteKItem.data.close.cumsum()
                 self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
                 self.curve.setData(self.avgline)
                 del tmpline
-            if self.CandleMinuteKDrawYrectHigh < Kitem_recive.high:
-                self.CandleMinuteKDrawYrectHigh = Kitem_recive.high
+            if self.CandleMinuteKDrawYrectHigh < self.CandleMinuteKItem.high:
+                self.CandleMinuteKDrawYrectHigh = self.CandleMinuteKItem.high
                 self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
-            if self.CandleMinuteKDrawYrectLow > Kitem_recive.low:
-                self.CandleMinuteKDrawYrectLow = Kitem_recive.low
+            if self.CandleMinuteKDrawYrectLow > self.CandleMinuteKItem.low:
+                self.CandleMinuteKDrawYrectLow = self.CandleMinuteKItem.low
                 self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
-        self.CandleMinuteKDraw.updateDecimation()
     @Slot(pg.GraphicsObject)
     def CandleMinuteDealMinusDrawFunc(self,Kitem_recive):
+        self.CandleDealMinusItem = Kitem_recive
         if self.CandleMinuteDealMinusDraw_Build_None:
-            self.CandleMinuteDealMinusDraw.addItem(Kitem_recive)
-            self.CandleMinuteDealMinusDrawYrectHigh = Kitem_recive.data.dealminus.max()
-            self.CandleMinuteDealMinusDrawYrectLow = Kitem_recive.data.dealminus.min()
+            self.CandleMinuteDealMinusDraw.addItem(self.CandleDealMinusItem)
+            self.CandleMinuteDealMinusDrawYrectHigh = self.CandleDealMinusItem.data.dealminus.max()
+            self.CandleMinuteDealMinusDrawYrectLow = self.CandleDealMinusItem.data.dealminus.min()
             self.CandleMinuteDealMinusDraw.setYRange(self.CandleMinuteDealMinusDrawYrectLow,self.CandleMinuteDealMinusDrawYrectHigh)
-            self.DealMinusChangeRectidx = Kitem_recive.lastidx
+            self.DealMinusChangeRectidx = self.CandleDealMinusItem.lastidx
             self.CandleMinuteDealMinusDraw_Build_None = False
         else:
-            if self.CandleMinuteDealMinusDrawYrectHigh < Kitem_recive.high:
-                self.CandleMinuteDealMinusDrawYrectHigh = Kitem_recive.high
+            if self.CandleMinuteDealMinusDrawYrectHigh < self.CandleDealMinusItem.high:
+                self.CandleMinuteDealMinusDrawYrectHigh = self.CandleDealMinusItem.high
                 self.CandleMinuteDealMinusDraw.setYRange(self.CandleMinuteDealMinusDrawYrectLow,self.CandleMinuteDealMinusDrawYrectHigh)
-            if self.CandleMinuteDealMinusDrawYrectLow > Kitem_recive.low:
-                self.CandleMinuteDealMinusDrawYrectLow = Kitem_recive.low
+            if self.CandleMinuteDealMinusDrawYrectLow > self.CandleDealMinusItem.low:
+                self.CandleMinuteDealMinusDrawYrectLow = self.CandleDealMinusItem.low
                 self.CandleMinuteDealMinusDraw.setYRange(self.CandleMinuteDealMinusDrawYrectLow,self.CandleMinuteDealMinusDrawYrectHigh)
     @Slot(pg.GraphicsObject)
     def CandleMinuteBigDrawFunc(self,Kitem_recive):
+        self.CandleMinuteBigItem = Kitem_recive
         if self.CandleMinuteBigDraw_Build_None:
-            self.CandleMinuteBigDraw.addItem(Kitem_recive)
-            self.CandleMinuteBigDrawYrectHigh = Kitem_recive.data.big.max()
-            self.CandleMinuteBigDrawYrectLow = Kitem_recive.data.big.min()
+            self.CandleMinuteBigDraw.addItem(self.CandleMinuteBigItem)
+            self.CandleMinuteBigDrawYrectHigh = self.CandleMinuteBigItem.data.big.max()
+            self.CandleMinuteBigDrawYrectLow = self.CandleMinuteBigItem.data.big.min()
             self.CandleMinuteBigDraw.setYRange(self.CandleMinuteBigDrawYrectLow,self.CandleMinuteBigDrawYrectHigh)
-            self.BigChangeRectidx = Kitem_recive.lastidx
+            self.BigChangeRectidx = self.CandleMinuteBigItem.lastidx
             self.CandleMinuteBigDraw_Build_None = False
         else:
-            if self.CandleMinuteBigDrawYrectHigh < Kitem_recive.high:
-                self.CandleMinuteBigDrawYrectHigh = Kitem_recive.high
+            if self.CandleMinuteBigDrawYrectHigh < self.CandleMinuteBigItem.high:
+                self.CandleMinuteBigDrawYrectHigh = self.CandleMinuteBigItem.high
                 self.CandleMinuteBigDraw.setYRange(self.CandleMinuteBigDrawYrectLow,self.CandleMinuteBigDrawYrectHigh)
-            if self.CandleMinuteBigDrawYrectLow > Kitem_recive.low:
-                self.CandleMinuteBigDrawYrectLow = Kitem_recive.low
+            if self.CandleMinuteBigDrawYrectLow > self.CandleMinuteBigItem.low:
+                self.CandleMinuteBigDrawYrectLow = self.CandleMinuteBigItem.low
                 self.CandleMinuteBigDraw.setYRange(self.CandleMinuteBigDrawYrectLow,self.CandleMinuteBigDrawYrectHigh)
     @Slot(pg.GraphicsObject)
     def CandleMinuteSmallDrawFunc(self,Kitem_recive):
+        self.CandleMinuteSmallItem = Kitem_recive
         if self.CandleMinuteSmallDraw_Build_None:
-            self.CandleMinuteSmallDraw.addItem(Kitem_recive)
-            self.CandleMinuteSmallDrawYrectHigh = Kitem_recive.data.small.max()
-            self.CandleMinuteSmallDrawYrectLow = Kitem_recive.data.small.min()
+            self.CandleMinuteSmallDraw.addItem(self.CandleMinuteSmallItem)
+            self.CandleMinuteSmallDrawYrectHigh = self.CandleMinuteSmallItem.data.small.max()
+            self.CandleMinuteSmallDrawYrectLow = self.CandleMinuteSmallItem.data.small.min()
             self.CandleMinuteSmallDraw.setYRange(self.CandleMinuteSmallDrawYrectLow,self.CandleMinuteSmallDrawYrectHigh)
-            self.SmallChangeRectidx = Kitem_recive.lastidx
+            self.SmallChangeRectidx = self.CandleMinuteSmallItem.lastidx
             self.CandleMinuteSmallDraw_Build_None = False
         else:
-            if self.CandleMinuteSmallDrawYrectHigh < Kitem_recive.high:
-                self.CandleMinuteSmallDrawYrectHigh = Kitem_recive.high
+            if self.CandleMinuteSmallDrawYrectHigh < self.CandleMinuteSmallItem.high:
+                self.CandleMinuteSmallDrawYrectHigh = self.CandleMinuteSmallItem.high
                 self.CandleMinuteSmallDraw.setYRange(self.CandleMinuteSmallDrawYrectLow,self.CandleMinuteSmallDrawYrectHigh)
-            if self.CandleMinuteSmallDrawYrectLow > Kitem_recive.low:
-                self.CandleMinuteSmallDrawYrectLow = Kitem_recive.low
+            if self.CandleMinuteSmallDrawYrectLow > self.CandleMinuteSmallItem.low:
+                self.CandleMinuteSmallDrawYrectLow = self.CandleMinuteSmallItem.low
                 self.CandleMinuteSmallDraw.setYRange(self.CandleMinuteSmallDrawYrectLow,self.CandleMinuteSmallDrawYrectHigh)
 
 class SKReplyLibEvent:

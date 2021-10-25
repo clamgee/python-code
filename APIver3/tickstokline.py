@@ -261,9 +261,11 @@ class TicksToMinuteK(QThread):
         self.Candledf=self.Candledf.rename_axis('ndatetime').reset_index()
         self.Candledf['ndatetime'] = pd.to_datetime(self.Candledf['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
         self.lastidx=self.Candledf.last_valid_index()
-        if self.Candledf.at[self.lastidx,'ndatetime'] != None :
+        try:
             self.mm=self.Candledf.at[self.lastidx,'ndatetime'].replace(second=0,microsecond=0)
             self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
+        except Exception:
+            pass
         self.High=self.Candledf.at[self.lastidx,'high']
         self.Low=self.Candledf.at[self.lastidx,'low']
         self.Close=self.Candledf.at[self.lastidx,'close']
