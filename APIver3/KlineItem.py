@@ -4,25 +4,26 @@ import numpy as np
 from pyqtgraph import QtCore,QtGui,GraphicsItem
 
 class CandleItem(pg.GraphicsObject):
-    def __init__(self,Candledf):
+    def __init__(self):
         pg.GraphicsObject.__init__(self)
-        self.data = Candledf
         self.picturemain = QtGui.QPicture() #主K線圖
         self.picturelast = QtGui.QPicture() #最後一根K線圖
         self.pictures = []
         self.PaintChange = True
         # self.setFlag(self.ItemUsesExtendedStyleOption)
-        self.rect = None
-        self.high = self.data.high.max()
-        self.low = self.data.low.min()
-        self.lastidx = self.data.last_valid_index()
-        self.close = self.data.at[self.lastidx,'close']
+        self.high = 0
+        self.low = 0
+        self.lastidx = 0
+        self.close = 0
         self.countK = 87 #設定要顯示多少K線
-        self.generatePicture()
-        self.informViewBoundsChanged()
 
     def set_data(self,Candledf,nlist):
         self.data = Candledf
+        if len(self.pictures) == 0:
+            self.high = self.data.high.max()
+            self.low = self.data.low.min()
+            self.lastidx = self.data.last_valid_index()
+            self.close = self.data.at[self.lastidx,'close']
         lastidx = nlist[0]; close = nlist[1]
         if self.high < close:
             self.high = close
@@ -97,7 +98,6 @@ class BarItem(pg.GraphicsObject):
         self.pictures = []
         self.PaintChange = False
         # self.setFlag(self.ItemUsesExtendedStyleOption)
-        self.rect = None
         self.low = 0
         self.high = 0
         self.lastidx = 0
