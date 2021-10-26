@@ -220,15 +220,20 @@ class SKMainWindow(QMainWindow):
         print('Data Pid: ',self.DataProc.pid)
         print('Tick12K Pid: ',self.Tick12KProc.pid)
         print('MinK Pid: ',self.MinKProc.pid)
-        self.Candle12KDrawThread = FuncClass.Candle12KDrawThread(self.Candle12KItem_signal)
+        self.CandleItem12K = KlineItem.CandleItem()
+        self.Candle12KDrawThread = FuncClass.Candle12KDrawThread(self.CandleItem12K.set_data,self.Candle12KItem_signal)
         self.Candle12KDrawThread.start()
-        self.CandleMinKDrawThread = FuncClass.CandleMinKDrawThread(self.CandleMinuteKItem_signal)
+        self.CandleMinuteKItem = KlineItem.CandleItem()
+        self.CandleMinKDrawThread = FuncClass.CandleMinKDrawThread(self.CandleMinuteKItem.set_data,self.CandleMinuteKItem_signal)
         self.CandleMinKDrawThread.start()
-        self.CandleMinuteDealMinusThread = FuncClass.CandleMinKDealMinusDrawThread(self.CandleMinuteDealMinusItem_signal)
+        self.CandleDealMinusItem = KlineItem.BarItem()
+        self.CandleMinuteDealMinusThread = FuncClass.CandleMinKDealMinusDrawThread(self.CandleDealMinusItem.set_data,self.CandleMinuteDealMinusItem_signal)
         self.CandleMinuteDealMinusThread.start()
-        self.CandleMinuteBigThread = FuncClass.CandleMinKBigDrawThread(self.CandleMinuteBigItem_signal)
+        self.CandleMinuteBigItem = KlineItem.BarItem()
+        self.CandleMinuteBigThread = FuncClass.CandleMinKBigDrawThread(self.CandleMinuteBigItem.set_data,self.CandleMinuteBigItem_signal)
         self.CandleMinuteBigThread.start()
-        self.CandleMinuteSmallThread = FuncClass.CandleMinKSmallDrawThread(self.CandleMinuteSmallItem_signal)
+        self.CandleMinuteSmallItem = KlineItem.BarItem()
+        self.CandleMinuteSmallThread = FuncClass.CandleMinKSmallDrawThread(self.CandleMinuteSmallItem.set_data,self.CandleMinuteSmallItem_signal)
         self.CandleMinuteSmallThread.start()
         nCode=skQ.SKQuoteLib_RequestTicks(0, bstrStockNo)
         skQ.SKQuoteLib_RequestFutureTradeInfo(comtypes.automation.c_short(0),bstrStockNo)
@@ -241,7 +246,7 @@ class SKMainWindow(QMainWindow):
     @Slot()
     def Candle12KDrawFunc(self):
         if self.Candle12KDraw_Build_None:
-            self.CandleItem12K = KlineItem.CandleItem()
+            # self.CandleItem12K = KlineItem.CandleItem()
             self.Axis12k = pg.AxisItem(orientation='bottom')
             self.Candle12KDraw = self.MainUi.tab_TicksK.addPlot(row=0,col=0,axisItems={'bottom': self.Axis12k})
             self.Candle12KDraw.showAxis('right',show=True)
@@ -250,9 +255,9 @@ class SKMainWindow(QMainWindow):
             self.Candle12KDraw.setMouseEnabled(x=False, y=False)
             self.Candle12KDraw.setMenuEnabled(False)
             self.Candle12KDraw.addItem(self.CandleItem12K)
-            while GlobalVar.NS.df12K.shape[0] == 0 and len(GlobalVar.NS.list12K) == 0:
-                time.sleep(0.1)
-            self.CandleItem12K.set_data(GlobalVar.NS.df12K,GlobalVar.NS.list12K)
+            # while GlobalVar.NS.df12K.shape[0] == 0 and len(GlobalVar.NS.list12K) == 0:
+            #     time.sleep(0.1)
+            # self.CandleItem12K.set_data(GlobalVar.NS.df12K,GlobalVar.NS.list12K)
             self.axis12k_xmax = len(self.CandleItem12K.pictures)
             self.axis12k_xmin = self.axis12k_xmax-self.CandleItem12K.countK
             self.axis12k_ymin = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
@@ -267,7 +272,7 @@ class SKMainWindow(QMainWindow):
             self.MALowLine.setData(self.CandleItem12K.data.low_avg)
             self.Candle12KDraw_Build_None = False
         else:
-            self.CandleItem12K.set_data(GlobalVar.NS.df12K,GlobalVar.NS.list12K)
+            # self.CandleItem12K.set_data(GlobalVar.NS.df12K,GlobalVar.NS.list12K)
             if self.axis12k_xmax != len(self.CandleItem12K.pictures):
                 self.axis12k_xmax = len(self.CandleItem12K.pictures)
                 self.axis12k_xmin = self.axis12k_xmax-self.CandleItem12K.countK
@@ -331,11 +336,11 @@ class SKMainWindow(QMainWindow):
     def CandleMinuteKDrawFunc(self):
         # self.CandleMinuteKItem = Kitem_recive
         if self.CandleMinuteKDraw_Build_None:
-            self.CandleMinuteKItem = KlineItem.CandleItem()
+            # self.CandleMinuteKItem = KlineItem.CandleItem()
             self.CandleMinuteKDraw.addItem(self.CandleMinuteKItem)
-            while GlobalVar.NS.dfMinK.shape[0] ==0 or len(GlobalVar.NS.listMinK) <2:
-                time.sleep(0.1)
-            self.CandleMinuteKItem.set_data(GlobalVar.NS.dfMinK,GlobalVar.NS.listMinK)
+            # while GlobalVar.NS.dfMinK.shape[0] ==0 or len(GlobalVar.NS.listMinK) <2:
+            #     time.sleep(0.1)
+            # self.CandleMinuteKItem.set_data(GlobalVar.NS.dfMinK,GlobalVar.NS.listMinK)
             direct=os.path.abspath('../data')
             filelist = os.listdir('../data')
             file = filelist[-1]
@@ -361,12 +366,14 @@ class SKMainWindow(QMainWindow):
             self.ChangeRectidx = self.CandleMinuteKItem.lastidx
             self.CandleMinuteKDraw_Build_None = False
         else:
-            self.CandleMinuteKItem.set_data(GlobalVar.NS.dfMinK,GlobalVar.NS.listMinK)
+            # self.CandleMinuteKItem.set_data(GlobalVar.NS.dfMinK,GlobalVar.NS.listMinK)
             if self.ChangeRectidx != self.CandleMinuteKItem.lastidx:
                 self.ChangeRectidx = self.CandleMinuteKItem.lastidx
                 dict_tmp=self.CandleMinuteKItem.data['ndatetime'][self.CandleMinuteKItem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
                 self.AxisMinute.setTicks([dict_tmp.items()])
                 self.AxisMinuteDealMinus.setTicks([dict_tmp.items()])
+                self.AxisMinuteBig.setTicks([dict_tmp.items()])
+                self.AxisMinuteSmall.setTicks([dict_tmp.items()])
                 del dict_tmp
                 tmpline=self.CandleMinuteKItem.data.close.cumsum()
                 self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
@@ -382,18 +389,18 @@ class SKMainWindow(QMainWindow):
     @Slot()
     def CandleMinuteDealMinusDrawFunc(self):
         if self.CandleMinuteDealMinusDraw_Build_None:
-            self.CandleDealMinusItem = KlineItem.BarItem()
+            # self.CandleDealMinusItem = KlineItem.BarItem()
             self.CandleMinuteDealMinusDraw.addItem(self.CandleDealMinusItem)
-            while GlobalVar.NS.dfMinK.shape[0] == 0 or len(GlobalVar.NS.listMinDealMinus) < 2 :
-                time.sleep(0.1)
-            self.CandleDealMinusItem.set_data(GlobalVar.NS.dfMinK[['ndatetime','dealminus']],GlobalVar.NS.listMinDealMinus)
+            # while GlobalVar.NS.dfMinK.shape[0] == 0 or len(GlobalVar.NS.listMinDealMinus) < 2 :
+            #     time.sleep(0.1)
+            # self.CandleDealMinusItem.set_data(GlobalVar.NS.dfMinK[['ndatetime','dealminus']],GlobalVar.NS.listMinDealMinus)
             self.CandleMinuteDealMinusDrawYrectHigh = self.CandleDealMinusItem.data.dealminus.max()
             self.CandleMinuteDealMinusDrawYrectLow = self.CandleDealMinusItem.data.dealminus.min()
             self.CandleMinuteDealMinusDraw.setYRange(self.CandleMinuteDealMinusDrawYrectLow,self.CandleMinuteDealMinusDrawYrectHigh)
             self.DealMinusChangeRectidx = self.CandleDealMinusItem.lastidx
             self.CandleMinuteDealMinusDraw_Build_None = False
         else:
-            self.CandleDealMinusItem.set_data(GlobalVar.NS.dfMinK[['ndatetime','dealminus']],GlobalVar.NS.listMinDealMinus)
+            # self.CandleDealMinusItem.set_data(GlobalVar.NS.dfMinK[['ndatetime','dealminus']],GlobalVar.NS.listMinDealMinus)
             if self.CandleMinuteDealMinusDrawYrectHigh < self.CandleDealMinusItem.high:
                 self.CandleMinuteDealMinusDrawYrectHigh = self.CandleDealMinusItem.high
                 self.CandleMinuteDealMinusDraw.setYRange(self.CandleMinuteDealMinusDrawYrectLow,self.CandleMinuteDealMinusDrawYrectHigh)
@@ -404,18 +411,18 @@ class SKMainWindow(QMainWindow):
     @Slot()
     def CandleMinuteBigDrawFunc(self):
         if self.CandleMinuteBigDraw_Build_None:
-            self.CandleMinuteBigItem = KlineItem.BarItem()
+            # self.CandleMinuteBigItem = KlineItem.BarItem()
             self.CandleMinuteBigDraw.addItem(self.CandleMinuteBigItem)
-            while GlobalVar.NS.dfMinK.shape[0] == 0 or len(GlobalVar.NS.listMinBig) < 2 :
-                time.sleep(0.1) 
-            self.CandleMinuteBigItem.set_data(GlobalVar.NS.dfMinK[['ndatetime','big']],GlobalVar.NS.listMinBig)
+            # while GlobalVar.NS.dfMinK.shape[0] == 0 or len(GlobalVar.NS.listMinBig) < 2 :
+            #     time.sleep(0.1) 
+            # self.CandleMinuteBigItem.set_data(GlobalVar.NS.dfMinK[['ndatetime','big']],GlobalVar.NS.listMinBig)
             self.CandleMinuteBigDrawYrectHigh = self.CandleMinuteBigItem.data.big.max()
             self.CandleMinuteBigDrawYrectLow = self.CandleMinuteBigItem.data.big.min()
             self.CandleMinuteBigDraw.setYRange(self.CandleMinuteBigDrawYrectLow,self.CandleMinuteBigDrawYrectHigh)
             self.BigChangeRectidx = self.CandleMinuteBigItem.lastidx
             self.CandleMinuteBigDraw_Build_None = False
         else:
-            self.CandleMinuteBigItem.set_data(GlobalVar.NS.dfMinK[['ndatetime','big']],GlobalVar.NS.listMinBig)
+            # self.CandleMinuteBigItem.set_data(GlobalVar.NS.dfMinK[['ndatetime','big']],GlobalVar.NS.listMinBig)
             if self.CandleMinuteBigDrawYrectHigh < self.CandleMinuteBigItem.high:
                 self.CandleMinuteBigDrawYrectHigh = self.CandleMinuteBigItem.high
                 self.CandleMinuteBigDraw.setYRange(self.CandleMinuteBigDrawYrectLow,self.CandleMinuteBigDrawYrectHigh)
@@ -426,11 +433,11 @@ class SKMainWindow(QMainWindow):
     @Slot()
     def CandleMinuteSmallDrawFunc(self):
         if self.CandleMinuteSmallDraw_Build_None:
-            self.CandleMinuteSmallItem = KlineItem.BarItem()
+            # self.CandleMinuteSmallItem = KlineItem.BarItem()
             self.CandleMinuteSmallDraw.addItem(self.CandleMinuteSmallItem)
-            while GlobalVar.NS.dfMinK.shape[0] == 0 or len(GlobalVar.NS.listMinSmall) < 2 :
-                time.sleep(0.1) 
-            self.CandleMinuteSmallItem.set_data(GlobalVar.NS.dfMinK[['ndatetime','small']],GlobalVar.NS.listMinSmall)
+            # while GlobalVar.NS.dfMinK.shape[0] == 0 or len(GlobalVar.NS.listMinSmall) < 2 :
+            #     time.sleep(0.1) 
+            # self.CandleMinuteSmallItem.set_data(GlobalVar.NS.dfMinK[['ndatetime','small']],GlobalVar.NS.listMinSmall)
             self.CandleMinuteSmallDrawYrectHigh = self.CandleMinuteSmallItem.data.small.max()
             self.CandleMinuteSmallDrawYrectLow = self.CandleMinuteSmallItem.data.small.min()
             self.CandleMinuteSmallDraw.setYRange(self.CandleMinuteSmallDrawYrectLow,self.CandleMinuteSmallDrawYrectHigh)
