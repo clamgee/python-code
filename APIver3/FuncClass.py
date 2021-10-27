@@ -136,7 +136,7 @@ class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
         self.args = (args[0],args[1],args[2])
 
     def run(self):  # 必須的，啟動進程方法
-        self.Thd = self.target(self.args[0],self.args[1],self.args[2])
+        self.Thd = self.target(self.args[0],self.args[1],self.args[2]) #將QThread丟進來執行
         self.Thd.run()
 
 class DomDataProcess(mp.Process):
