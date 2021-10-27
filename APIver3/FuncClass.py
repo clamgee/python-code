@@ -45,7 +45,7 @@ class Candle12KDrawThread(QThread):
         while True:
             GlobalVar.CandleItem12K_Event.wait()
             while self.DFBuild_None: 
-                if GlobalVar.NS.df12K.shape[0] == 0 and len(GlobalVar.NS.list12K) == 0:
+                if GlobalVar.NS.df12K.shape[0] == 0 or len(GlobalVar.NS.list12K) < 2:
                     time.sleep(0.1)
                 else:
                     self.DFBuild_None = False
