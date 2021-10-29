@@ -265,14 +265,20 @@ class TicksToMinuteK(QThread):
         try:
             self.mm=self.Candledf.at[self.lastidx,'ndatetime'].replace(second=0,microsecond=0)
             self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
+            self.High=self.Candledf.at[self.lastidx,'high']
+            self.Low=self.Candledf.at[self.lastidx,'low']
+            self.Close=self.Candledf.at[self.lastidx,'close']
+            self.Candledf['big']=int(self.__NS.listFT[2]-self.__NS.listFT[1])
+            self.Candledf['small']=int(self.__NS.listFT[3]-self.__NS.listFT[4])
+
         except Exception:
+            self.mm=0; self.mm1=0
+            self.High=0
+            self.Low=0
+            self.Close=0
+            self.Candledf['big']=0
+            self.Candledf['small']=0
             pass
-        self.High=self.Candledf.at[self.lastidx,'high']
-        self.Low=self.Candledf.at[self.lastidx,'low']
-        self.Close=self.Candledf.at[self.lastidx,'close']
-        self.Candledf['big']=int(self.__NS.listFT[2]-self.__NS.listFT[1])
-        self.Candledf['small']=int(self.__NS.listFT[3]-self.__NS.listFT[4])
-        self.Candledf[['open','high','low','close','volume','dealminus','big','small']]= self.Candledf[['open','high','low','close','volume','dealminus','big','small']].astype(int)
 
     def TicksToMinuteK(self,nlist):
         ndatetime = nlist[0]; nclose = nlist[1]; nQty = nlist[2] ; ndeal = nlist[3]
