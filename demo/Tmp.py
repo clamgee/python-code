@@ -1,14 +1,9 @@
-
-import pandas as pd
 import numpy as np
-import multiprocessing as mp
-import time
-import pyqtgraph as pg
-from PySide6.QtCore import QAbstractTableModel,Qt,QTime
-from PySide6.QtWidgets import QTableWidgetItem
-from PySide6.QtGui import QFont
-print(time.localtime().tm_hour)
-
+import pandas as pd
+import tensorflow as tf
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set()
 Candledf=pd.read_csv('../result.dat',low_memory=False)
 Candledf['ndatetime']=pd.to_datetime(Candledf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
 

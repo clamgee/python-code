@@ -36,7 +36,9 @@ class CandleItem(pg.GraphicsObject):
         self.informViewBoundsChanged()
         if self.close != close:
             self.close = self.data.at[self.lastidx,'close']
-        self.update()
+        if self.scene()!=None:
+            self.scene().update()
+        # self.update()
     
     def generatePicture(self):    
         # 重畫或者最後一根K線
@@ -118,7 +120,9 @@ class BarItem(pg.GraphicsObject):
         self.informViewBoundsChanged()
         if self.close != close:
             self.close = self.data.at[self.lastidx,self.columnname]
-        self.update()
+        if self.scene()!=None:
+            self.scene().update()
+        # self.update()
 
     def generatePicture(self):    
         # 重畫或者最後一根K線

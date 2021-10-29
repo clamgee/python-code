@@ -164,8 +164,8 @@ class DomDataProcess(mp.Process):
                 self.df.at[5,'買量']=str(int(sum(bidQty)))
                 self.df.at[5,'賣量']=str(int(sum(askQty)))
                 self.__Domdf.Domdf = self.df
-                if self.__Event.is_set() is False :
-                    self.__Event.set()
+                # if self.__Event.is_set() is False :
+                self.__Event.set()
 
 class DomTableUpdateThread(QThread):
     def __init__(self, parent):
