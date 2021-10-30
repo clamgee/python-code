@@ -46,7 +46,6 @@ class CandleItem(pg.GraphicsObject):
             self.pictures.pop()
         w = 1.0 / 3.0
         start = len(self.pictures)
-        # print('圖片長度: ',start)
         stop = self.lastidx + 1
         for (t, x) in self.data.loc[start:stop, ['open', 'high', 'low', 'close']].iterrows():
             picture = QtGui.QPicture()
