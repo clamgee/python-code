@@ -590,9 +590,11 @@ class SKQuoteLibEvents:
         # # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
         if nTime == jTime:
             GlobalVar.SaveNotify.set(True)
+            time.sleep(0.5)
             globals()['DataQueue'+str(GlobalVar.SaveNotify.commodityIndex)].put(None)
             globals()['Tick12KQueueTX00'].put(None)
-            print('已變更存檔資訊',GlobalVar.SaveNotify.value)
+            strMsg =nTime.toString(Qt.ISODate) +' 已變更存檔資訊: '+ str(GlobalVar.SaveNotify.value)
+            SKMain.SKMessage.ui.textBrowser.append(strMsg)
 
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
