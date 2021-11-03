@@ -281,7 +281,8 @@ class SKMainWindow(QMainWindow):
                 self.Axis12k.setTicks([dict_tmp.items()])
                 self.MAHighLine.setData(self.CandleItem12K.data.high_avg)
                 self.MALowLine.setData(self.CandleItem12K.data.low_avg)
-            elif self.axis12k_ymin > self.CandleItem12K.close or self.axis12k_ymax < self.CandleItem12K.close:
+
+            if self.axis12k_ymin > self.CandleItem12K.close or self.axis12k_ymax < self.CandleItem12K.close:
                 self.axis12k_ymin = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
                 self.axis12k_ymax = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
                 self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
@@ -343,7 +344,7 @@ class SKMainWindow(QMainWindow):
             self.yesterdayclose = tmpdf.at[tmpdf.last_valid_index(),'close']
             print(self.yesterdayclose)
             del tmpdf
-            self.YCline = pg.InfiniteLine(angle=0, movable=False,pen='w')
+            self.YCline = pg.InfiniteLine(angle=0, movable=False,pen='y')
             self.CandleMinuteKDraw.addItem(self.YCline)
             self.YCline.setPos(self.yesterdayclose)
             dict_tmp=self.CandleMinuteKItem.data['ndatetime'][self.CandleMinuteKItem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
@@ -352,7 +353,7 @@ class SKMainWindow(QMainWindow):
             del dict_tmp
             tmpline=self.CandleMinuteKItem.data.close.cumsum()
             self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
-            self.curve=self.CandleMinuteKDraw.plot(pen='y')
+            self.curve=self.CandleMinuteKDraw.plot(pen='w')
             self.curve.setData(self.avgline)
             del tmpline
             self.CandleMinuteKDrawYrectHigh = max(self.CandleMinuteKItem.data.high.max(),self.yesterdayclose)
