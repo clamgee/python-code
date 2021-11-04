@@ -1,17 +1,8 @@
-import multiprocessing as mp
-import timeit
-import time
-_event = mp.Event()
-
-def func():
-    for i in range(10):
-        if _event.is_set() is False:
-            _event.set()
-        _event.wait()
-        # time.sleep(0.0001)
-        _event.clear()
-t = timeit.timeit(func,number=100)
-print(t)
+import tensorflow as tf
+tf_vr1 = tf.Variable([1,2,3,4])
+a = 10
+tf_vr1=tf.multiply(tf_vr1, a)
+print(tf_vr1)
 
 # sns.set()
 # Candledf=pd.read_csv('../result.dat',low_memory=False)
