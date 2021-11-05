@@ -16,15 +16,16 @@ class CandleItem(pg.GraphicsObject):
         self.lastidx = 0
         self.close = 0
         self.countK = 87 #設定要顯示多少K線
+        self.nPtr = 0
 
     def set_data(self,Candledf,nlist):
         self.data = Candledf
+        lastidx = nlist[0]; close = nlist[1];self.nPtr = nlist[2]
         if len(self.pictures) == 0:
             self.high = self.data.high.max()
             self.low = self.data.low.min()
             self.lastidx = self.data.last_valid_index()
             self.close = self.data.at[self.lastidx,'close']
-        lastidx = nlist[0]; close = nlist[1]
         if self.high < close:
             self.high = close
         if self.low > close:

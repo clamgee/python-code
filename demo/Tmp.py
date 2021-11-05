@@ -1,8 +1,5 @@
-import tensorflow as tf
-tf_vr1 = tf.Variable([1,2,3,4])
-a = 10
-tf_vr1=tf.multiply(tf_vr1, a)
-print(tf_vr1)
+from PySide6.QtCore import QThread
+
 
 # sns.set()
 # Candledf=pd.read_csv('../result.dat',low_memory=False)
