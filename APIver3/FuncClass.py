@@ -25,7 +25,8 @@ class PandasModel(QAbstractTableModel):
     def data(self, index, role=Qt.DisplayRole):
         if index.isValid():
             if role == Qt.DisplayRole:
-                return str(self._data.at[index.row(), self._data.columns[index.column()]])
+                return str(self._data.iloc[index.row(), index.column()])
+                # return str(self._data.at[index.row(), self._data.columns[index.column()]])
             elif role == Qt.TextAlignmentRole:
                 return int(Qt.AlignCenter | Qt.AlignVCenter)
         return None
