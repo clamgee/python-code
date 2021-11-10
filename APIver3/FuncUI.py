@@ -62,6 +62,7 @@ class CommodityForm(QtCore.QObject):
         self.ui.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.Commodity_comboBox_signal.connect(self.Commodity_comboBox_recive)
         self.MPowerTalbeUI()
+        self.DomTalbeUI()
     @QtCore.Slot(int,str)
     def Commodity_comboBox_recive(self,sMarketNo,bstrStockData):
         Line = bstrStockData.split(';')
@@ -111,6 +112,21 @@ class CommodityForm(QtCore.QObject):
                 j+=1
             i+=1
 
+    def DomTalbeUI(self):
+        self.ui.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.Domdf = pd.DataFrame(np.arange(24).reshape(6,4), columns=['買量','買價','賣價','賣量'])
+        font = QtGui.QFont()
+        font.setBold(True)
+        i=0
+        while i < 6 :
+            j=0
+            while j < 4:
+                self.Domdf.at[i,self.Domdf.columns[j]] = QTableWidgetItem('')
+                self.Domdf.at[i,self.Domdf.columns[j]].setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+                self.ui.DomTable.setItem(i, j, self.Domdf.at[i,self.Domdf.columns[j]])
+                j+=1
+            i+=1
 # if __name__ == "__main__":
 #     FuncUIApp = QApplication(sys.argv)
 #     SKLogin = LoginDialog()

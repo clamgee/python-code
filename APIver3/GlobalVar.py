@@ -8,7 +8,7 @@ def Initialize():
     global CandleItem12K_Event
     NS.df12K = pd.DataFrame() # 12K圖使用的pandas
     NS.list12K = [] #12K圖使用的比對參數
-    CandleItem12K_Event = mp.Queue() # 12K圖形變更通知
+    CandleItem12K_Event = mp.Event() # 12K圖形變更通知
     #分鐘K圖形用
     global CandleItemMinute_Event,CandleMinuteDealMinus_Event,CandleMinuteBig_Event,CandleMinuteSmall_Event
     NS.dfMinK = pd.DataFrame() # 分鐘圖使用的pandas
@@ -17,14 +17,15 @@ def Initialize():
     NS.listMinBig =[] # 大單比對參數
     NS.listMinSmall =[] # 小單比對參數
     NS.listFT = [] #期貨交易委買賣資訊
-    CandleItemMinute_Event = mp.Queue()
+    NS.Domdict = {} #五檔報價
+    CandleItemMinute_Event = mp.Event()
     CandleMinuteDealMinus_Event = mp.Event()
     CandleMinuteBig_Event = mp.Event()
     CandleMinuteSmall_Event = mp.Event()
     # 五檔介面
     global DomDataQueue, Dom_Event
     NS.Domdf = pd.DataFrame()
-    DomDataQueue = mp.Queue()
+    # DomDataQueue = mp.Queue()
     Dom_Event = mp.Event()
     # 商品力道表
     global MP_Event,PowerQueue 

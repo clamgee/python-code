@@ -44,19 +44,15 @@ class Candle12KDrawThread(QThread):
         self.DFBuild_None = True
     def run(self):
         while True:
-            nPtr = GlobalVar.CandleItem12K_Event.get()
-            if nPtr is not None:
-                while self.DFBuild_None: 
-                    if GlobalVar.NS.df12K.shape[0] == 0 or len(GlobalVar.NS.list12K) < 3:
-                        time.sleep(0.1)
-                    else:
-                        self.DFBuild_None = False
-                if nPtr > self.Candle12KItem.nPtr:        
-                    self.Candle12KItem.set_data(GlobalVar.NS.df12K,GlobalVar.NS.list12K)
-                    self.Candle12KItem_signal.emit()
+            GlobalVar.CandleItem12K_Event.wait()            
+            while self.DFBuild_None: 
+                if GlobalVar.NS.df12K.shape[0] == 0 or len(GlobalVar.NS.list12K) < 3:
+                    time.sleep(0.1)
                 else:
-                    pass
-
+                    self.DFBuild_None = False
+            self.Candle12KItem.set_data(GlobalVar.NS.df12K,GlobalVar.NS.list12K)
+            self.Candle12KItem_signal.emit()
+            GlobalVar.CandleItem12K_Event.clear() 
 
 class CandleMinKDrawThread(QThread):
     def __init__(self,inputFunc,inputSignal):
@@ -66,20 +62,15 @@ class CandleMinKDrawThread(QThread):
         self.DFBuild_None = True
     def run(self):
         while True:
-            nPtr = GlobalVar.CandleItemMinute_Event.get()
-            if nPtr is not None:
-                while self.DFBuild_None:
-                    if GlobalVar.NS.dfMinK.shape[0] ==0 or len(GlobalVar.NS.listMinK) <2:
-                        time.sleep(0.1)
-                    else:
-                        self.DFBuild_None = False
-                if nPtr > self.CandleMinKItem.nPtr:
-                    self.CandleMinKItem.set_data(GlobalVar.NS.dfMinK,GlobalVar.NS.listMinK)
-                    self.CandleMinKItem_signal.emit()
+            GlobalVar.CandleItemMinute_Event.wait()           
+            while self.DFBuild_None:
+                if GlobalVar.NS.dfMinK.shape[0] ==0 or len(GlobalVar.NS.listMinK) <2:
+                    time.sleep(0.1)
                 else:
-                    pass
-
-            
+                    self.DFBuild_None = False
+            self.CandleMinKItem.set_data(GlobalVar.NS.dfMinK,GlobalVar.NS.listMinK)
+            self.CandleMinKItem_signal.emit()
+            GlobalVar.CandleItemMinute_Event.clear()  
 
 class CandleMinKDealMinusDrawThread(QThread):
     def __init__(self,inputFunc,inputSignal):
@@ -148,34 +139,34 @@ class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
         self.Thd = self.target(self.args[0],self.args[1],self.args[2]) #將QThread丟進來執行
         self.Thd.run()
 
-class DomDataProcess(mp.Process):
-    def __init__(self,*args):
-        super(DomDataProcess,self).__init__()
-        self.__Event = args[0]
-        self.__Queue = args[1]
-        self.__Domdf = args[2]
-        self.df = pd.DataFrame(np.arange(24).reshape(6,4), columns=['買量','買價','賣價','賣量']) #多空力道 DataFrame
-        self.df[['買量','買價','賣價','賣量']]=self.df[['買量','買價','賣價','賣量']].astype(str)
-        self.df.at[5,'買價']=str('')
-        self.df.at[5,'賣價']=str('')
-        self.__Domdf.Domdf = self.df
+# class DomDataProcess(mp.Process):
+#     def __init__(self,*args):
+#         super(DomDataProcess,self).__init__()
+#         self.__Event = args[0]
+#         self.__Queue = args[1]
+#         self.__Domdf = args[2]
+#         self.df = pd.DataFrame(np.arange(24).reshape(6,4), columns=['買量','買價','賣價','賣量']) #多空力道 DataFrame
+#         self.df[['買量','買價','賣價','賣量']]=self.df[['買量','買價','賣價','賣量']].astype(str)
+#         self.df.at[5,'買價']=str('')
+#         self.df.at[5,'賣價']=str('')
+#         self.__Domdf.Domdf = self.df
         
-    def run(self):
-        while True:
-            ndict = self.__Queue.get()
-            if ndict!=None:
-                for (t, x) in self.df.loc[0:4,['買量','買價','賣價','賣量']].iterrows():
-                    self.df.at[t,'買量']=str(ndict['買量'][t])
-                    self.df.at[t,'買價']=str(ndict['買價'][t])
-                    self.df.at[t,'賣價']=str(ndict['賣價'][t])
-                    self.df.at[t,'賣量']=str(ndict['賣量'][t])
-                bidQty = ndict['買量'].values()
-                askQty = ndict['賣量'].values()
-                self.df.at[5,'買量']=str(int(sum(bidQty)))
-                self.df.at[5,'賣量']=str(int(sum(askQty)))
-                self.__Domdf.Domdf = self.df
-                if self.__Event.is_set() is False :
-                    self.__Event.set()
+#     def run(self):
+#         while True:
+#             ndict = self.__Queue.get()
+#             if ndict!=None:
+#                 for (t, x) in self.df.loc[0:4,['買量','買價','賣價','賣量']].iterrows():
+#                     self.df.at[t,'買量']=str(ndict['買量'][t])
+#                     self.df.at[t,'買價']=str(ndict['買價'][t])
+#                     self.df.at[t,'賣價']=str(ndict['賣價'][t])
+#                     self.df.at[t,'賣量']=str(ndict['賣量'][t])
+#                 bidQty = ndict['買量'].values()
+#                 askQty = ndict['賣量'].values()
+#                 self.df.at[5,'買量']=str(int(sum(bidQty)))
+#                 self.df.at[5,'賣量']=str(int(sum(askQty)))
+#                 self.__Domdf.Domdf = self.df
+#                 if self.__Event.is_set() is False :
+#                     self.__Event.set()
 
 class DomTableUpdateThread(QThread):
     def __init__(self, parent):
@@ -184,7 +175,21 @@ class DomTableUpdateThread(QThread):
     def run(self):
         while True:
             GlobalVar.Dom_Event.wait()
-            self._parent.DomModel.UpdateData(GlobalVar.NS.Domdf)
+            for key in GlobalVar.NS.Domdict:
+                i = 0
+                while i < 5:
+                    self._parent.SKCommodity.Domdf.at[i,key].setText(str(GlobalVar.NS.Domdict[key][i]))
+                    i+=1
+            # for (t, x) in self._parent.SKCommodity.Domdf.loc[0:4,['買量','買價','賣價','賣量']].iterrows():
+            #     self._parent.SKCommodity.Domdf.at[t,'買量'].setText(str(GlobalVar.NS.Domdict['買量'][t]))
+            #     self._parent.SKCommodity.Domdf.at[t,'買價'].setText(str(GlobalVar.NS.Domdict['買價'][t]))
+            #     self._parent.SKCommodity.Domdf.at[t,'賣價'].setText(str(GlobalVar.NS.Domdict['賣價'][t]))
+            #     self._parent.SKCommodity.Domdf.at[t,'賣量'].setText(str(GlobalVar.NS.Domdict['賣量'][t]))
+            bidQty = GlobalVar.NS.Domdict['買量'].values()
+            askQty = GlobalVar.NS.Domdict['賣量'].values()
+            self._parent.SKCommodity.Domdf.at[5,'買量'].setText(str(int(sum(bidQty))))
+            self._parent.SKCommodity.Domdf.at[5,'賣量'].setText(str(int(sum(askQty))))
+            # self._parent.DomModel.UpdateData(GlobalVar.NS.Domdf)
             GlobalVar.Dom_Event.clear()
 
 class MPTableBigSmallThread(QThread):

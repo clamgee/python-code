@@ -75,12 +75,12 @@ class SKMainWindow(QMainWindow):
         self.SKCommodity.ui.commoditybtn.clicked.connect(self.commodityFunc)
         self.SKCommodity.ui.TDetailbtn.clicked.connect(self.SKTraDetailUI)
         self.SKCommodity.ui.Market_comboBox.currentIndexChanged.connect(self.MarketlistchangeFunc)
-        self.DomDataProc = FuncClass.DomDataProcess(GlobalVar.Dom_Event,GlobalVar.DomDataQueue,GlobalVar.NS)
-        self.DomDataProc.start()
-        print('報價五檔 Pid: ',self.DomDataProc.pid)
-        self.DomModel = FuncClass.PandasModel()
-        self.DomModel.UpdateData(GlobalVar.NS.Domdf)
-        self.SKCommodity.ui.DomTable.setModel(self.DomModel)
+        # self.DomDataProc = FuncClass.DomDataProcess(GlobalVar.Dom_Event,GlobalVar.DomDataQueue,GlobalVar.NS)
+        # self.DomDataProc.start()
+        # print('報價五檔 Pid: ',self.DomDataProc.pid)
+        # self.DomModel = FuncClass.PandasModel()
+        # self.DomModel.UpdateData(GlobalVar.NS.Domdf)
+        # self.SKCommodity.ui.DomTable.setModel(self.DomModel)
         self.DomModelThread = FuncClass.DomTableUpdateThread(self)
         self.DomModelThread.start()
         self.MPTableBigSmallThread = FuncClass.MPTableBigSmallThread(self)
@@ -611,18 +611,19 @@ class SKQuoteLibEvents:
             nhis = False
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
             globals()['DataQueue'+str(sStockIdx)].put(nlist)
-    # def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
-    #     if GlobalVar.CandleTarget.commodityIndex == sStockidx:
-    #         total_dict={'買量':{0:nBestBidQty1,1:nBestBidQty2,2:nBestBidQty3,3:nBestBidQty4,4:nBestBidQty5},
-    #                     '買價':{0:int(nBestBid1/100),1:int(nBestBid2/100),2:int(nBestBid3/100),3:int(nBestBid4/100),4:int(nBestBid5/100)},
-    #                     '賣價':{0:int(nBestAsk1/100),1:int(nBestAsk2/100),2:int(nBestAsk3/100),3:int(nBestAsk4/100),4:int(nBestAsk5/100)},
-    #                     '賣量':{0:nBestAskQty1,1:nBestAskQty2,2:nBestAskQty3,3:nBestAskQty4,4:nBestAskQty5}}
-    #         GlobalVar.DomDataQueue.put(total_dict)
+    def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
+        if GlobalVar.CandleTarget.commodityIndex == sStockidx:
+            GlobalVar.NS.Domdict={'買量':{0:nBestBidQty1,1:nBestBidQty2,2:nBestBidQty3,3:nBestBidQty4,4:nBestBidQty5},
+                        '買價':{0:int(nBestBid1/100),1:int(nBestBid2/100),2:int(nBestBid3/100),3:int(nBestBid4/100),4:int(nBestBid5/100)},
+                        '賣價':{0:int(nBestAsk1/100),1:int(nBestAsk2/100),2:int(nBestAsk3/100),3:int(nBestAsk4/100),4:int(nBestAsk5/100)},
+                        '賣量':{0:nBestAskQty1,1:nBestAskQty2,2:nBestAskQty3,3:nBestAskQty4,4:nBestAskQty5}}
+            # if GlobalVar.Dom_Event.is_set() is False:
+            GlobalVar.Dom_Event.set()
     def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount):
         if GlobalVar.CandleTarget.commodityIndex == sStockidx:
             GlobalVar.NS.listFT = [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
-            if GlobalVar.MP_Event.is_set() is False:
-                GlobalVar.MP_Event.set()
+            # if GlobalVar.MP_Event.is_set() is False:
+            GlobalVar.MP_Event.set()
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
