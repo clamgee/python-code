@@ -50,8 +50,9 @@ class Candle12KDrawThread(QThread):
                     time.sleep(0.1)
                 else:
                     self.DFBuild_None = False
-            self.Candle12KItem.set_data(GlobalVar.NS.df12K,GlobalVar.NS.list12K)
-            self.Candle12KItem_signal.emit()
+            if self.Candle12KItem.nPtr < GlobalVar.NS.list12K[2]:
+                self.Candle12KItem.set_data(GlobalVar.NS.df12K,GlobalVar.NS.list12K)
+                self.Candle12KItem_signal.emit()
             GlobalVar.CandleItem12K_Event.clear() 
 
 class CandleMinKDrawThread(QThread):
@@ -64,12 +65,13 @@ class CandleMinKDrawThread(QThread):
         while True:
             GlobalVar.CandleItemMinute_Event.wait()           
             while self.DFBuild_None:
-                if GlobalVar.NS.dfMinK.shape[0] ==0 or len(GlobalVar.NS.listMinK) <2:
+                if GlobalVar.NS.dfMinK.shape[0] ==0 or len(GlobalVar.NS.listMinK) <3:
                     time.sleep(0.1)
                 else:
                     self.DFBuild_None = False
-            self.CandleMinKItem.set_data(GlobalVar.NS.dfMinK,GlobalVar.NS.listMinK)
-            self.CandleMinKItem_signal.emit()
+            if self.CandleMinKItem.nPtr < GlobalVar.NS.listMinK[2]:
+                self.CandleMinKItem.set_data(GlobalVar.NS.dfMinK,GlobalVar.NS.listMinK)
+                self.CandleMinKItem_signal.emit()
             GlobalVar.CandleItemMinute_Event.clear()  
 
 class CandleMinKDealMinusDrawThread(QThread):
@@ -78,7 +80,6 @@ class CandleMinKDealMinusDrawThread(QThread):
         self.CandleMinuteDealMinusItem_signal = inputSignal
         self.CandleMinuteDealMinusItemFunc = inputFunc
         self.DFBuild_None = True
-
     def run(self):
         while True:
             GlobalVar.CandleMinuteDealMinus_Event.wait()
@@ -96,8 +97,7 @@ class CandleMinKBigDrawThread(QThread):
         super().__init__()
         self.CandleMinuteBigItem_signal = inputSignal
         self.CandleMinuteBigItemFunc = inputFunc
-        self.DFBuild_None = True
-    
+        self.DFBuild_None = True    
     def run(self):
         while True:
             GlobalVar.CandleMinuteBig_Event.wait()
@@ -116,7 +116,6 @@ class CandleMinKSmallDrawThread(QThread):
         self.CandleMinuteSmallItem_signal = inputSignal
         self.CandleMinuteSmallItemFunc = inputFunc
         self.DFBuild_None = True
-
     def run(self):
         while True:
             GlobalVar.CandleMinuteSmall_Event.wait()
