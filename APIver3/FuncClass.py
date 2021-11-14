@@ -174,16 +174,10 @@ class DomTableUpdateThread(QThread):
     def run(self):
         while True:
             GlobalVar.Dom_Event.wait()
-            for key in GlobalVar.NS.Domdict:
-                i = 0
-                while i < 5:
-                    self._parent.SKCommodity.Domdf.at[i,key].setText(str(GlobalVar.NS.Domdict[key][i]))
-                    i+=1
-            # for (t, x) in self._parent.SKCommodity.Domdf.loc[0:4,['買量','買價','賣價','賣量']].iterrows():
-            #     self._parent.SKCommodity.Domdf.at[t,'買量'].setText(str(GlobalVar.NS.Domdict['買量'][t]))
-            #     self._parent.SKCommodity.Domdf.at[t,'買價'].setText(str(GlobalVar.NS.Domdict['買價'][t]))
-            #     self._parent.SKCommodity.Domdf.at[t,'賣價'].setText(str(GlobalVar.NS.Domdict['賣價'][t]))
-            #     self._parent.SKCommodity.Domdf.at[t,'賣量'].setText(str(GlobalVar.NS.Domdict['賣量'][t]))
+            
+            for (t, x) in self._parent.SKCommodity.Domdf.loc[0:4,:].iterrows():
+                for key in GlobalVar.NS.Domdict:
+                    self._parent.SKCommodity.Domdf.at[t,key].setText(str(GlobalVar.NS.Domdict[key][t]))
             bidQty = GlobalVar.NS.Domdict['買量'].values()
             askQty = GlobalVar.NS.Domdict['賣量'].values()
             self._parent.SKCommodity.Domdf.at[5,'買量'].setText(str(int(sum(bidQty))))
