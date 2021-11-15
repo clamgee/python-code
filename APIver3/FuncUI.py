@@ -115,18 +115,19 @@ class CommodityForm(QtCore.QObject):
     def DomTalbeUI(self):
         self.ui.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.Domdf = pd.DataFrame(np.arange(24).reshape(6,4), columns=['買量','買價','賣價','賣量'])
-        font = QtGui.QFont()
-        font.setBold(True)
-        i=0
-        while i < 6 :
-            j=0
-            while j < 4:
-                self.Domdf.at[i,self.Domdf.columns[j]] = QTableWidgetItem('')
-                self.Domdf.at[i,self.Domdf.columns[j]].setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-                self.ui.DomTable.setItem(i, j, self.Domdf.at[i,self.Domdf.columns[j]])
-                j+=1
-            i+=1
+        # self.Domdf = pd.DataFrame(np.arange(24).reshape(6,4), columns=['買量','買價','賣價','賣量'])
+        self.Domdict = {}
+        
+        for i in range(4):
+            self.Domdict.setdefault(i,{})
+            for j in range(6):
+                self.Domdict[i][j]=QTableWidgetItem('')
+                self.Domdict[i][j].setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+                # self.Domdf.at[i,self.Domdf.columns[j]] = QTableWidgetItem('')
+                # self.Domdf.at[i,self.Domdf.columns[j]].setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+                # self.ui.DomTable.setItem(i, j, self.Domdf.at[i,self.Domdf.columns[j]])
+                self.ui.DomTable.setItem(j, i, self.Domdict[i][j])
+
 # if __name__ == "__main__":
 #     FuncUIApp = QApplication(sys.argv)
 #     SKLogin = LoginDialog()

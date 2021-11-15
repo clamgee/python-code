@@ -33,14 +33,13 @@ class CandleItem(pg.GraphicsObject):
         if self.lastidx != lastidx:
             self.PaintChange = True
             self.lastidx = self.data.last_valid_index()
-        self.generatePicture()
-        self.informViewBoundsChanged()
         if self.close != close:
             self.close = self.data.at[self.lastidx,'close']
-        if self.scene()!=None:
+        self.generatePicture()
+        self.informViewBoundsChanged()
+        if self.scene() != None:
             self.scene().update()
-        # self.update()
-    
+
     def generatePicture(self):    
         # 重畫或者最後一根K線
         if int(len(self.pictures))>1:
@@ -116,14 +115,13 @@ class BarItem(pg.GraphicsObject):
         if self.lastidx != lastidx:
             self.PaintChange = True
             self.lastidx = self.data.last_valid_index()
-        self.generatePicture()
-        self.informViewBoundsChanged()
         if self.close != close:
             self.close = self.data.at[self.lastidx,self.columnname]
-        if self.scene()!=None:
+        self.generatePicture()
+        self.informViewBoundsChanged()
+        if self.scene() != None:
             self.scene().update()
-        # self.update()
-
+       
     def generatePicture(self):    
         # 重畫或者最後一根K線
         if int(len(self.pictures))>1:

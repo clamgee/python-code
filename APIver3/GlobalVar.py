@@ -17,7 +17,8 @@ def Initialize():
     NS.listMinBig =[] # 大單比對參數
     NS.listMinSmall =[] # 小單比對參數
     NS.listFT = [] #期貨交易委買賣資訊
-    NS.Domdict = {} #五檔報價
+    NS.Domdict = {} #五檔報價處理
+    NS.Domlist = [] #五檔報價傳送list
     CandleItemMinute_Event = mp.Event()
     CandleMinuteDealMinus_Event = mp.Event()
     CandleMinuteBig_Event = mp.Event()
