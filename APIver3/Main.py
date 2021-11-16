@@ -561,7 +561,7 @@ class SKOrderLibEvent:
 
 class SKQuoteLibEvents:
     def __init__(self):
-        self.count = 0
+        self.nPtr = 0
     def OnConnection(self, nKind, nCode):
         if (nKind == 3001):
             strMsg = 'Connected!, '+str(nCode)+str(nKind)
@@ -623,8 +623,8 @@ class SKQuoteLibEvents:
     def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount):
         if GlobalVar.CandleTarget.commodityIndex == sStockidx:
             GlobalVar.NS.listFT = [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
-            # if GlobalVar.MP_Event.is_set() is False:
-            GlobalVar.MP_Event.set()
+            if GlobalVar.MP_Event.is_set() is False:
+                GlobalVar.MP_Event.set()
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()
