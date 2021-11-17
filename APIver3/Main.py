@@ -613,17 +613,17 @@ class SKQuoteLibEvents:
             globals()['DataQueue'+str(sStockIdx)].put(nlist)
     def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
         if GlobalVar.CandleTarget.commodityIndex == sStockidx:
-            GlobalVar.NS.Domlist = [nBestBidQty1,nBestBidQty2,nBestBidQty3,nBestBidQty4,nBestBidQty5,int(nBestBid1/100),int(nBestBid2/100),int(nBestBid3/100),int(nBestBid4/100),int(nBestBid5/100),int(nBestAsk1/100),int(nBestAsk2/100),int(nBestAsk3/100),int(nBestAsk4/100),int(nBestAsk5/100),nBestAskQty1,nBestAskQty2,nBestAskQty3,nBestAskQty4,nBestAskQty5]
             # GlobalVar.NS.Domdict={'買量':{0:nBestBidQty1,1:nBestBidQty2,2:nBestBidQty3,3:nBestBidQty4,4:nBestBidQty5},
             #             '買價':{0:int(nBestBid1/100),1:int(nBestBid2/100),2:int(nBestBid3/100),3:int(nBestBid4/100),4:int(nBestBid5/100)},
             #             '賣價':{0:int(nBestAsk1/100),1:int(nBestAsk2/100),2:int(nBestAsk3/100),3:int(nBestAsk4/100),4:int(nBestAsk5/100)},
             #             '賣量':{0:nBestAskQty1,1:nBestAskQty2,2:nBestAskQty3,3:nBestAskQty4,4:nBestAskQty5}}
             if GlobalVar.Dom_Event.is_set() is False:
+                GlobalVar.NS.Domlist = [nBestBidQty1,nBestBidQty2,nBestBidQty3,nBestBidQty4,nBestBidQty5,int(nBestBid1/100),int(nBestBid2/100),int(nBestBid3/100),int(nBestBid4/100),int(nBestBid5/100),int(nBestAsk1/100),int(nBestAsk2/100),int(nBestAsk3/100),int(nBestAsk4/100),int(nBestAsk5/100),nBestAskQty1,nBestAskQty2,nBestAskQty3,nBestAskQty4,nBestAskQty5]
                 GlobalVar.Dom_Event.set()
     def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount):
         if GlobalVar.CandleTarget.commodityIndex == sStockidx:
-            GlobalVar.NS.listFT = [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
             if GlobalVar.MP_Event.is_set() is False:
+                GlobalVar.NS.listFT = [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
                 GlobalVar.MP_Event.set()
 
 # comtypes使用此方式註冊callback
@@ -637,8 +637,12 @@ SKReplyLibEventHandler = comtypes.client.GetEvents(skR, SKReplyEvent)
 if __name__=='__main__':
     GlobalVar.Initialize()
     SKApp = QApplication(sys.argv)
-    SKMain = SKMainWindow()
-    SKMain.show()
-    # sys.exit(SKApp.exec_())
-    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        SKApp.instance().exec_()
+    try:
+        SKMain = SKMainWindow()
+        SKMain.show()
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+    sys.exit(SKApp.exec_())
+    # if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+    #     SKApp.instance().exec_()

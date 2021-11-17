@@ -7,7 +7,7 @@ import gc
 
 start = time.time()
 # 修改要抓期交所資料的檔案，手動修改檔案名稱
-df = pd.read_csv('Daily_2021_11_16.csv', encoding='big5', error_bad_lines=False, warn_bad_lines=True,low_memory=False)
+df = pd.read_csv('Daily_2021_11_17.csv', encoding='big5', error_bad_lines=False, warn_bad_lines=True,low_memory=False)
 df.rename(columns={
     df.columns[0]: 'ndate',
     df.columns[1]: 'product',
