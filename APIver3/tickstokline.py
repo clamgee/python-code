@@ -43,7 +43,7 @@ class DataToTicks(QThread):
                 deal = 0 - nQty
                 self.__ask -= nQty
             if tmptime == 8 and self.__checkhour == 4 :
-                self.__ask = self.__bid = 0
+                self.__ask = self.__bid = deal = 0
             self.__checkhour = tmptime 
             # True:下載歷史資料至list, 2: 處理歷史list 3: 即時
             if self.hisbol:
