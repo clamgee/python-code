@@ -270,7 +270,6 @@ class TicksToMinuteK(QThread):
             self.Close=self.Candledf.at[self.lastidx,'close']
             self.Candledf['big']=int(self.__NS.listFT[2]-self.__NS.listFT[1])
             self.Candledf['small']=int(self.__NS.listFT[3]-self.__NS.listFT[4])
-
         except Exception:
             self.mm=0; self.mm1=0
             self.High=0
@@ -278,7 +277,6 @@ class TicksToMinuteK(QThread):
             self.Close=0
             self.Candledf['big']=0
             self.Candledf['small']=0
-            pass
 
     def TicksToMinuteK(self,nlist):
         ndatetime = nlist[0]; nclose = nlist[1]; nQty = nlist[2] ; ndeal = nlist[3]
