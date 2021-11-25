@@ -182,14 +182,6 @@ class DomTableUpdateThread(QThread):
                     n+=1
             self._parent.SKCommodity.Domdict[0][5].setText(str(int(sum(GlobalVar.NS.Domlist[0:5]))))
             self._parent.SKCommodity.Domdict[3][5].setText(str(int(sum(GlobalVar.NS.Domlist[15:20]))))
-            # for (t, x) in self._parent.SKCommodity.Domdf.loc[0:4,:].iterrows():
-            #     for key in GlobalVar.NS.Domdict:
-            #         self._parent.SKCommodity.Domdf.at[t,key].setText(str(GlobalVar.NS.Domdict[key][t]))
-            # bidQty = GlobalVar.NS.Domlist[0:4].values()
-            # askQty = GlobalVar.NS.Domlist[15:19].values()
-            # self._parent.SKCommodity.Domdf.at[5,'買量'].setText(str(int(sum(GlobalVar.NS.Domlist[0:4]))))
-            # self._parent.SKCommodity.Domdf.at[5,'賣量'].setText(str(int(sum(askQty))))
-            # self._parent.DomModel.UpdateData(GlobalVar.NS.Domdf)
             GlobalVar.Dom_Event.clear()
 
 class MPTableBigSmallThread(QThread):

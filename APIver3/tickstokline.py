@@ -286,7 +286,9 @@ class TicksToMinuteK(QThread):
             self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
             if self.lastidx is None:
                 self.lastidx=0
-            tmpdeal=self.Candledf.at[self.lastidx,'dealminus']+ndeal
+                tmpdeal = ndeal
+            else:
+                tmpdeal=self.Candledf.at[self.lastidx,'dealminus']+ndeal
             self.Candledf=self.Candledf.append(pd.DataFrame([[self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,big,small]],columns=['ndatetime','open','high','low','close','volume','dealminus','big','small']),ignore_index=True,sort=False)
             self.High = self.Low = self.Close = nclose
             self.lastidx=self.Candledf.last_valid_index()
