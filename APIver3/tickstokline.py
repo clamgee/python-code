@@ -197,8 +197,8 @@ class TicksTo12K(QThread):
                     self.tickto12k(nlist[1])
                     if self.__CandleTarget.value == self.name:
                         if self.__CandleItem12K_Event.is_set() is False:
-                            self.__Candledf12K.df12K = self.Candledf
                             self.__Candledf12K.list12K = [self.lastidx,self.Close,nlist[2]]
+                            self.__Candledf12K.df12K = self.Candledf
                             self.__CandleItem12K_Event.set()
                 else:
                     self.HisListProcess(nlist[1])
@@ -312,9 +312,9 @@ class TicksToMinuteK(QThread):
                 if self.HisDone:
                     self.TicksToMinuteK(nlist[1])
                     if self.__CandleTarget.value == self.name:
-                        self.__NS.dfMinK = self.Candledf
                         if self.__CandleItemMinK_Event.is_set() is False:
                             self.__NS.listMinK = [self.lastidx,self.Close,nlist[2]]
+                            self.__NS.dfMinK = self.Candledf
                             self.__CandleItemMinK_Event.set()
                         if self.__CandleMinuteDealMinus_Event.is_set() is False:
                             self.__NS.listMinDealMinus = [self.lastidx,self.Candledf.at[self.lastidx,'dealminus']]
