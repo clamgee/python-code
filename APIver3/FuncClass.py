@@ -1,5 +1,6 @@
 from PySide6.QtCore import QAbstractTableModel, QObject,Qt,QThread,Signal,Slot
 import multiprocessing as mp
+from multiprocessing.process import current_process
 import time,os
 import pandas as pd
 import numpy as np
@@ -136,7 +137,8 @@ class MyProcess(mp.Process):  # 定義一個Class，繼承Process類
 
     def run(self):  # 必須的，啟動進程方法
         self.Thd = self.target(self.args[0],self.args[1],self.args[2]) #將QThread丟進來執行
-        self.Thd.run()
+        self.Thd.start()
+        print(self.Thd.name,current_process().name)
 
 # class DomDataProcess(mp.Process):
 #     def __init__(self,*args):

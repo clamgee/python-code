@@ -4,10 +4,11 @@ import time,os
 import numpy as np
 import pandas as pd
 import multiprocessing as mp
+import threading as td
 from PySide6.QtCore import QThread,QTime,Qt
 
 
-class DataToTicks(QThread):
+class DataToTicks(td.Thread):
     def __init__(self,inputname,inputindex,inputTuple):
         super(DataToTicks, self).__init__()
         self.name=inputname
@@ -90,7 +91,7 @@ class DataToTicks(QThread):
                 print(localtime,' Ticks已存檔!!')
                 self.__FileSave = False
 
-class TicksTo12K(QThread):
+class TicksTo12K(td.Thread):
     def __init__(self,inputname,inputindex,inputTuple):
         super(TicksTo12K, self).__init__()
         self.name = inputname
@@ -202,9 +203,7 @@ class TicksTo12K(QThread):
                             self.__CandleItem12K_Event.set()
                 else:
                     self.HisListProcess(nlist[1])
-                    # self.__Candledf12K.df12K = self.Candledf
-                    # if self.__CandleTarget.value == self.name:
-                    #     self.__CandleItem12K_Event.set()
+                    
 
             if self.__SaveNotify.value and self.__FileSave:
                 result=self.Candledf.drop(columns=['high_avg','low_avg'])            
@@ -215,7 +214,7 @@ class TicksTo12K(QThread):
                 print(localtime,' 12K已存檔!!')
                 self.__FileSave = False
 
-class TicksToMinuteK(QThread):
+class TicksToMinuteK(td.Thread):
     def __init__(self,inputname,inputindex,inputTuple):
         super(TicksToMinuteK, self).__init__()
         self.name = inputname
@@ -239,7 +238,6 @@ class TicksToMinuteK(QThread):
 
     def HisListProcess(self,nlist):
         dayticks = pd.DataFrame(nlist,columns=['ndatetime','nbid','nask','close','volume','deal'])
-        # dayticks.drop(['deal'], axis=1, inplace=True)
         dayticks['ndatetime']=pd.to_datetime(dayticks['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         now = time.localtime(time.time()).tm_hour
         if now>14 or now<8 :
@@ -327,7 +325,4 @@ class TicksToMinuteK(QThread):
                             self.__CandleMinuteSmall_Event.set()
                 else:
                     self.HisListProcess(nlist[1])
-                    # if self.__CandleTarget.value == self.name:
-                    #     if self.__CandleItemMinK_Event.is_set() is False:
-                    #         self.__NS.dfMinK = self.Candledf
-                    #         self.__CandleItemMinK_Event.set()
+
