@@ -34,7 +34,7 @@ class CandleItem(pg.GraphicsObject):
             self.PaintChange = True
             self.lastidx = self.data.last_valid_index()
         if self.close != close:
-            self.close = self.data.at[self.lastidx,'close']
+            self.close = close
         self.generatePicture()
         self.informViewBoundsChanged()
         if self.scene() != None:

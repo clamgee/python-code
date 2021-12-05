@@ -198,7 +198,7 @@ class MPTableBigSmallThread(QThread):
                         'DealCont':{0:GlobalVar.NS.listFT[5],1:GlobalVar.NS.listFT[6],2:int(GlobalVar.NS.listFT[6]-GlobalVar.NS.listFT[5])}}
             for key in MP_dict:
                 i = 0
-                while i < 3:
+                for i in range(3):
                     self._parent.SKCommodity.MPower.at[i,key].setText(str(MP_dict[key][i]))
                     if i == 2:
                         if MP_dict[key][i] > 0:
@@ -207,7 +207,6 @@ class MPTableBigSmallThread(QThread):
                         else:
                             self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.green)
                             self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.black)
-                    i+=1
             GlobalVar.MP_Event.clear()
 
 class MPTablePowerThread(QThread):
