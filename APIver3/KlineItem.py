@@ -116,7 +116,7 @@ class BarItem(pg.GraphicsObject):
             self.PaintChange = True
             self.lastidx = self.data.last_valid_index()
         if self.close != close:
-            self.close = self.data.at[self.lastidx,self.columnname]
+            self.close = close
         self.generatePicture()
         self.informViewBoundsChanged()
         if self.scene() != None:
