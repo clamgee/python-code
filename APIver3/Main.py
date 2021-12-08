@@ -292,10 +292,13 @@ class SKMainWindow(QMainWindow):
         self.CandleMinuteKDraw = self.MainUi.tab_DayTrading.addPlot(row=0,col=0,axisItems={'bottom': self.AxisMinute})
         self.CandleMinuteKDraw.autoRange()
         now = time.localtime(time.time()).tm_hour
+        Axisdict={}
         if now>14 or now<8 :
             self.CandleMinuteKDraw.setXRange(0,840)
+            Axisdict = GlobalVar.NightlyAxis
         elif now>=8 and now<15:
-            self.CandleMinuteKDraw.setXRange(0,310)
+            self.CandleMinuteKDraw.setXRange(0,300)
+            Axisdict = GlobalVar.DailyAxis
         self.CandleMinuteKDraw.showAxis('right',show=True)
         self.CandleMinuteKDraw.showAxis('left',show=False)
         self.CandleMinuteKDraw.showGrid(x=False,y=True)
@@ -328,6 +331,10 @@ class SKMainWindow(QMainWindow):
         self.CandleMinuteBigDraw.setMenuEnabled(False)
         self.CandleMinuteSmallDraw.setMouseEnabled(x=False, y=False)
         self.CandleMinuteSmallDraw.setMenuEnabled(False)
+        self.AxisMinute.setTicks([Axisdict.items()])
+        self.AxisMinuteDealMinus.setTicks([Axisdict.items()])
+        self.AxisMinuteBig.setTicks([Axisdict.items()])
+        self.AxisMinuteSmall.setTicks([Axisdict.items()])
         self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(0,7)
         self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(1,1)
         self.MainUi.tab_DayTrading.ci.layout.setRowStretchFactor(2,1)
@@ -347,10 +354,6 @@ class SKMainWindow(QMainWindow):
             self.YCline = pg.InfiniteLine(angle=0, movable=False,pen='y')
             self.CandleMinuteKDraw.addItem(self.YCline)
             self.YCline.setPos(self.yesterdayclose)
-            dict_tmp=self.CandleMinuteKItem.data['ndatetime'][self.CandleMinuteKItem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
-            self.AxisMinute.setTicks([dict_tmp.items()])
-            self.AxisMinuteDealMinus.setTicks([dict_tmp.items()])
-            del dict_tmp
             tmpline=self.CandleMinuteKItem.data.close.cumsum()
             self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
             self.curve=self.CandleMinuteKDraw.plot(pen='w')
@@ -364,12 +367,6 @@ class SKMainWindow(QMainWindow):
         else:
             if self.ChangeRectidx != self.CandleMinuteKItem.lastidx:
                 self.ChangeRectidx = self.CandleMinuteKItem.lastidx
-                dict_tmp=self.CandleMinuteKItem.data['ndatetime'][self.CandleMinuteKItem.data.ndatetime.dt.minute==0].dt.strftime('%H:%M:%S').to_dict()
-                self.AxisMinute.setTicks([dict_tmp.items()])
-                self.AxisMinuteDealMinus.setTicks([dict_tmp.items()])
-                self.AxisMinuteBig.setTicks([dict_tmp.items()])
-                self.AxisMinuteSmall.setTicks([dict_tmp.items()])
-                del dict_tmp
                 tmpline=self.CandleMinuteKItem.data.close.cumsum()
                 self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
                 self.curve.setData(self.avgline)
@@ -551,6 +548,7 @@ class SKOrderLibEvent:
             print('OnOpenInterest end pass')
             pass
         else:
+            Line[6] = str(int(Line[6])/1000)
             SKMain.openpd = SKMain.openpd.append(pd.DataFrame([Line],columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅','登入帳號']))
         SKMain.onOpenInterestReplytimes+=1
         # i=0
@@ -643,6 +641,6 @@ if __name__=='__main__':
     except Exception as inst:
         print(type(inst))
         print(inst.args)
-    sys.exit(SKApp.exec_())
-    # if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-    #     SKApp.instance().exec_()
+    # sys.exit(SKApp.exec_())
+    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+         SKApp.instance().exec_()
