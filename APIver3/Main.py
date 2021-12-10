@@ -599,13 +599,13 @@ class SKQuoteLibEvents:
         SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
     
     def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        if nSimulate == 0 and globals()['DataQueue'+str(sStockIdx)].commodityIndex == sStockIdx:
+        if nSimulate == 0 :#and globals()['DataQueue'+str(sStockIdx)].commodityIndex == sStockIdx:
             nhis = True
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
             globals()['DataQueue'+str(sStockIdx)].put(nlist)
     
     def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        if nSimulate == 0 and globals()['DataQueue'+str(sStockIdx)].commodityIndex == sStockIdx:
+        if nSimulate == 0 :#and globals()['DataQueue'+str(sStockIdx)].commodityIndex == sStockIdx:
             nhis = False
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
             globals()['DataQueue'+str(sStockIdx)].put(nlist)
