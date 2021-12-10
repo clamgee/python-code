@@ -164,7 +164,7 @@ class SKMainWindow(QMainWindow):
     # 報價系統連線功能
     @Slot()
     def ConnectFunc(self):
-        m_nCode = skQ.SKQuoteLib_EnterMonitor()
+        m_nCode = skQ.SKQuoteLib_EnterMonitorLONG()
         if m_nCode==0:
             strMsg = '報價已連線!!!'
             self.SKCommodityUI(self) #商品+5檔+大小單+下單介面
@@ -172,7 +172,7 @@ class SKMainWindow(QMainWindow):
             self.MainUi.CommodityUIbtn.triggered.connect(self.SKCommodity.ui.show) #商品+5檔+大小單+下單介面
         else:
             strMsg = skC.SKCenterLib_GetReturnCodeMessage(m_nCode)
-        self.SKMessage.ui.textBrowser.append('EnterMonitor: '+strMsg)
+        self.SKMessage.ui.textBrowser.append('EnterMonitorLONG: '+strMsg)
     @Slot()
     def disconnectFunc(self):
         m_nCode = skQ.SKQuoteLib_LeaveMonitor()
@@ -598,18 +598,18 @@ class SKQuoteLibEvents:
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
     
-    def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        if nSimulate == 0 :#and globals()['DataQueue'+str(sStockIdx)].commodityIndex == sStockIdx:
+    def OnNotifyHistoryTicksLONG(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
+        if nSimulate == 0 and globals()['DataQueue'+str(sStockIdx)].commodityIndex == sStockIdx:
             nhis = True
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
             globals()['DataQueue'+str(sStockIdx)].put(nlist)
     
-    def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
-        if nSimulate == 0 :#and globals()['DataQueue'+str(sStockIdx)].commodityIndex == sStockIdx:
+    def OnNotifyTicksLONG(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
+        if nSimulate == 0 and globals()['DataQueue'+str(sStockIdx)].commodityIndex == sStockIdx:
             nhis = False
             nlist = [int(nPtr),str(lDate),str(lTimehms),str(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty),nhis]
             globals()['DataQueue'+str(sStockIdx)].put(nlist)
-    def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
+    def OnNotifyBest5LONG(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
         if GlobalVar.CandleTarget.commodityIndex == sStockidx:
             # GlobalVar.NS.Domdict={'買量':{0:nBestBidQty1,1:nBestBidQty2,2:nBestBidQty3,3:nBestBidQty4,4:nBestBidQty5},
             #             '買價':{0:int(nBestBid1/100),1:int(nBestBid2/100),2:int(nBestBid3/100),3:int(nBestBid4/100),4:int(nBestBid5/100)},
@@ -618,7 +618,7 @@ class SKQuoteLibEvents:
             if GlobalVar.Dom_Event.is_set() is False:
                 GlobalVar.NS.Domlist = [nBestBidQty1,nBestBidQty2,nBestBidQty3,nBestBidQty4,nBestBidQty5,int(nBestBid1/100),int(nBestBid2/100),int(nBestBid3/100),int(nBestBid4/100),int(nBestBid5/100),int(nBestAsk1/100),int(nBestAsk2/100),int(nBestAsk3/100),int(nBestAsk4/100),int(nBestAsk5/100),nBestAskQty1,nBestAskQty2,nBestAskQty3,nBestAskQty4,nBestAskQty5]
                 GlobalVar.Dom_Event.set()
-    def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount):
+    def OnNotifyFutureTradeInfoLONG(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount):
         if GlobalVar.CandleTarget.commodityIndex == sStockidx:
             if GlobalVar.MP_Event.is_set() is False:
                 GlobalVar.NS.listFT = [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
