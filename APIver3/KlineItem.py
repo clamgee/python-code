@@ -32,7 +32,7 @@ class CandleItem(pg.GraphicsObject):
             self.low = close
         if self.lastidx != lastidx:
             self.PaintChange = True
-            self.lastidx = self.data.last_valid_index()
+            self.lastidx = lastidx
         if self.close != close:
             self.close = close
         self.generatePicture()
@@ -114,7 +114,7 @@ class BarItem(pg.GraphicsObject):
             self.low = close
         if self.lastidx != lastidx:
             self.PaintChange = True
-            self.lastidx = self.data.last_valid_index()
+            self.lastidx = lastidx
         if self.close != close:
             self.close = close
         self.generatePicture()
