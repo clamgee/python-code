@@ -26,11 +26,11 @@ def Initialize():
     # 五檔介面
     global DomDataQueue, Dom_Event
     NS.Domdf = pd.DataFrame()
-    # DomDataQueue = mp.Queue()
-    Dom_Event = mp.Event()
+    DomDataQueue = mp.Queue()
+    # Dom_Event = mp.Event()
     # 商品力道表
     global MP_Event,PowerQueue 
-    MP_Event = mp.Event()
+    MP_Event = mp.Queue()
     PowerQueue = mp.Queue()
     #全介面標的
     global CandleTarget, DomTarget, SaveNotify

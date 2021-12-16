@@ -176,15 +176,23 @@ class DomTableUpdateThread(QThread):
         
     def run(self):
         while True:
-            GlobalVar.Dom_Event.wait()
-            n=0
-            for key in self._parent.SKCommodity.Domdict:
-                for i in range(5):
-                    self._parent.SKCommodity.Domdict[key][i].setText(str(GlobalVar.NS.Domlist[n]))
-                    n+=1
-            self._parent.SKCommodity.Domdict[0][5].setText(str(int(sum(GlobalVar.NS.Domlist[0:5]))))
-            self._parent.SKCommodity.Domdict[3][5].setText(str(int(sum(GlobalVar.NS.Domlist[15:20]))))
-            GlobalVar.Dom_Event.clear()
+            nlist = GlobalVar.DomDataQueue.get()
+            if nlist is not None:
+                n=0
+                for key in self._parent.SKCommodity.Domdict:
+                    for i in range(5):
+                        self._parent.SKCommodity.Domdict[key][i].setText(str(nlist[n]))
+                        n+=1
+                self._parent.SKCommodity.Domdict[0][5].setText(str(int(sum(nlist[0:5]))))
+                self._parent.SKCommodity.Domdict[3][5].setText(str(int(sum(nlist[15:20]))))
+            # n=0
+            # for key in self._parent.SKCommodity.Domdict:
+            #     for i in range(5):
+            #         self._parent.SKCommodity.Domdict[key][i].setText(str(GlobalVar.NS.Domlist[n]))
+            #         n+=1
+            # self._parent.SKCommodity.Domdict[0][5].setText(str(int(sum(GlobalVar.NS.Domlist[0:5]))))
+            # self._parent.SKCommodity.Domdict[3][5].setText(str(int(sum(GlobalVar.NS.Domlist[15:20]))))
+            # GlobalVar.Dom_Event.clear()
 
 class MPTableBigSmallThread(QThread):
     def __init__(self, parent: typing.Optional[QObject] = ...) -> None:
@@ -192,22 +200,39 @@ class MPTableBigSmallThread(QThread):
         self._parent = parent
     def run(self):
         while True:
-            GlobalVar.MP_Event.wait()
-            MP_dict = {'ComCont':{0:GlobalVar.NS.listFT[1],1:GlobalVar.NS.listFT[2],2:int(GlobalVar.NS.listFT[2]-GlobalVar.NS.listFT[1])},
-                        'ComQty':{0:GlobalVar.NS.listFT[3],1:GlobalVar.NS.listFT[4],2:int(GlobalVar.NS.listFT[3]-GlobalVar.NS.listFT[4])},
-                        'DealCont':{0:GlobalVar.NS.listFT[5],1:GlobalVar.NS.listFT[6],2:int(GlobalVar.NS.listFT[6]-GlobalVar.NS.listFT[5])}}
-            for key in MP_dict:
-                i = 0
-                for i in range(3):
-                    self._parent.SKCommodity.MPower.at[i,key].setText(str(MP_dict[key][i]))
-                    if i == 2:
-                        if MP_dict[key][i] > 0:
-                            self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.red)
-                            self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.white)
-                        else:
-                            self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.green)
-                            self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.black)
-            GlobalVar.MP_Event.clear()
+            # GlobalVar.MP_Event.wait()
+            nlist = GlobalVar.MP_Event.get()
+            if nlist is not None:
+                MP_dict = {'ComCont':{0:nlist[1],1:nlist[2],2:int(nlist[2]-nlist[1])},
+                'ComQty':{0:nlist[3],1:nlist[4],2:int(nlist[3]-nlist[4])},
+                'DealCont':{0:nlist[5],1:nlist[6],2:int(nlist[6]-nlist[5])}}
+                for key in MP_dict:
+                    i = 0
+                    for i in range(3):
+                        self._parent.SKCommodity.MPower.at[i,key].setText(str(MP_dict[key][i]))
+                        if i == 2:
+                            if MP_dict[key][i] > 0:
+                                self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.red)
+                                self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.white)
+                            else:
+                                self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.green)
+                                self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.black)
+
+            # MP_dict = {'ComCont':{0:GlobalVar.NS.listFT[1],1:GlobalVar.NS.listFT[2],2:int(GlobalVar.NS.listFT[2]-GlobalVar.NS.listFT[1])},
+            #             'ComQty':{0:GlobalVar.NS.listFT[3],1:GlobalVar.NS.listFT[4],2:int(GlobalVar.NS.listFT[3]-GlobalVar.NS.listFT[4])},
+            #             'DealCont':{0:GlobalVar.NS.listFT[5],1:GlobalVar.NS.listFT[6],2:int(GlobalVar.NS.listFT[6]-GlobalVar.NS.listFT[5])}}
+            # for key in MP_dict:
+            #     i = 0
+            #     for i in range(3):
+            #         self._parent.SKCommodity.MPower.at[i,key].setText(str(MP_dict[key][i]))
+            #         if i == 2:
+            #             if MP_dict[key][i] > 0:
+            #                 self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.red)
+            #                 self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.white)
+            #             else:
+            #                 self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.green)
+            #                 self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.black)
+            # GlobalVar.MP_Event.clear()
 
 class MPTablePowerThread(QThread):
     def __init__(self, parent: typing.Optional[QObject] = ...) -> None:

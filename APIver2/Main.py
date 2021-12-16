@@ -290,7 +290,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
         self.bestfive[['買量','買價','賣價','賣量']]=self.bestfive[['買量','買價','賣價','賣量']].astype(str)
         self.Dom1model=PandasModel()
         self.Dom1model.UpdateData(self.bestfive)
-        self.DomTable.setModel(self.Dom1model)
+        # self.DomTable.setModel(self.Dom1model)
         self.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         # self.DomTable.horizontalHeader().setDefaultAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -421,7 +421,7 @@ class SKMainWindow(QMainWindow):  # 主視窗
     # 閃電下單結束
     # 報價系統連線功能
     def ConnectFun(self):
-        m_nCode = skQ.SKQuoteLib_EnterMonitor()
+        m_nCode = skQ.SKQuoteLib_EnterMonitorLONG()
         # self.Connectbtn.setStyleSheet(""" QAction { background-color: rgb(49,49,49); color: rgb(255,255,255); border: 1px solid ;} """)
         self.SKMessage.textBrowser.append("EnterMonitor: "+str(m_nCode))
 
@@ -868,12 +868,12 @@ class SKQuoteLibEvents:
         SKMain.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
 
     # @repeatQuote
-    def OnNotifyHistoryTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
+    def OnNotifyHistoryTicksLONG(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
         if nSimulate == 0:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print([lDate,lTimehms,lTimemillismicros,nBid,nAsk,nClose,nQty,sStockIdx])
-            if SKMain.timestart=='':
-                SKMain.timestart = time.time()
+            # if SKMain.timestart=='':
+            #     SKMain.timestart = time.time()
             if SKMain.Future.hisbol!=1:
                 SKMain.Future.hisbol=1
             SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
@@ -882,69 +882,70 @@ class SKQuoteLibEvents:
             # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
             # SKMain.ndetialmsg.textBrowser.append(strMsg)
 
-    def OnNotifyTicks(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
+    def OnNotifyTicksLONG(self, sMarketNo, sStockIdx, nPtr, lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty, nSimulate):
         # strMsg=str(lDate)+','+str(lTimehms)+','+str(lTimemillismicros)+','+str(nBid)+','+str(nAsk)+','+str(nClose)+','+str(nQty)
         if nSimulate == 0:
             # SKMain.newThread.KLine_signal.emit(str(lDate),int(lTimehms),int(lTimemillismicros),int(nBid),int(nAsk),int(nClose),int(nQty))
             # print('ThreadName: ',QThread.currentThread().objectName(),'ThreadID: ',int(QThread.currentThreadId()))
-            if SKMain.timeend == '' and SKMain.Future.hisbol==1:
-                SKMain.timeend = time.time()
+            # if SKMain.timeend == '' and SKMain.Future.hisbol==1:
+            if SKMain.Future.hisbol==1:
+                # SKMain.timeend = time.time()
                 SKMain.Future.hisbol=2
                 SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
-                print(round((SKMain.timeend-SKMain.timestart),3))
+                # print(round((SKMain.timeend-SKMain.timestart),3))
                 # print(SKMain.Future.contractkpd.tail(10))
             else:
                 SKMain.Future.Ticks(lDate, lTimehms, lTimemillismicros, nBid, nAsk, nClose, nQty)
             # strMsg = str(SKMain.Future.contractkpd.iloc[-1:].values)
-            start = time.time()
+            # start = time.time()
             SKMain.Kitem.set_data(SKMain.Future.lastidx,SKMain.Future.High,SKMain.Future.Low,SKMain.Future.contractkpd.tail(SKMain.Future.lastidx+1-SKMain.Kitem.lastidx))
-            A = time.time()-start
-            start = time.time()
+            # A = time.time()-start
+            # start = time.time()
             SKMain.minKitem.set_data(SKMain.Future.minlastidx,SKMain.Future.minhigh,SKMain.Future.minlow,SKMain.Future.mindf.tail(SKMain.Future.minlastidx+1-SKMain.minKitem.lastidx))
-            B = time.time()-start
-            start = time.time()
+            # B = time.time()-start
+            # start = time.time()
             SKMain.dealminusbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','dealminus']].tail(SKMain.Future.minlastidx+1-SKMain.dealminusbar.lastidx))
             if SKMain.Future.mindf is not None:
                 SKMain.bigbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','big']].tail(SKMain.Future.minlastidx+1-SKMain.bigbar.lastidx))
                 SKMain.RetailInvestorsbar.set_data(SKMain.Future.minlastidx,SKMain.Future.mindf[['ndatetime','small']].tail(SKMain.Future.minlastidx+1-SKMain.RetailInvestorsbar.lastidx))
-            C = time.time()-start
+            # C = time.time()-start
             xmax = SKMain.Future.lastidx + 1
             minkmax = SKMain.Future.minlastidx + 1
             if SKMain.axis12k_xmax != xmax:
                 SKMain.Draw12kUpdate()
             if SKMain.axismin_ch != minkmax:
                 SKMain.DrawminkUpdate()
-            SKMain.MPower.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
-            SKMain.MPower.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
-            SKMain.MPower.at[2,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
+            # SKMain.MPower.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
+            # SKMain.MPower.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
+            # SKMain.MPower.at[2,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
             SKMain.MPower_pawndf.at[0,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealbid']))
             SKMain.MPower_pawndf.at[1,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealask']))
             SKMain.MPower_pawndf.at[2,'DealQty'].setText(str(SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus']))
 
             if SKMain.Future.contractkpd.at[SKMain.Future.lastidx,'dealminus'] > 0:
-                SKMain.MPower.at[2,'DealQty'].setBackground(Qt.red)
+                # SKMain.MPower.at[2,'DealQty'].setBackground(Qt.red)
                 SKMain.MPower_pawndf.at[2,'DealQty'].setBackground(Qt.red)
             else:
-                SKMain.MPower.at[2,'DealQty'].setBackground(Qt.green)
+                # SKMain.MPower.at[2,'DealQty'].setBackground(Qt.green)
                 SKMain.MPower_pawndf.at[2,'DealQty'].setBackground(Qt.green)
-            SKMain.MPower.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
+            # SKMain.MPower.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
             SKMain.MPower_pawndf.at[3,'DealQty'].setText(str(SKMain.Future.ticksum))
-            if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
-                SKMain.timeA.pop(0)
-                SKMain.timeA.append(A)
-                SKMain.timeB.pop(0)
-                SKMain.timeB.append(B)
-                SKMain.timeC.pop(0)
-                SKMain.timeC.append(C)
+            # if len(SKMain.timeA)==1000 or len(SKMain.timeB)==1000:
+            #     SKMain.timeA.pop(0)
+            #     SKMain.timeA.append(A)
+            #     SKMain.timeB.pop(0)
+            #     SKMain.timeB.append(B)
+            #     SKMain.timeC.pop(0)
+            #     SKMain.timeC.append(C)
 
-            else:
-                SKMain.timeA.append(A)
-                SKMain.timeB.append(B)
-                SKMain.timeC.append(C)
-            A = str(int(1/(sum(SKMain.timeA)/len(SKMain.timeA))))
-            B = str(int(1/(sum(SKMain.timeB)/len(SKMain.timeB))))
-            C = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
-            SKMain.draw12k.setLabel('top','12K線: '+ A +' ,分鐘: '+ B+' ,Bar : '+ C)
+            # else:
+            #     SKMain.timeA.append(A)
+            #     SKMain.timeB.append(B)
+            #     SKMain.timeC.append(C)
+            # A = str(int(1/(sum(SKMain.timeA)/len(SKMain.timeA))))
+            # B = str(int(1/(sum(SKMain.timeB)/len(SKMain.timeB))))
+            # C = str(int(1/(sum(SKMain.timeC)/len(SKMain.timeC))))
+            # SKMain.draw12k.setLabel('top','12K線: '+ A +' ,分鐘: '+ B+' ,Bar : '+ C)
             
             # SKMain.ndetialmsg.textBrowser.append(str(SKMain.Future.ticklst[-1]))
             # if SKMain.axis12k_xmax != xmax:
@@ -962,7 +963,7 @@ class SKQuoteLibEvents:
             #     SKMain.draw12k.setYRange(SKMain.axis12k_ymin,SKMain.axis12k_ymax)
 
 
-    def OnNotifyBest5(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
+    def OnNotifyBest5LONG(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
         # total_dict={'bid_dict':{int(nBestBid1/100):int(nBestBidQty1),int(nBestBid2/100):int(nBestBidQty2),int(nBestBid3/100):int(nBestBidQty3),int(nBestBid4/100):int(nBestBidQty4),int(nBestBid5/100):int(nBestBidQty5)},
         # 'ask_dict':{int(nBestAsk1/100):int(nBestAskQty1),int(nBestAsk2/100):int(nBestAskQty2),int(nBestAsk3/100):int(nBestAskQty3),int(nBestAsk4/100):int(nBestAskQty4),int(nBestAsk5/100):int(nBestAskQty5)}}
         total_dict={'買量':{0:nBestBidQty1,1:nBestBidQty2,2:nBestBidQty3,3:nBestBidQty4,4:nBestBidQty5},
@@ -1007,7 +1008,7 @@ class SKQuoteLibEvents:
         # else:
         #     pass
         # 更新點
-    def OnNotifyFutureTradeInfo(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount): 
+    def OnNotifyFutureTradeInfoLONG(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount): 
         # print(nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount)
         # 'ComQty','ComCont','DealCont','DealQty'
         MP_dict = {'ComCont':{0:nBuyTotalCount,1:nSellTotalCount,2:int(nSellTotalCount-nBuyTotalCount)},
@@ -1019,32 +1020,44 @@ class SKQuoteLibEvents:
             while i < 3:
                 # SKMain.MPower.at[i,key]=MP_dict[key][i]
                 SKMain.MPower_pawndf.at[i,key].setText(str(MP_dict[key][i]))
+                if i == 2:
+                    if SKMain.Future.mindf is not None:
+                        if key == 'ComQty' :
+                            SKMain.Future.mindf.at[SKMain.Future.minlastidx,'big']=MP_dict[key][i]
+                        if key == 'ComCont' :
+                            SKMain.Future.mindf.at[SKMain.Future.minlastidx,'small']=MP_dict['ComCont'][i]
+                    if MP_dict[key][i] > 0:
+                        SKMain.MPower_pawndf.at[i,key].setBackground(Qt.red)
+                        SKMain.MPower_pawndf.at[i,key].setForeground(Qt.white)
+                    else:
+                        SKMain.MPower_pawndf.at[i,key].setBackground(Qt.green)
+                        SKMain.MPower_pawndf.at[i,key].setForeground(Qt.black)
                 i+=1
-        for (t, x) in SKMain.MPower.loc[0:2,['ComQty','ComCont','DealCont']].iterrows():
-            x.ComQty.setText(str(MP_dict['ComQty'][t]))
-            x.ComCont.setText(str(MP_dict['ComCont'][t]))
-            x.DealCont.setText(str(MP_dict['DealCont'][t]))
-            if t == 2 and SKMain.Future.mindf is not None:
-                SKMain.Future.mindf.at[SKMain.Future.minlastidx,'big']=MP_dict['ComQty'][t]
-                SKMain.Future.mindf.at[SKMain.Future.minlastidx,'small']=MP_dict['ComCont'][t]
-                if MP_dict['ComQty'][t]>0:
-                    x.ComQty.setBackground(Qt.red)
-                    SKMain.MPower_pawndf.at[t,'ComQty'].setBackground(Qt.red)
-                else:
-                    x.ComQty.setBackground(Qt.green)
-                    SKMain.MPower_pawndf.at[t,'ComQty'].setBackground(Qt.green)
-                if MP_dict['ComCont'][t]>0:
-                    x.ComCont.setBackground(Qt.red)
-                    SKMain.MPower_pawndf.at[t,'ComCont'].setBackground(Qt.red)
-                else:
-                    x.ComCont.setBackground(Qt.green)
-                    SKMain.MPower_pawndf.at[t,'ComCont'].setBackground(Qt.green)
-                if MP_dict['DealCont'][t]>0:
-                    x.DealCont.setBackground(Qt.red)
-                    SKMain.MPower_pawndf.at[t,'DealCont'].setBackground(Qt.red)
-                else:
-                    x.DealCont.setBackground(Qt.green)
-                    SKMain.MPower_pawndf.at[t,'DealCont'].setBackground(Qt.green)
+        # for (t, x) in SKMain.MPower.loc[0:2,['ComQty','ComCont','DealCont']].iterrows():
+        #     x.ComQty.setText(str(MP_dict['ComQty'][t]))
+        #     x.ComCont.setText(str(MP_dict['ComCont'][t]))
+        #     x.DealCont.setText(str(MP_dict['DealCont'][t]))
+        #     if t == 2 and SKMain.Future.mindf is not None:
+        #         SKMain.Future.mindf.at[SKMain.Future.minlastidx,'big']=MP_dict['ComQty'][t]
+        #         SKMain.Future.mindf.at[SKMain.Future.minlastidx,'small']=MP_dict['ComCont'][t]
+        #         if MP_dict['ComQty'][t]>0:
+        #             x.ComQty.setBackground(Qt.red)
+        #             SKMain.MPower_pawndf.at[t,'ComQty'].setBackground(Qt.red)
+        #         else:
+        #             x.ComQty.setBackground(Qt.green)
+        #             SKMain.MPower_pawndf.at[t,'ComQty'].setBackground(Qt.green)
+        #         if MP_dict['ComCont'][t]>0:
+        #             x.ComCont.setBackground(Qt.red)
+        #             SKMain.MPower_pawndf.at[t,'ComCont'].setBackground(Qt.red)
+        #         else:
+        #             x.ComCont.setBackground(Qt.green)
+        #             SKMain.MPower_pawndf.at[t,'ComCont'].setBackground(Qt.green)
+        #         if MP_dict['DealCont'][t]>0:
+        #             x.DealCont.setBackground(Qt.red)
+        #             SKMain.MPower_pawndf.at[t,'DealCont'].setBackground(Qt.red)
+        #         else:
+        #             x.DealCont.setBackground(Qt.green)
+        #             SKMain.MPower_pawndf.at[t,'DealCont'].setBackground(Qt.green)
 
 
 
