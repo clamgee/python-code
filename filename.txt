@@ -665,3 +665,5 @@ Ticks2021-12-08.txt
 Ticks2021-12-09.txt
 Ticks2021-12-10.txt
 Ticks2021-12-13.txt
+Ticks2021-12-14.txt
+Ticks2021-12-15.txt

@@ -19,26 +19,30 @@ class CandleItem(pg.GraphicsObject):
         self.nPtr = 0
 
     def set_data(self,Candledf,nlist):
-        self.data = Candledf
-        lastidx = nlist[0]; close = nlist[1];self.nPtr = nlist[2]
-        if len(self.pictures) == 0:
-            self.high = self.data.high.max()
-            self.low = self.data.low.min()
-            self.lastidx = self.data.last_valid_index()
-            self.close = self.data.at[self.lastidx,'close']
-        if self.high < close:
-            self.high = close
-        if self.low > close:
-            self.low = close
-        if self.lastidx != lastidx:
-            self.PaintChange = True
-            self.lastidx = lastidx
-        if self.close != close:
-            self.close = close
-        self.generatePicture()
-        self.informViewBoundsChanged()
-        if self.scene() != None:
-            self.scene().update()
+        try:
+            self.data = Candledf
+            lastidx = nlist[0]; close = nlist[1];self.nPtr = nlist[2]
+            if len(self.pictures) == 0:
+                self.high = self.data.high.max()
+                self.low = self.data.low.min()
+                self.lastidx = self.data.last_valid_index()
+                self.close = self.data.at[self.lastidx,'close']
+            if self.high < close:
+                self.high = close
+            if self.low > close:
+                self.low = close
+            if self.lastidx != lastidx:
+                self.PaintChange = True
+                self.lastidx = lastidx
+            if self.close != close:
+                self.close = close
+            self.generatePicture()
+            self.informViewBoundsChanged()
+            if self.scene() != None:
+                self.scene().update()
+        except AttributeError as e:
+            print('K線繪圖錯誤: ',e)
+            pass
 
     def generatePicture(self):    
         # 重畫或者最後一根K線
@@ -105,22 +109,26 @@ class BarItem(pg.GraphicsObject):
         self.close = 0
 
     def set_data(self,Candledf,nlist):
-        self.data = Candledf
-        lastidx = nlist[0]; close = nlist[1]
-        self.columnname = self.data.columns[-1]
-        if self.high < close:
-            self.high = close
-        if self.low > close:
-            self.low = close
-        if self.lastidx != lastidx:
-            self.PaintChange = True
-            self.lastidx = lastidx
-        if self.close != close:
-            self.close = close
-        self.generatePicture()
-        self.informViewBoundsChanged()
-        if self.scene() != None:
-            self.scene().update()
+        try:
+            self.data = Candledf
+            lastidx = nlist[0]; close = nlist[1]
+            self.columnname = self.data.columns[-1]
+            if self.high < close:
+                self.high = close
+            if self.low > close:
+                self.low = close
+            if self.lastidx != lastidx:
+                self.PaintChange = True
+                self.lastidx = lastidx
+            if self.close != close:
+                self.close = close
+            self.generatePicture()
+            self.informViewBoundsChanged()
+            if self.scene() != None:
+                self.scene().update()
+        except AttributeError as e:
+            print('Bar線繪圖錯誤:',e)
+            pass
        
     def generatePicture(self):    
         # 重畫或者最後一根K線

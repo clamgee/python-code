@@ -7,7 +7,7 @@ import gc
 
 start = time.time()
 # 修改要抓期交所資料的檔案，手動修改檔案名稱
-df = pd.read_csv('Daily_2021_12_10.csv', encoding='big5', error_bad_lines=False, warn_bad_lines=True,low_memory=False)
+df = pd.read_csv('Daily_2021_12_15.csv', encoding='big5', error_bad_lines=False, warn_bad_lines=True,low_memory=False)
 df.rename(columns={
     df.columns[0]: 'ndate',
     df.columns[1]: 'product',
@@ -40,31 +40,18 @@ df['ndate']=pd.to_datetime(df['ndate'],format='%Y-%m-%d %H:%M:%S.%f')
 df.sort_values(by=['ndate'],ascending=True)
 df = df.reset_index(drop=True)
 # -----處理多空力道
-tmpdf = df['price'].drop(index=df.index)
-tmpdf.columns='close'
-tmpdf.loc[0]=0
-tmpdf = tmpdf.append(df.price,ignore_index=True)
-tmpdf = tmpdf.reset_index(drop=True)
-df['lclose']=0
-df['lclose']=tmpdf.map(lambda x:x)
+df['lclose']=df.price.shift(1)
+df.lclose.fillna(value=0, inplace=True)
 def dealfunc(arrLike,nBid,nAsk,nClose,nQty,lClose):
-    if arrLike[nBid]==arrLike[nAsk]:
-        if arrLike[lClose]!=0 and arrLike[nClose]>arrLike[lClose]:
+    if arrLike[lClose] !=0 :
+        if arrLike[nClose] > arrLike[lClose]:
             deal = arrLike[nQty]
-        elif arrLike[lClose]!=0 and arrLike[nClose]<arrLike[lClose]:
+        elif arrLike[nClose] < arrLike[lClose]:
             deal = 0-arrLike[nQty]
         else:
-            deal=arrLike[nQty]
+            deal =0
     else:
-        if arrLike[lClose]!=0 and (arrLike[nClose]>arrLike[lClose] or arrLike[nClose]>=arrLike[nAsk]):
-            deal = arrLike[nQty]
-        elif arrLike[lClose]!=0 and (arrLike[nClose]<arrLike[lClose] or arrLike[nClose]<=arrLike[nBid]):
-            deal = 0-arrLike[nQty]
-        else:
-            if arrLike[nClose]>=arrLike[nAsk]:
-                deal=arrLike[nQty]
-            else:
-                deal = 0-arrLike[nQty]
+        deal=0
     return deal
 start = time.time()
 df['deal']=df.apply(dealfunc,axis=1,args=('nbid', 'nask', 'price', 'volume','lclose'))
