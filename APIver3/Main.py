@@ -310,14 +310,14 @@ class SKMainWindow(QMainWindow):
         self.CandleMinuteDealMinusDraw.showAxis('left',show=False)
         self.CandleMinuteDealMinusDraw.showGrid(x=False,y=True)
         self.AxisMinuteBig = pg.AxisItem(orientation='bottom')
-        self.CandleMinuteBigDraw=self.MainUi.tab_DayTrading.addPlot(row=3,col=0,axisItems={'bottom': self.AxisMinuteBig})
+        self.CandleMinuteBigDraw=self.MainUi.tab_DayTrading.addPlot(row=2,col=0,axisItems={'bottom': self.AxisMinuteBig})
         self.CandleMinuteBigDraw.autoRange(True)
         self.CandleMinuteBigDraw.setXLink(self.CandleMinuteKDraw)
         self.CandleMinuteBigDraw.showAxis('right',show=True)
         self.CandleMinuteBigDraw.showAxis('left',show=False)
         self.CandleMinuteBigDraw.showGrid(x=False,y=True)
         self.AxisMinuteSmall = pg.AxisItem(orientation='bottom')
-        self.CandleMinuteSmallDraw=self.MainUi.tab_DayTrading.addPlot(row=2,col=0,axisItems={'bottom': self.AxisMinuteSmall})
+        self.CandleMinuteSmallDraw=self.MainUi.tab_DayTrading.addPlot(row=3,col=0,axisItems={'bottom': self.AxisMinuteSmall})
         self.CandleMinuteSmallDraw.autoRange(True)
         self.CandleMinuteSmallDraw.setXLink(self.CandleMinuteKDraw)
         self.CandleMinuteSmallDraw.showAxis('right',show=True)
@@ -422,7 +422,6 @@ class SKMainWindow(QMainWindow):
             self.SmallChangeRectidx = self.CandleMinuteSmallItem.lastidx
             self.CandleMinuteSmallDraw_Build_None = False
         else:
-            self.CandleMinuteSmallItem.set_data(GlobalVar.NS.dfMinK[['ndatetime','small']],GlobalVar.NS.listMinSmall)
             if self.CandleMinuteSmallDrawYrectHigh < self.CandleMinuteSmallItem.high:
                 self.CandleMinuteSmallDrawYrectHigh = self.CandleMinuteSmallItem.high
                 self.CandleMinuteSmallDraw.setYRange(self.CandleMinuteSmallDrawYrectLow,self.CandleMinuteSmallDrawYrectHigh)
@@ -594,7 +593,6 @@ class SKQuoteLibEvents:
             globals()['Tick12KQueueTX00'].put(None)
             strMsg =nTime.toString(Qt.ISODate) +' 已變更存檔資訊: '+ str(GlobalVar.SaveNotify.value)
             SKMain.SKMessage.ui.textBrowser.append(strMsg)
-
         nTime = QTime(sHour, sMinute, sSecond).toString(Qt.ISODate)
         SKMain.MainUi.statusBar.showMessage('帳號:' + str(SKMain.SKID) + '\t伺服器時間:' + nTime)
     

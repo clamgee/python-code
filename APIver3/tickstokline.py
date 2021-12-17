@@ -197,13 +197,13 @@ class TicksTo12K(td.Thread):
                 if self.HisDone:
                     self.tickto12k(nlist[1])
                     if self.__CandleTarget.value == self.name:
-                        if self.__CandleItem12K_Event.is_set() is False:
-                            self.__Candledf12K.list12K = [self.lastidx,self.Close,nlist[2]]
-                            self.__Candledf12K.df12K = self.Candledf
-                            self.__CandleItem12K_Event.set()
+                        self.__CandleItem12K_Event.put([self.lastidx,self.Close,nlist[2],self.Candledf])
+                        # if self.__CandleItem12K_Event.is_set() is False:
+                        #     self.__Candledf12K.list12K = [self.lastidx,self.Close,nlist[2]]
+                        #     self.__Candledf12K.df12K = self.Candledf
+                        #     self.__CandleItem12K_Event.set()
                 else:
-                    self.HisListProcess(nlist[1])
-                    
+                    self.HisListProcess(nlist[1])                    
 
             if self.__SaveNotify.value and self.__FileSave:
                 result=self.Candledf.drop(columns=['high_avg','low_avg'])            
@@ -266,8 +266,8 @@ class TicksToMinuteK(td.Thread):
             self.High=self.Candledf.at[self.lastidx,'high']
             self.Low=self.Candledf.at[self.lastidx,'low']
             self.Close=self.Candledf.at[self.lastidx,'close']
-            self.Candledf['big']=int(self.__NS.listFT[2]-self.__NS.listFT[1])
-            self.Candledf['small']=int(self.__NS.listFT[3]-self.__NS.listFT[4])
+            self.Candledf['big']=int(self.__NS.listFT[3]-self.__NS.listFT[4])
+            self.Candledf['small']=int(self.__NS.listFT[2]-self.__NS.listFT[1])
         except Exception:
             self.mm=0; self.mm1=0
             self.High=0
@@ -278,7 +278,7 @@ class TicksToMinuteK(td.Thread):
 
     def TicksToMinuteK(self,nlist):
         ndatetime = nlist[0]; nclose = nlist[1]; nQty = nlist[2] ; ndeal = nlist[3]
-        small=int(self.__NS.listFT[3]-self.__NS.listFT[4]); big=int(self.__NS.listFT[2]-self.__NS.listFT[1])
+        small=int(self.__NS.listFT[2]-self.__NS.listFT[1]); big=int(self.__NS.listFT[3]-self.__NS.listFT[4])
         if self.mm1==0 or ndatetime>=self.mm1:
             self.mm=ndatetime.replace(second=0,microsecond=0)
             self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
@@ -310,19 +310,23 @@ class TicksToMinuteK(td.Thread):
                 if self.HisDone:
                     self.TicksToMinuteK(nlist[1])
                     if self.__CandleTarget.value == self.name:
-                        if self.__CandleItemMinK_Event.is_set() is False:
-                            self.__NS.listMinK = [self.lastidx,self.Close,nlist[2]]
-                            self.__NS.dfMinK = self.Candledf
-                            self.__CandleItemMinK_Event.set()
-                        if self.__CandleMinuteDealMinus_Event.is_set() is False:
-                            self.__NS.listMinDealMinus = [self.lastidx,self.Candledf.at[self.lastidx,'dealminus']]
-                            self.__CandleMinuteDealMinus_Event.set()
-                        if self.__CandleMinuteBig_Event.is_set() is False:
-                            self.__NS.listMinBig = [self.lastidx,self.Candledf.at[self.lastidx,'big']]
-                            self.__CandleMinuteBig_Event.set()
-                        if self.__CandleMinuteSmall_Event.is_set() is False:
-                            self.__NS.listMinSmall = [self.lastidx,self.Candledf.at[self.lastidx,'small']]
-                            self.__CandleMinuteSmall_Event.set()
+                        self.__CandleItemMinK_Event.put([self.lastidx,self.Close,nlist[2],self.Candledf])
+                        self.__CandleMinuteDealMinus_Event.put([self.lastidx,self.Candledf.at[self.lastidx,'dealminus'],self.Candledf[['ndatetime','dealminus']]])
+                        self.__CandleMinuteBig_Event.put([self.lastidx,self.Candledf.at[self.lastidx,'big'],self.Candledf[['ndatetime','big']]])
+                        self.__CandleMinuteSmall_Event.put([self.lastidx,self.Candledf.at[self.lastidx,'small'],self.Candledf[['ndatetime','small']]])
+                        # if self.__CandleItemMinK_Event.is_set() is False:
+                        #     self.__NS.listMinK = [self.lastidx,self.Close,nlist[2]]
+                        #     self.__NS.dfMinK = self.Candledf
+                        #     self.__CandleItemMinK_Event.set()
+                        # if self.__CandleMinuteDealMinus_Event.is_set() is False:
+                        #     self.__NS.listMinDealMinus = [self.lastidx,self.Candledf.at[self.lastidx,'dealminus']]
+                        #     self.__CandleMinuteDealMinus_Event.set()
+                        # if self.__CandleMinuteBig_Event.is_set() is False:
+                        #     self.__NS.listMinBig = [self.lastidx,self.Candledf.at[self.lastidx,'big']]
+                        #     self.__CandleMinuteBig_Event.set()
+                        # if self.__CandleMinuteSmall_Event.is_set() is False:
+                        #     self.__NS.listMinSmall = [self.lastidx,self.Candledf.at[self.lastidx,'small']]
+                        #     self.__CandleMinuteSmall_Event.set()
                 else:
                     self.HisListProcess(nlist[1])
 
