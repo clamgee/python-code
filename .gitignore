@@ -1,5 +1,6 @@
 *.csv
 .gitignore
+/.qt_for_python
 /x64
 /PythonExample
 *.swp

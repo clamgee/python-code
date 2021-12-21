@@ -610,18 +610,20 @@ class SKQuoteLibEvents:
             
     def OnNotifyBest5LONG(self,sMarketNo,sStockidx,nBestBid1,nBestBidQty1,nBestBid2,nBestBidQty2,nBestBid3,nBestBidQty3,nBestBid4,nBestBidQty4,nBestBid5,nBestBidQty5,nExtendBid,nExtendBidQty,nBestAsk1,nBestAskQty1,nBestAsk2,nBestAskQty2,nBestAsk3,nBestAskQty3,nBestAsk4,nBestAskQty4,nBestAsk5,nBestAskQty5,nExtendAsk,nExtendAskQty,nSimulate):
         if GlobalVar.CandleTarget.commodityIndex == sStockidx:
-            nlist = [nBestBidQty1,nBestBidQty2,nBestBidQty3,nBestBidQty4,nBestBidQty5,int(nBestBid1/100),int(nBestBid2/100),int(nBestBid3/100),int(nBestBid4/100),int(nBestBid5/100),int(nBestAsk1/100),int(nBestAsk2/100),int(nBestAsk3/100),int(nBestAsk4/100),int(nBestAsk5/100),nBestAskQty1,nBestAskQty2,nBestAskQty3,nBestAskQty4,nBestAskQty5]
-            GlobalVar.DomDataQueue.put(nlist)
-            # if GlobalVar.Dom_Event.is_set() is False:
-            #     GlobalVar.NS.Domlist = [nBestBidQty1,nBestBidQty2,nBestBidQty3,nBestBidQty4,nBestBidQty5,int(nBestBid1/100),int(nBestBid2/100),int(nBestBid3/100),int(nBestBid4/100),int(nBestBid5/100),int(nBestAsk1/100),int(nBestAsk2/100),int(nBestAsk3/100),int(nBestAsk4/100),int(nBestAsk5/100),nBestAskQty1,nBestAskQty2,nBestAskQty3,nBestAskQty4,nBestAskQty5]
-            #     GlobalVar.Dom_Event.set()
+            # nlist = [nBestBidQty1,nBestBidQty2,nBestBidQty3,nBestBidQty4,nBestBidQty5,int(nBestBid1/100),int(nBestBid2/100),int(nBestBid3/100),int(nBestBid4/100),int(nBestBid5/100),int(nBestAsk1/100),int(nBestAsk2/100),int(nBestAsk3/100),int(nBestAsk4/100),int(nBestAsk5/100),nBestAskQty1,nBestAskQty2,nBestAskQty3,nBestAskQty4,nBestAskQty5]
+            if GlobalVar.Dom_Event.is_set() is False:
+                GlobalVar.NS.Domlist = [nBestBidQty1,nBestBidQty2,nBestBidQty3,nBestBidQty4,nBestBidQty5,int(nBestBid1/100),int(nBestBid2/100),int(nBestBid3/100),int(nBestBid4/100),int(nBestBid5/100),int(nBestAsk1/100),int(nBestAsk2/100),int(nBestAsk3/100),int(nBestAsk4/100),int(nBestAsk5/100),nBestAskQty1,nBestAskQty2,nBestAskQty3,nBestAskQty4,nBestAskQty5]
+                GlobalVar.Dom_Event.set()
+            else:
+                pass
     def OnNotifyFutureTradeInfoLONG(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount):
         if GlobalVar.CandleTarget.commodityIndex == sStockidx:
-            nlist = [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
-            GlobalVar.MP_Event.put(nlist)
-            # if GlobalVar.MP_Event.is_set() is False:
-            GlobalVar.NS.listFT = [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
-            #     GlobalVar.MP_Event.set()
+            # nlist = [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
+            if GlobalVar.MP_Event.is_set() is False:
+                GlobalVar.NS.listFT = [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
+                GlobalVar.MP_Event.set()
+            else:
+                pass
 
 # comtypes使用此方式註冊callback
 SKQuoteEvent = SKQuoteLibEvents()

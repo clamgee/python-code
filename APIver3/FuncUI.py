@@ -55,11 +55,9 @@ class CommodityForm(QtCore.QObject):
         UiFile.open(QtCore.QFile.ReadOnly)
         self.ui = Loader.load(UiFile)
         UiFile.close()
-        # self.ui.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
+        self.ui.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
         # 顯示最大最小化關閉按鍵
         self.ui.setWindowFlags(QtCore.Qt.WindowMinMaxButtonsHint|QtCore.Qt.WindowCloseButtonHint)
-        self.ui.DomTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.ui.DomTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.Commodity_comboBox_signal.connect(self.Commodity_comboBox_recive)
         self.MPowerTalbeUI()
         self.DomTalbeUI()

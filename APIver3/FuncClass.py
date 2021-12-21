@@ -46,7 +46,7 @@ class Candle12KDrawThread(QThread):
     def run(self):
         while True:
             nlist = GlobalVar.CandleItem12K_Event.get()
-            if nlist is not None:
+            if nlist is not None and GlobalVar.NS.nPtr12K == nlist[2]:
                 while self.DFBuild_None: 
                     if nlist[3].shape[0] == 0 or len(nlist) < 4:
                         time.sleep(0.1)
@@ -54,6 +54,8 @@ class Candle12KDrawThread(QThread):
                         self.DFBuild_None = False
                 self.Candle12KItem.set_data(nlist[3],nlist[:3])
                 self.Candle12KItem_signal.emit()
+            else:
+                pass
             # GlobalVar.CandleItem12K_Event.wait()            
             # while self.DFBuild_None: 
             #     if GlobalVar.NS.df12K.shape[0] == 0 or len(GlobalVar.NS.list12K) < 3:
@@ -74,7 +76,7 @@ class CandleMinKDrawThread(QThread):
     def run(self):
         while True:
             nlist = GlobalVar.CandleItemMinute_Event.get()
-            if nlist is not None:           
+            if nlist is not None and GlobalVar.NS.nPtrMinK == nlist[2]:           
                 while self.DFBuild_None:
                     if nlist[3].shape[0] == 0 or len(nlist) < 4:
                         time.sleep(0.1)
@@ -82,6 +84,8 @@ class CandleMinKDrawThread(QThread):
                         self.DFBuild_None = False
                 self.CandleMinKItem.set_data(nlist[3],nlist[:3])
                 self.CandleMinKItem_signal.emit()
+            else:
+                pass
 
             # GlobalVar.CandleItemMinute_Event.wait()           
             # while self.DFBuild_None:
@@ -103,14 +107,16 @@ class CandleMinKDealMinusDrawThread(QThread):
     def run(self):
         while True:
             nlist = GlobalVar.CandleMinuteDealMinus_Event.get()
-            if nlist is not None:
+            if nlist is not None and GlobalVar.NS.nPtrMinDealMinus == nlist[3]:
                 while self.DFBuild_None:
-                    if nlist[2].shape[0] == 0 or len(nlist) < 3 :
+                    if nlist[2].shape[0] == 0 or len(nlist) < 4 :
                         time.sleep(0.1)
                     else:
                         self.DFBuild_None = False
                 self.CandleMinuteDealMinusItemFunc(nlist[2],nlist[:2])
                 self.CandleMinuteDealMinusItem_signal.emit()
+            else:
+                pass
 
             # GlobalVar.CandleMinuteDealMinus_Event.wait()
             # while self.DFBuild_None:
@@ -131,14 +137,16 @@ class CandleMinKBigDrawThread(QThread):
     def run(self):
         while True:
             nlist = GlobalVar.CandleMinuteBig_Event.get()
-            if nlist is not None:
+            if nlist is not None and GlobalVar.NS.nPtrMinBig == nlist[3]:
                 while self.DFBuild_None:
-                    if nlist[2].shape[0] == 0 or len(nlist) < 3 :
+                    if nlist[2].shape[0] == 0 or len(nlist) < 4 :
                         time.sleep(0.1)
                     else:
                         self.DFBuild_None = False 
                 self.CandleMinuteBigItemFunc(nlist[2],nlist[:2])
                 self.CandleMinuteBigItem_signal.emit()
+            else:
+                pass
 
             # GlobalVar.CandleMinuteBig_Event.wait()
             # while self.DFBuild_None:
@@ -159,14 +167,16 @@ class CandleMinKSmallDrawThread(QThread):
     def run(self):
         while True:
             nlist = GlobalVar.CandleMinuteSmall_Event.get()
-            if nlist is not None:
+            if nlist is not None and GlobalVar.NS.nPtrMinSmall == nlist[3]:
                 while self.DFBuild_None:
-                    if nlist[2].shape[0] == 0 or len(nlist) < 3 :
+                    if nlist[2].shape[0] == 0 or len(nlist) < 4 :
                         time.sleep(0.1) 
                     else:
                         self.DFBuild_None = False
                 self.CandleMinuteSmallItemFunc(nlist[2],nlist[:2])
                 self.CandleMinuteSmallItem_signal.emit()
+            else:
+                pass
 
             # GlobalVar.CandleMinuteSmall_Event.wait()
             # while self.DFBuild_None:
@@ -225,66 +235,41 @@ class DomTableUpdateThread(QThread):
         
     def run(self):
         while True:
-            nlist = GlobalVar.DomDataQueue.get()
-            if nlist is not None:
-                n=0
-                for key in self._parent.SKCommodity.Domdict:
-                    for i in range(5):
-                        self._parent.SKCommodity.Domdict[key][i].setText(str(nlist[n]))
-                        n+=1
-                self._parent.SKCommodity.Domdict[0][5].setText(str(int(sum(nlist[0:5]))))
-                self._parent.SKCommodity.Domdict[3][5].setText(str(int(sum(nlist[15:20]))))
-            # n=0
-            # for key in self._parent.SKCommodity.Domdict:
-            #     for i in range(5):
-            #         self._parent.SKCommodity.Domdict[key][i].setText(str(GlobalVar.NS.Domlist[n]))
-            #         n+=1
-            # self._parent.SKCommodity.Domdict[0][5].setText(str(int(sum(GlobalVar.NS.Domlist[0:5]))))
-            # self._parent.SKCommodity.Domdict[3][5].setText(str(int(sum(GlobalVar.NS.Domlist[15:20]))))
-            # GlobalVar.Dom_Event.clear()
+            GlobalVar.Dom_Event.wait()
+            n=0
+            for key in self._parent.SKCommodity.Domdict:
+                for i in range(5):
+                    self._parent.SKCommodity.Domdict[key][i].setText(str(GlobalVar.NS.Domlist[n]))
+                    n+=1
+            self._parent.SKCommodity.Domdict[0][5].setText(str(int(sum(GlobalVar.NS.Domlist[0:5]))))
+            self._parent.SKCommodity.Domdict[3][5].setText(str(int(sum(GlobalVar.NS.Domlist[15:20]))))
+            GlobalVar.Dom_Event.clear()
 
 class MPTableBigSmallThread(QThread):
-    def __init__(self, parent: typing.Optional[QObject] = ...) -> None:
+    def __init__(self, parent) -> None:
         super().__init__(parent=parent)
         self._parent = parent
     def run(self):
         while True:
-            # GlobalVar.MP_Event.wait()
-            nlist = GlobalVar.MP_Event.get()
-            if nlist is not None:
-                MP_dict = {'ComCont':{0:nlist[1],1:nlist[2],2:int(nlist[2]-nlist[1])},
-                'ComQty':{0:nlist[3],1:nlist[4],2:int(nlist[3]-nlist[4])},
-                'DealCont':{0:nlist[5],1:nlist[6],2:int(nlist[6]-nlist[5])}}
-                for key in MP_dict:
-                    i = 0
-                    for i in range(3):
-                        self._parent.SKCommodity.MPower.at[i,key].setText(str(MP_dict[key][i]))
-                        if i == 2:
-                            if MP_dict[key][i] > 0:
-                                self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.red)
-                                self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.white)
-                            else:
-                                self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.green)
-                                self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.black)
-
-            # MP_dict = {'ComCont':{0:GlobalVar.NS.listFT[1],1:GlobalVar.NS.listFT[2],2:int(GlobalVar.NS.listFT[2]-GlobalVar.NS.listFT[1])},
-            #             'ComQty':{0:GlobalVar.NS.listFT[3],1:GlobalVar.NS.listFT[4],2:int(GlobalVar.NS.listFT[3]-GlobalVar.NS.listFT[4])},
-            #             'DealCont':{0:GlobalVar.NS.listFT[5],1:GlobalVar.NS.listFT[6],2:int(GlobalVar.NS.listFT[6]-GlobalVar.NS.listFT[5])}}
-            # for key in MP_dict:
-            #     i = 0
-            #     for i in range(3):
-            #         self._parent.SKCommodity.MPower.at[i,key].setText(str(MP_dict[key][i]))
-            #         if i == 2:
-            #             if MP_dict[key][i] > 0:
-            #                 self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.red)
-            #                 self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.white)
-            #             else:
-            #                 self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.green)
-            #                 self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.black)
-            # GlobalVar.MP_Event.clear()
+            GlobalVar.MP_Event.wait()
+            MP_dict = {'ComCont':{0:GlobalVar.NS.listFT[1],1:GlobalVar.NS.listFT[2],2:int(GlobalVar.NS.listFT[2]-GlobalVar.NS.listFT[1])},
+                        'ComQty':{0:GlobalVar.NS.listFT[3],1:GlobalVar.NS.listFT[4],2:int(GlobalVar.NS.listFT[3]-GlobalVar.NS.listFT[4])},
+                        'DealCont':{0:GlobalVar.NS.listFT[5],1:GlobalVar.NS.listFT[6],2:int(GlobalVar.NS.listFT[6]-GlobalVar.NS.listFT[5])}}
+            for key in MP_dict:
+                i = 0
+                for i in range(3):
+                    self._parent.SKCommodity.MPower.at[i,key].setText(str(MP_dict[key][i]))
+                    if i == 2:
+                        if MP_dict[key][i] > 0:
+                            self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.red)
+                            self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.white)
+                        else:
+                            self._parent.SKCommodity.MPower.at[i,key].setBackground(Qt.green)
+                            self._parent.SKCommodity.MPower.at[i,key].setForeground(Qt.black)
+            GlobalVar.MP_Event.clear()
 
 class MPTablePowerThread(QThread):
-    def __init__(self, parent: typing.Optional[QObject] = ...) -> None:
+    def __init__(self, parent) -> None:
         super().__init__(parent=parent)
         self._parent = parent
     def run(self):

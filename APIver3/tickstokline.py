@@ -198,6 +198,7 @@ class TicksTo12K(td.Thread):
                     self.tickto12k(nlist[1])
                     if self.__CandleTarget.value == self.name:
                         self.__CandleItem12K_Event.put([self.lastidx,self.Close,nlist[2],self.Candledf])
+                        self.__Candledf12K.nPr12K = nlist[2]
                         # if self.__CandleItem12K_Event.is_set() is False:
                         #     self.__Candledf12K.list12K = [self.lastidx,self.Close,nlist[2]]
                         #     self.__Candledf12K.df12K = self.Candledf
@@ -311,9 +312,13 @@ class TicksToMinuteK(td.Thread):
                     self.TicksToMinuteK(nlist[1])
                     if self.__CandleTarget.value == self.name:
                         self.__CandleItemMinK_Event.put([self.lastidx,self.Close,nlist[2],self.Candledf])
-                        self.__CandleMinuteDealMinus_Event.put([self.lastidx,self.Candledf.at[self.lastidx,'dealminus'],self.Candledf[['ndatetime','dealminus']]])
-                        self.__CandleMinuteBig_Event.put([self.lastidx,self.Candledf.at[self.lastidx,'big'],self.Candledf[['ndatetime','big']]])
-                        self.__CandleMinuteSmall_Event.put([self.lastidx,self.Candledf.at[self.lastidx,'small'],self.Candledf[['ndatetime','small']]])
+                        self.__NS.nPtrMinK = nlist[2]
+                        self.__CandleMinuteDealMinus_Event.put([self.lastidx,self.Candledf.at[self.lastidx,'dealminus'],self.Candledf[['ndatetime','dealminus']],nlist[2]])
+                        self.__NS.nPtrMinDealMinus = nlist[2]
+                        self.__CandleMinuteBig_Event.put([self.lastidx,self.Candledf.at[self.lastidx,'big'],self.Candledf[['ndatetime','big']],nlist[2]])
+                        self.__NS.nPtrMinBig = nlist[2]
+                        self.__CandleMinuteSmall_Event.put([self.lastidx,self.Candledf.at[self.lastidx,'small'],self.Candledf[['ndatetime','small']],nlist[2]])
+                        self.__NS.nPtrMinSmall = nlist[2]
                         # if self.__CandleItemMinK_Event.is_set() is False:
                         #     self.__NS.listMinK = [self.lastidx,self.Close,nlist[2]]
                         #     self.__NS.dfMinK = self.Candledf

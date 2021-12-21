@@ -7,15 +7,15 @@ def Initialize():
     # 12K圖形用
     global CandleItem12K_Event
     NS.df12K = pd.DataFrame() # 12K圖使用的pandas
-    NS.list12K = [] #12K圖使用的比對參數
+    NS.nPtr12K = 0 #12K圖使用的比對參數
     CandleItem12K_Event = mp.Queue() # 12K圖形變更通知
     #分鐘K圖形用
     global CandleItemMinute_Event,CandleMinuteDealMinus_Event,CandleMinuteBig_Event,CandleMinuteSmall_Event
     NS.dfMinK = pd.DataFrame() # 分鐘圖使用的pandas
-    NS.listMinK = [] # 分鐘圖使用的比對參數
-    NS.listMinDealMinus =[] # 多空力道圖使用的比對參數
-    NS.listMinBig =[] # 大單比對參數
-    NS.listMinSmall =[] # 小單比對參數
+    NS.nPtrMinK = 0 # 分鐘圖使用的比對參數
+    NS.nPtrMinDealMinus = 0 # 多空力道圖使用的比對參數
+    NS.nPtrMinBig = 0 # 大單比對參數
+    NS.nPtrMinSmall = 0 # 小單比對參數
     NS.listFT = [] #期貨交易委買賣資訊
     NS.Domdict = {} #五檔報價處理
     NS.Domlist = [] #五檔報價傳送list
@@ -26,11 +26,11 @@ def Initialize():
     # 五檔介面
     global DomDataQueue, Dom_Event
     NS.Domdf = pd.DataFrame()
-    DomDataQueue = mp.Queue()
-    # Dom_Event = mp.Event()
+    # DomDataQueue = mp.Queue()
+    Dom_Event = mp.Event()
     # 商品力道表
     global MP_Event,PowerQueue 
-    MP_Event = mp.Queue()
+    MP_Event = mp.Event()
     PowerQueue = mp.Queue()
     #全介面標的
     global CandleTarget, DomTarget, SaveNotify
