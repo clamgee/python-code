@@ -33,5 +33,5 @@ Candledf.rename(columns={'dealcumsum':'deal'},inplace=True)
 Candledf=Candledf.rename_axis('ndatetime').reset_index()
 Candledf['ndatetime'] = pd.to_datetime(Candledf['ndatetime'], format='%Y-%m-%d %H:%M:%S.%f')
 Candledf.sort_values(by=['ndatetime'],ascending=True)
-
-print(Candledf.head())
+state = Candledf.loc[295,:]
+print(state['ndatetime'].time().strftime('%H:%M:%S'))
