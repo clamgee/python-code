@@ -198,7 +198,7 @@ class TicksTo12K(td.Thread):
                     self.tickto12k(nlist[1])
                     if self.__CandleTarget.value == self.name:
                         self.__CandleItem12K_Event.put([self.lastidx,self.Close,nlist[2],self.Candledf])
-                        self.__Candledf12K.nPr12K = nlist[2]
+                        self.__Candledf12K.nPtr12K = nlist[2]
                         # if self.__CandleItem12K_Event.is_set() is False:
                         #     self.__Candledf12K.list12K = [self.lastidx,self.Close,nlist[2]]
                         #     self.__Candledf12K.df12K = self.Candledf
