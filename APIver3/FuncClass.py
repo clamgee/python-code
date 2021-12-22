@@ -76,7 +76,7 @@ class CandleMinKDrawThread(QThread):
     def run(self):
         while True:
             nlist = GlobalVar.CandleItemMinute_Event.get()
-            if nlist is not None: #and GlobalVar.NS.nPtrMinK == nlist[2]:           
+            if nlist is not None and GlobalVar.NS.nPtrMinK == nlist[2]:           
                 while self.DFBuild_None:
                     if nlist[3].shape[0] == 0 or len(nlist) < 4:
                         time.sleep(0.1)

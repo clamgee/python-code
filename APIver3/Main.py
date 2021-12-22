@@ -273,10 +273,7 @@ class SKMainWindow(QMainWindow):
             if self.axis12k_xmax != len(self.CandleItem12K.pictures):
                 self.axis12k_xmax = len(self.CandleItem12K.pictures)
                 self.axis12k_xmin = self.axis12k_xmax-self.CandleItem12K.countK
-                # self.axis12k_ymin = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
-                # self.axis12k_ymax = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
                 self.Candle12KDraw.setXRange(self.axis12k_xmin,self.axis12k_xmax)
-                # self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
                 dict_tmp = self.CandleItem12K.data['ndatetime'][(self.CandleItem12K.data.volume!=12000) & (self.CandleItem12K.data.ndatetime.dt.hour>8) & (self.CandleItem12K.data.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
                 self.Axis12k.setTicks([dict_tmp.items()])
                 self.MAHighLine.setData(self.CandleItem12K.data.high_avg)
@@ -557,8 +554,6 @@ class SKOrderLibEvent:
         #     i+=1
 
 class SKQuoteLibEvents:
-    def __init__(self):
-        self.nPtr = 0
     def OnConnection(self, nKind, nCode):
         if (nKind == 3001):
             strMsg = 'Connected!, '+str(nCode)+str(nKind)
@@ -634,6 +629,7 @@ SKReplyEvent = SKReplyLibEvent()
 SKReplyLibEventHandler = comtypes.client.GetEvents(skR, SKReplyEvent)
 
 if __name__=='__main__':
+    mp.freeze_support()
     GlobalVar.Initialize()
     SKApp = QApplication(sys.argv)
     try:
@@ -642,6 +638,5 @@ if __name__=='__main__':
     except Exception as inst:
         print(type(inst))
         print(inst.args)
-    # sys.exit(SKApp.exec_())
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
          SKApp.instance().exec_()
