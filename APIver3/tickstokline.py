@@ -227,6 +227,7 @@ class TicksToMinuteK(td.Thread):
         self.__CandleMinuteBig_Event = inputTuple[4]
         self.__CandleMinuteSmall_Event = inputTuple[5]
         self.__NS = inputTuple[6]
+        self.lastMPlist = []
         self.Candledf = None
         self.HisDone = False
         self.mm=0
@@ -279,7 +280,11 @@ class TicksToMinuteK(td.Thread):
 
     def TicksToMinuteK(self,nlist):
         ndatetime = nlist[0]; nclose = nlist[1]; nQty = nlist[2] ; ndeal = nlist[3]
-        small=int(self.__NS.listFT[2]-self.__NS.listFT[1]); big=int(self.__NS.listFT[3]-self.__NS.listFT[4])
+        if len(self.__NS.listFT) == 7:
+            small=int(self.__NS.listFT[2]-self.__NS.listFT[1]); big=int(self.__NS.listFT[3]-self.__NS.listFT[4])
+            self.lastMPlist = self.__NS.listFT
+        else:
+            small=int(self.lastMPlist[2]-self.lastMPlist[1]); big=int(self.lastMPlist[3]-self.lastMPlist[4])
         if self.mm1==0 or ndatetime>=self.mm1:
             self.mm=ndatetime.replace(second=0,microsecond=0)
             self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
