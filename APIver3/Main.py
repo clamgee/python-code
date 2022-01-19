@@ -269,21 +269,21 @@ class SKMainWindow(QMainWindow):
             self.MAHighLine.setData(self.CandleItem12K.data.high_avg)
             self.MALowLine.setData(self.CandleItem12K.data.low_avg)
             self.Candle12KDraw_Build_None = False
-        else:
-            if self.axis12k_xmax != len(self.CandleItem12K.pictures):
-                self.axis12k_xmax = len(self.CandleItem12K.pictures)
-                self.axis12k_xmin = self.axis12k_xmax-self.CandleItem12K.countK
-                self.Candle12KDraw.setXRange(self.axis12k_xmin,self.axis12k_xmax)
-                dict_tmp = self.CandleItem12K.data['ndatetime'][(self.CandleItem12K.data.volume!=12000) & (self.CandleItem12K.data.ndatetime.dt.hour>8) & (self.CandleItem12K.data.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
-                self.Axis12k.setTicks([dict_tmp.items()])
-                self.MAHighLine.setData(self.CandleItem12K.data.high_avg)
-                self.MALowLine.setData(self.CandleItem12K.data.low_avg)
-
-            if self.axis12k_ymin > self.CandleItem12K.close or self.axis12k_ymax < self.CandleItem12K.close:
-                self.axis12k_ymin = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
-                self.axis12k_ymax = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
-                self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
             
+        if self.axis12k_xmax != len(self.CandleItem12K.pictures):
+            self.axis12k_xmax = len(self.CandleItem12K.pictures)
+            self.axis12k_xmin = self.axis12k_xmax-self.CandleItem12K.countK
+            self.Candle12KDraw.setXRange(self.axis12k_xmin,self.axis12k_xmax)
+            dict_tmp = self.CandleItem12K.data['ndatetime'][(self.CandleItem12K.data.volume!=12000) & (self.CandleItem12K.data.ndatetime.dt.hour>8) & (self.CandleItem12K.data.ndatetime.dt.hour<15)].dt.strftime('%Y-%m-%d %H:%M:%S').to_dict()
+            self.Axis12k.setTicks([dict_tmp.items()])
+            self.MAHighLine.setData(self.CandleItem12K.data.high_avg)
+            self.MALowLine.setData(self.CandleItem12K.data.low_avg)
+
+        if self.axis12k_ymin > self.CandleItem12K.close or self.axis12k_ymax < self.CandleItem12K.close:
+            self.axis12k_ymin = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
+            self.axis12k_ymax = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
+            self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
+        
     def Setup_CandleMinuteKDrawUI(self):
         self.AxisMinute = pg.AxisItem(orientation='bottom')
         self.CandleMinuteKDraw = self.MainUi.tab_DayTrading.addPlot(row=0,col=0,axisItems={'bottom': self.AxisMinute})

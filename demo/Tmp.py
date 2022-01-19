@@ -3,10 +3,11 @@ import numpy as np
 import pandas as pd
 import os
 import datetime
-import APIver3.Config_dict as Config_dict
-
-print(Config_dict['BuySell'])
-
+action = ['Wait','Buy','Sell','Short','BuyCover','ShortStopLoss','BuyCoverStopLoss']
+data = np.zeros(7)
+print(data,action)
+actS = pd.Series(data,index=action)
+print(actS['Wait'])
 # Candledf=pd.read_csv('../result.dat',low_memory=False)
 # Candledf['ndatetime']=pd.to_datetime(Candledf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
 # laxtidx = Candledf.last_valid_index()
