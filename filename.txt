@@ -693,3 +693,6 @@ Ticks2022-01-18.txt
 Ticks2022-01-19.txt
 Ticks2022-01-20.txt
 Ticks2022-01-21.txt
+Ticks2022-01-24.txt
+Ticks2022-01-25.txt
+Ticks2022-01-26.txt
