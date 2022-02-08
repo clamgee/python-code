@@ -270,7 +270,7 @@ class SKMainWindow(QMainWindow):
             self.MALowLine.setData(self.CandleItem12K.data.low_avg)
             self.Candle12KDraw_Build_None = False
             
-        if self.axis12k_xmax != len(self.CandleItem12K.pictures):
+        if self.axis12k_xmax < len(self.CandleItem12K.pictures):
             self.axis12k_xmax = len(self.CandleItem12K.pictures)
             self.axis12k_xmin = self.axis12k_xmax-self.CandleItem12K.countK
             self.Candle12KDraw.setXRange(self.axis12k_xmin,self.axis12k_xmax)
@@ -362,7 +362,7 @@ class SKMainWindow(QMainWindow):
             self.ChangeRectidx = self.CandleMinuteKItem.lastidx
             self.CandleMinuteKDraw_Build_None = False
         else:
-            if self.ChangeRectidx != self.CandleMinuteKItem.lastidx:
+            if self.ChangeRectidx < self.CandleMinuteKItem.lastidx:
                 self.ChangeRectidx = self.CandleMinuteKItem.lastidx
                 tmpline=self.CandleMinuteKItem.data.close.cumsum()
                 self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
