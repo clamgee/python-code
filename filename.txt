@@ -696,3 +696,5 @@ Ticks2022-01-21.txt
 Ticks2022-01-24.txt
 Ticks2022-01-25.txt
 Ticks2022-01-26.txt
+Ticks2022-02-07.txt
+Ticks2022-02-08.txt
