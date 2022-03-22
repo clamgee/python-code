@@ -40,7 +40,7 @@ class CandleItem(pg.GraphicsObject):
             self.informViewBoundsChanged()
             if self.scene() is not None:
                 self.scene().update()
-        except AttributeError as e:
+        except ValueError as e:
             print('K線繪圖錯誤: ',e)
             pass
 
@@ -126,7 +126,7 @@ class BarItem(pg.GraphicsObject):
             self.informViewBoundsChanged()
             if self.scene() is not None:
                 self.scene().update()
-        except AttributeError as e:
+        except ValueError as e:
             print('Bar線繪圖錯誤:',e)
             pass
        
