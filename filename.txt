@@ -735,3 +735,6 @@ Ticks2022-03-29.txt
 Ticks2022-03-30.txt
 Ticks2022-03-31.txt
 Ticks2022-04-01.txt
+Ticks2022-04-06.txt
+Ticks2022-04-07.txt
+Ticks2022-04-08.txt
