@@ -31,16 +31,16 @@ class CandleItem(pg.GraphicsObject):
                 self.high = close
             if self.low > close:
                 self.low = close
-            if self.lastidx != lastidx:
+            if self.lastidx < lastidx:
                 self.PaintChange = True
                 self.lastidx = lastidx
             if self.close != close:
                 self.close = close
             self.generatePicture()
             self.informViewBoundsChanged()
-            if self.scene() != None:
+            if self.scene() is not None:
                 self.scene().update()
-        except AttributeError as e:
+        except ValueError as e:
             print('K線繪圖錯誤: ',e)
             pass
 
@@ -117,16 +117,16 @@ class BarItem(pg.GraphicsObject):
                 self.high = close
             if self.low > close:
                 self.low = close
-            if self.lastidx != lastidx:
+            if self.lastidx < lastidx:
                 self.PaintChange = True
                 self.lastidx = lastidx
             if self.close != close:
                 self.close = close
             self.generatePicture()
             self.informViewBoundsChanged()
-            if self.scene() != None:
+            if self.scene() is not None:
                 self.scene().update()
-        except AttributeError as e:
+        except ValueError as e:
             print('Bar線繪圖錯誤:',e)
             pass
        

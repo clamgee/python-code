@@ -356,8 +356,8 @@ class SKMainWindow(QMainWindow):
             self.curve=self.CandleMinuteKDraw.plot(pen='w')
             self.curve.setData(self.avgline)
             del tmpline
-            self.CandleMinuteKDrawYrectHigh = max(self.CandleMinuteKItem.data.high.max(),self.yesterdayclose)
-            self.CandleMinuteKDrawYrectLow = min(self.CandleMinuteKItem.data.low.min(),self.yesterdayclose)
+            self.CandleMinuteKDrawYrectHigh = max(self.CandleMinuteKItem.high,self.yesterdayclose)
+            self.CandleMinuteKDrawYrectLow = min(self.CandleMinuteKItem.low,self.yesterdayclose)
             self.CandleMinuteKDraw.setYRange(self.CandleMinuteKDrawYrectLow,self.CandleMinuteKDrawYrectHigh)
             self.ChangeRectidx = self.CandleMinuteKItem.lastidx
             self.CandleMinuteKDraw_Build_None = False
@@ -379,8 +379,8 @@ class SKMainWindow(QMainWindow):
     def CandleMinuteDealMinusDrawFunc(self):
         if self.CandleMinuteDealMinusDraw_Build_None:
             self.CandleMinuteDealMinusDraw.addItem(self.CandleDealMinusItem)
-            self.CandleMinuteDealMinusDrawYrectHigh = self.CandleDealMinusItem.data.dealminus.max()
-            self.CandleMinuteDealMinusDrawYrectLow = self.CandleDealMinusItem.data.dealminus.min()
+            self.CandleMinuteDealMinusDrawYrectHigh = self.CandleDealMinusItem.high
+            self.CandleMinuteDealMinusDrawYrectLow = self.CandleDealMinusItem.low
             self.CandleMinuteDealMinusDraw.setYRange(self.CandleMinuteDealMinusDrawYrectLow,self.CandleMinuteDealMinusDrawYrectHigh)
             self.DealMinusChangeRectidx = self.CandleDealMinusItem.lastidx
             self.CandleMinuteDealMinusDraw_Build_None = False
@@ -396,8 +396,8 @@ class SKMainWindow(QMainWindow):
     def CandleMinuteBigDrawFunc(self):
         if self.CandleMinuteBigDraw_Build_None:
             self.CandleMinuteBigDraw.addItem(self.CandleMinuteBigItem)
-            self.CandleMinuteBigDrawYrectHigh = self.CandleMinuteBigItem.data.big.max()
-            self.CandleMinuteBigDrawYrectLow = self.CandleMinuteBigItem.data.big.min()
+            self.CandleMinuteBigDrawYrectHigh = self.CandleMinuteBigItem.high
+            self.CandleMinuteBigDrawYrectLow = self.CandleMinuteBigItem.low
             self.CandleMinuteBigDraw.setYRange(self.CandleMinuteBigDrawYrectLow,self.CandleMinuteBigDrawYrectHigh)
             self.BigChangeRectidx = self.CandleMinuteBigItem.lastidx
             self.CandleMinuteBigDraw_Build_None = False
@@ -413,8 +413,8 @@ class SKMainWindow(QMainWindow):
     def CandleMinuteSmallDrawFunc(self):
         if self.CandleMinuteSmallDraw_Build_None:
             self.CandleMinuteSmallDraw.addItem(self.CandleMinuteSmallItem)
-            self.CandleMinuteSmallDrawYrectHigh = self.CandleMinuteSmallItem.data.small.max()
-            self.CandleMinuteSmallDrawYrectLow = self.CandleMinuteSmallItem.data.small.min()
+            self.CandleMinuteSmallDrawYrectHigh = self.CandleMinuteSmallItem.high
+            self.CandleMinuteSmallDrawYrectLow = self.CandleMinuteSmallItem.low
             self.CandleMinuteSmallDraw.setYRange(self.CandleMinuteSmallDrawYrectLow,self.CandleMinuteSmallDrawYrectHigh)
             self.SmallChangeRectidx = self.CandleMinuteSmallItem.lastidx
             self.CandleMinuteSmallDraw_Build_None = False
