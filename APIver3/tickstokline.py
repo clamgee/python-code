@@ -192,7 +192,7 @@ class TicksTo12K(td.Thread):
     def run(self):
         while True:
             nlist = self.__Queue.get()
-            if nlist != None:
+            if nlist is not None:
                 self.HisDone = nlist[0]
                 if self.HisDone:
                     self.tickto12k(nlist[1])
@@ -311,7 +311,7 @@ class TicksToMinuteK(td.Thread):
     def run(self):
         while True:
             nlist = self.__Queue.get()
-            if nlist != None:
+            if nlist is not None:
                 self.HisDone = nlist[0]
                 if self.HisDone:
                     self.TicksToMinuteK(nlist[1])
