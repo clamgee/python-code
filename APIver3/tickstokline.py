@@ -22,6 +22,7 @@ class DataToTicks(td.Thread):
         self.TickList = []
         self.FTlist = []
         self.ListTransform = False
+        self.LastPower = True
         self.LastTick = 0
         self.hisbol = True #是否為歷史Data
         self.__FileSave = True
@@ -37,12 +38,21 @@ class DataToTicks(td.Thread):
         tmptime = ndatetime.hour
         if self.LastTick < nPtr:
             self.LastTick = nPtr
-            if abs(nclose-nBid) >= abs(nclose-nAsk) :
+            if abs(nclose-nBid) > abs(nclose-nAsk) :
                 deal = nQty
                 self.__bid += nQty
-            else:
+                self.LastPower = True
+            elif abs(nclose-nBid) < abs(nclose-nAsk) :
                 deal = 0 - nQty
                 self.__ask -= nQty
+                self.LastPower = False
+            else:
+                if self.LastPower:
+                    deal = nQty
+                    self.__bid += nQty
+                else:
+                    deal = 0 - nQty
+                    self.__ask -= nQty
             if tmptime == 8 and self.__checkhour == 4 :
                 self.__ask = self.__bid = deal = 0
             self.__checkhour = tmptime 
