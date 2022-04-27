@@ -123,6 +123,7 @@ class TicksTo12K(td.Thread):
         self.High = self.Candledf['high'].max()
         self.Low = self.Candledf['low'].min()
         self.Close = self.Candledf.at[self.lastidx,'close']
+        self.tmpcontract = 0
         self.CheckHour = None
         self.HisDone = False
         self.__FileSave = True
