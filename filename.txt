@@ -766,3 +766,4 @@ Ticks2022-05-16.txt
 Ticks2022-05-17.txt
 Ticks2022-05-18.txt
 Ticks2022-05-19.txt
+Ticks2022-05-20.txt
