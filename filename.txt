@@ -770,3 +770,12 @@ Ticks2022-05-20.txt
 Ticks2022-05-23.txt
 Ticks2022-05-24.txt
 Ticks2022-05-25.txt
+Ticks2022-05-26.txt
+Ticks2022-05-27.txt
+Ticks2022-05-30.txt
+Ticks2022-05-31.txt
+Ticks2022-06-01.txt
+Ticks2022-06-02.txt
+Ticks2022-06-06.txt
+Ticks2022-06-07.txt
+Ticks2022-06-08.txt
