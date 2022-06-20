@@ -23,7 +23,7 @@ class DataToTicks(td.Thread):
         self.FTlist = []
         self.ListTransform = False
         self.LastPower = True
-        self.LastTick = 0
+        self.LastTick = -1
         self.hisbol = True #是否為歷史Data
         self.__FileSave = True
         self.__bid = 0

@@ -779,3 +779,11 @@ Ticks2022-06-02.txt
 Ticks2022-06-06.txt
 Ticks2022-06-07.txt
 Ticks2022-06-08.txt
+Ticks2022-06-09.txt
+Ticks2022-06-10.txt
+Ticks2022-06-13.txt
+Ticks2022-06-14.txt
+Ticks2022-06-15.txt
+Ticks2022-06-16.txt
+Ticks2022-06-17.txt
+Ticks2022-06-20.txt
