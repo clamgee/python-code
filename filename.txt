@@ -787,3 +787,8 @@ Ticks2022-06-15.txt
 Ticks2022-06-16.txt
 Ticks2022-06-17.txt
 Ticks2022-06-20.txt
+Ticks2022-06-21.txt
+Ticks2022-06-22.txt
+Ticks2022-06-23.txt
+Ticks2022-06-24.txt
+Ticks2022-06-27.txt

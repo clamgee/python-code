@@ -38,6 +38,8 @@ class DataToTicks(td.Thread):
         tmptime = ndatetime.hour
         if self.LastTick < nPtr:
             self.LastTick = nPtr
+            if tmptime == 8 and self.__checkhour == 4 :
+                self.__ask = self.__bid = deal = 0
             if abs(nclose-nBid) > abs(nclose-nAsk) :
                 deal = nQty
                 self.__bid += nQty
@@ -53,8 +55,6 @@ class DataToTicks(td.Thread):
                 else:
                     deal = 0 - nQty
                     self.__ask -= nQty
-            if tmptime == 8 and self.__checkhour == 4 :
-                self.__ask = self.__bid = deal = 0
             self.__checkhour = tmptime 
             # True:下載歷史資料至list, 2: 處理歷史list 3: 即時
             if self.hisbol:
@@ -253,9 +253,9 @@ class TicksToMinuteK(td.Thread):
         dayticks = pd.DataFrame(nlist,columns=['ndatetime','nbid','nask','close','volume','deal'])
         dayticks['ndatetime']=pd.to_datetime(dayticks['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         now = time.localtime(time.time()).tm_hour
-        if now>14 or now<8 :
+        if now>15 or now<7 :
             dayticks=dayticks[(dayticks.ndatetime.dt.hour>14) | (dayticks.ndatetime.dt.hour<8)] # 夜盤
-        elif now>=8 and now<15:
+        elif now>7 and now<15:
             dayticks=dayticks[(dayticks.ndatetime.dt.hour>=8) & (dayticks.ndatetime.dt.hour<15)] # 日盤
         dayticks.sort_values(by=['ndatetime'],ascending=True)
         dayticks.index = dayticks.ndatetime
@@ -300,7 +300,6 @@ class TicksToMinuteK(td.Thread):
             self.mm=ndatetime.replace(second=0,microsecond=0)
             self.mm1=self.mm+datetime.timedelta(minutes=self.interval)
             if self.lastidx is None:
-                self.lastidx=0
                 tmpdeal = ndeal
             else:
                 tmpdeal=self.Candledf.at[self.lastidx,'dealminus']+ndeal
