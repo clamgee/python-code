@@ -75,6 +75,7 @@ class SKMainWindow(QMainWindow):
         self.SKCommodity.ui.commoditybtn.clicked.connect(self.commodityFunc)
         self.SKCommodity.ui.TDetailbtn.clicked.connect(self.SKTraDetailUI)
         self.SKCommodity.ui.Market_comboBox.currentIndexChanged.connect(self.MarketlistchangeFunc)
+        self.SKCommodity.ui.LastPrice_btn.clicked.connect(self.GetLastPriceFunc)
         # self.DomDataProc = FuncClass.DomDataProcess(GlobalVar.Dom_Event,GlobalVar.DomDataQueue,GlobalVar.NS)
         # self.DomDataProc.start()
         # print('報價五檔 Pid: ',self.DomDataProc.pid)
@@ -243,6 +244,9 @@ class SKMainWindow(QMainWindow):
             self.SKMessage.ui.textBrowser.append('商品訂閱錯誤: '+strMsg)
         else:
             self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))        
+    @Slot()
+    def GetLastPriceFunc(self):
+        self.SKCommodity.ui.PriceSpin.setValue(self.CandleMinuteKItem.close)
     # 商品訂閱結束
     @Slot()
     def Candle12KDrawFunc(self):
