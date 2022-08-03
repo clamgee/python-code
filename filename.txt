@@ -807,3 +807,14 @@ Ticks2022-07-13.txt
 Ticks2022-07-14.txt
 Ticks2022-07-15.txt
 Ticks2022-07-18.txt
+Ticks2022-07-19.txt
+Ticks2022-07-20.txt
+Ticks2022-07-21.txt
+Ticks2022-07-22.txt
+Ticks2022-07-25.txt
+Ticks2022-07-26.txt
+Ticks2022-07-27.txt
+Ticks2022-07-29.txt
+Ticks2022-08-01.txt
+Ticks2022-08-02.txt
+Ticks2022-08-03.txt

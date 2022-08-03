@@ -583,7 +583,7 @@ class SKQuoteLibEvents:
         rTime = QTime(8,30,00)
         # if rTime == nTime:
         #     SKMain.ConnectFun()
-        jTime = QTime(13, 46, 00)
+        jTime = QTime(13, 47, 00)
         # # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
         if nTime == jTime:
             GlobalVar.SaveNotify.set(True)
