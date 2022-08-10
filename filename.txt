@@ -818,3 +818,7 @@ Ticks2022-07-29.txt
 Ticks2022-08-01.txt
 Ticks2022-08-02.txt
 Ticks2022-08-03.txt
+Ticks2022-08-04.txt
+Ticks2022-08-05.txt
+Ticks2022-08-08.txt
+Ticks2022-08-09.txt
