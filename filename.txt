@@ -824,3 +824,12 @@ Ticks2022-08-08.txt
 Ticks2022-08-09.txt
 Ticks2022-08-10.txt
 Ticks2022-08-11.txt
+Ticks2022-08-12.txt
+Ticks2022-08-15.txt
+Ticks2022-08-16.txt
+Ticks2022-08-17.txt
+Ticks2022-08-18.txt
+Ticks2022-08-19.txt
+Ticks2022-08-22.txt
+Ticks2022-08-23.txt
+Ticks2022-08-24.txt

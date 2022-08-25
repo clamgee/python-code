@@ -500,6 +500,15 @@ class SKReplyLibEvent:
                                                                          '委託日期', '委託時間', '交易時段']), ignore_index=True)
         if SKMain.ReplyComplete == True:
             SKMain.ReplyCRpdMode.UpdateData(SKMain.replypd)
+            SKMain.openpd.drop(SKMain.openpd.index,inplace=True)
+            m_nCode = skO.GetOpenInterestWithFormat(bstrUserID, SKMain.IBAccount,3)
+            if m_nCode != 0 :
+                SKMain.SKMessage.ui.textBrowser.append('未平倉資訊發生錯誤!!')
+                SKMain.SKMessage.ui.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))               
+            m_nCode = skO.GetFutureRights(bstrUserID, SKMain.IBAccount, 1)
+            if m_nCode != 0 :
+                SKMain.SKMessage.ui.textBrowser.append('權益數資訊發生錯誤!!')
+                SKMain.SKMessage.ui.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))          
 
     def OnSmartData(self, bstrUserID, bstrData):
         print(bstrUserID, '智動回報:', bstrData)

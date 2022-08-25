@@ -509,38 +509,5 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>Order_btn</sender>
-   <signal>rejected()</signal>
-   <receiver>AskAct_btn</receiver>
-   <slot>toggle()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>334</x>
-     <y>587</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>169</x>
-     <y>498</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>Order_btn</sender>
-   <signal>rejected()</signal>
-   <receiver>BidAct_btn</receiver>
-   <slot>toggle()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>334</x>
-     <y>587</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>61</x>
-     <y>498</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
