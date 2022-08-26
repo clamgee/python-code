@@ -332,7 +332,7 @@ class TicksToMinuteK(td.Thread):
                         self.__NS.nPtrMinDealMinus = nlist[2]
                         self.__CandleMinuteBig_Event.put([self.lastidx,self.Candledf.at[self.lastidx,'big'],self.Candledf[['ndatetime','big']],nlist[2]])
                         self.__NS.nPtrMinBig = nlist[2]
-                        self.__CandleMinuteSmall_Event.put([self.lastidx,self.Candledf.at[self.lastidx,'small'],self.Candledf[['ndatetime','small']],nlist[2]])
+                        self.__CandleMinuteSmall_Event.put([self.lastidx,self.Candledf.at[self.lastidx,'volume'],self.Candledf[['ndatetime','volume']],nlist[2]])
                         self.__NS.nPtrMinSmall = nlist[2]
                         # if self.__CandleItemMinK_Event.is_set() is False:
                         #     self.__NS.listMinK = [self.lastidx,self.Close,nlist[2]]

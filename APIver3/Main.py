@@ -76,6 +76,8 @@ class SKMainWindow(QMainWindow):
         self.SKCommodity.ui.TDetailbtn.clicked.connect(self.SKTraDetailUI)
         self.SKCommodity.ui.Market_comboBox.currentIndexChanged.connect(self.MarketlistchangeFunc)
         self.SKCommodity.ui.LastPrice_btn.clicked.connect(self.GetLastPriceFunc)
+        self.SKCommodity.ui.BidAct_btn.clicked.connect(self.BidAct_Func)
+        self.SKCommodity.ui.AskAct_btn.clicked.connect(self.AskAct_Func)
         # self.DomDataProc = FuncClass.DomDataProcess(GlobalVar.Dom_Event,GlobalVar.DomDataQueue,GlobalVar.NS)
         # self.DomDataProc.start()
         # print('報價五檔 Pid: ',self.DomDataProc.pid)
@@ -195,7 +197,7 @@ class SKMainWindow(QMainWindow):
         elif nCode==2:
             self.SKMessage.ui.textBrowser.append('資料下載中...')
         else:
-            self.SKMessage.ui.textBrowser.append('報價未連線!!!')       
+            self.SKMessage.ui.textBrowser.append('報價未連線!!!')      
 
     # 商品訂閱
     @Slot()
@@ -244,10 +246,22 @@ class SKMainWindow(QMainWindow):
             self.SKMessage.ui.textBrowser.append('商品訂閱錯誤: '+strMsg)
         else:
             self.SKMessage.ui.textBrowser.append('選擇商品: '+bstrStockNo+','+str(pSKStock.nStockIdx))        
+    # 商品訂閱結束
+    # 下單功能
+    @Slot()
+    def BidAct_Func(self):
+        self.SKCommodity.ui.BidAct_btn.setStyleSheet('background-color: red;''color: white;')
+        self.SKCommodity.ui.AskAct_btn.setStyleSheet('background-color: ')
+    @Slot()
+    def AskAct_Func(self):
+        self.SKCommodity.ui.BidAct_btn.setStyleSheet('background-color: ;''color:')
+        self.SKCommodity.ui.AskAct_btn.setStyleSheet('background-color: green')
     @Slot()
     def GetLastPriceFunc(self):
         self.SKCommodity.ui.PriceSpin.setValue(self.CandleMinuteKItem.close)
-    # 商品訂閱結束
+
+    # 下單功能結束
+    # 繪圖
     @Slot()
     def Candle12KDrawFunc(self):
         if self.Candle12KDraw_Build_None:
@@ -501,14 +515,14 @@ class SKReplyLibEvent:
         if SKMain.ReplyComplete == True:
             SKMain.ReplyCRpdMode.UpdateData(SKMain.replypd)
             SKMain.openpd.drop(SKMain.openpd.index,inplace=True)
-            m_nCode = skO.GetOpenInterestWithFormat(bstrUserID, SKMain.IBAccount,3)
-            if m_nCode != 0 :
+            m0_nCode = skO.GetOpenInterestWithFormat(bstrUserID, SKMain.IBAccount,3)
+            if m0_nCode != 0 :
                 SKMain.SKMessage.ui.textBrowser.append('未平倉資訊發生錯誤!!')
-                SKMain.SKMessage.ui.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))               
-            m_nCode = skO.GetFutureRights(bstrUserID, SKMain.IBAccount, 1)
-            if m_nCode != 0 :
+                SKMain.SKMessage.ui.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m0_nCode))               
+            m1_nCode = skO.GetFutureRights(bstrUserID, SKMain.IBAccount, 1)
+            if m1_nCode != 0 :
                 SKMain.SKMessage.ui.textBrowser.append('權益數資訊發生錯誤!!')
-                SKMain.SKMessage.ui.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m_nCode))          
+                SKMain.SKMessage.ui.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m1_nCode))          
 
     def OnSmartData(self, bstrUserID, bstrData):
         print(bstrUserID, '智動回報:', bstrData)

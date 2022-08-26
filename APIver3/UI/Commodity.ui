@@ -201,6 +201,12 @@
        </item>
        <item>
         <widget class="QComboBox" name="InterestType_box">
+         <property name="maxVisibleItems">
+          <number>3</number>
+         </property>
+         <property name="maxCount">
+          <number>3</number>
+         </property>
          <item>
           <property name="text">
            <string>自動倉</string>
@@ -220,6 +226,12 @@
        </item>
        <item>
         <widget class="QComboBox" name="OrderType_box">
+         <property name="maxVisibleItems">
+          <number>3</number>
+         </property>
+         <property name="maxCount">
+          <number>3</number>
+         </property>
          <item>
           <property name="text">
            <string>ROD</string>
