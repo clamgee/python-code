@@ -40,6 +40,7 @@ class DataToTicks(td.Thread):
             self.LastTick = nPtr
             if tmptime == 8 and self.__checkhour == 4 :
                 self.__ask = self.__bid = deal = 0
+                print(ndatetime)
             if abs(nclose-nBid) > abs(nclose-nAsk) :
                 deal = nQty
                 self.__bid += nQty

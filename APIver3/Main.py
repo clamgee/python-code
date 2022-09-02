@@ -481,7 +481,9 @@ class SKReplyLibEvent:
         if SKMain.replypd.shape[0] > 0:
             tmp = SKMain.replypd.委託序號.isin({Line[0]})
             if tmp[tmp == True].index.shape[0] > 0:
-                i = tmp[tmp == True].index[0]
+                i=None                    
+            # if tmp[tmp == True].index.shape[0] > 0:
+            #     i = tmp[tmp == True].index[0]
             else:
                 i = None
         else:
@@ -518,7 +520,8 @@ class SKReplyLibEvent:
             m0_nCode = skO.GetOpenInterestWithFormat(bstrUserID, SKMain.IBAccount,3)
             if m0_nCode != 0 :
                 SKMain.SKMessage.ui.textBrowser.append('未平倉資訊發生錯誤!!')
-                SKMain.SKMessage.ui.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m0_nCode))               
+                SKMain.SKMessage.ui.textBrowser.append(skC.SKCenterLib_GetReturnCodeMessage(m0_nCode))
+                print(Line)             
             m1_nCode = skO.GetFutureRights(bstrUserID, SKMain.IBAccount, 1)
             if m1_nCode != 0 :
                 SKMain.SKMessage.ui.textBrowser.append('權益數資訊發生錯誤!!')
@@ -554,7 +557,7 @@ class SKOrderLibEvent:
             if row.find('##') >= 0:
                 break
             else:
-                if row.find('+') >= 0:
+                if row.find('+') >= 0 or i == 11:
                     SKMain.Bill.loc[i, 'Right'].setText(str(int(int(row.replace('+', '').strip())/100)))
                 else:
                     SKMain.Bill.loc[i, 'Right'].setText(row.strip())
@@ -574,6 +577,7 @@ class SKOrderLibEvent:
             Line[6] = str(int(Line[6])/1000)
             SKMain.openpd = SKMain.openpd.append(pd.DataFrame([Line],columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅','登入帳號']))
         SKMain.onOpenInterestReplytimes+=1
+        print(SKMain.onOpenInterestReplytimes)
         # i=0
         # print(Line)
         # for row in Line:
@@ -606,7 +610,7 @@ class SKQuoteLibEvents:
         rTime = QTime(8,30,00)
         # if rTime == nTime:
         #     SKMain.ConnectFun()
-        jTime = QTime(13, 47, 00)
+        jTime = QTime(13, 46, 00)
         # # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
         if nTime == jTime:
             GlobalVar.SaveNotify.set(True)
