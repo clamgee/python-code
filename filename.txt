@@ -852,3 +852,9 @@ Ticks2022-09-15.txt
 Ticks2022-09-16.txt
 Ticks2022-09-19.txt
 Ticks2022-09-20.txt
+Ticks2022-09-21.txt
+Ticks2022-09-22.txt
+Ticks2022-09-23.txt
+Ticks2022-09-26.txt
+Ticks2022-09-27.txt
+Ticks2022-09-28.txt
