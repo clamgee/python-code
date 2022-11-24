@@ -38,7 +38,7 @@ class DataToTicks(td.Thread):
         tmptime = ndatetime.hour
         if self.LastTick < nPtr:
             self.LastTick = nPtr
-            if tmptime == 8 and self.__checkhour == 4 :
+            if tmptime == 8 and (self.__checkhour == 4 or self.__checkhour == 5):
                 self.__ask = self.__bid = deal = 0
                 print(ndatetime)
             if abs(nclose-nBid) > abs(nclose-nAsk) :
