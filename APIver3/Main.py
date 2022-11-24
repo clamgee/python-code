@@ -606,12 +606,14 @@ class SKQuoteLibEvents:
         SKMain.SKCommodity.Commodity_comboBox_signal.emit(sMarketNo,bstrStockData)
 
     def OnNotifyServerTime(self, sHour, sMinute, sSecond, nTotal):
-        nTime = QTime(sHour, sMinute, sSecond)
-        rTime = QTime(8,30,00)
-        # if rTime == nTime:
-        #     SKMain.ConnectFun()
-        jTime = QTime(13, 46, 00)
-        # # jTime=datetime.datetime.strptime('13:50:00','%H:%M:%S').time()
+        nTime = QTime(sHour, sMinute, sSecond)#現在時間
+        rTime = QTime(8,40,00)#呼叫連線時間
+        wTime = QTime(8,46,5)#開始工作時間
+        jTime = QTime(13, 46, 00)#存檔時間
+        if nTime == rTime:
+            SKMain.ConnectFunc()
+        if nTime == wTime:
+            SKMain.commodityFunc()
         if nTime == jTime:
             GlobalVar.SaveNotify.set(True)
             time.sleep(0.5)
@@ -658,6 +660,7 @@ if __name__=='__main__':
     SKApp = QApplication(sys.argv)
     SKMain = SKMainWindow()
     SKMain.show()
+    SKMain.LoginFuncAccept()
     # try:
     #     SKMain = SKMainWindow()
     #     SKMain.show()
