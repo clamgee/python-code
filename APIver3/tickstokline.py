@@ -112,12 +112,13 @@ class TicksTo12K(td.Thread):
         self.__CandleItem12K_Event = inputTuple[2]
         self.__Candledf12K = inputTuple[3]
         self.__SaveNotify = inputTuple[4]
+        self.MA = 87
         self.Candledf=pd.read_csv('../result.dat',low_memory=False)
         self.Candledf['ndatetime']=pd.to_datetime(self.Candledf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
         self.Candledf.sort_values(by=['ndatetime'],ascending=True)
         self.Candledf=self.Candledf.reset_index(drop=True)
+        self.Candledf = self.Candledf.tail(0-self.MA*2)
         self.Candledf[['open','high','low','close','volume']]=self.Candledf[['open','high','low','close','volume']].astype(int)
-        self.MA = 87
         self.Candledf['high_avg'] = self.Candledf.high.rolling(self.MA).mean().round(0)
         self.Candledf['low_avg'] = self.Candledf.low.rolling(self.MA).mean().round(0)
         self.lastidx = self.Candledf.last_valid_index()
