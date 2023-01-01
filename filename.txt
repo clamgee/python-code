@@ -920,3 +920,7 @@ Ticks2022-12-21.txt
 Ticks2022-12-22.txt
 Ticks2022-12-23.txt
 Ticks2022-12-26.txt
+Ticks2022-12-27.txt
+Ticks2022-12-28.txt
+Ticks2022-12-29.txt
+Ticks2022-12-30.txt
