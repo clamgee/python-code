@@ -608,7 +608,7 @@ class SKQuoteLibEvents:
     def OnNotifyServerTime(self, sHour, sMinute, sSecond, nTotal):
         nTime = QTime(sHour, sMinute, sSecond)#現在時間
         rTime = QTime(8,40,00)#呼叫連線時間
-        wTime = QTime(8,46,5)#開始工作時間
+        wTime = QTime(13,40,00)#開始工作時間
         jTime = QTime(13, 46, 00)#存檔時間
         if nTime == rTime:
             SKMain.ConnectFunc()
