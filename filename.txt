@@ -924,3 +924,16 @@ Ticks2022-12-27.txt
 Ticks2022-12-28.txt
 Ticks2022-12-29.txt
 Ticks2022-12-30.txt
+Ticks2023-01-03.txt
+Ticks2023-01-04.txt
+Ticks2023-01-05.txt
+Ticks2023-01-06.txt
+Ticks2023-01-09.txt
+Ticks2023-01-10.txt
+Ticks2023-01-11.txt
+Ticks2023-01-12.txt
+Ticks2023-01-13.txt
+Ticks2023-01-16.txt
+Ticks2023-01-17.txt
+Ticks2023-01-30.txt
+Ticks2023-01-31.txt
