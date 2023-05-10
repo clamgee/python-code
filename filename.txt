@@ -999,3 +999,6 @@ Ticks2023-05-02.txt
 Ticks2023-05-03.txt
 Ticks2023-05-04.txt
 Ticks2023-05-05.txt
+Ticks2023-05-08.txt
+Ticks2023-05-09.txt
+Ticks2023-05-10.txt
