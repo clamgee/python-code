@@ -1002,3 +1002,13 @@ Ticks2023-05-05.txt
 Ticks2023-05-08.txt
 Ticks2023-05-09.txt
 Ticks2023-05-10.txt
+Ticks2023-05-11.txt
+Ticks2023-05-12.txt
+Ticks2023-05-15.txt
+Ticks2023-05-16.txt
+Ticks2023-05-17.txt
+Ticks2023-05-18.txt
+Ticks2023-05-19.txt
+Ticks2023-05-22.txt
+Ticks2023-05-23.txt
+Ticks2023-05-24.txt
