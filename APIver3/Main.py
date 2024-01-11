@@ -669,4 +669,4 @@ if __name__=='__main__':
     #     print(type(inst))
     #     print(inst.args)
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-         SKApp.instance().exec_()
+         SKApp.instance().exec()
