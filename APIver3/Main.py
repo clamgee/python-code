@@ -128,6 +128,7 @@ class SKMainWindow(QMainWindow):
             skC.SKCenterLib_SetLogPath(os.path.split(os.path.realpath(__file__))[0] + '\\CapitalLog_Quote')
             __ID = self.Login.ui.LoginID.text().replace(' ', '')
             __PW = self.Login.ui.LoginPW.text().replace(' ', '')
+            print('帳號密碼: ',__ID,__PW)
             m_nCode1 = skC.SKCenterLib_Login(__ID, __PW)
             if m_nCode1 == 0:
                 self.SKID = __ID

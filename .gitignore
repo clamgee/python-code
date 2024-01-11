@@ -27,6 +27,6 @@ Clam-NB.code-workspace
 /APIver2/data/filename.txt
 /APIver2/*.csv
 /__pycache__
-/APIver3/UI/__pycache__
+/APIver3/UI/__pycache__/*.*
 /APIver3/CapitalLog_Quote/*.log
 /APIver3/CapitalLog_Quote/*.txt
