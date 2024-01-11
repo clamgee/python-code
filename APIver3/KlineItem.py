@@ -10,7 +10,7 @@ class CandleItem(pg.GraphicsObject):
         self.picturelast = QtGui.QPicture() #最後一根K線圖
         self.pictures = []
         self.PaintChange = True
-        self.setFlag(self.ItemUsesExtendedStyleOption)
+        # self.setFlag(self.ItemUsesExtendedStyleOption)
         self.high = 0
         self.low = 0
         self.lastidx = 0
@@ -102,7 +102,7 @@ class BarItem(pg.GraphicsObject):
         self.picturelast = QtGui.QPicture() #最後一根K線圖
         self.pictures = []
         self.PaintChange = False
-        self.setFlag(self.ItemUsesExtendedStyleOption)
+        # self.setFlag(self.ItemUsesExtendedStyleOption)
         self.low = 0
         self.high = 0
         self.lastidx = 0
