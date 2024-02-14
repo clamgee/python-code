@@ -142,16 +142,16 @@ class BarItem(pg.GraphicsObject):
         for (t, x) in self.data.loc[start:stop, [self.columnname]].iterrows():
             picture = QtGui.QPicture()
             p = QtGui.QPainter(picture)
-            if x[-1]<0:
+            if x.iloc[0]<0:
                 p.setBrush(pg.mkBrush('g'))
                 p.setPen(pg.mkPen(color='g',width=0.1))
-            elif x[-1]>0:
+            elif x.iloc[0]>0:
                 p.setBrush(pg.mkBrush('r'))
                 p.setPen(pg.mkPen(color='r',width=0.1))
             else:
                 p.setBrush(pg.mkBrush('w'))
                 p.setPen(pg.mkPen(color='w',width=0.1))
-            p.drawRect(QtCore.QRectF(t-w, 0, w*2, x[-1]))
+            p.drawRect(QtCore.QRectF(t-w, 0, w*2, x.iloc[0]))
             p.end()
             self.pictures.append(picture)
         

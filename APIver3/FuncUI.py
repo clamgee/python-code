@@ -1,5 +1,4 @@
 import sys,os,gc
-sys.path.append("..")
 # # 使用PySide6套件
 from PySide6.QtUiTools import QUiLoader #使用 .LoginUI介面模組
 from PySide6.QtWidgets import QApplication,QHeaderView,QTableWidgetItem #PySide6介面控制模組
@@ -19,7 +18,7 @@ class LoginDialog(QtCore.QObject):
         UiFile.close()
         self.ui.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)  # 設定最上層
         self.ui.setWindowModality(QtCore.Qt.ApplicationModal)  # 設定須先完成對話框，其他介面設定無效
-        if self.ui.IDPWCheck.checkState()==2:
+        if self.ui.IDPWCheck.checkState():
             with open("IDPW.json",mode="r",encoding="utf-8") as file:
                 data = json.load(file)
             self.ui.LoginID.setText(data["ID"])
@@ -66,8 +65,8 @@ class CommodityForm(QtCore.QObject):
         Line = bstrStockData.split(';')
         self.count+=1
         ListCommodity=[]
-        p = re.compile('TX\w+|TF\w+|TE\w+')
-        c = re.compile('##\w+')
+        p = re.compile('TX\\w+|TF\\w+|TE\\w+')
+        c = re.compile('##\\w+')
         for row in Line:
             rowstuff = row.split(',')
             for row in rowstuff:
@@ -95,7 +94,7 @@ class CommodityForm(QtCore.QObject):
     def MPowerTalbeUI(self):
         self.ui.MPTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.MPTable.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.MPower = pd.DataFrame(np.arange(16).reshape(4,4), columns=['ComQty','ComCont','DealCont','DealQty'])
+        self.MPower = pd.DataFrame(columns=['ComQty','ComCont','DealCont','DealQty'])
         font = QtGui.QFont()
         font.setBold(True)
         i=0

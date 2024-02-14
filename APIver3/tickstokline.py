@@ -88,12 +88,12 @@ class DataToTicks(td.Thread):
             
             if self.__SaveNotify.value and self.__FileSave:
                 ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume','deal'])
-                ticksdf =ticksdf.append(pd.DataFrame(self.TickList,columns=['ndatetime','nbid','nask','close','volume','deal']),ignore_index=True,sort=False)
+                ticksdf = pd.concat([ticksdf,pd.DataFrame(self.TickList,columns=['ndatetime','nbid','nask','close','volume','deal'])],ignore_index=True,sort=False)
                 ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
                 filename = 'Ticks' + ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
                 ticksdf.to_csv('../data/'+filename, header=False, index=False)
                 df1=pd.read_csv('../filename.txt')
-                df1=df1.append(pd.DataFrame([[filename]],columns=['filename']),ignore_index=True)
+                df1=pd.concat([df1,pd.DataFrame([[filename]],columns=['filename'])],ignore_index=True)
                 df1.to_csv('../filename.txt',index=False)
                 del df1
                 del ticksdf
@@ -134,12 +134,12 @@ class TicksTo12K(td.Thread):
         for row in nlist:
             tmphour=row[0].hour
             if (tmphour==8 and self.CheckHour==4) or (tmphour==15 and (self.CheckHour is None or self.CheckHour==13)):
-                self.Candledf=self.Candledf.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],row[4],0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+                self.Candledf = pd.concat([self.Candledf,pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],row[4],0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg'])],ignore_index=True,sort=False)
                 self.High=self.Low=self.Close=row[3]
                 self.tmpcontract=row[4]
                 self.lastidx = self.Candledf.last_valid_index()
             elif self.tmpcontract==0 or self.tmpcontract==12000 :
-                self.Candledf=self.Candledf.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],row[4],0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+                self.Candledf.loc[self.lastidx+1,:] = [row[0],row[3],row[3],row[3],row[3],row[4],0,0]
                 self.High=self.Low=self.Close=row[3]
                 self.tmpcontract=row[4]
                 self.lastidx = self.Candledf.last_valid_index()
@@ -150,7 +150,7 @@ class TicksTo12K(td.Thread):
                 self.Candledf.at[self.lastidx,'close']=self.Close=row[3]
                 self.Candledf.at[self.lastidx,'volume']=12000
                 self.tmpcontract=self.tmpcontract+row[4]-12000
-                self.Candledf=self.Candledf.append(pd.DataFrame([[row[0],row[3],row[3],row[3],row[3],self.tmpcontract,0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+                self.Candledf.loc[self.lastidx+1,:] = [row[0],row[3],row[3],row[3],row[3],self.tmpcontract,0,0]
                 self.High=self.Low=self.Close=row[3]
                 self.lastidx = self.Candledf.last_valid_index()
             else:
@@ -167,13 +167,13 @@ class TicksTo12K(td.Thread):
         ndatetime = nlist[0]; nclose = nlist[1]; nQty = nlist[2]
         tmphour=ndatetime.hour
         if (tmphour==8 and self.CheckHour==4) or (tmphour==15 and (self.CheckHour is None or self.CheckHour==13)):
-            self.Candledf=self.Candledf.append(pd.DataFrame([[ndatetime,nclose,nclose,nclose,nclose,nQty,0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+            self.Candledf.loc[self.Candledf.last_valid_index()+1,:] = [ndatetime,nclose,nclose,nclose,nclose,nQty,0,0]
             self.High=self.Low=self.Close=nclose
             self.tmpcontract=nQty
             self.drawMA=True
             self.lastidx = self.Candledf.last_valid_index()        
         elif self.tmpcontract==0 or self.tmpcontract==12000 :
-            self.Candledf=self.Candledf.append(pd.DataFrame([[ndatetime,nclose,nclose,nclose,nclose,nQty,0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+            self.Candledf.loc[self.lastidx+1,:] = [ndatetime,nclose,nclose,nclose,nclose,nQty,0,0]
             self.High=self.Low=self.Close=nclose
             self.tmpcontract=nQty
             self.drawMA=True
@@ -185,7 +185,8 @@ class TicksTo12K(td.Thread):
             self.Candledf.at[self.lastidx,'close']=self.Close=nclose
             self.Candledf.at[self.lastidx,'volume']=12000
             self.tmpcontract=self.tmpcontract+nQty-12000
-            self.Candledf=self.Candledf.append(pd.DataFrame([[ndatetime,nclose,nclose,nclose,nclose,self.tmpcontract,0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
+            self.Candledf.loc[self.lastidx+1,:] = [ndatetime,nclose,nclose,nclose,nclose,self.tmpcontract,0,0]
+            # self.Candledf.loc[self.lastidx+1,:] = [ndatetime,nclose,nclose,nclose,nclose,self.tmpcontract,0,0]],columns=['ndatetime','open','high','low','close','volume','high_avg','low_avg']),ignore_index=True,sort=False)
             self.lastidx = self.Candledf.last_valid_index()
             self.High=self.Low=self.Close=nclose
             self.drawMA=True
@@ -305,7 +306,9 @@ class TicksToMinuteK(td.Thread):
                 tmpdeal = ndeal
             else:
                 tmpdeal=self.Candledf.at[self.lastidx,'dealminus']+ndeal
-            self.Candledf=self.Candledf.append(pd.DataFrame([[self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,big,small]],columns=['ndatetime','open','high','low','close','volume','dealminus','big','small']),ignore_index=True,sort=False)
+            print(self.Candledf.tail(-1))
+            self.Candledf = pd.concat([self.Candledf,pd.DataFrame([self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,big,small],columns=['ndatetime', 'open', 'high', 'low', 'close', 'volume', 'dealminus', 'big', 'small'])],axis=1,ignore_index=True)
+            # self.Candledf = pd.concat([self.Candledf,pd.DataFrame([self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,big,small],columns=['ndatetime','open','high','low','close','volume','dealminus','big','small'])],ignore_index=True,sort=False)
             self.High = self.Low = self.Close = nclose
             self.lastidx=self.Candledf.last_valid_index()
         elif ndatetime < self.mm1 :

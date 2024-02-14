@@ -1,3 +1,17 @@
+import pandas as pd
+import numpy as np
+import time
+a=pd.DataFrame(np.zeros((5,2)),columns=['close','open'])
+a=a.astype(int)
+# a.loc[a.index[-1]+1]=[2,2]
+b=pd.DataFrame(np.random.choice(5,(4,2)),columns=['close','open'])
+
+# print(type(a.loc[a.index[-1]].values))
+
+c=pd.concat([a,b],ignore_index=True)
+c.loc[c.last_valid_index()+1,:]=[8,8]
+print(c.columns.to_list())
+
 # import pyqtgraph.examples
 # pyqtgraph.examples.run()
 # OnNewData_dict={'MarketType':{'TS':'證券','TA':'盤後','TL':'零股','TF':'期貨','TO':'選擇權','OF':'海期','OO':'海選','OS':'複委託'},

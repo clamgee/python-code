@@ -21,6 +21,7 @@ class TMW(QMainWindow): #主視窗
         self.bid_btn.clicked.connect(self.bidfunc)
         self.ask_btn.clicked.connect(self.askfunc)
         # QApplication.setStyle(QStyleFactory.create('cleanlooks'))
+        
     
     def bidfunc(self):
         if self.trade_act!=0:

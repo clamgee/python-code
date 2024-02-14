@@ -94,9 +94,9 @@ class SKMainWindow(QMainWindow):
     def SKRightUI(self):
         self.MainUi.Right_TB.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.MainUi.Right_TB.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.Bill = pd.DataFrame(np.arange(41).reshape(41), columns=['Right'])  # 期貨權益數 DataFrame        
+        self.Bill = pd.DataFrame(columns=['Right'])  # 期貨權益數 DataFrame        
         i = 0
-        while i < self.Bill.shape[0]:
+        while i < 41: #權益數共41個欄位
             self.Bill.at[i, 'Right'] = QTableWidgetItem('')
             self.Bill.at[i, 'Right'].setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
             i += 1
@@ -128,7 +128,6 @@ class SKMainWindow(QMainWindow):
             skC.SKCenterLib_SetLogPath(os.path.split(os.path.realpath(__file__))[0] + '\\CapitalLog_Quote')
             __ID = self.Login.ui.LoginID.text().replace(' ', '')
             __PW = self.Login.ui.LoginPW.text().replace(' ', '')
-            print('帳號密碼: ',__ID,__PW)
             m_nCode1 = skC.SKCenterLib_Login(__ID, __PW)
             if m_nCode1 == 0:
                 self.SKID = __ID
@@ -511,10 +510,7 @@ class SKReplyLibEvent:
                         Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][2]],
                         Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][3]],
                         Line[0], Line[10], Line[23], Line[24], Line[24]]]
-            SKMain.replypd = SKMain.replypd.append(pd.DataFrame(tmplist,
-                                                                columns=['商品名稱', '買賣', '委託價格', '委託口數', '委託狀態', '成交口數',
-                                                                         '取消口數', '倉位', '條件', '價位格式', '委託序號', '委託書號',
-                                                                         '委託日期', '委託時間', '交易時段']), ignore_index=True)
+            SKMain.replypd = pd.concat([SKMain.replypd,pd.DataFrame(tmplist,columns=['商品名稱', '買賣', '委託價格', '委託口數', '委託狀態', '成交口數', '取消口數', '倉位', '條件', '價位格式', '委託序號', '委託書號', '委託日期', '委託時間', '交易時段'])], ignore_index=True)
         if SKMain.ReplyComplete == True:
             SKMain.ReplyCRpdMode.UpdateData(SKMain.replypd)
             SKMain.openpd.drop(SKMain.openpd.index,inplace=True)
@@ -558,7 +554,9 @@ class SKOrderLibEvent:
             if row.find('##') >= 0:
                 break
             else:
-                if row.find('+') >= 0 or i == 11:
+                if str(row).strip()=='':
+                    SKMain.Bill.loc[i, 'Right'].setText('Null')
+                elif row.find('+') >= 0 or i == 11:
                     SKMain.Bill.loc[i, 'Right'].setText(str(int(int(row.replace('+', '').strip())/100)))
                 else:
                     SKMain.Bill.loc[i, 'Right'].setText(row.strip())
@@ -576,7 +574,7 @@ class SKOrderLibEvent:
             pass
         else:
             Line[6] = str(int(Line[6])/1000)
-            SKMain.openpd = SKMain.openpd.append(pd.DataFrame([Line],columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅','登入帳號']))
+            SKMain.openpd = pd.concat([SKMain.openpd,pd.DataFrame(Line,columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅','登入帳號'])], ignore_index=True)
         SKMain.onOpenInterestReplytimes+=1
         print(SKMain.onOpenInterestReplytimes)
         # i=0
@@ -658,6 +656,7 @@ SKReplyLibEventHandler = comtypes.client.GetEvents(skR, SKReplyEvent)
 if __name__=='__main__':
     mp.freeze_support()
     GlobalVar.Initialize()
+    QApplication.setAttribute(Qt.ApplicationAttribute.AA_ShareOpenGLContexts)
     SKApp = QApplication(sys.argv)
     SKMain = SKMainWindow()
     SKMain.show()
@@ -669,4 +668,4 @@ if __name__=='__main__':
     #     print(type(inst))
     #     print(inst.args)
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-         SKApp.instance().exec()
+        sys.exit(SKApp.instance().exec())
