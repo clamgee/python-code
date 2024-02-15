@@ -88,12 +88,12 @@ class DataToTicks(td.Thread):
             
             if self.__SaveNotify.value and self.__FileSave:
                 ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume','deal'])
-                ticksdf = pd.concat([ticksdf,pd.DataFrame(self.TickList,columns=['ndatetime','nbid','nask','close','volume','deal'])],ignore_index=True,sort=False)
+                ticksdf = pd.concat([ticksdf,pd.DataFrame(self.TickList,columns=['ndatetime','nbid','nask','close','volume','deal'])],axis=1,ignore_index=True,sort=False)
                 ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
                 filename = 'Ticks' + ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
                 ticksdf.to_csv('../data/'+filename, header=False, index=False)
                 df1=pd.read_csv('../filename.txt')
-                df1=pd.concat([df1,pd.DataFrame([[filename]],columns=['filename'])],ignore_index=True)
+                df1=pd.concat([df1,pd.DataFrame([[filename]],columns=['filename'])],axis=1,ignore_index=True)
                 df1.to_csv('../filename.txt',index=False)
                 del df1
                 del ticksdf
@@ -306,9 +306,7 @@ class TicksToMinuteK(td.Thread):
                 tmpdeal = ndeal
             else:
                 tmpdeal=self.Candledf.at[self.lastidx,'dealminus']+ndeal
-            print(self.Candledf.tail(-1))
-            self.Candledf = pd.concat([self.Candledf,pd.DataFrame([self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,big,small],columns=['ndatetime', 'open', 'high', 'low', 'close', 'volume', 'dealminus', 'big', 'small'])],axis=1,ignore_index=True)
-            # self.Candledf = pd.concat([self.Candledf,pd.DataFrame([self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,big,small],columns=['ndatetime','open','high','low','close','volume','dealminus','big','small'])],ignore_index=True,sort=False)
+            self.Candledf = pd.concat([self.Candledf,pd.DataFrame(np.array([self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,big,small]).reshape(1,9),columns=['ndatetime', 'open', 'high', 'low', 'close', 'volume', 'dealminus', 'big', 'small'])],ignore_index=True)
             self.High = self.Low = self.Close = nclose
             self.lastidx=self.Candledf.last_valid_index()
         elif ndatetime < self.mm1 :

@@ -23,7 +23,7 @@ def func2(df):
         tmphour=row.ndatetime.hour
         if tmpcontract==0 or (tmphour==15 and (CheckHour is None or CheckHour==13)):
             tmplist=[[row.ndatetime,row.close,row.close,row.close,row.close,row.volume]]
-            contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
+            contractkpd=pd.concat([contractkpd,pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume'])],ignore_index=True)
             # contractkpd.loc[row.ndatetime]=[row.ndatetime,row.close,row.close,row.close,row.close,row.volume]
             print(contractkpd.tail(1),', 條件1 Index: ',index,' ,rowindex: ',rowindex)
             tmpcontract=row.volume
@@ -45,7 +45,7 @@ def func2(df):
             rowindex=index
             tmpcontract=row.volume
             tmplist=[[row.ndatetime,row.close,row.close,row.close,row.close,tmpcontract]]
-            contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
+            contractkpd=pd.concat([contractkpd,pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume'])],ignore_index=True)
             print(contractkpd.tail(1),', 條件3 Index: ',index,' ,rowindex: ',rowindex)
 
         elif (tmpcontract+row.volume)>12000:
@@ -57,7 +57,7 @@ def func2(df):
             rowindex=index
             # contractkpd.loc[row.ndatetime]=[row.ndatetime,row.close,row.close,row.close,row.close,tmpcontract]
             tmplist=[[row.ndatetime,row.close,row.close,row.close,row.close,tmpcontract]]
-            contractkpd=contractkpd.append(pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume']),ignore_index=True)
+            contractkpd=pd.concat([contractkpd,pd.DataFrame(tmplist,columns=['ndatetime','open','high','low','close','volume'])],ignore_index=True)
             print(contractkpd.tail(1),',條件4 Index: ',index,', rowindex: ',rowindex)
         else:
             tmpcontract=tmpcontract+row.volume
@@ -74,7 +74,7 @@ print(os.path.abspath('data'))
 for info in os.listdir('data'):
     domain=os.path.abspath(r'data')
     if info not in df1['filename'].values:
-        df1=df1.append(pd.DataFrame([[info]],columns=['filename']),ignore_index=True)
+        df1=pd.concat([df1,pd.DataFrame([[info]],columns=['filename'])],ignore_index=True)
         info=os.path.join(domain,info)
         print(info)
         if df is None:

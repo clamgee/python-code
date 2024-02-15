@@ -1,17 +1,11 @@
 import pandas as pd
 import numpy as np
 import time
-a=pd.DataFrame(np.zeros((5,2)),columns=['close','open'])
-a=a.astype(int)
-# a.loc[a.index[-1]+1]=[2,2]
-b=pd.DataFrame(np.random.choice(5,(4,2)),columns=['close','open'])
+import datetime
 
-# print(type(a.loc[a.index[-1]].values))
-
-c=pd.concat([a,b],ignore_index=True)
-c.loc[c.last_valid_index()+1,:]=[8,8]
-print(c.columns.to_list())
-
+a=[datetime.datetime(2024, 2, 15, 9, 49), 18572, 18572, 18572, 18572, 1, 8370, 2187, 3866]
+# a=pd.DataFrame(np.array([datetime.datetime(2024, 2, 15, 9, 49), 18572, 18572, 18572, 18572, 1, 8370, 2187, 3866]).reshape(1,9),columns=['date',1,2,3,4,5,6,7,8])
+print(a.index)
 # import pyqtgraph.examples
 # pyqtgraph.examples.run()
 # OnNewData_dict={'MarketType':{'TS':'證券','TA':'盤後','TL':'零股','TF':'期貨','TO':'選擇權','OF':'海期','OO':'海選','OS':'複委託'},
