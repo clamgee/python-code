@@ -90,9 +90,9 @@ class DataToTicks(td.Thread):
                 ticksdf = pd.DataFrame(columns=['ndatetime','nbid','nask','close','volume','deal'])
                 ticksdf = pd.concat([ticksdf,pd.DataFrame(self.TickList,columns=['ndatetime','nbid','nask','close','volume','deal'])],ignore_index=True,sort=False).dropna()
                 ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
-                print(ticksdf)
                 filename = 'Ticks' + ticksdf.iloc[-1, 0].date().strftime('%Y-%m-%d') + '.txt'
                 ticksdf.to_csv('../data/'+filename, header=False, index=False)
+                print(ticksdf[ticksdf.isnull().T.any()])
                 df1=pd.read_csv('../filename.txt')
                 df1=pd.concat([df1,pd.DataFrame([[filename]],columns=['filename'])],ignore_index=True)
                 print('存檔前: ',df1)
@@ -224,7 +224,7 @@ class TicksTo12K(td.Thread):
 
             if self.__SaveNotify.value and self.__FileSave:
                 result=self.Candledf.drop(columns=['high_avg','low_avg'])
-                result = result[['open','high','low','close','volume']].astype(int)            
+                result[['open','high','low','close','volume']] = result[['open','high','low','close','volume']].astype(int)            
                 result.sort_values(by=['ndatetime'],ascending=True)
                 result.to_csv('../result.dat',header=True, index=False,mode='w')
                 now = time.localtime()

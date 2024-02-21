@@ -574,7 +574,7 @@ class SKOrderLibEvent:
             pass
         else:
             Line[6] = str(int(Line[6])/1000)
-            SKMain.openpd = pd.concat([SKMain.openpd,pd.DataFrame(Line,columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅','登入帳號'])], ignore_index=True)
+            SKMain.openpd = pd.concat([SKMain.openpd,pd.DataFrame(Line.reshape(1,11),columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅','登入帳號'])], ignore_index=True)
         SKMain.onOpenInterestReplytimes+=1
         print(SKMain.onOpenInterestReplytimes)
         # i=0

@@ -84,6 +84,7 @@ for info in os.listdir('data'):
             df=pd.read_csv(info,header=None)
             print(2)
         contractkpd=func2(df)
+        contractkpd[['open','high','low','close','volume']]=contractkpd[['open','high','low','close','volume']].astype(int)
         contractkpd.to_csv('result.dat',header=False,index=False,mode='a')
 
 print(df1)
