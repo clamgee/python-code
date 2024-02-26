@@ -30,3 +30,6 @@ Ticks2024-02-16.txt
 Ticks2024-02-19.txt
 Ticks2024-02-20.txt
 Ticks2024-02-21.txt
+Ticks2024-02-22.txt
+Ticks2024-02-23.txt
+Ticks2024-02-26.txt

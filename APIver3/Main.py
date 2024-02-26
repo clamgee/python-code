@@ -502,15 +502,15 @@ class SKReplyLibEvent:
             SKMain.replypd.loc[i, '委託時間'] = Line[24]
             SKMain.replypd.loc[i, '交易時段'] = Line[24]
         else:
-            tmplist = [[Line[8], Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][0]],
+            tmplist = [Line[8], Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][0]],
                         round(float(Line[11]),2), Line[20],
                         Config_dict.OnNewData_dict['Type'][Line[2]],
                         dealcontract, cancelcontract,
                         Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][1]],
                         Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][2]],
                         Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][3]],
-                        Line[0], Line[10], Line[23], Line[24], Line[24]]]
-            SKMain.replypd = pd.concat([SKMain.replypd,pd.DataFrame(tmplist,columns=['商品名稱', '買賣', '委託價格', '委託口數', '委託狀態', '成交口數', '取消口數', '倉位', '條件', '價位格式', '委託序號', '委託書號', '委託日期', '委託時間', '交易時段'])], ignore_index=True)
+                        Line[0], Line[10], Line[23], Line[24], Line[24]]
+            SKMain.replypd = pd.concat([SKMain.replypd,pd.DataFrame(np.array(tmplist).reshape(1,15),columns=['商品名稱', '買賣', '委託價格', '委託口數', '委託狀態', '成交口數', '取消口數', '倉位', '條件', '價位格式', '委託序號', '委託書號', '委託日期', '委託時間', '交易時段'])], ignore_index=True)
         if SKMain.ReplyComplete == True:
             SKMain.ReplyCRpdMode.UpdateData(SKMain.replypd)
             SKMain.openpd.drop(SKMain.openpd.index,inplace=True)
@@ -574,7 +574,7 @@ class SKOrderLibEvent:
             pass
         else:
             Line[6] = str(int(Line[6])/1000)
-            SKMain.openpd = pd.concat([SKMain.openpd,pd.DataFrame(Line.reshape(1,11),columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅','登入帳號'])], ignore_index=True)
+            SKMain.openpd = pd.concat([SKMain.openpd,pd.DataFrame(np.array(Line).reshape(1,11),columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅','登入帳號'])], ignore_index=True)
         SKMain.onOpenInterestReplytimes+=1
         print(SKMain.onOpenInterestReplytimes)
         # i=0
