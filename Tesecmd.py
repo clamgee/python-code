@@ -3,9 +3,10 @@ import numpy as np
 import time
 import datetime
 
-a=[datetime.datetime(2024, 2, 15, 9, 49), 18572, 18572, 18572, 18572, 1, 8370, 2187, 3866]
-# a=pd.DataFrame(np.array([datetime.datetime(2024, 2, 15, 9, 49), 18572, 18572, 18572, 18572, 1, 8370, 2187, 3866]).reshape(1,9),columns=['date',1,2,3,4,5,6,7,8])
-print(a.index)
+# a=[datetime.datetime(2024, 2, 15, 9, 49), 18572, 18572, 18572, 18572, 1, 8370, 2187, 3866]
+a=pd.DataFrame(np.array([datetime.datetime(2024, 2, 15, 9, 49), 18572, 18572, 18572, 18572, 1, 8370, 2187, 3866]).reshape(1,9),columns=['date',1,2,3,4,5,6,7,8])
+
+print(a.empty)
 # import pyqtgraph.examples
 # pyqtgraph.examples.run()
 # OnNewData_dict={'MarketType':{'TS':'證券','TA':'盤後','TL':'零股','TF':'期貨','TO':'選擇權','OF':'海期','OO':'海選','OS':'複委託'},
