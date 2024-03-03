@@ -87,7 +87,7 @@ class DataToTicks(td.Thread):
                 self.Ticks(nlist)
             
             if self.__SaveNotify.value and self.__FileSave:
-                ticksdf = pd.DataFrame(self.TickList,columns=['ndatetime','nbid','nask','close','volume','deal'],ignore_index=True,sort=False).dropna()
+                ticksdf = pd.DataFrame(self.TickList,columns=['ndatetime','nbid','nask','close','volume','deal'])
                 ticksdf['ndatetime']=pd.to_datetime(ticksdf['ndatetime'],format='%Y-%m-%d %H:%M:%S.%f')
                 ticksdf = ticksdf.sort_values(by=['ndatetime'],ascending=True)
                 ticksdf = ticksdf.reset_index(drop=True)
@@ -95,13 +95,12 @@ class DataToTicks(td.Thread):
                 ticksdf.to_csv('../data/'+filename, header=False, index=False)
                 df1=pd.read_csv('../filename.txt')
                 df1=pd.concat([df1,pd.DataFrame([[filename]],columns=['filename'])],ignore_index=True)
-                print('存檔前: ',df1)
                 df1.to_csv('../filename.txt',index=False)
                 del df1
                 del ticksdf
                 now = time.localtime()
                 localtime = QTime(now.tm_hour, now.tm_min, now.tm_sec).toString(Qt.ISODate)
-                print(localtime,' Ticks已存檔!!')
+                print(localtime,' Ticks已存檔=> ',filename)
                 self.__FileSave = False
 
 class TicksTo12K(td.Thread):
