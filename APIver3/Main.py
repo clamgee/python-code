@@ -298,9 +298,12 @@ class SKMainWindow(QMainWindow):
             self.MALowLine.setData(self.CandleItem12K.data.low_avg)
 
         if self.axis12k_ymin > self.CandleItem12K.close or self.axis12k_ymax < self.CandleItem12K.close:
-            self.axis12k_ymin = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
-            self.axis12k_ymax = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
-            self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
+            try:
+                self.axis12k_ymin = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['low']].values.min()
+                self.axis12k_ymax = self.CandleItem12K.data.loc[self.axis12k_xmin:self.axis12k_xmax, ['high']].values.max()
+                self.Candle12KDraw.setYRange(self.axis12k_ymin,self.axis12k_ymax)
+            except Exception as e:            
+                print(f"CandleItem12K異常: {e}")
         
     def Setup_CandleMinuteKDrawUI(self):
         self.AxisMinute = pg.AxisItem(orientation='bottom')
@@ -654,18 +657,16 @@ SKReplyEvent = SKReplyLibEvent()
 SKReplyLibEventHandler = comtypes.client.GetEvents(skR, SKReplyEvent)
 
 if __name__=='__main__':
-    mp.freeze_support()
-    GlobalVar.Initialize()
-    QApplication.setAttribute(Qt.ApplicationAttribute.AA_ShareOpenGLContexts)
-    SKApp = QApplication(sys.argv)
-    SKMain = SKMainWindow()
-    SKMain.show()
-    SKMain.LoginFuncAccept()
-    # try:
-    #     SKMain = SKMainWindow()
-    #     SKMain.show()
-    # except Exception as inst:
-    #     print(type(inst))
-    #     print(inst.args)
-    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        sys.exit(SKApp.instance().exec())
+    try:
+        mp.freeze_support()
+        GlobalVar.Initialize()
+        QApplication.setAttribute(Qt.ApplicationAttribute.AA_ShareOpenGLContexts)
+        SKApp = QApplication(sys.argv)
+        SKMain = SKMainWindow()
+        SKMain.show()
+        SKMain.LoginFuncAccept()
+        if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+            sys.exit(SKApp.instance().exec())
+    except Exception as e:
+
+        print(f"主程式異常: {e}")

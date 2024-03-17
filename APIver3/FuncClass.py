@@ -46,7 +46,7 @@ class Candle12KDrawThread(QThread):
     def run(self):
         while True:
             nlist = GlobalVar.CandleItem12K_Event.get()
-            if nlist is not None: #and GlobalVar.NS.nPtr12K == nlist[2]:
+            if nlist is not None : #and GlobalVar.NS.nPtr12K == nlist[2]:
                 while self.DFBuild_None: 
                     if nlist[3].shape[0] == 0 or len(nlist) < 4:
                         time.sleep(0.1)
@@ -54,8 +54,6 @@ class Candle12KDrawThread(QThread):
                         self.DFBuild_None = False
                 self.Candle12KItem.set_data(nlist[3],nlist[:3])
                 self.Candle12KItem_signal.emit()
-            else:
-                pass
             # GlobalVar.CandleItem12K_Event.wait()            
             # while self.DFBuild_None: 
             #     if GlobalVar.NS.df12K.shape[0] == 0 or len(GlobalVar.NS.list12K) < 3:
