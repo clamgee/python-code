@@ -610,7 +610,7 @@ class SKQuoteLibEvents:
     def OnNotifyServerTime(self, sHour, sMinute, sSecond, nTotal):
         nTime = QTime(sHour, sMinute, sSecond)#現在時間
         rTime = QTime(8,40,00)#呼叫連線時間
-        wTime = QTime(8,43,00)#開始工作時間
+        wTime = QTime(8,45,5)#開始工作時間
         jTime = QTime(13, 46, 00)#存檔時間
         if nTime == rTime:
             SKMain.ConnectFunc()
@@ -642,6 +642,7 @@ class SKQuoteLibEvents:
         if GlobalVar.CandleTarget.commodityIndex == sStockidx:
             nlist = [nBestBidQty1,nBestBidQty2,nBestBidQty3,nBestBidQty4,nBestBidQty5,int(nBestBid1/100),int(nBestBid2/100),int(nBestBid3/100),int(nBestBid4/100),int(nBestBid5/100),int(nBestAsk1/100),int(nBestAsk2/100),int(nBestAsk3/100),int(nBestAsk4/100),int(nBestAsk5/100),nBestAskQty1,nBestAskQty2,nBestAskQty3,nBestAskQty4,nBestAskQty5]
             GlobalVar.DomDataQueue.put(nlist)
+    
     def OnNotifyFutureTradeInfoLONG(self,bstrStockNo,sMarketNo,sStockidx,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount):
         if GlobalVar.CandleTarget.commodityIndex == sStockidx:
             nlist = [bstrStockNo,nBuyTotalCount,nSellTotalCount,nBuyTotalQty,nSellTotalQty,nBuyDealTotalCount,nSellDealTotalCount]
