@@ -8,13 +8,13 @@ df1=pd.read_csv('filename.txt')
 df = pd.read_csv(r'data/Ticks2024-03-21.txt',header=None)
 df.columns = ['ndatetime','nbid','nask','close','volume','deal']
 print(df.tail())
-target = 'nask'
-# 建立ARIMA模型
-model = ARIMA(df[target], order=(5,1,0))
+# target = 'nask'
+# # 建立ARIMA模型
+# model = ARIMA(df[target], order=(15,0,5))
 
-# 擬合模型
-model_fit = model.fit()
+# # 擬合模型
+# model_fit = model.fit()
 
-# 進行預測
-forecast = model_fit.forecast(steps=1)
-print(forecast)
+# # 進行預測
+# forecast = model_fit.forecast(steps=1)
+# print(forecast)
