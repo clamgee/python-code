@@ -30,3 +30,5 @@ Clam-NB.code-workspace
 /APIver3/UI/__pycache__/*.pyc
 /APIver3/CapitalLog_Quote/*.log
 /APIver3/CapitalLog_Quote/*.txt
+/.venv
+/.idea
