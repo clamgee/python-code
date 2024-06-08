@@ -10,3 +10,6 @@ pip list --format freeze | %{$_.split('==')[0]} > requirements.txt
 
 讀取先前列出模組進行安裝
 pip3 install -r requirements.txt
+
+強行安裝套件中尚未安裝的部件
+pip3 install --force-reinstall --no-binary :all: pyinstaller

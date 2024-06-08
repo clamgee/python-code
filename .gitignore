@@ -32,3 +32,4 @@ Clam-NB.code-workspace
 /APIver3/CapitalLog_Quote/*.txt
 /.venv
 /.idea
+*.pyc
