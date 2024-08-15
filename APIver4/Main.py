@@ -3,6 +3,6 @@ import datetime
 import modin.pandas as pd
 # import pandas as pd
 dfdata = pd.read_csv('../data/Ticks2024-01-04.txt',header=None)
-print('OK!!')
+# print('OK!!')
 # a=dfdata.values.tolist()
-# print(a[0])
+print(dfdata.head())
