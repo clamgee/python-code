@@ -611,7 +611,7 @@ class SKQuoteLibEvents:
         nTime = QTime(sHour, sMinute, sSecond)#現在時間
         rTime = QTime(8,40,00)#呼叫連線時間
         wTime = QTime(8,45,5)#開始工作時間
-        jTime = QTime(13, 46, 00)#存檔時間
+        jTime = QTime(13,46,00)#存檔時間
         if nTime == rTime:
             SKMain.ConnectFunc()
         if nTime == wTime:
