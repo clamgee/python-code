@@ -1,7 +1,7 @@
 import os
 # os.environ["MODIN_ENGINE"] = "ray"
-# import pandas as pd
-import modin.pandas as pd
+# import modin.pandas as pd
+import pandas as pd
 import datetime
 
 dfMon=pd.DataFrame(columns=['ndatetime','open','high','low','close','volume'])
@@ -119,14 +119,15 @@ class CandlestickItem(pg.GraphicsObject):
         ## (in this case, QPicture does all the work of computing the bouning rect for us)
         return QtCore.QRectF(self.picture.boundingRect())
 
-dict_tmp = dfMon['ndatetime'].dt.strftime('%Y/%m/%d %H:%M:%S.%f').to_dict()
+# dict_tmp = dfMon['ndatetime'].dt.strftime('%Y/%m/%d %H:%M:%S.%f').to_dict()
+dict_tmp = dfMon['ndatetime'].dt.strftime('%Y/%m/%d').to_dict()
 kline=CandlestickItem(dfMon)
 pic = pg.plot()
-MyAxis = pg.AxisItem(orientation='bottom')
+MyAxis = pic.getAxis('bottom')
 MyAxis.setTicks([dict_tmp.items()])
 # pic.addPlot(row=0,col=0,axisItems={'bottom': MyAxis},y=dfMon)
 pic.addItem(kline)
-pic.get
+pic.show()
 
 if __name__ == '__main__':
     pg.exec()
