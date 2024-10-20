@@ -186,3 +186,7 @@ Ticks2024-10-08.txt
 Ticks2024-10-09.txt
 Ticks2024-10-11.txt
 Ticks2024-10-14.txt
+Ticks2024-10-15.txt
+Ticks2024-10-16.txt
+Ticks2024-10-17.txt
+Ticks2024-10-18.txt
