@@ -268,3 +268,9 @@ Ticks2025-02-13.txt
 Ticks2025-02-14.txt
 Ticks2025-02-17.txt
 Ticks2025-02-18.txt
+Ticks2025-02-19.txt
+Ticks2025-02-20.txt
+Ticks2025-02-21.txt
+Ticks2025-02-24.txt
+Ticks2025-02-25.txt
+Ticks2025-02-26.txt
