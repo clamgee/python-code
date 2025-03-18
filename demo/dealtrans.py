@@ -11,7 +11,7 @@ for file in domain:
         tmpdf = df['close'].drop(index=df.index)
         tmpdf.columns='close'
         tmpdf.loc[0]=0
-        tmpdf = tmpdf.append(df.close,ignore_index=True)
+        tmpdf = pd.concat([tmpdf,df.close],ignore_index=True)
         tmpdf = tmpdf.reset_index(drop=True)
         df['lclose']=0
         df['lclose']=tmpdf.map(lambda x:x)
