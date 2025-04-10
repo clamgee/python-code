@@ -287,3 +287,17 @@ Ticks2025-03-13.txt
 Ticks2025-03-14.txt
 Ticks2025-03-17.txt
 Ticks2025-03-18.txt
+Ticks2025-03-19.txt
+Ticks2025-03-20.txt
+Ticks2025-03-21.txt
+Ticks2025-03-24.txt
+Ticks2025-03-25.txt
+Ticks2025-03-26.txt
+Ticks2025-03-27.txt
+Ticks2025-03-28.txt
+Ticks2025-03-31.txt
+Ticks2025-04-01.txt
+Ticks2025-04-02.txt
+Ticks2025-04-07.txt
+Ticks2025-04-08.txt
+Ticks2025-04-09.txt
