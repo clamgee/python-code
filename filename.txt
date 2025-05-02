@@ -306,3 +306,13 @@ Ticks2025-04-11.txt
 Ticks2025-04-14.txt
 Ticks2025-04-15.txt
 Ticks2025-04-16.txt
+Ticks2025-04-17.txt
+Ticks2025-04-18.txt
+Ticks2025-04-21.txt
+Ticks2025-04-22.txt
+Ticks2025-04-23.txt
+Ticks2025-04-24.txt
+Ticks2025-04-25.txt
+Ticks2025-04-28.txt
+Ticks2025-04-29.txt
+Ticks2025-05-02.txt

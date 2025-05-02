@@ -37,7 +37,7 @@ for info in domain:
         if is_third_thurs==False and (ndate.month!=checkMon and ndate.month<3) and ndate.weekday()>2 and week:
             is_third_thurs = True
         df1=pd.read_csv('../data/'+info,header=None)
-        df1[0]=pd.to_datetime(df1[0],format='ISO8601')
+        df1[0]=pd.to_datetime(df1[0],format='mixed')
         # df1[0]=pd.to_datetime(df1[0],format='%Y-%m-%d %H:%M:%S.%f')
         # if is_third_thurs:
         if dfMon.shape[0]==0 or is_third_thurs:
@@ -54,7 +54,7 @@ for info in domain:
             dfMon.iloc[-1,4]=df1.iloc[-1,3]
             dfMon.iloc[-1,5]=dfMon.iloc[-1,5]+df1[4].sum()
 
-print(dfMon.tail())
+print(dfMon)
 # dfMon.to_csv('MonKline.dat',header=True,index=False,mode='w')
         # if is_third_thurs :
         #     print(is_third_thurs,ndate)
@@ -120,7 +120,8 @@ class CandlestickItem(pg.GraphicsObject):
         return QtCore.QRectF(self.picture.boundingRect())
 
 # dict_tmp = dfMon['ndatetime'].dt.strftime('%Y/%m/%d %H:%M:%S.%f').to_dict()
-dict_tmp = dfMon['ndatetime'].dt.strftime('%Y/%m/%d').to_dict()
+dfMon = dfMon.iloc[3:].reset_index(drop=True)
+dict_tmp = dfMon['ndatetime'].dt.strftime('%Y/%m').to_dict()
 kline=CandlestickItem(dfMon)
 pic = pg.plot()
 MyAxis = pic.getAxis('bottom')
