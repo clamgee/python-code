@@ -77,6 +77,7 @@ class DataToTicks(td.Thread):
                     self.__PowerQueue.put([self.__bid,self.__ask])
                 if self.__NS.listFT[0] == self.name:
                     self.FTlist.append([ndatetime]+self.__NS.listFT[1:])
+            print(self.TickList[-1])
         else:
             print('捨棄Tick序號: ',nPtr)
 
@@ -308,7 +309,9 @@ class TicksToMinuteK(td.Thread):
                 tmpdeal = ndeal
             else:
                 tmpdeal=self.Candledf.at[self.lastidx,'dealminus']+ndeal
-            self.Candledf = pd.concat([self.Candledf,pd.DataFrame(np.array([self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,big,small]).reshape(1,9),columns=['ndatetime', 'open', 'high', 'low', 'close', 'volume', 'dealminus', 'big', 'small'])],ignore_index=True)
+            #self.Candledf = pd.concat([self.Candledf,pd.DataFrame(np.array([self.mm,nclose,nclose,nclose,nclose,nQty,tmpdeal,big,small]).reshape(1,9),columns=['ndatetime', 'open', 'high', 'low', 'close', 'volume', 'dealminus', 'big', 'small'])],ignore_index=True)
+            data_dict = {'ndatetime': self.mm,'open': nclose,'high': nclose,'low': nclose,'close': nclose,'volume': nQty,'dealminus': tmpdeal,'big': big,'small': small}
+            self.Candledf = pd.concat([self.Candledf, pd.DataFrame([data_dict])], ignore_index=True)
             self.High = self.Low = self.Close = nclose
             self.lastidx=self.Candledf.last_valid_index()
         elif ndatetime < self.mm1 :

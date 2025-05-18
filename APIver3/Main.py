@@ -374,6 +374,7 @@ class SKMainWindow(QMainWindow):
             self.YCline.setPos(self.yesterdayclose)
             tmpline=self.CandleMinuteKItem.data.close.cumsum()
             self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
+            # self.avgline = self.CandleMinuteKItem.data.close.expanding().mean()
             self.curve=self.CandleMinuteKDraw.plot(pen='w')
             self.curve.setData(self.avgline)
             del tmpline
@@ -513,7 +514,9 @@ class SKReplyLibEvent:
                         Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][2]],
                         Config_dict.OnNewData_dict['BuySell'][Line[1]][Line[6][3]],
                         Line[0], Line[10], Line[23], Line[24], Line[24]]
-            SKMain.replypd = pd.concat([SKMain.replypd,pd.DataFrame(np.array(tmplist).reshape(1,15),columns=['商品名稱', '買賣', '委託價格', '委託口數', '委託狀態', '成交口數', '取消口數', '倉位', '條件', '價位格式', '委託序號', '委託書號', '委託日期', '委託時間', '交易時段'])], ignore_index=True)
+            # SKMain.replypd = pd.concat([SKMain.replypd,pd.DataFrame(np.array(tmplist).reshape(1,15),columns=['商品名稱', '買賣', '委託價格', '委託口數', '委託狀態', '成交口數', '取消口數', '倉位', '條件', '價位格式', '委託序號', '委託書號', '委託日期', '委託時間', '交易時段'])], ignore_index=True)
+            new_row = pd.DataFrame([dict(zip(['商品名稱', '買賣', '委託價格', '委託口數', '委託狀態', '成交口數', '取消口數','倉位', '條件', '價位格式', '委託序號', '委託書號', '委託日期', '委託時間', '交易時段'], tmplist))])
+            SKMain.replypd = pd.concat([SKMain.replypd, new_row], ignore_index=True)
         if SKMain.ReplyComplete == True:
             SKMain.ReplyCRpdMode.UpdateData(SKMain.replypd)
             SKMain.openpd.drop(SKMain.openpd.index,inplace=True)
@@ -577,7 +580,13 @@ class SKOrderLibEvent:
             pass
         else:
             Line[6] = str(int(Line[6])/1000)
-            SKMain.openpd = pd.concat([SKMain.openpd,pd.DataFrame(np.array(Line).reshape(1,11),columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅','登入帳號'])], ignore_index=True)
+            #SKMain.openpd = pd.concat([SKMain.openpd,pd.DataFrame(np.array(Line).reshape(1,11),columns=['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅','登入帳號'])], ignore_index=True)
+            columns = ['市場別', '期貨帳號', '商品', '買賣別', '未平倉部位', '當沖未平倉部位','平均成本', '一點價值', '單口手續費', '交易稅', '登入帳號']
+            if len(Line) == 11:
+                row_df = pd.DataFrame([dict(zip(columns, Line))])
+                SKMain.openpd = pd.concat([SKMain.openpd, row_df], ignore_index=True)
+            else:
+                print("⚠️ Line 資料長度錯誤，應為 11：", Line)
         SKMain.onOpenInterestReplytimes+=1
         print(SKMain.onOpenInterestReplytimes)
         # i=0
@@ -611,7 +620,7 @@ class SKQuoteLibEvents:
         nTime = QTime(sHour, sMinute, sSecond)#現在時間
         rTime = QTime(8,40,00)#呼叫連線時間
         wTime = QTime(8,45,5)#開始工作時間
-        jTime = QTime(13,46,00)#存檔時間
+        jTime = QTime(13,45,20)#存檔時間
         if nTime == rTime:
             SKMain.ConnectFunc()
         if nTime == wTime:
