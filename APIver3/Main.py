@@ -374,7 +374,6 @@ class SKMainWindow(QMainWindow):
             self.YCline.setPos(self.yesterdayclose)
             tmpline=self.CandleMinuteKItem.data.close.cumsum()
             self.avgline = tmpline.apply(lambda x: x/(tmpline[tmpline==x].index[0]+1))
-            # self.avgline = self.CandleMinuteKItem.data.close.expanding().mean()
             self.curve=self.CandleMinuteKDraw.plot(pen='w')
             self.curve.setData(self.avgline)
             del tmpline
@@ -620,7 +619,7 @@ class SKQuoteLibEvents:
         nTime = QTime(sHour, sMinute, sSecond)#現在時間
         rTime = QTime(8,40,00)#呼叫連線時間
         wTime = QTime(8,45,5)#開始工作時間
-        jTime = QTime(13,45,20)#存檔時間
+        jTime = QTime(13,46,00)#存檔時間
         if nTime == rTime:
             SKMain.ConnectFunc()
         if nTime == wTime:

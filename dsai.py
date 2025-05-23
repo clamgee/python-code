@@ -93,7 +93,7 @@ for info in domain:
         # print()
       return full_response
     # 進入K線
-    for (t, x) in daymin.loc[:, :].iterrows():
+    for (t, x) in daymin.iterrows():
       start = datetime.datetime.now()
       if pd.isna(x["close"]):
         x["open"], x["close"], x["high"], x["low"], x["volume"],x["dealminus"]=lastopen, lastclose, lasthigh, lastlow, 0, lastdealminus

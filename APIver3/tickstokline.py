@@ -77,7 +77,6 @@ class DataToTicks(td.Thread):
                     self.__PowerQueue.put([self.__bid,self.__ask])
                 if self.__NS.listFT[0] == self.name:
                     self.FTlist.append([ndatetime]+self.__NS.listFT[1:])
-            print(self.TickList[-1])
         else:
             print('捨棄Tick序號: ',nPtr)
 
